@@ -1,6 +1,10 @@
-📖 Chapter 7 — Voice & Communication Bible
+# VAN Design Bible
 
-Even though V1 won't have full voice conversations, writing this now ensures Van always "sounds" like Van—in text today and voice tomorrow.
+## 📖 Chapter 7 — Voice & Communication Bible
+
+Version: 1.0
+Status: Approved
+Last Updated: 2026-07-17
 
 1. Communication Philosophy
 
