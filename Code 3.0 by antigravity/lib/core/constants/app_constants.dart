@@ -43,6 +43,43 @@ abstract final class AppConstants {
   static const String keyLanguage = 'app_language';
 
   // ============================================================
+  // SECURE STORAGE KEYS (flutter_secure_storage)
+  // ============================================================
+
+  /// Persisted marker confirming a previous successful sign-in.
+  /// Used for fast session restore decisions at startup.
+  static const String secureHasSession = 'vaanix.has_session';
+
+  // ============================================================
+  // SUPABASE TABLE NAMES
+  // ============================================================
+
+  static const String tableProfiles = 'profiles';
+  static const String tableUserSettings = 'user_settings';
+  static const String tableUserProgress = 'user_progress';
+  static const String tableLessons = 'lessons';
+  static const String tableLessonProgress = 'lesson_progress';
+  static const String tableExams = 'exams';
+  static const String tableExamAttempts = 'exam_attempts';
+
+  // ============================================================
+  // AUTH
+  // ============================================================
+
+  /// OAuth redirect URL scheme registered for Supabase deep links.
+  static const String authDeepLinkScheme = 'io.supabase.flutter://login-callback/';
+
+  /// Min password length enforced client-side before hitting Supabase.
+  static const int minPasswordLength = 8;
+
+  // ============================================================
+  // LOCAL CACHE BOX / KEY PREFIXES
+  // ============================================================
+
+  static const String cachePrefixUser = 'vaanix.user.';
+  static const String cachePrefixSettings = 'vaanix.settings.';
+
+  // ============================================================
   // ONBOARDING
   // ============================================================
 

@@ -49,8 +49,20 @@ dependencies:
   # Local storage (preferences)
   shared_preferences: ^2.3.1
 
+  # Secure storage (tokens / sensitive KV)
+  flutter_secure_storage: ^9.2.2
+
   # Icons
   flutter_svg: ^2.0.10+1
+
+  # Google Sign-In
+  google_sign_in: ^6.2.1
+
+  # Connectivity monitoring
+  connectivity_plus: ^5.0.2
+
+  # Structured logging
+  logger: ^2.3.0
 
 dev_dependencies:
   flutter_test:
