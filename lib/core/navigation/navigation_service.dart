@@ -8,15 +8,17 @@
 ///
 /// The service wraps [GoRouter] and exposes typed helper methods so feature
 /// code never hard-codes route strings. All route names come from [RouteNames].
+///
+/// [rootNavigatorKey] has been moved to [navigator_keys.dart] to break the
+/// circular import between [app_router.dart] ↔ [navigation_service.dart].
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vaanix_app/core/constants/route_names.dart';
-import 'package:vaanix_app/app/router/app_router.dart';
 
-/// Global navigator key for context-free dialogs and bottom sheets.
-final rootNavigatorKey = GlobalKey<NavigatorState>();
+import 'package:vaanix_app/core/constants/route_names.dart';
+import 'package:vaanix_app/core/navigation/navigator_keys.dart';
+import 'package:vaanix_app/app/router/app_router.dart';
 
 /// Wraps [GoRouter] to provide context-free programmatic navigation.
 class NavigationService {

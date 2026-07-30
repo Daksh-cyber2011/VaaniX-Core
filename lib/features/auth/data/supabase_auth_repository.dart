@@ -122,7 +122,7 @@ class SupabaseAuthRepository implements AuthRepository {
   AuthSession _mapFromEvent(AuthState event) {
     final session = event.session;
     if (session == null) {
-      return event.eventName == 'TOKEN_REFRESHED'
+      return event.event == AuthChangeEvent.tokenRefreshed
           ? const AuthSession(status: AuthStatus.sessionExpired)
           : AuthSession.empty;
     }

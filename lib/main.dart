@@ -18,7 +18,7 @@ import 'package:vaanix_app/app/bootstrap/app_bootstrap.dart';
 import 'package:vaanix_app/core/errors/app_error_handler.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/providers/session_manager.dart';
-import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart'
+import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(
@@ -38,8 +38,8 @@ Future<void> main() async {
             ),
             // Wire the core session manager dependency to the feature's
             // auth repository (dependency inversion seam).
-            coreAuthRepositoryProvider.overrideWithValue(
-              authRepositoryProvider),
+            coreAuthRepositoryProvider.overrideWith(
+              (ref) => ref.read(authRepositoryProvider)),
           ],
           child: const VaaniXApp(),
         ),

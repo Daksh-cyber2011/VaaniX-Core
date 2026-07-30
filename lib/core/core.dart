@@ -42,6 +42,7 @@ export 'logging/logger.dart';
 export 'lifecycle/app_lifecycle_observer.dart';
 
 // ─── Navigation ─────────────────────────────────────────────────────────────
+export 'navigation/navigator_keys.dart';
 export 'navigation/navigation_service.dart';
 
 // ─── Theme ──────────────────────────────────────────────────────────────────

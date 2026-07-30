@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
-import 'package:vaanix_app/core/navigation/navigation_service.dart';
+import 'package:vaanix_app/core/navigation/navigator_keys.dart';
 import 'package:vaanix_app/app/router/go_router_refresh_notifier.dart';
 import 'package:vaanix_app/app/router/splash_screen.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';

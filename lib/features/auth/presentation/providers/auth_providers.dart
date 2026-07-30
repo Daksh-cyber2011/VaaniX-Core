@@ -5,8 +5,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/auth/core_auth_repository.dart';
-import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/core/supabase/supabase_config.dart';
 import 'package:vaanix_app/features/auth/data/supabase_auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_repository.dart';
@@ -20,15 +18,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return repo;
 });
 
-/// Exposes the concrete [AuthRepository] as a core-level [CoreAuthRepository].
-///
-/// This is the dependency-inversion seam: `core`'s [SessionManager] reads
-/// [coreAuthRepositoryProvider] without importing feature code, and this
-/// provider (in the feature layer) supplies the live implementation. The
-/// alias keeps a single source of truth — the Supabase repo built above.
-final coreAuthRepositoryProvider = Provider<CoreAuthRepository>((ref) {
-  return ref.watch(authRepositoryProvider);
-});
+
 
 /// Emits the current [AuthSession] and every subsequent change.
 final authSessionStreamProvider = StreamProvider<AuthSession>(
