@@ -9,16 +9,15 @@
 /// The service wraps [GoRouter] and exposes typed helper methods so feature
 /// code never hard-codes route strings. All route names come from [RouteNames].
 ///
-/// [rootNavigatorKey] has been moved to [navigator_keys.dart] to break the
-/// circular import between [app_router.dart] ↔ [navigation_service.dart].
+/// The [navigationServiceProvider] is defined in `app/router/app_router.dart`
+/// (the only place that imports both this service and the GoRouter instance)
+/// to avoid a `core ↔ app` circular dependency.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/navigation/navigator_keys.dart';
-import 'package:vaanix_app/app/router/app_router.dart';
 
 /// Wraps [GoRouter] to provide context-free programmatic navigation.
 class NavigationService {
@@ -109,9 +108,3 @@ class NavigationService {
   void goVanProfile() => go(RouteNames.vanProfile);
   void goSettings()   => push(RouteNames.settings);
 }
-
-/// Riverpod provider for [NavigationService].
-final navigationServiceProvider = Provider<NavigationService>((ref) {
-  final router = ref.watch(appRouterProvider);
-  return NavigationService(router);
-});

@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
+import 'package:vaanix_app/core/theme/app_colors.dart';
 
 abstract final class AppTextStyles {
   // ============================================================

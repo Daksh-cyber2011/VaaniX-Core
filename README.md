@@ -44,13 +44,17 @@ lib/
 ### Dependency Rule
 
 ```
-app → core → (nothing)
-app → features → core
-app → shared → core
-features → core
-features → shared
-core → core only (never features or app)
+app → core, features, shared
+features → core, shared
+shared → core (design tokens only: theme colors, text styles, constants)
+core → core only (never features, app, or shared)
 ```
+
+> **Design-token carve-out**: `shared/widgets` may import `core/theme/` and
+> `core/constants/` because these are pure data classes (colors, typography,
+> string constants) with no business logic or feature coupling. All other
+> `core/` packages (providers, storage, network, auth) are off-limits to
+> `shared/`.
 
 ### State Management
 

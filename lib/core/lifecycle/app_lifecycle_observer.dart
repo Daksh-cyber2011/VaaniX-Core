@@ -22,7 +22,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'logger.dart';
+import 'package:vaanix_app/core/logging/logger.dart';
 
 /// Notifier that tracks the current [AppLifecycleState].
 class _LifecycleNotifier extends Notifier<AppLifecycleState>
