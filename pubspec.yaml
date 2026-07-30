@@ -1,0 +1,69 @@
+name: vaanix_app
+description: >
+  VaaniX — A Sanskrit-first AI-powered language learning companion for Indian students.
+  Built around Van, an emotionally intelligent AI duck companion.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.5.1
+
+  # Navigation
+  go_router: ^14.2.0
+
+  # Supabase (auth + database)
+  supabase_flutter: ^2.5.3
+
+  # Environment variables
+  flutter_dotenv: ^5.1.0
+
+  # Networking
+  dio: ^5.4.3
+
+  # Network connectivity awareness (offline detection)
+  connectivity_plus: ^6.0.3
+
+  # Google Fonts
+  google_fonts: ^6.2.1
+
+  # Animation (Lottie files for Van animations)
+  lottie: ^3.1.0
+
+  # Image caching
+  cached_network_image: ^3.3.1
+
+  # Functional programming (Either / Result types)
+  dartz: ^0.10.1
+
+  # Value equality
+  equatable: ^2.0.5
+
+  # Local storage (preferences)
+  shared_preferences: ^2.3.1
+
+  # Icons
+  flutter_svg: ^2.0.10+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Linting
+  flutter_lints: ^3.0.0
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
+
+flutter:
+  uses-material-design: true
+
+  # Assets — Van assets, icons, images
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/icons/

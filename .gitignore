@@ -1,0 +1,98 @@
+# =============================================================================
+# VaaniX — Flutter / Dart .gitignore
+# =============================================================================
+# Mirrors the official Flutter .gitignore with VaaniX-specific additions.
+# The .env file is NEVER committed — it holds live Supabase / backend keys.
+# =============================================================================
+
+# ─── Secrets & Environment ───────────────────────────────────────────────────
+# Real credentials live in assets/env/.env (created from .env.example).
+.env
+**/.env
+.env.local
+**/.env.local
+
+# ─── Dart / Flutter build artifacts ──────────────────────────────────────────
+**/.dart_tool/
+.dart_tool/
+.packages
+build/
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android (build & generated)
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+*.jks
+
+# iOS / macOS (build & generated)
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+**/.symlinks/
+**/Flutter/ephemeral/
+
+# Web
+**/web/icons/Icon-192.png
+**/web/icons/Icon-512.png
+
+# Linux / Windows / desktop generated
+**/linux/flutter/ephemeral/
+**/windows/runner/Debug/
+**/windows/runner/Release/
+
+# Coverage & test reports
+coverage/
+test/.test_coverage.dart
+
+# ─── IDEs & Editors ──────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# ─── OS files ────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ─── Generated / codegen output ──────────────────────────────────────────────
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.config.dart
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+*.log
+.fvm/
