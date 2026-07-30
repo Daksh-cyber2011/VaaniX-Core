@@ -8,8 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'app_colors.dart';
-import 'app_text_styles.dart';
+import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 abstract final class AppTheme {
   // ============================================================

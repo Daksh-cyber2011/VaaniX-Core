@@ -1,36 +1,18 @@
 /// Onboarding State — Domain Layer
 ///
-/// Holds all data collected across the 7 onboarding screens.
+/// Holds all data collected across the onboarding screens.
 /// Stored locally via SharedPreferences through [OnboardingRepository].
 ///
-/// PRD Section 8.1
+/// [PersonalityMode] and [CbseClass] are defined once in the profile domain
+/// (`features/profile/domain/user_profile.dart`) so onboarding, settings,
+/// and Van profile share a single source of truth. They are re-exported here
+/// so existing onboarding imports keep resolving.
 
-/// Which personality mode the user selected for Van.
-/// Maps to the three communication modes from PRD Section 6.5.
-enum PersonalityMode {
-  cheerleader, // Energetic, celebratory — most encouraging
-  calm,        // Patient, soft, steady — good for anxious learners
-  fun,         // Playful, humor-forward — duck puns, casual
-}
+import 'package:vaanix_app/features/profile/domain/user_profile.dart'
+    show PersonalityMode, CbseClass;
 
-/// The user's CBSE class (6–10) as defined in PRD Section 4.
-enum CbseClass {
-  class6,
-  class7,
-  class8,
-  class9,
-  class10;
-
-  /// Display label shown in UI
-  String get label => 'Class ${index + 6}';
-
-  /// Numeric value
-  int get value => index + 6;
-
-  static CbseClass fromValue(int v) =>
-      CbseClass.values.firstWhere((c) => c.value == v,
-          orElse: () => CbseClass.class9);
-}
+export 'package:vaanix_app/features/profile/domain/user_profile.dart'
+    show PersonalityMode, CbseClass;
 
 /// Immutable snapshot of state across all onboarding screens.
 /// Updated step-by-step as user progresses.

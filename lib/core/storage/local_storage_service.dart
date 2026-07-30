@@ -76,6 +76,31 @@ class LocalStorageService implements ILocalStorageService {
   Future<void> setLastActiveDate(String isoDate) =>
       _prefs.setString(AppConstants.keyLastActiveDate, isoDate);
 
+  // ─── XP & Progress ────────────────────────────────────────────────────────
+
+  @override
+  int get xpTotal => _prefs.getInt(AppConstants.keyXpTotal) ?? 0;
+
+  @override
+  Future<void> setXpTotal(int xp) =>
+      _prefs.setInt(AppConstants.keyXpTotal, xp);
+
+  @override
+  List<String> get completedLessonIds =>
+      _prefs.getStringList(AppConstants.keyCompletedLessonIds) ?? const [];
+
+  @override
+  Future<void> setCompletedLessonIds(List<String> ids) =>
+      _prefs.setStringList(AppConstants.keyCompletedLessonIds, ids);
+
+  @override
+  List<String> get completedQuizIds =>
+      _prefs.getStringList(AppConstants.keyCompletedQuizIds) ?? const [];
+
+  @override
+  Future<void> setCompletedQuizIds(List<String> ids) =>
+      _prefs.setStringList(AppConstants.keyCompletedQuizIds, ids);
+
   // ─── Preferences ───────────────────────────────────────────────────────────
 
   @override

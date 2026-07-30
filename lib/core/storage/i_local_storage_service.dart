@@ -29,6 +29,16 @@ abstract class ILocalStorageService {
   String? get lastActiveDate;
   Future<void> setLastActiveDate(String isoDate);
 
+  // XP & progress
+  int get xpTotal;
+  Future<void> setXpTotal(int xp);
+
+  List<String> get completedLessonIds;
+  Future<void> setCompletedLessonIds(List<String> ids);
+
+  List<String> get completedQuizIds;
+  Future<void> setCompletedQuizIds(List<String> ids);
+
   // Preferences
   String? get themeMode;
   Future<void> setThemeMode(String mode);

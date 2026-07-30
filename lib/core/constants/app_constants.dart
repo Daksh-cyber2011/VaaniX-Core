@@ -41,6 +41,9 @@ abstract final class AppConstants {
   static const String keySelectedClass = 'selected_class';
   static const String keyThemeMode = 'theme_mode';
   static const String keyLanguage = 'app_language';
+  static const String keyXpTotal = 'xp_total';
+  static const String keyCompletedLessonIds = 'completed_lesson_ids';
+  static const String keyCompletedQuizIds = 'completed_quiz_ids';
 
   // ============================================================
   // ONBOARDING

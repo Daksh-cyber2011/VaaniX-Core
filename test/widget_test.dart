@@ -12,6 +12,12 @@ import 'package:vaanix_app/core/errors/exception_mapper.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
+import 'package:vaanix_app/features/profile/data/local_user_profile_repository.dart';
+import 'package:vaanix_app/features/profile/domain/user_profile.dart';
+import 'package:vaanix_app/features/profile/domain/user_profile_repository.dart';
+import 'package:vaanix_app/features/progress/data/local_progress_repository.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
 
 late ProviderContainer _container;
 
@@ -47,6 +53,7 @@ void main() {
       expect(storage.companionName, AppConstants.companionDefaultName);
       expect(storage.dailyGoalMinutes, AppConstants.defaultDailyGoalMinutes);
       expect(storage.currentStreak, 0);
+      expect(storage.xpTotal, 0);
     });
 
     test('round-trips onboarding + companion name', () async {
@@ -56,6 +63,12 @@ void main() {
 
       expect(storage.isOnboardingComplete, isTrue);
       expect(storage.companionName, 'Quack');
+    });
+
+    test('XP round-trips', () async {
+      final storage = _container.read(localStorageServiceProvider);
+      await storage.setXpTotal(250);
+      expect(storage.xpTotal, 250);
     });
   });
 
@@ -76,6 +89,123 @@ void main() {
     test('localStorageServiceProvider resolves from sharedPreferencesProvider', () {
       final service = _container.read(localStorageServiceProvider);
       expect(service, isA<LocalStorageService>());
+    });
+  });
+
+  group('LocalUserProfileRepository', () {
+    late UserProfileRepository repo;
+
+    setUp(() {
+      repo = LocalUserProfileRepository(
+        _container.read(localStorageServiceProvider),
+      );
+    });
+
+    test('getProfile returns defaults before any write', () async {
+      final result = await repo.getProfile();
+      result.fold(
+        (_) => fail('expected success'),
+        (profile) {
+          expect(profile.companionName, AppConstants.companionDefaultName);
+          expect(profile.dailyGoalMinutes, AppConstants.defaultDailyGoalMinutes);
+          expect(profile.xpTotal, 0);
+          expect(profile.currentStreak, 0);
+        },
+      );
+    });
+
+    test('addXp accumulates and persists', () async {
+      await repo.addXp(50);
+      final after = await repo.addXp(25);
+      after.fold(
+        (_) => fail('expected success'),
+        (xp) => expect(xp, 75),
+      );
+    });
+
+    test('recordDailyActivity sets streak to 1 on first call', () async {
+      final result = await repo.recordDailyActivity();
+      result.fold(
+        (_) => fail('expected success'),
+        (streak) => expect(streak, 1),
+      );
+    });
+  });
+
+  group('LocalProgressRepository', () {
+    late ProgressRepository repo;
+
+    setUp(() {
+      repo = LocalProgressRepository(
+        _container.read(localStorageServiceProvider),
+      );
+    });
+
+    test('completeLesson adds XP and records id', () async {
+      const lesson = Lesson(
+        id: 'ls_test_1',
+        title: 'Test',
+        chapterId: 'ch_test',
+        xpReward: 20,
+      );
+      final result = await repo.completeLesson(lesson);
+      result.fold(
+        (_) => fail('expected success'),
+        (xp) => expect(xp, 20),
+      );
+      final ids = repo.getCompletedLessonIds();
+      ids.fold(
+        (_) => fail('expected success'),
+        (list) => expect(list, contains('ls_test_1')),
+      );
+    });
+
+    test('completeQuiz awards 10 XP per correct answer', () async {
+      final result = await repo.completeQuiz(
+        quizId: 'qz_test',
+        score: 3,
+        total: 5,
+      );
+      result.fold(
+        (_) => fail('expected success'),
+        (r) {
+          expect(r.xpEarned, 30);
+          expect(r.score, 3);
+        },
+      );
+    });
+
+    test('reset clears XP and ids', () async {
+      await repo.completeLesson(const Lesson(
+        id: 'ls_x',
+        title: '',
+        chapterId: '',
+      ));
+      await repo.reset();
+      repo.getXp().fold(
+        (_) => fail('expected success'),
+        (xp) => expect(xp, 0),
+      );
+    });
+  });
+
+  group('UserProfile domain', () {
+    test('resolvedCompanionName falls back to Van', () {
+      const empty = UserProfile(companionName: '');
+      expect(empty.resolvedCompanionName, 'Van');
+    });
+
+    test('CbseClass.fromValue resolves valid values', () {
+      expect(CbseClass.fromValue(8), CbseClass.class8);
+      expect(CbseClass.fromValue(null), isNull);
+      expect(CbseClass.fromValue(99), isNull);
+    });
+
+    test('copyWith preserves unmodified fields', () {
+      const base = UserProfile(xpTotal: 100, currentStreak: 5);
+      final updated = base.copyWith(xpTotal: 150);
+      expect(updated.xpTotal, 150);
+      expect(updated.currentStreak, 5);
     });
   });
 }

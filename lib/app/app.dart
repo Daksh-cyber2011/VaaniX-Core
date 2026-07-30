@@ -4,11 +4,16 @@
 /// - MaterialApp.router with GoRouter
 /// - Global VaaniX theme (light + dark) via [AppTheme]
 /// - Reactive [ThemeMode] driven by [themeNotifierProvider]
+/// - Keeps [sessionManagerProvider] and the app lifecycle observer alive so
+///   token refresh, sign-out, and foreground/background hooks are active for
+///   the lifetime of the app.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/app/router/app_router.dart';
+import 'package:vaanix_app/core/lifecycle/app_lifecycle_observer.dart';
+import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/core/theme/app_theme.dart';
 import 'package:vaanix_app/core/theme/theme_notifier.dart';
 
@@ -19,6 +24,11 @@ class VaaniXApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
     final themeMode = ref.watch(themeNotifierProvider);
+
+    // Touch the session manager so it initializes its stream subscription
+    // and the lifecycle observer so it starts tracking foreground state.
+    ref.watch(sessionManagerProvider);
+    ref.watch(appLifecycleProvider);
 
     return MaterialApp.router(
       title: 'VaaniX',
