@@ -12,9 +12,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final session = Supabase.instance.client.auth.currentSession;
-    if (session != null) {
-      options.headers['Authorization'] = 'Bearer ${session.accessToken}';
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        options.headers['Authorization'] = 'Bearer ${session.accessToken}';
+      }
+    } catch (_) {
+      // Supabase not initialized (offline / unconfigured dev build).
+      // Proceed without attaching an auth header — the backend returns 401
+      // which is handled downstream by the error interceptor.
     }
     handler.next(options);
   }

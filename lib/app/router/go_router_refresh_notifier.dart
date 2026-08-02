@@ -20,9 +20,7 @@ import 'package:vaanix_app/core/auth/core_auth_session.dart';
 
 class GoRouterRefreshNotifier extends ChangeNotifier {
   GoRouterRefreshNotifier(Stream<AuthSession> sessionStream) {
-    _subscription = sessionStream.asBroadcastStream().listen(
-      _onSessionChanged,
-    );
+    _subscription = sessionStream.listen(_onSessionChanged);
   }
 
   StreamSubscription<AuthSession>? _subscription;

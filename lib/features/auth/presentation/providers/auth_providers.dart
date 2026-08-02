@@ -5,17 +5,26 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/supabase/supabase_config.dart';
+import 'package:vaanix_app/features/auth/data/noop_auth_repository.dart';
 import 'package:vaanix_app/features/auth/data/supabase_auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_session.dart';
 
 /// The polymorphic [AuthRepository]. Override in tests with a fake.
+///
+/// Uses [SupabaseAuthRepository] when Supabase is configured; falls back to
+/// [NoopAuthRepository] for offline / unconfigured development builds so the
+/// app remains fully functional without a backend.
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final client = ref.watch(supabaseClientProvider);
-  final repo = SupabaseAuthRepository(client);
-  ref.onDispose(repo.dispose);
-  return repo;
+  if (AppEnvironment.isSupabaseConfigured) {
+    final client = ref.watch(supabaseClientProvider);
+    final repo = SupabaseAuthRepository(client);
+    ref.onDispose(repo.dispose);
+    return repo;
+  }
+  return NoopAuthRepository();
 });
 
 
