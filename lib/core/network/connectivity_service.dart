@@ -8,8 +8,6 @@
 /// — declared in pubspec so it is a hard dependency. If at any point the
 /// dependency is removed, this service is the only place to change.
 
-import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +21,6 @@ class ConnectivityService {
   ConnectivityService(this._connectivity);
 
   final Connectivity _connectivity;
-  StreamSubscription<List<ConnectivityResult>>? _subscription;
 
   /// Emits the current status and every subsequent change.
   ///
@@ -42,11 +39,6 @@ class ConnectivityService {
   /// True when there is at least one active transport.
   Future<bool> get isOnline async => (await current) == ConnectivityStatus.online;
 
-  void dispose() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
   ConnectivityStatus _reduce(List<ConnectivityResult> results) {
     final online = results.any(
       (r) =>
@@ -63,11 +55,7 @@ class ConnectivityService {
 
 /// Riverpod wiring.
 final connectivityProvider = Provider<ConnectivityService>(
-  (ref) {
-    final service = ConnectivityService(Connectivity());
-    ref.onDispose(service.dispose);
-    return service;
-  },
+  (ref) => ConnectivityService(Connectivity()),
 );
 
 /// Reactive connectivity status for UI consumption.

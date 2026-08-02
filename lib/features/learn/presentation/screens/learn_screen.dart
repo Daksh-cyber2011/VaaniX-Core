@@ -102,7 +102,7 @@ class LearnScreen extends ConsumerWidget {
     if (confirm == true) {
       await ref
           .read(completedLessonIdsProvider.notifier)
-          .markComplete(lesson.id, lesson.xpReward);
+          .markComplete(lesson);
       // Refresh XP badge everywhere.
       ref.invalidate(xpTotalProvider);
       if (context.mounted) {

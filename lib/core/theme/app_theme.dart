@@ -117,7 +117,7 @@ abstract final class AppTheme {
         ),
 
         // --- Cards ---
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: AppColors.surfaceLight,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -285,7 +285,7 @@ abstract final class AppTheme {
           labelStyle: AppTextStyles.bodyMedium(color: AppColors.subtextDark),
         ),
 
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: AppColors.surfaceDark,
           elevation: 0,
           shape: RoundedRectangleBorder(

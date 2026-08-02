@@ -13,6 +13,7 @@ import 'package:vaanix_app/features/progress/presentation/providers/progress_pro
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
+import 'package:vaanix_app/shared/widgets/xp_badge.dart';
 
 class ExamScreen extends ConsumerStatefulWidget {
   const ExamScreen({super.key});
@@ -105,7 +106,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                StreakBadgeLocal(score: state.score),
+                XpBadge(xpTotal: state.score),
               ],
             ),
           ),
@@ -248,31 +249,6 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class StreakBadgeLocal extends StatelessWidget {
-  const StreakBadgeLocal({super.key, required this.score});
-  final int score;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.xp.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('⭐', style: TextStyle(fontSize: 14)),
-          const SizedBox(width: 4),
-          Text('$score',
-              style: AppTextStyles.labelLarge(color: AppColors.xp)),
         ],
       ),
     );

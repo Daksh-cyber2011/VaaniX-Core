@@ -7,6 +7,7 @@
 /// Cloud sync is delegated to [sync], which is a no-op until a remote
 /// repository is wired in — this keeps the app fully functional offline.
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
@@ -66,7 +67,9 @@ class LocalUserProfileRepository implements UserProfileRepository {
   @override
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass) async {
     if (cbseClass == null) {
-      return guardAsync(() => _storage.remove('cbse_class'));
+      return guardAsync(
+        () => _storage.remove(AppConstants.keySelectedClass),
+      );
     }
     return guardAsync(() => _storage.setSelectedClass(cbseClass.value));
   }

@@ -62,8 +62,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Assets — Van assets, icons, images
+  # Assets — Van assets, icons, images, environment
+  #
+  # NOTE: assets/env/ MUST be declared so the bundled .env file ships inside
+  # the APK/IPA. Without this, dotenv.load() silently fails at startup and
+  # Supabase never initializes even when credentials are present.
   assets:
     - assets/images/
     - assets/animations/
     - assets/icons/
+    - assets/env/

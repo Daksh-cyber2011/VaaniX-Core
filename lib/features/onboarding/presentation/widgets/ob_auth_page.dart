@@ -1,22 +1,83 @@
 /// Onboarding Page 5 — Account Creation
 ///
 /// UI shell for auth (Phone OTP / Google Sign-In).
+/// When Supabase is configured, pressing Google/Phone triggers the real
+/// auth flow; on success the auth stream fires and the router redirect moves
+/// the user forward automatically. When Supabase is not configured, the
+/// buttons skip (offline-first).
 /// Per PRD Section 8.1 Screen 6.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
-class ObAuthPage extends ConsumerWidget {
+class ObAuthPage extends ConsumerStatefulWidget {
   const ObAuthPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ObAuthPage> createState() => _ObAuthPageState();
+}
+
+class _ObAuthPageState extends ConsumerState<ObAuthPage> {
+  bool _isBusy = false;
+  String? _errorMessage;
+
+  bool get _canAuth => AppEnvironment.isSupabaseConfigured;
+
+  Future<void> _signInWithGoogle() async {
+    if (!_canAuth) {
+      ref.read(onboardingProvider.notifier).skipAuth();
+      return;
+    }
+    await _runAuth(() => ref
+        .read(authRepositoryProvider)
+        .signInWithOAuth(provider: 'google'));
+  }
+
+  Future<void> _signInWithPhone() async {
+    if (!_canAuth) {
+      ref.read(onboardingProvider.notifier).skipAuth();
+      return;
+    }
+    // Phone OTP requires a phone number entry UI. V1 delegates to skip
+    // until the phone-input widget lands; the full OTP flow will be
+    // wired here once the UI is ready.
+    ref.read(onboardingProvider.notifier).skipAuth();
+  }
+
+  Future<void> _runAuth(Future<dynamic> Function() action) async {
+    setState(() {
+      _isBusy = true;
+      _errorMessage = null;
+    });
+    final result = await action();
+    result.fold(
+      (failure) {
+        if (mounted) {
+          setState(() {
+            _isBusy = false;
+            _errorMessage = failure.message;
+          });
+        }
+      },
+      (_) {
+        // On success the auth stream fires; the router redirect and/or
+        // onboarding notifier handle forward navigation. No explicit
+        // skip needed.
+        if (mounted) setState(() => _isBusy = false);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final notifier = ref.read(onboardingProvider.notifier);
     final companionName = ref.watch(onboardingProvider).resolvedName;
 
@@ -27,11 +88,12 @@ class ObAuthPage extends ConsumerWidget {
           const SizedBox(height: 32),
 
           VanWidget(
-            state: VanState.happy,
+            state: _isBusy ? VanState.thinking : VanState.happy,
             size: 140,
             showSpeechBubble: true,
-            dialogueText:
-                'Let\'s save your progress, $companionName and I are ready! 🦆',
+            dialogueText: _isBusy
+                ? 'Signing you in...'
+                : 'Let\'s save your progress, $companionName and I are ready! 🦆',
           ),
 
           const SizedBox(height: 36),
@@ -48,19 +110,44 @@ class ObAuthPage extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
 
+          if (_errorMessage != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline_rounded,
+                      color: AppColors.error, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _errorMessage!,
+                      style: AppTextStyles.bodySmall(color: AppColors.error),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           const SizedBox(height: 36),
 
           _SocialButton(
             icon: _GoogleIcon(),
             label: 'Continue with Google',
-            onPressed: notifier.skipAuth,
+            onPressed: _isBusy ? null : _signInWithGoogle,
           ),
           const SizedBox(height: 12),
 
           _SocialButton.outlined(
             icon: const Icon(Icons.phone_outlined, size: 20),
             label: 'Continue with Phone',
-            onPressed: notifier.skipAuth,
+            onPressed: _isBusy ? null : _signInWithPhone,
           ),
 
           const SizedBox(height: 24),
@@ -81,7 +168,7 @@ class ObAuthPage extends ConsumerWidget {
 
           PrimaryButton.text(
             label: 'Skip for now',
-            onPressed: notifier.skipAuth,
+            onPressed: _isBusy ? null : notifier.skipAuth,
           ),
 
           const SizedBox(height: 16),
@@ -102,18 +189,18 @@ class _SocialButton extends StatelessWidget {
   const _SocialButton({
     required this.icon,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
   }) : _outlined = false;
 
   const _SocialButton.outlined({
     required this.icon,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
   }) : _outlined = true;
 
   final Widget icon;
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool _outlined;
 
   @override

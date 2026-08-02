@@ -30,10 +30,10 @@ class _CompletedLessonsNotifier extends StateNotifier<List<String>> {
 
   final ProgressRepository _repo;
 
-  Future<void> markComplete(String lessonId, int xpReward) async {
-    if (state.contains(lessonId)) return;
-    state = [...state, lessonId];
-    await _repo.completeLesson(_dummyLesson(lessonId, xpReward));
+  Future<void> markComplete(Lesson lesson) async {
+    if (state.contains(lesson.id)) return;
+    state = [...state, lesson.id];
+    await _repo.completeLesson(lesson);
   }
 }
 
@@ -51,7 +51,3 @@ class _XpNotifier extends StateNotifier<int> {
     result.fold((_) => null, (xp) => state = xp);
   }
 }
-
-Lesson _dummyLesson(String id, int xpReward) =>
-    // ignore: unused_element — local helper for progress bookkeeping.
-    Lesson(id: id, title: '', chapterId: '', xpReward: xpReward);
