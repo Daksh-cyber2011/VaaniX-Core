@@ -19,8 +19,11 @@ import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.d
 import 'package:vaanix_app/features/auth/presentation/screens/auth_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_screen.dart';
 import 'package:vaanix_app/features/home/presentation/screens/home_screen.dart';
+import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/lesson_content_screen.dart';
 import 'package:vaanix_app/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/screens/progress_screen.dart';
 import 'package:vaanix_app/features/settings/presentation/screens/settings_screen.dart';
 import 'package:vaanix_app/features/van_profile/presentation/screens/van_profile_screen.dart';
@@ -128,6 +131,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.learn,
                 name: RouteNames.learnName,
                 builder: (context, state) => const LearnScreen(),
+                routes: [
+                  // Lesson content — nested under /learn so back-nav
+                  // returns to the lesson tree.
+                  GoRoute(
+                    path: 'lesson/:lessonId',
+                    name: RouteNames.lessonContentName,
+                    builder: (context, state) {
+                      final lessonId =
+                          state.pathParameters['lessonId'] ?? '';
+                      // Look up the lesson in the curriculum provider.
+                      // We use a ConsumerWidget wrapper to read the
+                      // provider at build time.
+                      return _LessonContentRoute(lessonId: lessonId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -236,5 +255,57 @@ class _AppShell extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Wrapper widget that looks up a [Lesson] by ID from [curriculumProvider]
+/// and renders [LessonContentScreen]. Shows a not-found error if the
+/// lessonId doesn't match any lesson in the curriculum.
+class _LessonContentRoute extends ConsumerWidget {
+  const _LessonContentRoute({required this.lessonId});
+
+  final String lessonId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curriculum = ref.watch(curriculumProvider);
+    Lesson? lesson;
+    for (final chapter in curriculum) {
+      for (final l in chapter.lessons) {
+        if (l.id == lessonId) {
+          lesson = l;
+          break;
+        }
+      }
+      if (lesson != null) break;
+    }
+
+    if (lesson == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Lesson Not Found')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.search_off_rounded,
+                  size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(
+                'Could not find lesson: $lessonId',
+                style: const TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: () => context.go(RouteNames.learn),
+                child: const Text('Back to Lessons'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return LessonContentScreen(lesson: lesson);
   }
 }

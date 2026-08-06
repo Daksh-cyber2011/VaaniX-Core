@@ -4,9 +4,14 @@
 /// seed data (not backend): it lets the Learn and Exam screens render real
 /// chapters, lessons, and quizzes immediately. A remote curriculum service
 /// can later override [curriculumProvider] with server-driven content.
+///
+/// Lesson content strings are defined in [sanskrit_lesson_content.dart]
+/// to keep this file focused on structure. In Segment 8 this will be
+/// replaced by a JSON-driven curriculum loader.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// The full V1 curriculum, ordered by chapter → lesson.
@@ -24,6 +29,7 @@ final List<Chapter> sanskritCurriculum = [
         subtitle: 'Learn the 13 Sanskrit vowels (अ आ इ ई ...)',
         xpReward: 15,
         order: 0,
+        content: kVowelsContent,
       ),
       Lesson(
         id: 'ls_alphabet_consonants',
@@ -33,6 +39,7 @@ final List<Chapter> sanskritCurriculum = [
         difficulty: Difficulty.beginner,
         xpReward: 15,
         order: 1,
+        content: kConsonantsContent,
       ),
       Lesson(
         id: 'ls_alphabet_barakhadi',
@@ -42,6 +49,7 @@ final List<Chapter> sanskritCurriculum = [
         difficulty: Difficulty.intermediate,
         xpReward: 20,
         order: 2,
+        content: kBarakhadiContent,
       ),
     ],
   ),
@@ -58,6 +66,7 @@ final List<Chapter> sanskritCurriculum = [
         subtitle: 'नमस्ते, सुप्रभातम्, शुभरात्रिः',
         xpReward: 10,
         order: 0,
+        content: kGreetingsContent,
       ),
       Lesson(
         id: 'ls_words_family',
@@ -66,6 +75,7 @@ final List<Chapter> sanskritCurriculum = [
         subtitle: 'माता, पिता, भ्राता, भगिनी',
         xpReward: 10,
         order: 1,
+        content: kFamilyContent,
       ),
       Lesson(
         id: 'ls_words_numbers',
@@ -75,6 +85,7 @@ final List<Chapter> sanskritCurriculum = [
         difficulty: Difficulty.intermediate,
         xpReward: 15,
         order: 2,
+        content: kNumbersContent,
       ),
     ],
   ),
@@ -92,6 +103,7 @@ final List<Chapter> sanskritCurriculum = [
         difficulty: Difficulty.intermediate,
         xpReward: 20,
         order: 0,
+        content: kIntroContent,
       ),
       Lesson(
         id: 'ls_sentences_questions',
@@ -101,6 +113,7 @@ final List<Chapter> sanskritCurriculum = [
         difficulty: Difficulty.advanced,
         xpReward: 25,
         order: 1,
+        content: kQuestionsContent,
       ),
     ],
   ),

@@ -1,12 +1,13 @@
 /// Learn Screen — Lesson Tree
 ///
-/// Renders the V1 Sanskrit curriculum as chapters → lessons. Completed
-/// lessons show a check and award XP on first completion. Tapping a lesson
-/// marks it complete (the lesson-content player lands in a later milestone;
-/// for now completion is recorded so the Progress screen reflects activity).
+/// Renders the V1 Sanskrit curriculum as chapters → lessons. Tapping a
+/// lesson navigates to [LessonContentScreen] where the user reads the
+/// full lesson content and marks it complete. Completed lessons show a
+/// check icon and can be re-read anytime.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -40,7 +41,7 @@ class LearnScreen extends ConsumerWidget {
                   chapter: chapter,
                   completedCount: doneInChapter,
                   completedIds: completed,
-                  onTapLesson: (lesson) => _onTapLesson(context, ref, lesson),
+                  onTapLesson: (lesson) => _onTapLesson(context, lesson),
                 );
               },
             ),
@@ -65,53 +66,11 @@ class LearnScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _onTapLesson(
-    BuildContext context,
-    WidgetRef ref,
-    Lesson lesson,
-  ) async {
-    final completed = ref.read(completedLessonIdsProvider);
-    if (completed.contains(lesson.id)) {
-      // Already done — show a small recap notice.
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${lesson.title} — completed ✓')),
-        );
-      }
-      return;
-    }
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(lesson.title),
-        content: Text(lesson.subtitle ?? 'Start this lesson?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Later'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Complete (+XP)'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true && context.mounted) {
-      // Capture notifier references before the await so we don't touch
-      // the WidgetRef after the widget may have been unmounted.
-      final lessonsNotifier = ref.read(completedLessonIdsProvider.notifier);
-      await lessonsNotifier.markComplete(lesson);
-      // Refresh XP badge everywhere.
-      ref.invalidate(xpTotalProvider);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('+${lesson.xpReward} XP earned! 🎉')),
-        );
-      }
-    }
+  void _onTapLesson(BuildContext context, Lesson lesson) {
+    // Navigate to the lesson content screen. The lessonId is read from
+    // the path parameter in the route; the content screen looks up the
+    // full Lesson object via curriculumProvider.
+    context.go('/learn/lesson/${lesson.id}');
   }
 }
 
