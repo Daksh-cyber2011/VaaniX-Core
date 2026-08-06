@@ -75,10 +75,10 @@ class NoopAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Result<AuthSession>> signInWithOAuth({
+  Future<Result<void>> signInWithOAuth({
     required String provider,
   }) async {
-    return const Right(AuthSession.empty);
+    return const Right(null);
   }
 
   @override

@@ -6,8 +6,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/app_constants.dart';
+import 'package:vaanix_app/core/constants/route_names.dart';
+import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/core/theme/theme_notifier.dart';
@@ -239,6 +243,41 @@ class SettingsScreen extends ConsumerWidget {
           ),
 
           const SizedBox(height: 32),
+
+          // ─── ACCOUNT ─────────────────────────────────────────────────
+          if (AppEnvironment.isSupabaseConfigured) ...[
+            Text(
+              'ACCOUNT',
+              style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+            ),
+            const SizedBox(height: 8),
+            VaaniXCard(
+              onTap: () => _signOut(context, ref),
+              child: Row(
+                children: [
+                  const Icon(Icons.logout_rounded, color: AppColors.error),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Sign Out',
+                            style: AppTextStyles.titleMedium(
+                                color: AppColors.error)),
+                        Text(
+                          'End your session. Your local progress is kept.',
+                          style: AppTextStyles.bodySmall(
+                              color: AppColors.subtextLight),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
+
           Center(
             child: Text(
               '${AppConstants.appName} v${AppConstants.appVersion}',
@@ -415,5 +454,37 @@ class SettingsScreen extends ConsumerWidget {
       // Refresh XP notifier.
       ref.invalidate(xpTotalProvider);
     }
+  }
+
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign out?'),
+        content: const Text(
+          'Your session will end, but your local progress (XP, streak, '
+          'completed lessons) is kept on this device. You can sign back '
+          'in anytime.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    await ref.read(sessionManagerProvider.notifier).signOut();
+    if (!context.mounted) return;
+    context.goNamed(RouteNames.authName);
   }
 }

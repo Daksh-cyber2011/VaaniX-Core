@@ -49,6 +49,15 @@ class AuthException extends AppException {
       : super(message: message, cause: cause);
 }
 
+/// Thrown when an auth API call fails for a non-credential reason
+/// (e.g., unknown OAuth provider, rate limit, user-not-found).
+/// Distinct from [AuthException] so ExceptionMapper can route it to
+/// the appropriate Failure type (NotFound / Conflict / RateLimit).
+class AuthApiException extends AppException {
+  const AuthApiException(String message, {Object? cause})
+      : super(message: message, cause: cause);
+}
+
 class OtpException extends AppException {
   const OtpException([String message = 'OTP verification failed'])
       : super(message: message);

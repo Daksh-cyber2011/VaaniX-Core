@@ -1,12 +1,22 @@
 /// Supabase Auth Repository Implementation
 ///
 /// Adapts the Supabase GoTrue client to the VaaniX [AuthRepository] contract.
+///
+/// Note: We `hide AuthException` from supabase_flutter to avoid a name clash
+/// with VaaniX's own `AuthException` (from lib/core/errors/exceptions.dart).
+/// ExceptionMapper still handles Supabase's AuthException correctly because
+/// it imports supabase_flutter with an `as supabase` prefix and pattern-matches
+/// on `supabase.AuthException` explicitly. When Supabase throws an AuthException,
+/// it flows through guardAsync → ExceptionMapper.toFailure → the supabase.AuthException
+/// branch → correct Failure type (InvalidCredentialsFailure / NotFoundFailure /
+/// ConflictFailure / RateLimitFailure / UnauthenticatedFailure).
 
 import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
 
 import 'package:vaanix_app/core/errors/exception_mapper.dart';
+import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/auth/domain/auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_session.dart';
@@ -88,15 +98,24 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Result<AuthSession>> signInWithOAuth({required String provider}) {
+  Future<Result<void>> signInWithOAuth({required String provider}) {
     return guardAsync(() async {
-      await _auth.signInWithOAuth(
-        OAuthProvider.values.firstWhere(
-          (p) => p.name == provider,
-          orElse: () => OAuthProvider.google,
+      // Validate the provider name instead of silently defaulting to Google.
+      // An unknown provider name now throws AuthException, which
+      // ExceptionMapper maps to UnauthenticatedFailure (or
+      // InvalidCredentialsFailure if the message contains 'credential').
+      final oauthProvider = OAuthProvider.values.firstWhere(
+        (p) => p.name == provider,
+        orElse: () => throw AuthApiException(
+          'Unknown OAuth provider: "$provider". '
+          'Supported providers: '
+          '${OAuthProvider.values.map((p) => p.name).join(', ')}.',
         ),
       );
-      return currentSession;
+      // signInWithOAuth opens the browser; the session arrives later via
+      // sessionStream (onAuthStateChange). Return void — callers should
+      // listen to authSessionStreamProvider for the resulting session.
+      await _auth.signInWithOAuth(oauthProvider);
     });
   }
 
@@ -149,15 +168,18 @@ class SupabaseAuthRepository implements AuthRepository {
 
   AuthUser _toUser(User user) {
     final meta = user.userMetadata;
+    // Use ?.toString() instead of `as String?` to avoid TypeError when
+    // Supabase metadata contains a non-string value at these keys
+    // (e.g., an int user id, or a Map for nested profile data).
     return AuthUser(
       id: user.id,
       email: user.email,
       phone: user.phone,
-      displayName: (meta['name'] as String?) ??
-          (meta['full_name'] as String?) ??
-          (meta['user_name'] as String?),
-      photoUrl: (meta['avatar_url'] as String?) ??
-          (meta['picture'] as String?),
+      displayName: meta['name']?.toString() ??
+          meta['full_name']?.toString() ??
+          meta['user_name']?.toString(),
+      photoUrl: meta['avatar_url']?.toString() ??
+          meta['picture']?.toString(),
     );
   }
 
