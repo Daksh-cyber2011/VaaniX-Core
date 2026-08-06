@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -41,37 +42,27 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
         .signInWithOAuth(provider: 'google'));
   }
 
-  Future<void> _signInWithPhone() async {
-    if (!_canAuth) {
-      ref.read(onboardingProvider.notifier).skipAuth();
-      return;
-    }
-    // Phone OTP requires a phone number entry UI. V1 delegates to skip
-    // until the phone-input widget lands; the full OTP flow will be
-    // wired here once the UI is ready.
-    ref.read(onboardingProvider.notifier).skipAuth();
-  }
-
-  Future<void> _runAuth(Future<dynamic> Function() action) async {
+  /// Type-safe auth runner. Accepts a typed `Future<Result<T>>` action
+  /// instead of `Future<dynamic>` — no more dynamic dispatch on result.
+  Future<void> _runAuth<T>(Future<Result<T>> Function() action) async {
     setState(() {
       _isBusy = true;
       _errorMessage = null;
     });
     final result = await action();
+    if (!mounted) return;
     result.fold(
       (failure) {
-        if (mounted) {
-          setState(() {
-            _isBusy = false;
-            _errorMessage = failure.message;
-          });
-        }
+        setState(() {
+          _isBusy = false;
+          _errorMessage = failure.message;
+        });
       },
       (_) {
         // On success the auth stream fires; the router redirect and/or
         // onboarding notifier handle forward navigation. No explicit
         // skip needed.
-        if (mounted) setState(() => _isBusy = false);
+        setState(() => _isBusy = false);
       },
     );
   }
@@ -137,37 +128,30 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
 
           const SizedBox(height: 36),
 
-          _SocialButton(
-            icon: _GoogleIcon(),
-            label: 'Continue with Google',
-            onPressed: _isBusy ? null : _signInWithGoogle,
-          ),
-          const SizedBox(height: 12),
-
-          _SocialButton.outlined(
-            icon: const Icon(Icons.phone_outlined, size: 20),
-            label: 'Continue with Phone',
-            onPressed: _isBusy ? null : _signInWithPhone,
-          ),
-
-          const SizedBox(height: 24),
-
-          Row(
-            children: [
-              const Expanded(child: Divider()),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text('or',
-                    style: AppTextStyles.bodySmall(
-                        color: AppColors.subtextLight)),
-              ),
-              const Expanded(child: Divider()),
-            ],
-          ),
-          const SizedBox(height: 20),
+          if (_canAuth) ...[
+            _SocialButton(
+              icon: _GoogleIcon(),
+              label: 'Continue with Google',
+              onPressed: _isBusy ? null : _signInWithGoogle,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                const Expanded(child: Divider()),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text('or',
+                      style: AppTextStyles.bodySmall(
+                          color: AppColors.subtextLight)),
+                ),
+                const Expanded(child: Divider()),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
 
           PrimaryButton.text(
-            label: 'Skip for now',
+            label: _canAuth ? 'Skip for now' : 'Skip — continue offline',
             onPressed: _isBusy ? null : notifier.skipAuth,
           ),
 
@@ -190,42 +174,15 @@ class _SocialButton extends StatelessWidget {
     required this.icon,
     required this.label,
     this.onPressed,
-  }) : _outlined = false;
-
-  const _SocialButton.outlined({
-    required this.icon,
-    required this.label,
-    this.onPressed,
-  }) : _outlined = true;
+  });
 
   final Widget icon;
   final String label;
   final VoidCallback? onPressed;
-  final bool _outlined;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    if (_outlined) {
-      return OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 54),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          side: const BorderSide(color: AppColors.borderLight, width: 1.5),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            const SizedBox(width: 10),
-            Text(label, style: AppTextStyles.labelLarge()),
-          ],
-        ),
-      );
-    }
 
     return FilledButton(
       onPressed: onPressed,
@@ -249,6 +206,8 @@ class _SocialButton extends StatelessWidget {
 }
 
 class _GoogleIcon extends StatelessWidget {
+  const _GoogleIcon();
+
   @override
   Widget build(BuildContext context) {
     return Container(

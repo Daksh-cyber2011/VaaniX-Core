@@ -35,7 +35,11 @@ abstract class CoreAuthRepository {
   });
 
   /// Sign in using a third-party OAuth provider (e.g. 'google', 'apple').
-  Future<Result<AuthSession>> signInWithOAuth({required String provider});
+  ///
+  /// Returns `Result<void>` because OAuth opens a browser/tab and the
+  /// actual session arrives asynchronously via [sessionStream]. Callers
+  /// should watch `authSessionStreamProvider` for the resulting session.
+  Future<Result<void>> signInWithOAuth({required String provider});
 
   /// Refresh the current session if possible.
   Future<Result<AuthSession>> refresh();

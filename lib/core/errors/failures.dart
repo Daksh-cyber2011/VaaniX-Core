@@ -80,6 +80,13 @@ class SessionExpiredFailure extends Failure {
       : super(message: message, code: 'SESSION_EXPIRED');
 }
 
+/// Authenticated but forbidden (HTTP 403)
+class ForbiddenFailure extends Failure {
+  const ForbiddenFailure([
+      String message = 'You do not have access to this resource.'])
+      : super(message: message, code: 'FORBIDDEN');
+}
+
 // ============================================================
 // CACHE / LOCAL STORAGE FAILURES
 // ============================================================
@@ -106,6 +113,38 @@ class ValidationFailure extends Failure {
 
   @override
   List<Object?> get props => [message, code, field];
+}
+
+// ============================================================
+// HTTP STATUS FAILURES (4xx beyond auth)
+// ============================================================
+
+/// Resource was not found (HTTP 404)
+class NotFoundFailure extends Failure {
+  const NotFoundFailure([
+      String message = 'The requested resource was not found.'])
+      : super(message: message, code: 'NOT_FOUND');
+}
+
+/// Resource already exists / conflict (HTTP 409)
+class ConflictFailure extends Failure {
+  const ConflictFailure([
+      String message = 'This resource already exists.'])
+      : super(message: message, code: 'CONFLICT');
+}
+
+/// Rate limit exceeded (HTTP 429)
+class RateLimitFailure extends Failure {
+  const RateLimitFailure({
+    String message = 'Too many requests. Please try again later.',
+    this.retryAfter,
+  }) : super(message: message, code: 'RATE_LIMIT');
+
+  /// Hint from the server about how long to wait before retrying.
+  final Duration? retryAfter;
+
+  @override
+  List<Object?> get props => [message, code, retryAfter];
 }
 
 // ============================================================
