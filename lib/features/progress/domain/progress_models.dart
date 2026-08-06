@@ -19,6 +19,7 @@ class Lesson extends Equatable {
     this.difficulty = Difficulty.beginner,
     this.xpReward = 10,
     this.order = 0,
+    this.content,
   });
 
   final String id;
@@ -29,8 +30,21 @@ class Lesson extends Equatable {
   final int xpReward;
   final int order;
 
+  /// Markdown-like lesson content.
+  ///
+  /// Supported format (minimal, documented for future JSON-driven curriculum):
+  /// - `# Heading` — H1 heading
+  /// - Plain text paragraphs (separated by blank lines)
+  /// - `- Bullet point` — bullet list items
+  /// - `> Tip text` — blockquote (rendered with left accent border)
+  /// - `| Col1 | Col2 | Col3 |` — 3-column table (with `|---|---|---|` separator row)
+  ///
+  /// Devanagari text (Unicode range \u0900-\u097F) is rendered with
+  /// [AppTextStyles.sanskritBody] for proper font support.
+  final String? content;
+
   @override
-  List<Object?> get props => [id, chapterId, title];
+  List<Object?> get props => [id, chapterId, title, subtitle, difficulty, xpReward, order, content];
 }
 
 /// A chapter groups related lessons.
