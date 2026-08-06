@@ -89,9 +89,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.nestWarmLight,
+                  // Use the dark Nest color in dark mode so the warm-cream
+                  // background doesn't clash with a near-black scaffold.
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.nestWarmDark
+                      : AppColors.nestWarmLight,
                   borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: AppColors.borderLight),
+                  border: Border.all(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight,
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

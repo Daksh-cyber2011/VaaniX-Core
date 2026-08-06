@@ -451,8 +451,14 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(progressRepositoryProvider).reset();
-      // Refresh XP notifier.
+      // Invalidate ALL progress-related providers so the UI updates
+      // immediately. Previously only xpTotalProvider was invalidated,
+      // leaving completedLessonIdsProvider and completedQuizIdsProvider
+      // stale — the Learn and Progress screens kept showing completed
+      // lessons until the providers were re-created (hot restart).
       ref.invalidate(xpTotalProvider);
+      ref.invalidate(completedLessonIdsProvider);
+      ref.invalidate(completedQuizIdsProvider);
     }
   }
 

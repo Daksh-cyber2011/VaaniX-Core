@@ -52,14 +52,6 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
     await _repo.updateDailyGoal(minutes);
   }
 
-  /// Add XP and return the new total.
-  Future<int> addXp(int amount) async {
-    final result = await _repo.addXp(amount);
-    final next = result.fold((_) => state.xpTotal, (v) => v);
-    state = state.copyWith(xpTotal: next);
-    return next;
-  }
-
   /// Record today's activity and return the new streak.
   Future<int> recordDailyActivity() async {
     final result = await _repo.recordDailyActivity();

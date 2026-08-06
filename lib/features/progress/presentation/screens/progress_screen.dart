@@ -24,10 +24,12 @@ class ProgressScreen extends ConsumerWidget {
     final profile = ref.watch(userProfileProvider);
     final xp = ref.watch(xpTotalProvider);
     final completed = ref.watch(completedLessonIdsProvider);
+    final completedQuizIds = ref.watch(completedQuizIdsProvider);
     final curriculum = ref.watch(curriculumProvider);
 
     final totalLessons = curriculum.fold<int>(0, (s, c) => s + c.lessons.length);
     final completedCount = completed.length;
+    final quizCount = completedQuizIds.length;
 
     return VaaniXScaffold(
       title: 'Progress',
@@ -64,12 +66,25 @@ class ProgressScreen extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(child: _StatCard(
                 icon: '🎯',
-                label: 'Accuracy',
+                label: 'Quizzes Done',
+                value: '$quizCount',
+                color: AppColors.success,
+              )),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _StatCard(
+                icon: '📊',
+                label: 'Completion',
                 value: totalLessons == 0
                     ? '—'
                     : '${((completedCount / totalLessons) * 100).round()}%',
-                color: AppColors.success,
+                color: AppColors.vanOrange,
               )),
+              const SizedBox(width: 12),
+              const Expanded(child: SizedBox()), // spacer for layout balance
             ],
           ),
 

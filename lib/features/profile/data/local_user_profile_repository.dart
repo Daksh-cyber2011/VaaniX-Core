@@ -31,7 +31,6 @@ class LocalUserProfileRepository implements UserProfileRepository {
         personalityMode: personality,
         cbseClass: CbseClass.fromValue(_storage.selectedClass),
         dailyGoalMinutes: _storage.dailyGoalMinutes,
-        xpTotal: _storage.xpTotal,
         currentStreak: _storage.currentStreak,
         lastActiveDate: _storage.lastActiveDate,
       );
@@ -49,7 +48,6 @@ class LocalUserProfileRepository implements UserProfileRepository {
           _storage.setSelectedClass(profile.cbseClass!.value),
         _storage.setDailyGoalMinutes(profile.dailyGoalMinutes),
         _storage.setCurrentStreak(profile.currentStreak),
-        _storage.setXpTotal(profile.xpTotal),
         if (profile.lastActiveDate != null)
           _storage.setLastActiveDate(profile.lastActiveDate!),
       ]);
@@ -77,15 +75,6 @@ class LocalUserProfileRepository implements UserProfileRepository {
   @override
   Future<Result<void>> updateDailyGoal(int minutes) =>
       guardAsync(() => _storage.setDailyGoalMinutes(minutes));
-
-  @override
-  Future<Result<int>> addXp(int amount) {
-    return guardAsync(() async {
-      final next = _storage.xpTotal + amount;
-      await _storage.setXpTotal(next);
-      return next;
-    });
-  }
 
   @override
   Future<Result<int>> recordDailyActivity() {

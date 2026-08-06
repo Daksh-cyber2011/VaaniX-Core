@@ -108,18 +108,10 @@ void main() {
         (profile) {
           expect(profile.companionName, AppConstants.companionDefaultName);
           expect(profile.dailyGoalMinutes, AppConstants.defaultDailyGoalMinutes);
-          expect(profile.xpTotal, 0);
+          // xpTotal is no longer on UserProfile — it lives in the progress
+          // repo (single source of truth). Verified in the progress repo tests.
           expect(profile.currentStreak, 0);
         },
-      );
-    });
-
-    test('addXp accumulates and persists', () async {
-      await repo.addXp(50);
-      final after = await repo.addXp(25);
-      after.fold(
-        (_) => fail('expected success'),
-        (xp) => expect(xp, 75),
       );
     });
 
@@ -202,10 +194,11 @@ void main() {
     });
 
     test('copyWith preserves unmodified fields', () {
-      const base = UserProfile(xpTotal: 100, currentStreak: 5);
-      final updated = base.copyWith(xpTotal: 150);
-      expect(updated.xpTotal, 150);
-      expect(updated.currentStreak, 5);
+      // xpTotal is no longer on UserProfile (moved to progress repo in S4).
+      const base = UserProfile(currentStreak: 5, dailyGoalMinutes: 15);
+      final updated = base.copyWith(currentStreak: 10);
+      expect(updated.currentStreak, 10);
+      expect(updated.dailyGoalMinutes, 15);
     });
   });
 }
