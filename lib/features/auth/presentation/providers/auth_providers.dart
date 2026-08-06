@@ -24,7 +24,9 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     ref.onDispose(repo.dispose);
     return repo;
   }
-  return NoopAuthRepository();
+  final repo = NoopAuthRepository();
+  ref.onDispose(repo.dispose);
+  return repo;
 });
 
 

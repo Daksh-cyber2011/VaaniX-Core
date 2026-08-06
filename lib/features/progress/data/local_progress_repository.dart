@@ -24,6 +24,12 @@ class LocalProgressRepository implements ProgressRepository {
   @override
   Future<Result<int>> completeLesson(Lesson lesson) {
     return guardAsync(() async {
+      // Idempotency guard: only award XP the first time a lesson is completed.
+      // Prevents XP farming if a caller bypasses the notifier-level guard.
+      final alreadyCompleted = _storage.completedLessonIds.contains(lesson.id);
+      if (alreadyCompleted) {
+        return _storage.xpTotal;
+      }
       final ids = {..._storage.completedLessonIds, lesson.id}.toList();
       await Future.wait([
         _storage.setCompletedLessonIds(ids),
@@ -40,11 +46,16 @@ class LocalProgressRepository implements ProgressRepository {
     required int total,
   }) {
     return guardAsync(() async {
+      // Idempotency guard: only award XP the first time a quizId is completed.
+      // Prevents the Retry → Save Progress → infinite XP farm exploit.
+      // (Score / total are still returned for display, but xpEarned is 0 on
+      // repeat completions.)
+      final alreadyCompleted = _storage.completedQuizIds.contains(quizId);
+      final xpEarned = alreadyCompleted ? 0 : _quizXp(score, total);
       final ids = {..._storage.completedQuizIds, quizId}.toList();
-      final xpEarned = _quizXp(score, total);
       await Future.wait([
         _storage.setCompletedQuizIds(ids),
-        _setXp(_storage.xpTotal + xpEarned),
+        if (!alreadyCompleted) _setXp(_storage.xpTotal + xpEarned),
       ]);
       return QuizResult(
         quizId: quizId,

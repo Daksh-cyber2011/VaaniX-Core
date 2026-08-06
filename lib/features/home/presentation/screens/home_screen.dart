@@ -65,8 +65,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 children: [
-                  StreakBadge(streakCount: streak > 0 ? streak : 1),
-                  const SizedBox(width: 10),
+                  if (streak > 0) ...[
+                    StreakBadge(streakCount: streak),
+                    const SizedBox(width: 10),
+                  ],
                   XpBadge(xpTotal: xp),
                   const Spacer(),
                   CircleAvatar(

@@ -61,7 +61,10 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
       CurvedAnimation(parent: _nestController, curve: Curves.easeOutBack),
     );
 
-    _nestController.forward().then((_) => _entryController.forward());
+    _nestController.forward().then((_) {
+      if (!mounted) return;
+      _entryController.forward();
+    });
   }
 
   @override
@@ -73,9 +76,23 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
 
   Future<void> _onStart() async {
     setState(() => _isLoading = true);
-    await ref.read(onboardingProvider.notifier).completeOnboarding();
-    if (!mounted) return;
-    context.goNamed(RouteNames.homeName);
+    try {
+      await ref.read(onboardingProvider.notifier).completeOnboarding();
+      if (!mounted) return;
+      context.goNamed(RouteNames.homeName);
+    } catch (e) {
+      // On failure, surface a snackbar so the user knows something went
+      // wrong instead of being stuck on a forever-spinning button.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not complete onboarding: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override

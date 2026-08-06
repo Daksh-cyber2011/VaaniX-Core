@@ -61,17 +61,26 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
         onPersist: () async {
           if (_submitted) return;
           setState(() => _submitted = true);
-          await ref.read(progressRepositoryProvider).completeQuiz(
+          final result = await ref.read(progressRepositoryProvider).completeQuiz(
                 quizId: 'v1_practice_quiz',
                 score: state.score,
                 total: notifier.total,
               );
+          if (!mounted) return;
           ref.invalidate(xpTotalProvider);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('+${state.score * 10} XP earned! 🎉')),
-            );
-          }
+          // Surface the actual XP earned (0 on repeat completions due to
+          // the idempotency guard added in Segment 1).
+          final xpEarned = result.fold(
+            (_) => 0,
+            (r) => r.xpEarned,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: xpEarned > 0
+                  ? Text('+$xpEarned XP earned! 🎉')
+                  : const Text('Quiz already completed — no extra XP'),
+            ),
+          );
         },
       );
     }

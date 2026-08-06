@@ -27,6 +27,7 @@ abstract final class AppConstants {
   static const String supabaseAnonKeyKey = 'SUPABASE_ANON_KEY';
   static const String apiBaseUrlKey = 'API_BASE_URL';
   static const String appEnvKey = 'APP_ENV';
+  static const String sentryDsnKey = 'SENTRY_DSN';
 
   // ============================================================
   // STORAGE KEYS (SharedPreferences)

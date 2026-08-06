@@ -2,11 +2,13 @@
 ///
 /// Centralizes all startup work that must complete before the UI runs:
 ///   1. Load environment variables from the bundled .env file.
-///   2. Initialize Supabase (skipped safely if not configured).
-///   3. Acquire the [SharedPreferences] singleton (injected into Riverpod).
+///   2. Initialize Sentry (crash reporting) if a DSN is configured.
+///   3. Initialize Supabase (skipped safely if not configured).
+///   4. Acquire the [SharedPreferences] singleton (injected into Riverpod).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,12 +24,36 @@ class BootstrapResult {
 }
 
 /// Executes the full startup sequence and returns a [BootstrapResult].
+///
+/// Note: Sentry must be initialized BEFORE runApp via
+/// [SentryFlutter.init] in main.dart so it can wrap the zone guard.
+/// This method only configures Sentry scope post-init.
 Future<BootstrapResult> bootstrap() async {
   await _loadEnvironment();
+  _configureSentryScope();
   await _initializeSupabase();
 
   final prefs = await _acquireSharedPreferences();
   return BootstrapResult(sharedPreferences: prefs);
+}
+
+Future<void> _loadEnvironment() async {
+  try {
+    await dotenv.load(fileName: AppConstants.envFilePath);
+  } catch (e, st) {
+    reportError(e, st, context: 'dotenv.load');
+  }
+}
+
+/// Tags the Sentry scope with environment metadata so crashes can be
+/// filtered by flavor / release in the dashboard.
+void _configureSentryScope() {
+  Sentry.configureScope((scope) {
+    scope.setTag('flavor', AppEnvironment.flavor.name);
+    scope.setTag('release', AppConstants.appVersion);
+    scope.setExtra('supabase_configured',
+        AppEnvironment.isSupabaseConfigured.toString());
+  });
 }
 
 Future<void> _loadEnvironment() async {

@@ -99,10 +99,11 @@ class LearnScreen extends ConsumerWidget {
       ),
     );
 
-    if (confirm == true) {
-      await ref
-          .read(completedLessonIdsProvider.notifier)
-          .markComplete(lesson);
+    if (confirm == true && context.mounted) {
+      // Capture notifier references before the await so we don't touch
+      // the WidgetRef after the widget may have been unmounted.
+      final lessonsNotifier = ref.read(completedLessonIdsProvider.notifier);
+      await lessonsNotifier.markComplete(lesson);
       // Refresh XP badge everywhere.
       ref.invalidate(xpTotalProvider);
       if (context.mounted) {

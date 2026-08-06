@@ -9,6 +9,10 @@ import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/onboarding/data/onboarding_repository.dart';
 import 'package:vaanix_app/features/onboarding/domain/onboarding_state.dart';
 
+/// Total number of onboarding pages (indices 0..5).
+/// [nextPage] will not advance past this.
+const int _kOnboardingPageCount = 6;
+
 /// Provides [OnboardingRepository] backed by [LocalStorageService].
 final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
   final storage = ref.watch(localStorageServiceProvider);
@@ -24,6 +28,10 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   static OnboardingState _hydrate(OnboardingRepository repo) {
     return OnboardingState(
       isComplete: repo.isOnboardingComplete(),
+      // Hydrate companionName so a mid-onboarding app restart restores
+      // the saved name. Previously this was omitted, causing the name to
+      // silently revert to the default "Van" on re-entry.
+      companionName: repo.getCompanionName(),
       dailyGoalMinutes: repo.getDailyGoal(),
       personalityMode: repo.getPersonalityMode(),
       selectedClass: repo.getSelectedClass(),
@@ -31,10 +39,12 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   }
 
   void goToPage(int page) {
-    state = state.copyWith(currentPage: page);
+    final clamped = page.clamp(0, _kOnboardingPageCount - 1);
+    state = state.copyWith(currentPage: clamped);
   }
 
   void nextPage() {
+    if (state.currentPage >= _kOnboardingPageCount - 1) return;
     state = state.copyWith(currentPage: state.currentPage + 1);
   }
 
