@@ -39,6 +39,11 @@ abstract class ILocalStorageService {
   List<String> get completedQuizIds;
   Future<void> setCompletedQuizIds(List<String> ids);
 
+  /// Quiz attempt history — a JSON-encoded list of [QuizResult] maps for
+  /// the given quizId. Empty string or null means no attempts yet.
+  String? getQuizAttempts(String quizId);
+  Future<void> setQuizAttempts(String quizId, String jsonAttempts);
+
   // Preferences
   String? get themeMode;
   Future<void> setThemeMode(String mode);

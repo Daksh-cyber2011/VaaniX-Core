@@ -62,7 +62,6 @@ class UserProfile extends Equatable {
     this.personalityMode,
     this.cbseClass,
     this.dailyGoalMinutes = 10,
-    this.xpTotal = 0,
     this.currentStreak = 0,
     this.lastActiveDate,
     this.isAnonymous = true,
@@ -82,9 +81,6 @@ class UserProfile extends Equatable {
 
   /// Daily learning goal in minutes.
   final int dailyGoalMinutes;
-
-  /// Total XP earned across all lessons and quizzes.
-  final int xpTotal;
 
   /// Current consecutive-day streak.
   final int currentStreak;
@@ -108,7 +104,6 @@ class UserProfile extends Equatable {
     PersonalityMode? personalityMode,
     CbseClass? cbseClass,
     int? dailyGoalMinutes,
-    int? xpTotal,
     int? currentStreak,
     String? lastActiveDate,
     bool? isAnonymous,
@@ -119,7 +114,6 @@ class UserProfile extends Equatable {
       personalityMode: personalityMode ?? this.personalityMode,
       cbseClass: cbseClass ?? this.cbseClass,
       dailyGoalMinutes: dailyGoalMinutes ?? this.dailyGoalMinutes,
-      xpTotal: xpTotal ?? this.xpTotal,
       currentStreak: currentStreak ?? this.currentStreak,
       lastActiveDate: lastActiveDate ?? this.lastActiveDate,
       isAnonymous: isAnonymous ?? this.isAnonymous,
@@ -133,7 +127,6 @@ class UserProfile extends Equatable {
         personalityMode,
         cbseClass,
         dailyGoalMinutes,
-        xpTotal,
         currentStreak,
         lastActiveDate,
         isAnonymous,

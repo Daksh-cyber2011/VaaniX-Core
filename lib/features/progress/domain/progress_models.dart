@@ -44,7 +44,8 @@ class Lesson extends Equatable {
   final String? content;
 
   @override
-  List<Object?> get props => [id, chapterId, title, subtitle, difficulty, xpReward, order, content];
+  List<Object?> get props =>
+      [id, chapterId, title, subtitle, difficulty, xpReward, order, content];
 }
 
 /// A chapter groups related lessons.
@@ -64,7 +65,7 @@ class Chapter extends Equatable {
   final int order;
 
   @override
-  List<Object?> get props => [id, title];
+  List<Object?> get props => [id, title, subtitle, lessons, order];
 }
 
 /// A quiz question (multiple choice for V1).
@@ -84,7 +85,7 @@ class QuizQuestion extends Equatable {
   final String? explanation;
 
   @override
-  List<Object?> get props => [id, prompt];
+  List<Object?> get props => [id, prompt, options, correctIndex, explanation];
 }
 
 /// Result of one quiz attempt.
@@ -105,6 +106,28 @@ class QuizResult extends Equatable {
 
   double get percentage => total == 0 ? 0 : score / total;
 
+  /// Deserialize from JSON (for loading persisted attempt history).
+  factory QuizResult.fromJson(Map<String, dynamic> json) {
+    return QuizResult(
+      quizId: json['quizId'] as String,
+      score: (json['score'] as num).toInt(),
+      total: (json['total'] as num).toInt(),
+      xpEarned: (json['xpEarned'] as num).toInt(),
+      completedAt: json['completedAt'] != null
+          ? DateTime.tryParse(json['completedAt'] as String)
+          : null,
+    );
+  }
+
+  /// Serialize to JSON (for persisting attempt history).
+  Map<String, dynamic> toJson() => {
+        'quizId': quizId,
+        'score': score,
+        'total': total,
+        'xpEarned': xpEarned,
+        'completedAt': completedAt?.toIso8601String(),
+      };
+
   @override
-  List<Object?> get props => [quizId, score, total];
+  List<Object?> get props => [quizId, score, total, xpEarned, completedAt];
 }

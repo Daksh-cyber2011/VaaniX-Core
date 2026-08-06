@@ -17,7 +17,14 @@ final completedLessonIdsProvider =
   return _CompletedLessonsNotifier(ref.watch(progressRepositoryProvider));
 });
 
-/// Reactive XP total.
+/// Reactive list of completed quiz IDs (at least once each).
+final completedQuizIdsProvider =
+    StateNotifierProvider<_CompletedQuizIdsNotifier, List<String>>((ref) {
+  return _CompletedQuizIdsNotifier(ref.watch(progressRepositoryProvider));
+});
+
+/// Reactive XP total. Single source of truth for XP across the app —
+/// the profile module delegates to this instead of maintaining its own copy.
 final xpTotalProvider = StateNotifierProvider<_XpNotifier, int>((ref) {
   return _XpNotifier(ref.watch(progressRepositoryProvider));
 });
@@ -34,6 +41,21 @@ class _CompletedLessonsNotifier extends StateNotifier<List<String>> {
     if (state.contains(lesson.id)) return;
     state = [...state, lesson.id];
     await _repo.completeLesson(lesson);
+  }
+}
+
+class _CompletedQuizIdsNotifier extends StateNotifier<List<String>> {
+  _CompletedQuizIdsNotifier(this._repo) : super(const []) {
+    final result = _repo.getCompletedQuizIds();
+    result.fold((_) => null, (ids) => state = ids);
+  }
+
+  final ProgressRepository _repo;
+
+  /// Called after a quiz is persisted so the UI updates reactively.
+  void refresh() {
+    final result = _repo.getCompletedQuizIds();
+    result.fold((_) => null, (ids) => state = ids);
   }
 }
 

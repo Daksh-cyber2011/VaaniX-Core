@@ -21,9 +21,6 @@ abstract class UserProfileRepository {
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass);
   Future<Result<void>> updateDailyGoal(int minutes);
 
-  /// Add [amount] XP and return the new total.
-  Future<Result<int>> addXp(int amount);
-
   /// Mark today as active. Updates the streak:
   ///   - continued streak if last active was yesterday,
   ///   - reset to 1 if the streak was broken,

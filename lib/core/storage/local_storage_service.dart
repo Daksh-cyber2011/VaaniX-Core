@@ -101,6 +101,18 @@ class LocalStorageService implements ILocalStorageService {
   Future<void> setCompletedQuizIds(List<String> ids) =>
       _prefs.setStringList(AppConstants.keyCompletedQuizIds, ids);
 
+  /// Quiz attempt history is stored as a JSON-encoded string under
+  /// key `quiz_attempts_<quizId>`. This keeps SharedPreferences (which
+  /// only supports primitive types) happy while allowing structured
+  /// attempt data via [QuizResult.fromJson]/[toJson].
+  @override
+  String? getQuizAttempts(String quizId) =>
+      _prefs.getString('quiz_attempts_$quizId');
+
+  @override
+  Future<void> setQuizAttempts(String quizId, String jsonAttempts) =>
+      _prefs.setString('quiz_attempts_$quizId', jsonAttempts);
+
   // ─── Preferences ───────────────────────────────────────────────────────────
 
   @override

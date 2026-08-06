@@ -67,6 +67,15 @@ abstract final class AppConstants {
   static const List<int> supportedClasses = [6, 7, 8, 9, 10];
 
   // ============================================================
+  // XP REWARDS (centralized to prevent drift across modules)
+  // ============================================================
+
+  /// XP awarded per correct quiz answer. Used by LocalProgressRepository
+  /// and the exam screen's XP display. Previously duplicated as the
+  /// magic number `10` in three places — now a single source of truth.
+  static const int xpPerCorrectAnswer = 10;
+
+  // ============================================================
   // VAN ANIMATION TIMING (milliseconds)
   // From PRD Section 6.4 — Animation System
   // ============================================================

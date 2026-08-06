@@ -67,7 +67,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 total: notifier.total,
               );
           if (!mounted) return;
+          // Invalidate all progress-related providers so the Progress
+          // screen's "Quizzes Done" card updates reactively.
           ref.invalidate(xpTotalProvider);
+          ref.invalidate(completedQuizIdsProvider);
           // Surface the actual XP earned (0 on repeat completions due to
           // the idempotency guard added in Segment 1).
           final xpEarned = result.fold(

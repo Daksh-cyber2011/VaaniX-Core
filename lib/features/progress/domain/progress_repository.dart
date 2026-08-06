@@ -13,10 +13,15 @@ abstract class ProgressRepository {
   /// IDs of quizzes the learner has completed (at least once).
   Result<List<String>> getCompletedQuizIds();
 
+  /// All attempt history for [quizId], newest last. Empty if never
+  /// attempted. Used for best-score tracking and per-quiz analytics.
+  Result<List<QuizResult>> getQuizAttempts(String quizId);
+
   /// Mark [lessonId] as completed and award its XP.
   Future<Result<int>> completeLesson(Lesson lesson);
 
   /// Record a quiz attempt and award XP proportional to the score.
+  /// Also appends to the attempt history for [quizId].
   Future<Result<QuizResult>> completeQuiz({
     required String quizId,
     required int score,
