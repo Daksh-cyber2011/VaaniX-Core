@@ -45,8 +45,10 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
       parent: _vanEntryController,
       curve: Curves.easeOut,
     );
-    Future.delayed(const Duration(milliseconds: 200),
-        () => _vanEntryController.forward());
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (!mounted) return;
+      _vanEntryController.forward();
+    });
   }
 
   @override

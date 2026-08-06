@@ -18,6 +18,7 @@
 /// ```
 
 import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// Log severity level.
 enum _LogLevel {
@@ -46,7 +47,11 @@ abstract final class AppLogger {
 
   /// Error — should never happen in normal operation.
   ///
-  /// In production this is forwarded to crash-reporting via [reportError].
+  /// In debug builds: prints to console.
+  /// In release builds: forwards to Sentry via [Sentry.captureException]
+  /// so production crashes are visible in the Sentry dashboard.
+  /// If Sentry is not initialized, the call is a no-op (Sentry SDK
+  /// gracefully handles un-initialized capture calls).
   static void error(
     String message, {
     String? tag,
@@ -59,8 +64,28 @@ abstract final class AppLogger {
         debugPrint(stackTrace.toString());
       }
     }
-    // NOTE: Add Sentry.captureException(error, stackTrace: stackTrace) here
-    // once crash reporting is configured (Phase: Analytics milestone).
+    // Forward to Sentry in all modes — Sentry.no-op if not initialized.
+    // Attach the message as a breadcrumb for context.
+    if (error != null) {
+      Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+        withScope: (scope) {
+          scope.setTag('log_tag', tag ?? 'unknown');
+          scope.setLevel(SentryLevel.error);
+          scope.setExtra('message', message);
+        },
+      );
+    } else {
+      // No exception object — capture as a message.
+      Sentry.captureMessage(
+        message,
+        level: SentryLevel.error,
+        withScope: (scope) {
+          scope.setTag('log_tag', tag ?? 'unknown');
+        },
+      );
+    }
   }
 
   // ─── Internals ────────────────────────────────────────────────────────────

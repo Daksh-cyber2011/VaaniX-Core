@@ -50,6 +50,9 @@ dependencies:
   # Icons
   flutter_svg: ^2.0.10+1
 
+  # Crash reporting (production error visibility)
+  sentry_flutter: ^8.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
