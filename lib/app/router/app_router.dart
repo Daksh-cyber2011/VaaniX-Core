@@ -18,6 +18,7 @@ import 'package:vaanix_app/app/router/splash_screen.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:vaanix_app/features/auth/presentation/screens/auth_screen.dart';
 import 'package:vaanix_app/features/ai/presentation/screens/chat_screen.dart';
+import 'package:vaanix_app/features/achievements/presentation/screens/achievements_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_screen.dart';
 import 'package:vaanix_app/features/home/presentation/screens/home_screen.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
@@ -197,6 +198,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.chat,
         name: RouteNames.chatName,
         builder: (context, state) => const ChatScreen(),
+      ),
+
+      // ----------------------------------------------------------
+      // ACHIEVEMENTS (pushed on top, outside bottom nav)
+      // ----------------------------------------------------------
+      GoRoute(
+        path: RouteNames.achievements,
+        name: RouteNames.achievementsName,
+        builder: (context, state) => const AchievementsScreen(),
       ),
     ],
   );

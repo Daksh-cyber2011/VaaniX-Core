@@ -6,7 +6,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
@@ -136,6 +138,35 @@ class ProgressScreen extends ConsumerWidget {
               ),
             );
           }),
+
+          // ─── Achievements Entry Point ────────────────────────────
+          const SizedBox(height: 24),
+          VaaniXCard(
+            onTap: () => context.go(RouteNames.achievements),
+            child: Row(
+              children: [
+                const Icon(Icons.emoji_events_rounded,
+                    color: AppColors.primary, size: 28),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Achievements',
+                          style: AppTextStyles.titleMedium()),
+                      Text(
+                        'Tap to see your milestones',
+                        style: AppTextStyles.bodySmall(
+                            color: AppColors.subtextLight),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right_rounded,
+                    color: AppColors.subtextLight),
+              ],
+            ),
+          ),
 
           if (xp == 0 && completedCount == 0) ...[
             const SizedBox(height: 16),

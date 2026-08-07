@@ -18,6 +18,7 @@ import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
+import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -140,13 +141,19 @@ class ChatController extends StateNotifier<ChatState> {
           error: failure.message,
         );
       },
-      (updatedContext) {
+      (updatedContext) async {
         // The updated context includes the assistant's reply appended.
         state = state.copyWith(
           messages: updatedContext.messages,
           isSending: false,
           clearError: true,
         );
+
+        // ── Achievement check ──────────────────────────────────────
+        // After the first successful chat message, check for the
+        // 'van_friend' achievement.
+        final checker = _ref.read(achievementCheckerProvider);
+        await checker.checkAchievements(didChatWithVan: true);
       },
     );
   }
