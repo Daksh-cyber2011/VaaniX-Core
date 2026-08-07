@@ -4,12 +4,18 @@
 /// mode and learner context. This is the only place persona wording lives,
 /// so tone changes are localized and testable.
 ///
-/// Future prompt-engineering concerns (safety filters, RAG context injection,
-/// few-shot examples, localization) chain in by composing this implementation
+/// Segment 6: Now uses the [PersonalityMode] enum directly instead of
+/// fragile lowercase string matching. The personality mode is passed as
+/// a string in [LearnerContext.personalityMode] — we map it to the enum
+/// and use exhaustive switch.
+///
+/// Future prompt-engineering concerns (RAG context injection, few-shot
+/// examples, localization) chain in by composing this implementation
 /// or replacing it via DI — the [PromptPipeline] contract stays unchanged.
 
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/domain/prompt_pipeline.dart';
+import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 
 class DefaultPromptPipeline implements PromptPipeline {
   const DefaultPromptPipeline();
@@ -39,14 +45,18 @@ class DefaultPromptPipeline implements PromptPipeline {
       base.writeln('Current topic: ${learner.topic.trim()}.');
     }
 
-    // Personality steering.
-    switch (learner.personalityMode.toLowerCase()) {
-      case 'cheerleader':
-        base.writeln('Tone: energetic, celebratory, lots of encouragement.');
-      case 'calm':
-        base.writeln('Tone: patient, soft, steady; great for anxious learners.');
-      case 'fun':
-        base.writeln('Tone: playful, light duck puns, casual.');
+    // Personality steering — use the enum directly instead of string matching.
+    // Resolve the enum from the string; null/unknown falls through to default.
+    final mode = PersonalityMode.values.asNameMap()[learner.personalityMode];
+    if (mode != null) {
+      switch (mode) {
+        case PersonalityMode.cheerleader:
+          base.writeln('Tone: energetic, celebratory, lots of encouragement.');
+        case PersonalityMode.calm:
+          base.writeln('Tone: patient, soft, steady; great for anxious learners.');
+        case PersonalityMode.fun:
+          base.writeln('Tone: playful, light duck puns, casual.');
+      }
     }
 
     return base.toString().trim();

@@ -131,5 +131,5 @@ class ConversationContext extends Equatable {
   }
 
   @override
-  List<Object?> get props => [conversationId, messages, personaPrompt];
+  List<Object?> get props => [conversationId, learner, messages, personaPrompt];
 }

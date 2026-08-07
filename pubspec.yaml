@@ -53,6 +53,9 @@ dependencies:
   # Crash reporting (production error visibility)
   sentry_flutter: ^8.9.0
 
+  # AI — Google Gemini SDK (first real online ModelAdapter)
+  google_generative_ai: ^0.4.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

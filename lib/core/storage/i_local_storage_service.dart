@@ -51,6 +51,12 @@ abstract class ILocalStorageService {
   String? get language;
   Future<void> setLanguage(String language);
 
+  // AI Conversations — JSON-encoded lists of AiMessage maps.
+  // Keyed by conversationId. Used by LocalConversationMemory.
+  String? getAiConversation(String conversationId);
+  Future<void> setAiConversation(String conversationId, String jsonMessages);
+  Future<void> clearAiConversations();
+
   // Utilities
   bool containsKey(String key);
   Future<bool> remove(String key);

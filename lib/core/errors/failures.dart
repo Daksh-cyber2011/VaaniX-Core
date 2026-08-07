@@ -148,6 +148,38 @@ class RateLimitFailure extends Failure {
 }
 
 // ============================================================
+// AI FAILURES (LLM-specific — Segment 6)
+// ============================================================
+
+/// LLM service rate limit exceeded (HTTP 429 equivalent).
+class AiRateLimitFailure extends Failure {
+  const AiRateLimitFailure([
+    String message = 'AI service rate limit reached. Please wait a moment.',
+  ]) : super(message: message, code: 'AI_RATE_LIMIT');
+}
+
+/// LLM response was blocked by safety / content filters.
+class AiContentFilterFailure extends Failure {
+  const AiContentFilterFailure([
+    String message = 'The AI response was blocked by safety filters.',
+  ]) : super(message: message, code: 'AI_CONTENT_FILTER');
+}
+
+/// Conversation exceeds the model's context window.
+class AiContextLengthFailure extends Failure {
+  const AiContextLengthFailure([
+    String message = 'The conversation is too long. Please start a new conversation.',
+  ]) : super(message: message, code: 'AI_CONTEXT_LENGTH');
+}
+
+/// LLM service is unavailable (network error, server error, unknown SDK error).
+class AiServiceFailure extends Failure {
+  const AiServiceFailure([
+    String message = 'The AI service is unavailable.',
+  ]) : super(message: message, code: 'AI_SERVICE');
+}
+
+// ============================================================
 // UNKNOWN
 // ============================================================
 
