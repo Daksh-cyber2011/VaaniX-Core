@@ -14,6 +14,7 @@ abstract final class RouteNames {
   static const String exam = '/exam';
   static const String progress = '/progress';
   static const String vanProfile = '/van';
+  static const String chat = '/chat';
   static const String settings = '/settings';
 
   // Named route identifiers (for GoRouter.of(context).goNamed())
@@ -26,5 +27,6 @@ abstract final class RouteNames {
   static const String examName = 'exam';
   static const String progressName = 'progress';
   static const String vanProfileName = 'van-profile';
+  static const String chatName = 'chat';
   static const String settingsName = 'settings';
 }
