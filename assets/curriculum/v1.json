@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "chapters": [
+    {
+      "id": "ch_alphabet",
+      "title": "देवनागरी · The Alphabet",
+      "subtitle": "Svar (vowels) and Vyanjana (consonants)",
+      "order": 0,
+      "lessons": [
+        {
+          "id": "ls_alphabet_vowels",
+          "chapterId": "ch_alphabet",
+          "title": "स्वराः · Vowels",
+          "subtitle": "Learn the 13 Sanskrit vowels (अ आ इ ई ...)",
+          "xpReward": 15,
+          "order": 0,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_alphabet_consonants",
+          "chapterId": "ch_alphabet",
+          "title": "व्यञ्जनानि · Consonants",
+          "subtitle": "The 33 consonants and their sounds",
+          "xpReward": 15,
+          "order": 1,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_alphabet_barakhadi",
+          "chapterId": "ch_alphabet",
+          "title": "बाराखड़ी · Consonant + Vowel",
+          "subtitle": "Combine consonants with each vowel",
+          "xpReward": 20,
+          "order": 2,
+          "difficulty": "intermediate"
+        }
+      ]
+    },
+    {
+      "id": "ch_words",
+      "title": "शब्दाः · Words & Vocabulary",
+      "subtitle": "Everyday Sanskrit words",
+      "order": 1,
+      "lessons": [
+        {
+          "id": "ls_words_greetings",
+          "chapterId": "ch_words",
+          "title": "अभिवादनम् · Greetings",
+          "subtitle": "नमस्ते, सुप्रभातम्, शुभरात्रिः",
+          "xpReward": 10,
+          "order": 0,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_words_family",
+          "chapterId": "ch_words",
+          "title": "परिवारः · Family",
+          "subtitle": "माता, पिता, भ्राता, भगिनी",
+          "xpReward": 10,
+          "order": 1,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_words_numbers",
+          "chapterId": "ch_words",
+          "title": "सङ्ख्याः · Numbers 1–20",
+          "subtitle": "एकम्, द्वे, त्रीणि ...",
+          "xpReward": 15,
+          "order": 2,
+          "difficulty": "intermediate"
+        }
+      ]
+    },
+    {
+      "id": "ch_sentences",
+      "title": "वाक्यानि · Simple Sentences",
+      "subtitle": "Form basic sentences",
+      "order": 2,
+      "lessons": [
+        {
+          "id": "ls_sentences_intro",
+          "chapterId": "ch_sentences",
+          "title": "परिचयः · Introducing Yourself",
+          "subtitle": "मम नाम ... (My name is ...)",
+          "xpReward": 20,
+          "order": 0,
+          "difficulty": "intermediate"
+        },
+        {
+          "id": "ls_sentences_questions",
+          "chapterId": "ch_sentences",
+          "title": "प्रश्नाः · Asking Questions",
+          "subtitle": "किम्? कुत्र? कदा?",
+          "xpReward": 25,
+          "order": 1,
+          "difficulty": "advanced"
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "chapterId": "ch_alphabet",
+      "questions": [
+        {
+          "id": "q_alpha_1",
+          "prompt": "Which vowel is \"आ\"?",
+          "options": ["a (short)", "ā (long)", "i (short)", "u (short)"],
+          "correctIndex": 1,
+          "explanation": "आ is the long \"ā\" vowel."
+        },
+        {
+          "id": "q_alpha_2",
+          "prompt": "How many vowels are in the Sanskrit alphabet?",
+          "options": ["10", "13", "16", "20"],
+          "correctIndex": 1,
+          "explanation": "Sanskrit has 13 vowels (स्वराः)."
+        },
+        {
+          "id": "q_alpha_3",
+          "prompt": "Which is a consonant (व्यञ्जन)?",
+          "options": ["अ", "क", "आ", "ई"],
+          "correctIndex": 1,
+          "explanation": "क (ka) is a velar consonant."
+        }
+      ]
+    },
+    {
+      "chapterId": "ch_words",
+      "questions": [
+        {
+          "id": "q_words_1",
+          "prompt": "\"माता\" means?",
+          "options": ["Father", "Mother", "Sister", "Brother"],
+          "correctIndex": 1
+        },
+        {
+          "id": "q_words_2",
+          "prompt": "How do you say \"one\" in Sanskrit?",
+          "options": ["द्वे", "त्रीणि", "एकम्", "चत्वारि"],
+          "correctIndex": 2
+        }
+      ]
+    },
+    {
+      "chapterId": "ch_sentences",
+      "questions": [
+        {
+          "id": "q_sent_1",
+          "prompt": "\"मम नाम\" means?",
+          "options": ["Your name", "My name", "His name", "Our name"],
+          "correctIndex": 1
+        },
+        {
+          "id": "q_sent_2",
+          "prompt": "\"किम्\" is used to ask?",
+          "options": ["Where", "When", "What", "Why"],
+          "correctIndex": 2
+        }
+      ]
+    }
+  ]
+}
