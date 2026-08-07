@@ -1,20 +1,22 @@
 /// Sanskrit Curriculum — Seed Data (V1)
 ///
-/// Static, curriculum-aligned content for CBSE Classes 6–10. This is local
-/// seed data (not backend): it lets the Learn and Exam screens render real
-/// chapters, lessons, and quizzes immediately. A remote curriculum service
-/// can later override [curriculumProvider] with server-driven content.
+/// Static, curriculum-aligned content for CBSE Classes 6–10. This file now
+/// serves two purposes:
+///   1. Fallback data for [CurriculumLoader] when JSON parsing fails.
+///   2. Source of lesson content strings (merged into JSON-loaded lessons).
 ///
-/// Lesson content strings are defined in [sanskrit_lesson_content.dart]
-/// to keep this file focused on structure. In Segment 8 this will be
-/// replaced by a JSON-driven curriculum loader.
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+/// The [curriculumProvider] has moved to [CurriculumLoader] (Segment 8) and
+/// is now an AsyncNotifierProvider that loads from assets/curriculum/v1.json.
+/// This file no longer exports a curriculumProvider — import from
+/// curriculum_loader.dart instead.
+///
+/// Lesson content strings are defined in [sanskrit_lesson_content.dart].
 
 import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// The full V1 curriculum, ordered by chapter → lesson.
+/// Used as fallback by [CurriculumLoader] when JSON parsing fails.
 final List<Chapter> sanskritCurriculum = [
   Chapter(
     id: 'ch_alphabet',
@@ -119,12 +121,8 @@ final List<Chapter> sanskritCurriculum = [
   ),
 ];
 
-/// Riverpod provider exposing the V1 curriculum.
-final curriculumProvider = Provider<List<Chapter>>((ref) {
-  return sanskritCurriculum;
-});
-
-/// A starter quiz for each chapter (10 questions total across the set).
+/// A starter quiz for each chapter (7 questions total across the set).
+/// Used as fallback by [CurriculumLoader] when JSON parsing fails.
 final Map<String, List<QuizQuestion>> chapterQuizzes = {
   'ch_alphabet': [
     QuizQuestion(
@@ -179,8 +177,5 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
   ],
 };
 
-/// Provider for chapter quizzes.
-final chapterQuizzesProvider =
-    Provider<Map<String, List<QuizQuestion>>>((ref) {
-  return chapterQuizzes;
-});
+/// chapterQuizzesProvider has moved to [CurriculumLoader] (Segment 8).
+/// Import from curriculum_loader.dart for the async chapterQuizProvider.

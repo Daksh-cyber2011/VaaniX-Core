@@ -43,6 +43,56 @@ class Lesson extends Equatable {
   /// [AppTextStyles.sanskritBody] for proper font support.
   final String? content;
 
+  /// Deserialize from JSON (for loading curriculum from assets).
+  factory Lesson.fromJson(Map<String, dynamic> json) {
+    return Lesson(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      chapterId: json['chapterId'] as String,
+      subtitle: json['subtitle'] as String?,
+      difficulty: Difficulty.values.byName(
+          (json['difficulty'] as String?) ?? 'beginner'),
+      xpReward: (json['xpReward'] as num?)?.toInt() ?? 10,
+      order: (json['order'] as num?)?.toInt() ?? 0,
+      content: json['content'] as String?,
+    );
+  }
+
+  /// Serialize to JSON.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'chapterId': chapterId,
+        'subtitle': subtitle,
+        'difficulty': difficulty.name,
+        'xpReward': xpReward,
+        'order': order,
+        'content': content,
+      };
+
+  /// Returns a copy with the specified fields replaced.
+  Lesson copyWith({
+    String? id,
+    String? title,
+    String? chapterId,
+    String? subtitle,
+    Difficulty? difficulty,
+    int? xpReward,
+    int? order,
+    String? content,
+  }) {
+    return Lesson(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      chapterId: chapterId ?? this.chapterId,
+      subtitle: subtitle ?? this.subtitle,
+      difficulty: difficulty ?? this.difficulty,
+      xpReward: xpReward ?? this.xpReward,
+      order: order ?? this.order,
+      content: content ?? this.content,
+    );
+  }
+
   @override
   List<Object?> get props =>
       [id, chapterId, title, subtitle, difficulty, xpReward, order, content];
@@ -64,6 +114,29 @@ class Chapter extends Equatable {
   final List<Lesson> lessons;
   final int order;
 
+  /// Deserialize from JSON (for loading curriculum from assets).
+  factory Chapter.fromJson(Map<String, dynamic> json) {
+    return Chapter(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      subtitle: json['subtitle'] as String?,
+      lessons: (json['lessons'] as List<dynamic>?)
+              ?.map((e) => Lesson.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      order: (json['order'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  /// Serialize to JSON.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'subtitle': subtitle,
+        'lessons': lessons.map((l) => l.toJson()).toList(),
+        'order': order,
+      };
+
   @override
   List<Object?> get props => [id, title, subtitle, lessons, order];
 }
@@ -83,6 +156,28 @@ class QuizQuestion extends Equatable {
   final List<String> options;
   final int correctIndex;
   final String? explanation;
+
+  /// Deserialize from JSON (for loading quizzes from assets).
+  factory QuizQuestion.fromJson(Map<String, dynamic> json) {
+    return QuizQuestion(
+      id: json['id'] as String,
+      prompt: json['prompt'] as String,
+      options: (json['options'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      correctIndex: (json['correctIndex'] as num).toInt(),
+      explanation: json['explanation'] as String?,
+    );
+  }
+
+  /// Serialize to JSON.
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'prompt': prompt,
+        'options': options,
+        'correctIndex': correctIndex,
+        'explanation': explanation,
+      };
 
   @override
   List<Object?> get props => [id, prompt, options, correctIndex, explanation];

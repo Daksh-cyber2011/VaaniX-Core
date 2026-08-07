@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
@@ -25,8 +25,10 @@ class ProgressScreen extends ConsumerWidget {
     final xp = ref.watch(xpTotalProvider);
     final completed = ref.watch(completedLessonIdsProvider);
     final completedQuizIds = ref.watch(completedQuizIdsProvider);
-    final curriculum = ref.watch(curriculumProvider);
+    final curriculumAsync = ref.watch(curriculumProvider);
 
+    // Extract curriculum data (or empty list while loading/error).
+    final curriculum = curriculumAsync.valueOrNull ?? [];
     final totalLessons = curriculum.fold<int>(0, (s, c) => s + c.lessons.length);
     final completedCount = completed.length;
     final quizCount = completedQuizIds.length;
