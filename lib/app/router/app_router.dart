@@ -20,7 +20,7 @@ import 'package:vaanix_app/features/auth/presentation/screens/auth_screen.dart';
 import 'package:vaanix_app/features/ai/presentation/screens/chat_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_screen.dart';
 import 'package:vaanix_app/features/home/presentation/screens/home_screen.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_screen.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/lesson_content_screen.dart';
 import 'package:vaanix_app/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -269,8 +269,8 @@ class _AppShell extends StatelessWidget {
 }
 
 /// Wrapper widget that looks up a [Lesson] by ID from [curriculumProvider]
-/// and renders [LessonContentScreen]. Shows a not-found error if the
-/// lessonId doesn't match any lesson in the curriculum.
+/// and renders [LessonContentScreen]. Shows loading, error, and not-found
+/// states. The curriculum is now loaded asynchronously (Segment 8).
 class _LessonContentRoute extends ConsumerWidget {
   const _LessonContentRoute({required this.lessonId});
 
@@ -278,30 +278,24 @@ class _LessonContentRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curriculum = ref.watch(curriculumProvider);
-    Lesson? lesson;
-    for (final chapter in curriculum) {
-      for (final l in chapter.lessons) {
-        if (l.id == lessonId) {
-          lesson = l;
-          break;
-        }
-      }
-      if (lesson != null) break;
-    }
+    final curriculumAsync = ref.watch(curriculumProvider);
 
-    if (lesson == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Lesson Not Found')),
+    return curriculumAsync.when(
+      loading: () => Scaffold(
+        appBar: AppBar(title: const Text('Loading...')),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(title: const Text('Error')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.search_off_rounded,
+              const Icon(Icons.error_outline_rounded,
                   size: 64, color: Colors.grey),
               const SizedBox(height: 16),
               Text(
-                'Could not find lesson: $lessonId',
+                'Could not load curriculum: $error',
                 style: const TextStyle(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -313,9 +307,47 @@ class _LessonContentRoute extends ConsumerWidget {
             ],
           ),
         ),
-      );
-    }
+      ),
+      data: (curriculum) {
+        Lesson? lesson;
+        for (final chapter in curriculum) {
+          for (final l in chapter.lessons) {
+            if (l.id == lessonId) {
+              lesson = l;
+              break;
+            }
+          }
+          if (lesson != null) break;
+        }
 
-    return LessonContentScreen(lesson: lesson);
+        if (lesson == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Lesson Not Found')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.search_off_rounded,
+                      size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Could not find lesson: $lessonId',
+                    style: const TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  OutlinedButton(
+                    onPressed: () => context.go(RouteNames.learn),
+                    child: const Text('Back to Lessons'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return LessonContentScreen(lesson: lesson);
+      },
+    );
   }
 }

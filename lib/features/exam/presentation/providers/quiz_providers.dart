@@ -2,6 +2,12 @@
 ///
 /// Builds a flat list of quiz questions from the curriculum chapters and
 /// exposes the reactive [QuizNotifier] that drives the exam flow.
+///
+/// Segment 8: Quiz questions are now loaded from the JSON curriculum
+/// via [chapterQuizzesProvider] (still the hardcoded map as fallback,
+/// but the loader can override it). The curriculumProvider is now async
+/// so the quiz provider watches the AsyncValue and extracts the
+/// questions when data is available.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,8 +16,11 @@ import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 
 /// All quiz questions across the curriculum, flattened into one quiz.
+/// Uses the hardcoded chapterQuizzes map (which is also the fallback
+/// for the JSON loader). When the JSON curriculum is loaded, the
+/// chapterQuizProvider family can be used per-chapter instead.
 final quizQuestionsProvider = Provider<List<QuizQuestion>>((ref) {
-  final bank = ref.watch(chapterQuizzesProvider);
+  final bank = chapterQuizzes;
   return bank.values.expand((q) => q).toList();
 });
 
