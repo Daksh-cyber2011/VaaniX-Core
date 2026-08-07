@@ -1,12 +1,16 @@
 /// Van Profile Screen
 ///
 /// Shows Van with his current personality mode and lets the learner change
-/// it inline. Tapping Van plays a reaction. Reads/writes via
+/// it inline. Tapping Van plays a reaction. The "Chat with Van" button
+/// navigates to the [ChatScreen] where the learner can have a real
+/// conversation with Van via the AI pipeline. Reads/writes via
 /// [userProfileProvider].
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
@@ -53,6 +57,15 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
               onTap: _onTapVan,
             ),
           ),
+          const SizedBox(height: 24),
+
+          // ─── Chat with Van CTA ────────────────────────────────────
+          PrimaryButton(
+            onPressed: () => context.go(RouteNames.chat),
+            icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
+            label: 'Chat with $companionName',
+          ),
+
           const SizedBox(height: 32),
           Text('PERSONALITY',
               style:
