@@ -13,7 +13,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
+import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
 import 'package:vaanix_app/features/ai/presentation/widgets/message_bubble.dart';
@@ -74,6 +76,50 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         centerTitle: true,
         actions: [
+          // ─── AI Usage Indicator ──────────────────────────────────
+          // Shows remaining daily requests as a small chip. Tapping
+          // it shows detailed usage in a dialog.
+          FutureBuilder(
+            future: ref.read(tokenUsageTrackerProvider).getTodayUsage(),
+            builder: (context, snapshot) {
+              final usage = snapshot.data ?? DailyUsage.zero();
+              final remaining = usage.remainingRequests;
+              final color = remaining > 100
+                  ? AppColors.success
+                  : (remaining > 20 ? AppColors.warning : AppColors.error);
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => _showUsageDialog(context, usage),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.bolt_rounded, size: 14, color: color),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$remaining',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.add_comment_outlined),
             tooltip: 'New chat',
@@ -144,6 +190,80 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ],
       ),
     );
+  }
+
+  /// Show a dialog with detailed AI usage stats.
+  void _showUsageDialog(BuildContext context, DailyUsage usage) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.bolt_rounded, color: AppColors.primary),
+            SizedBox(width: 8),
+            Text('AI Usage Today'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _usageRow('Requests used',
+                '${usage.requestCount} / ${TokenUsageTracker.dailyRequestLimit}'),
+            _usageRow('Tokens used',
+                '${_formatTokens(usage.totalTokens)} / ${_formatTokens(TokenUsageTracker.dailyTokenLimit)}'),
+            _usageRow('Remaining requests',
+                '${usage.remainingRequests}'),
+            const SizedBox(height: 12),
+            // Request usage bar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: usage.requestUsageFraction.clamp(0.0, 1.0),
+                minHeight: 8,
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                color: usage.requestUsageFraction < 0.7
+                    ? AppColors.success
+                    : AppColors.error,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Cached responses don\'t count against your quota. '
+              'Van remembers repeated questions to save your limits!',
+              style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _usageRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppTextStyles.bodyMedium()),
+          Text(value,
+              style: AppTextStyles.bodyMedium(
+                  color: AppColors.primary,)),
+        ],
+      ),
+    );
+  }
+
+  String _formatTokens(int tokens) {
+    if (tokens >= 1000000) return '${(tokens / 1000000).toStringAsFixed(1)}M';
+    if (tokens >= 1000) return '${(tokens / 1000).toStringAsFixed(1)}K';
+    return '$tokens';
   }
 
   /// Empty state shown when the conversation has no messages yet.

@@ -9,6 +9,12 @@
 /// returned to the caller. The [SafetyFilter.defensiveSystemPrompt] is
 /// prepended to every persona prompt.
 ///
+/// Quota optimization (Segment 7.5):
+///   - [AiRateLimiter] throttles requests to stay under 15 RPM.
+///   - [ResponseCache] returns cached answers for repeated questions
+///     (40-60% API call reduction for a learning app).
+///   - [TokenUsageTracker] records daily token usage for visibility.
+///
 /// Error mapping: Gemini SDK exceptions are caught by [guardAsync] and
 /// mapped to AI-specific Failure types via [ExceptionMapper]:
 /// - Rate limit → [AiRateLimitFailure]
@@ -20,17 +26,30 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/utils/result.dart';
+import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
+import 'package:vaanix_app/features/ai/data/response_cache.dart';
 import 'package:vaanix_app/features/ai/data/safety_filter.dart';
+import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/domain/model_adapter.dart';
 
 class GeminiModelAdapter implements ModelAdapter {
-  GeminiModelAdapter({SafetyFilter? safetyFilter})
-      : _safetyFilter = safetyFilter ?? const DefaultSafetyFilter();
+  GeminiModelAdapter({
+    SafetyFilter? safetyFilter,
+    AiRateLimiter? rateLimiter,
+    ResponseCache? responseCache,
+    TokenUsageTracker? usageTracker,
+  })  : _safetyFilter = safetyFilter ?? const DefaultSafetyFilter(),
+        _rateLimiter = rateLimiter ?? AiRateLimiter(),
+        _responseCache = responseCache,
+        _usageTracker = usageTracker;
 
   final SafetyFilter _safetyFilter;
+  final AiRateLimiter _rateLimiter;
+  final ResponseCache? _responseCache;
+  final TokenUsageTracker? _usageTracker;
 
   GenerativeModel? _model;
   int _counter = 0;
@@ -72,6 +91,37 @@ class GeminiModelAdapter implements ModelAdapter {
     required AiConfig config,
   }) {
     return guardAsync(() async {
+      // Extract the latest user message.
+      final lastUserMsg = context.messages.lastWhere(
+        (m) => m.role == AiRole.user,
+        orElse: () => AiMessage.user(id: 'temp', content: 'नमस्ते'),
+      );
+      final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
+
+      // ── Cache check ────────────────────────────────────────────────
+      // Only cache if this looks like a standalone question (not a
+      // follow-up in a long conversation). We check if the transcript
+      // is short enough that the question makes sense in isolation.
+      if (_responseCache != null && context.transcript.length <= 2) {
+        final cached = await _responseCache!.get(sanitizedInput);
+        if (cached != null) {
+          // Cache hit! Return instantly without consuming API quota.
+          return AiMessage.assistant(
+            id: _nextId(),
+            content: cached,
+            createdAt: DateTime.now().toUtc(),
+            metadata: const {
+              'provider': 'gemini',
+              'cached': true,
+            },
+          );
+        }
+      }
+
+      // ── Rate limiting ──────────────────────────────────────────────
+      // Wait for an available slot before sending (stays under 15 RPM).
+      await _rateLimiter.awaitSlot();
+
       final model = _getModel(config);
 
       // Build the conversation history for Gemini.
@@ -86,17 +136,6 @@ class GeminiModelAdapter implements ModelAdapter {
 
       // Start a chat session with history.
       final chat = model.startChat(history: history);
-
-      // Send the latest user message (or empty if this is the first turn).
-      final lastUserMsg = context.messages.lastWhere(
-        (m) => m.role == AiRole.user,
-        orElse: () => AiMessage.user(
-          id: 'temp',
-          content: 'नमस्ते',
-        ),
-      );
-
-      final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
       final response = await chat.sendMessage(Content.text(sanitizedInput));
 
       final responseText = response.text;
@@ -109,16 +148,31 @@ class GeminiModelAdapter implements ModelAdapter {
         throw const AiContentFilterFailure();
       }
 
+      // ── Cache store ────────────────────────────────────────────────
+      // Cache the Q&A pair for future reuse.
+      if (_responseCache != null && context.transcript.length <= 2) {
+        await _responseCache!.put(sanitizedInput, responseText);
+      }
+
       // Extract usage metadata if available.
       final usage = response.usageMetadata;
+      final promptTokens = usage?.promptTokenCount ?? 0;
+      final completionTokens = usage?.candidatesTokenCount ?? 0;
+
+      // ── Usage tracking ─────────────────────────────────────────────
+      if (_usageTracker != null && usage != null) {
+        await _usageTracker!.recordUsage(
+          promptTokens: promptTokens,
+          completionTokens: completionTokens,
+        );
+      }
+
       final metadata = <String, dynamic>{
         'provider': 'gemini',
         'model': config.model.isEmpty ? 'gemini-1.5-flash' : config.model,
-        if (usage != null) ...{
-          'promptTokens': usage.promptTokenCount,
-          'completionTokens': usage.candidatesTokenCount,
-          'totalTokens': usage.totalTokenCount,
-        },
+        'promptTokens': promptTokens,
+        'completionTokens': completionTokens,
+        'totalTokens': usage?.totalTokenCount ?? (promptTokens + completionTokens),
       };
 
       return AiMessage.assistant(
@@ -136,6 +190,9 @@ class GeminiModelAdapter implements ModelAdapter {
     required AiConfig config,
   }) async* {
     try {
+      // Rate limiting before streaming.
+      await _rateLimiter.awaitSlot();
+
       final model = _getModel(config);
 
       // Build history.

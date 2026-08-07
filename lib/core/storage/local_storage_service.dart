@@ -150,6 +150,15 @@ class LocalStorageService implements ILocalStorageService {
     }
   }
 
+  // ─── Generic String Storage ────────────────────────────────────────────────
+
+  @override
+  String? getString(String key) => _prefs.getString(key);
+
+  @override
+  Future<void> setString(String key, String value) =>
+      _prefs.setString(key, value);
+
   // ─── Utilities ─────────────────────────────────────────────────────────────
 
   @override

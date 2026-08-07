@@ -57,6 +57,11 @@ abstract class ILocalStorageService {
   Future<void> setAiConversation(String conversationId, String jsonMessages);
   Future<void> clearAiConversations();
 
+  // Generic string storage — used by ResponseCache and TokenUsageTracker
+  // for arbitrary JSON blobs that don't fit the typed accessors above.
+  String? getString(String key);
+  Future<void> setString(String key, String value);
+
   // Utilities
   bool containsKey(String key);
   Future<bool> remove(String key);

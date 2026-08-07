@@ -4,11 +4,19 @@
 /// and the [GeminiModelAdapter] when [AppEnvironment.isGeminiConfigured]
 /// is true. Routes requests to the adapter named by [AiConfig.provider],
 /// falling back to offline when the chosen adapter is unavailable.
+///
+/// Segment 7.5: The GeminiModelAdapter is now constructed with an
+/// [AiRateLimiter], [ResponseCache], and [TokenUsageTracker] for quota
+/// optimization. These are injected from the Riverpod providers.
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/utils/result.dart';
+import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/ai/data/gemini_model_adapter.dart';
 import 'package:vaanix_app/features/ai/data/offline_model_adapter.dart';
+import 'package:vaanix_app/features/ai/data/response_cache.dart';
+import 'package:vaanix_app/features/ai/data/safety_filter.dart';
+import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/ai_service.dart';
@@ -16,13 +24,23 @@ import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/domain/model_adapter.dart';
 
 class AIServiceImpl implements AIService {
-  AIServiceImpl() {
+  AIServiceImpl({
+    SafetyFilter? safetyFilter,
+    AiRateLimiter? rateLimiter,
+    ResponseCache? responseCache,
+    TokenUsageTracker? usageTracker,
+  }) {
     // Always register the offline adapter as the fallback.
     _adapters[AiProviderId.offline] = OfflineModelAdapter();
 
-    // Register Gemini when configured.
+    // Register Gemini when configured, with quota optimization components.
     if (AppEnvironment.isGeminiConfigured) {
-      _adapters[AiProviderId.gemini] = GeminiModelAdapter();
+      _adapters[AiProviderId.gemini] = GeminiModelAdapter(
+        safetyFilter: safetyFilter,
+        rateLimiter: rateLimiter,
+        responseCache: responseCache,
+        usageTracker: usageTracker,
+      );
     }
   }
 
