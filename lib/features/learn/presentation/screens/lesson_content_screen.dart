@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/learn/presentation/widgets/lesson_content_view.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -67,6 +68,12 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
     await notifier.markComplete(widget.lesson);
     ref.invalidate(xpTotalProvider);
 
+    // ── Achievement check ──────────────────────────────────────────
+    // After completing a lesson, check if any lesson-count achievements
+    // are newly unlocked. Show a celebration if so.
+    final checker = ref.read(achievementCheckerProvider);
+    final newlyUnlocked = await checker.checkAchievements();
+
     if (!mounted) return;
     setState(() => _isCompleting = false);
 
@@ -76,6 +83,22 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
         behavior: SnackBarBehavior.floating,
       ),
     );
+
+    // Show achievement celebration if any were unlocked.
+    if (mounted && newlyUnlocked.isNotEmpty) {
+      for (final ach in newlyUnlocked) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '🏆 Achievement Unlocked: ${ach.title}!'
+              '${ach.xpReward > 0 ? ' (+${ach.xpReward} XP)' : ''}',
+            ),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    }
 
     if (mounted) {
       Navigator.of(context).pop();
