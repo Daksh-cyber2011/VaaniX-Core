@@ -60,7 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ─── Top Bar: Streak + XP + Avatar ───────────────────
+            // ─── Top Bar: Streak + XP + Chat + Avatar ────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -71,6 +71,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                   XpBadge(xpTotal: xp),
                   const Spacer(),
+                  // Chat with Van entry point.
+                  IconButton(
+                    onPressed: () => context.go(RouteNames.chat),
+                    icon: const Icon(Icons.chat_bubble_outline_rounded),
+                    tooltip: 'Chat with $companionName',
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
                   CircleAvatar(
                     radius: 18,
                     backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
