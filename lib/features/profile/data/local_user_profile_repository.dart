@@ -4,8 +4,10 @@
 /// [ILocalStorageService]. Every read and write is synchronous under the hood
 /// (SharedPreferences), wrapped in [guardAsync] for a consistent failure API.
 ///
-/// Cloud sync is delegated to [sync], which is a no-op until a remote
-/// repository is wired in — this keeps the app fully functional offline.
+/// Segment 5: The `sync()` method was removed (it was a no-op stub). A
+/// `SupabaseUserProfileRepository` with real cloud sync will be added in a
+/// Production milestone when the backend is ready. Until then, the profile
+/// is local-only (offline-first).
 
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
@@ -100,13 +102,6 @@ class LocalUserProfileRepository implements UserProfileRepository {
 
       return newStreak;
     });
-  }
-
-  @override
-  Future<Result<void>> sync() async {
-    // No-op until a remote store is wired in. Local is the source of truth
-    // for anonymous users; the cloud sync layer will hook in here.
-    return const Right(null);
   }
 
   /// Returns the UTC midnight ISO-8601 date string for [date].
