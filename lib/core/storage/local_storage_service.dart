@@ -129,6 +129,27 @@ class LocalStorageService implements ILocalStorageService {
   Future<void> setLanguage(String language) =>
       _prefs.setString(AppConstants.keyLanguage, language);
 
+  // ─── AI Conversations ──────────────────────────────────────────────────────
+
+  /// AI conversation history stored as JSON strings under
+  /// `ai_conversation_<conversationId>`.
+  @override
+  String? getAiConversation(String conversationId) =>
+      _prefs.getString('ai_conversation_$conversationId');
+
+  @override
+  Future<void> setAiConversation(String conversationId, String jsonMessages) =>
+      _prefs.setString('ai_conversation_$conversationId', jsonMessages);
+
+  @override
+  Future<void> clearAiConversations() async {
+    // Remove all keys starting with 'ai_conversation_'.
+    final keys = _prefs.getKeys().where((k) => k.startsWith('ai_conversation_'));
+    for (final key in keys) {
+      await _prefs.remove(key);
+    }
+  }
+
   // ─── Utilities ─────────────────────────────────────────────────────────────
 
   @override

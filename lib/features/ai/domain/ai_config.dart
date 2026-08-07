@@ -118,5 +118,5 @@ class AiConfig extends Equatable {
 
   @override
   List<Object?> get props =>
-      [provider, model, temperature, maxTokens, topP, enableStreaming];
+      [provider, model, temperature, maxTokens, topP, enableStreaming, systemPrompt, extra];
 }

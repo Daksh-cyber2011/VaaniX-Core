@@ -105,8 +105,30 @@ class AiMessage extends Equatable {
         metadata: metadata ?? this.metadata,
       );
 
+  /// Deserialize from JSON (for loading persisted conversation history).
+  factory AiMessage.fromJson(Map<String, dynamic> json) {
+    return AiMessage(
+      id: json['id'] as String,
+      role: AiRole.values.byName(json['role'] as String),
+      content: json['content'] as String,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      metadata: json['metadata'] as Map<String, dynamic>? ?? const {},
+    );
+  }
+
+  /// Serialize to JSON (for persisting conversation history).
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'role': role.name,
+        'content': content,
+        'createdAt': createdAt?.toIso8601String(),
+        'metadata': metadata,
+      };
+
   @override
-  List<Object?> get props => [id, role, content, createdAt];
+  List<Object?> get props => [id, role, content, createdAt, metadata];
 }
 
 /// A single streamed token/chunk emitted by a [ModelAdapter].

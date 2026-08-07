@@ -55,4 +55,12 @@ class AppEnvironment {
     if (url != null && url.isNotEmpty) return url;
     return 'http://localhost:8000/api/v1';
   }
+
+  /// Google Gemini API key. Empty when not configured — the AI module
+  /// falls back to [OfflineModelAdapter] in that case.
+  static String get geminiApiKey =>
+      dotenv.env[AppConstants.geminiApiKey]?.trim() ?? '';
+
+  /// True when a Gemini API key is present and non-empty.
+  static bool get isGeminiConfigured => geminiApiKey.isNotEmpty;
 }
