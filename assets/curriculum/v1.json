@@ -104,6 +104,7 @@
       "questions": [
         {
           "id": "q_alpha_1",
+          "difficulty": "beginner",
           "prompt": "Which vowel is \"आ\"?",
           "options": ["a (short)", "ā (long)", "i (short)", "u (short)"],
           "correctIndex": 1,
@@ -111,6 +112,7 @@
         },
         {
           "id": "q_alpha_2",
+          "difficulty": "beginner",
           "prompt": "How many vowels are in the Sanskrit alphabet?",
           "options": ["10", "13", "16", "20"],
           "correctIndex": 1,
@@ -118,6 +120,7 @@
         },
         {
           "id": "q_alpha_3",
+          "difficulty": "beginner",
           "prompt": "Which is a consonant (व्यञ्जन)?",
           "options": ["अ", "क", "आ", "ई"],
           "correctIndex": 1,
@@ -130,12 +133,14 @@
       "questions": [
         {
           "id": "q_words_1",
+          "difficulty": "beginner",
           "prompt": "\"माता\" means?",
           "options": ["Father", "Mother", "Sister", "Brother"],
           "correctIndex": 1
         },
         {
           "id": "q_words_2",
+          "difficulty": "intermediate",
           "prompt": "How do you say \"one\" in Sanskrit?",
           "options": ["द्वे", "त्रीणि", "एकम्", "चत्वारि"],
           "correctIndex": 2
@@ -147,12 +152,14 @@
       "questions": [
         {
           "id": "q_sent_1",
+          "difficulty": "intermediate",
           "prompt": "\"मम नाम\" means?",
           "options": ["Your name", "My name", "His name", "Our name"],
           "correctIndex": 1
         },
         {
           "id": "q_sent_2",
+          "difficulty": "advanced",
           "prompt": "\"किम्\" is used to ask?",
           "options": ["Where", "When", "What", "Why"],
           "correctIndex": 2

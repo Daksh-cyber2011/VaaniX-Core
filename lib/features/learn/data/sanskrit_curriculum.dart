@@ -127,6 +127,8 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
   'ch_alphabet': [
     QuizQuestion(
       id: 'q_alpha_1',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
       prompt: 'Which vowel is "आ"?',
       options: const ['a (short)', 'ā (long)', 'i (short)', 'u (short)'],
       correctIndex: 1,
@@ -134,6 +136,8 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
     ),
     QuizQuestion(
       id: 'q_alpha_2',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
       prompt: 'How many vowels are in the Sanskrit alphabet?',
       options: const ['10', '13', '16', '20'],
       correctIndex: 1,
@@ -141,6 +145,8 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
     ),
     QuizQuestion(
       id: 'q_alpha_3',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
       prompt: 'Which is a consonant (व्यञ्जन)?',
       options: const ['अ', 'क', 'आ', 'ई'],
       correctIndex: 1,
@@ -150,12 +156,16 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
   'ch_words': [
     QuizQuestion(
       id: 'q_words_1',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.beginner,
       prompt: '"माता" means?',
       options: const ['Father', 'Mother', 'Sister', 'Brother'],
       correctIndex: 1,
     ),
     QuizQuestion(
       id: 'q_words_2',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.intermediate,
       prompt: 'How do you say "one" in Sanskrit?',
       options: const ['द्वे', 'त्रीणि', 'एकम्', 'चत्वारि'],
       correctIndex: 2,
@@ -164,12 +174,16 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
   'ch_sentences': [
     QuizQuestion(
       id: 'q_sent_1',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
       prompt: '"मम नाम" means?',
       options: const ['Your name', 'My name', 'His name', 'Our name'],
       correctIndex: 1,
     ),
     QuizQuestion(
       id: 'q_sent_2',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.advanced,
       prompt: '"किम्" is used to ask?',
       options: const ['Where', 'When', 'What', 'Why'],
       correctIndex: 2,

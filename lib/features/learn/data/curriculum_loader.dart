@@ -40,7 +40,8 @@ Future<List<Chapter>> loadCurriculum() async {
     final merged = chapters.map((ch) {
       final updatedLessons = ch.lessons.map((lesson) {
         final content = contentMap[lesson.id];
-        if (content != null && (lesson.content == null || lesson.content!.isEmpty)) {
+        if (content != null &&
+            (lesson.content == null || lesson.content!.isEmpty)) {
           return lesson.copyWith(content: content);
         }
         return lesson;
@@ -74,7 +75,8 @@ Future<List<QuizQuestion>> loadQuizForChapter(String chapterId) async {
       if ((quizMap['chapterId'] as String?) == chapterId) {
         final questions = quizMap['questions'] as List<dynamic>? ?? [];
         return questions
-            .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))
+            .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>)
+                .copyWith(chapterId: chapterId))
             .toList();
       }
     }
@@ -124,7 +126,6 @@ final curriculumProvider =
 );
 
 /// Quiz questions for a specific chapter (async family provider).
-final chapterQuizProvider =
-    FutureProvider.family<List<QuizQuestion>, String>(
+final chapterQuizProvider = FutureProvider.family<List<QuizQuestion>, String>(
   (ref, chapterId) => loadQuizForChapter(chapterId),
 );

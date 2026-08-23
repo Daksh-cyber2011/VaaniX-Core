@@ -50,8 +50,8 @@ class Lesson extends Equatable {
       title: json['title'] as String,
       chapterId: json['chapterId'] as String,
       subtitle: json['subtitle'] as String?,
-      difficulty: Difficulty.values.byName(
-          (json['difficulty'] as String?) ?? 'beginner'),
+      difficulty: Difficulty.values
+          .byName((json['difficulty'] as String?) ?? 'beginner'),
       xpReward: (json['xpReward'] as num?)?.toInt() ?? 10,
       order: (json['order'] as num?)?.toInt() ?? 0,
       content: json['content'] as String?,
@@ -149,6 +149,8 @@ class QuizQuestion extends Equatable {
     required this.options,
     required this.correctIndex,
     this.explanation,
+    this.chapterId = '',
+    this.difficulty = Difficulty.beginner,
   });
 
   final String id;
@@ -157,16 +159,25 @@ class QuizQuestion extends Equatable {
   final int correctIndex;
   final String? explanation;
 
+  /// Owning chapter id (for chapter/difficulty exam selection).
+  final String chapterId;
+
+  /// Difficulty band of the question.
+  final Difficulty difficulty;
+
   /// Deserialize from JSON (for loading quizzes from assets).
   factory QuizQuestion.fromJson(Map<String, dynamic> json) {
     return QuizQuestion(
       id: json['id'] as String,
       prompt: json['prompt'] as String,
-      options: (json['options'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      options:
+          (json['options'] as List<dynamic>).map((e) => e as String).toList(),
       correctIndex: (json['correctIndex'] as num).toInt(),
       explanation: json['explanation'] as String?,
+      chapterId: json['chapterId'] as String? ?? '',
+      difficulty: json['difficulty'] != null
+          ? Difficulty.values.byName(json['difficulty'] as String)
+          : Difficulty.beginner,
     );
   }
 
@@ -177,10 +188,33 @@ class QuizQuestion extends Equatable {
         'options': options,
         'correctIndex': correctIndex,
         'explanation': explanation,
+        'chapterId': chapterId,
+        'difficulty': difficulty.name,
       };
 
+  QuizQuestion copyWith({
+    String? id,
+    String? prompt,
+    List<String>? options,
+    int? correctIndex,
+    String? explanation,
+    String? chapterId,
+    Difficulty? difficulty,
+  }) {
+    return QuizQuestion(
+      id: id ?? this.id,
+      prompt: prompt ?? this.prompt,
+      options: options ?? this.options,
+      correctIndex: correctIndex ?? this.correctIndex,
+      explanation: explanation ?? this.explanation,
+      chapterId: chapterId ?? this.chapterId,
+      difficulty: difficulty ?? this.difficulty,
+    );
+  }
+
   @override
-  List<Object?> get props => [id, prompt, options, correctIndex, explanation];
+  List<Object?> get props =>
+      [id, prompt, options, correctIndex, explanation, chapterId, difficulty];
 }
 
 /// Result of one quiz attempt.
