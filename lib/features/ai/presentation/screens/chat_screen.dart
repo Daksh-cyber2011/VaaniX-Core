@@ -69,7 +69,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const VanWidget(state: VanState.happy, size: 32),
+            const VanWidget(useController: true, size: 32),
             const SizedBox(width: 10),
             Text(companionName, style: AppTextStyles.titleMedium()),
           ],
@@ -302,7 +302,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const VanWidget(state: VanState.thinking, size: 32),
+          const VanWidget(useController: true, size: 32),
           const SizedBox(width: 8),
           Container(
             padding:

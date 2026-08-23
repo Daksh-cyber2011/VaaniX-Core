@@ -78,6 +78,11 @@ class _VanWidgetState extends ConsumerState<VanWidget>
     final isLoading = presentation?.isLoading ?? widget.isLoading;
     final asset = widget.assetCatalog.assetFor(state);
     final reducedMotion = MediaQuery.of(context).disableAnimations;
+    final defaultTap = widget.useController && state.definition.allowsUserInteraction
+        ? () => ref.read(vanControllerProvider.notifier).dispatch(
+              const VanEvent(VanEventType.companionTapped),
+            )
+        : null;
     final tilt = switch (state) {
       VanState.thinking => -0.04,
       VanState.caring || VanState.sad => 0.03,
@@ -88,10 +93,10 @@ class _VanWidgetState extends ConsumerState<VanWidget>
     };
 
     return Semantics(
-      button: widget.onTap != null || widget.onLongPress != null,
+      button: widget.onTap != null || widget.onLongPress != null || defaultTap != null,
       label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
       child: GestureDetector(
-      onTap: widget.onTap,
+      onTap: widget.onTap ?? defaultTap,
       onLongPress: widget.onLongPress,
       child: Column(
         mainAxisSize: MainAxisSize.min,

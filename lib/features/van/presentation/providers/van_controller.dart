@@ -76,9 +76,12 @@ class VanController extends StateNotifier<VanPresentationState> {
   bool canPresent(VanReaction candidate) {
     final current = state.reaction;
     if (current == null || state.current == VanState.idle) return true;
+    if (!state.current.definition.interruptible) {
+      return candidate.priority == VanPriority.critical;
+    }
     if (candidate.priority.index > current.priority.index) return true;
     if (candidate.priority.index == current.priority.index) return true;
-    return state.current.definition.interruptible;
+    return false;
   }
 
   /// Ends a sustained state, for example after an AI stream completes.

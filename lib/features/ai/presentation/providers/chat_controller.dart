@@ -22,6 +22,7 @@ import 'package:vaanix_app/features/achievements/presentation/providers/achievem
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/features/van/van.dart';
 
 /// Immutable state for the chat screen.
 class ChatState {
@@ -118,6 +119,9 @@ class ChatController extends StateNotifier<ChatState> {
       isSending: true,
       clearError: true,
     );
+    final van = _ref.read(vanControllerProvider.notifier);
+    van.dispatch(const VanEvent(VanEventType.userMessageReceived));
+    van.dispatch(const VanEvent(VanEventType.aiThinking));
 
     // Build the conversation context.
     final learner = _buildLearnerContext(profile);
@@ -140,6 +144,10 @@ class ChatController extends StateNotifier<ChatState> {
           isSending: false,
           error: failure.message,
         );
+        van.dispatch(VanEvent(
+          VanEventType.errorOccurred,
+          message: 'I couldn\'t connect right now. Let\'s try again soon.',
+        ));
       },
       (updatedContext) async {
         // The updated context includes the assistant's reply appended.
@@ -148,6 +156,10 @@ class ChatController extends StateNotifier<ChatState> {
           isSending: false,
           clearError: true,
         );
+        final reply = updatedContext.messages.isEmpty
+            ? null
+            : updatedContext.messages.last.content;
+        van.dispatch(VanEvent(VanEventType.aiResponseStarted, message: reply));
 
         // ── Achievement check ──────────────────────────────────────
         // After the first successful chat message, check for the
@@ -166,6 +178,7 @@ class ChatController extends StateNotifier<ChatState> {
     // Generate a new conversation ID.
     final newId = 'conv_${DateTime.now().millisecondsSinceEpoch}';
     state = ChatState(conversationId: newId);
+    _ref.read(vanControllerProvider.notifier).settle();
   }
 
   /// Clear the error state.
