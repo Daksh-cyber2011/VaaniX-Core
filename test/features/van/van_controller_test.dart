@@ -78,9 +78,17 @@ void main() {
       );
       expect(controller.state.current, VanState.error);
     });
+
+    test('disposal cancels a pending fallback safely', () {
+      final controller = VanController();
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect));
+      expect(controller.state.current, VanState.happy);
+      controller.dispose();
+    });
   });
 
-  testWidgets('finite reactions return to idle deterministically', (tester) async {
+  testWidgets('finite reactions return to idle deterministically',
+      (tester) async {
     final controller = VanController();
     addTearDown(controller.dispose);
 

@@ -51,9 +51,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final companionName = profile.resolvedCompanionName;
     final streak = profile.currentStreak;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12
-        ? 'सुप्रभातम्'
-        : (hour < 17 ? 'शुभ अपराह्नः' : 'शुभ सायं');
+    final greeting =
+        hour < 12 ? 'सुप्रभातम्' : (hour < 17 ? 'शुभ अपराह्नः' : 'शुभ सायं');
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -81,7 +80,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 4),
                   CircleAvatar(
                     radius: 18,
-                    backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                    backgroundColor:
+                        colorScheme.primary.withValues(alpha: 0.12),
                     child: Icon(
                       Icons.person_outline,
                       size: 20,

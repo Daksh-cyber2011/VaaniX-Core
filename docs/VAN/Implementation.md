@@ -22,6 +22,20 @@ recoverable system failure. Definitions in `van_state.dart` carry a stable id,
 meaning, priority, default duration, interruptibility, fallback, and speech,
 AI-thinking, and interaction permissions.
 
+| State | V1 fallback presentation | Final asset | Duration / fallback |
+| --- | --- | --- | --- |
+| idle | breathing and gentle bob | `duck_idle_loop` | loop |
+| happy | warm open expression | `duck_happy_short` | 1.4s → idle |
+| thinking | head tilt / considering | `duck_thinking_loop` | sustained |
+| focus | still, attentive posture | `duck_focus_loop` | sustained |
+| caring | gentle inclined posture | `duck_caring_short` | 2.4s → idle |
+| surprised | expanded pose | `duck_surprised_short` | 1.8s → idle |
+| sad | mild concern only | `duck_sad_soft` | 1.8s → idle |
+| funny | playful tilt | `duck_funny_short` | 1.2s → idle |
+| achievement | animated celebratory scale/bob | `duck_achievement_celebrate` | 2.6s → idle |
+| speaking | response presentation | `duck_speaking_loop` | 2.2s → idle |
+| error | brief recoverable wobble | `duck_error_soft` | 2.6s → idle |
+
 ## Events and integration API
 
 `VanEvent` has a typed id, optional short speech-bubble message, and structured
@@ -67,6 +81,14 @@ van_assets.json` reserves stable `duck_*` IDs, format, dimensions, and paths;
 all entries are deliberately marked unavailable until approved source art is
 added. `duck` remains the permanent internal asset prefix; Van remains the
 public default name.
+
+`VanVisualRenderer` is the production default: it renders a catalog asset only
+when it is explicitly marked available; missing, malformed, or unavailable
+Lottie assets always fall back safely to the Flutter character. The V1 asset
+manifest gives every required animation an ID, format, path, duration, loop,
+fallback, V1 requirement, and status. This is intentionally a **VISUAL ASSET
+BLOCKER** until approved vector source files are supplied.
+
 
 ## Testing
 

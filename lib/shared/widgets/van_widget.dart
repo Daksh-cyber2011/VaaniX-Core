@@ -100,53 +100,102 @@ class _VanWidgetState extends State<VanWidget>
     final isLoading = presentation?.isLoading ?? widget.isLoading;
     final asset = widget.assetCatalog.assetFor(state);
     final reducedMotion = MediaQuery.of(context).disableAnimations;
-    final defaultTap = state.definition.allowsUserInteraction ? onDefaultTap : null;
+    final defaultTap =
+        state.definition.allowsUserInteraction ? onDefaultTap : null;
     return Semantics(
-      button: widget.onTap != null || widget.onLongPress != null || defaultTap != null,
+      button: widget.onTap != null ||
+          widget.onLongPress != null ||
+          defaultTap != null,
       label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
       child: GestureDetector(
-      onTap: widget.onTap ?? defaultTap,
-      onLongPress: widget.onLongPress,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Speech bubble (shown above Van)
-          if (widget.showSpeechBubble && (dialogueText != null || isLoading))
-            _SpeechBubble(text: dialogueText, isLoading: isLoading),
-          if (widget.showSpeechBubble && (dialogueText != null || isLoading))
-            const SizedBox(height: 8),
+        onTap: widget.onTap ?? defaultTap,
+        onLongPress: widget.onLongPress,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Speech bubble (shown above Van)
+            if (widget.showSpeechBubble && (dialogueText != null || isLoading))
+              _SpeechBubble(text: dialogueText, isLoading: isLoading),
+            if (widget.showSpeechBubble && (dialogueText != null || isLoading))
+              const SizedBox(height: 8),
 
-          // Van character
-          AnimatedBuilder(
-            animation: _breatheAnimation,
-            builder: (context, child) {
-              final motion = _VanFallbackMotion.resolve(
-                state,
-                _idleController.value,
-                reducedMotion,
-              );
-              final fallbackBody = _VanBody(
-                size: widget.size,
-                state: state,
-                assetId: asset.id,
-                motion: motion,
-              );
-              final visual = reducedMotion
-                  ? fallbackBody
-                  : widget.visualBuilder?.call(context, asset, fallbackBody) ??
-                      VanVisualRenderer(asset: asset, fallback: fallbackBody);
-              return Transform.translate(
-                offset: Offset(0, motion.verticalOffset * widget.size),
-                child: Transform.rotate(
-                  angle: motion.rotation,
-                  child: Transform.scale(scale: motion.scale, child: visual),
-                ),
-              );
-            },
-          ),
-        ],
+            // Van character
+            AnimatedBuilder(
+              animation: _breatheAnimation,
+              builder: (context, child) {
+                final motion = _VanFallbackMotion.resolve(
+                  state,
+                  _idleController.value,
+                  reducedMotion,
+                );
+                final fallbackBody = _VanBody(
+                  size: widget.size,
+                  state: state,
+                  assetId: asset.id,
+                  motion: motion,
+                );
+                final visual = reducedMotion
+                    ? fallbackBody
+                    : widget.visualBuilder
+                            ?.call(context, asset, fallbackBody) ??
+                        VanVisualRenderer(asset: asset, fallback: fallbackBody);
+                return Transform.translate(
+                  offset: Offset(0, motion.verticalOffset * widget.size),
+                  child: Transform.rotate(
+                    angle: motion.rotation,
+                    child: Transform.scale(scale: motion.scale, child: visual),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
-      ),
+    );
+  }
+}
+
+/// State-specific motion for the Flutter renderer while final Lottie assets
+/// remain unavailable. It stays deliberately subtle and honors reduced motion.
+class _VanFallbackMotion {
+  const _VanFallbackMotion({
+    this.verticalOffset = 0.0,
+    this.rotation = 0.0,
+    this.scale = 1.0,
+  });
+
+  final double verticalOffset;
+  final double rotation;
+  final double scale;
+
+  factory _VanFallbackMotion.resolve(
+    VanState state,
+    double animationValue,
+    bool reducedMotion,
+  ) {
+    if (reducedMotion) return const _VanFallbackMotion();
+
+    final wave = Curves.easeInOut.transform(animationValue);
+    return _VanFallbackMotion(
+      verticalOffset: switch (state) {
+        VanState.idle => (wave - 0.5) * 0.018,
+        VanState.achievement => -wave * 0.035,
+        _ => 0.0,
+      },
+      rotation: switch (state) {
+        VanState.thinking => -0.055,
+        VanState.caring || VanState.sad => 0.045,
+        VanState.funny => -0.075 + wave * 0.15,
+        VanState.error => (wave - 0.5) * 0.06,
+        _ => 0.0,
+      },
+      scale: switch (state) {
+        VanState.idle => 1.0 + wave * 0.025,
+        VanState.achievement => 1.0 + wave * 0.06,
+        VanState.surprised => 1.02,
+        VanState.error => 0.98,
+        _ => 1.0,
+      },
     );
   }
 }
