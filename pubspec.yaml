@@ -1,4 +1,4 @@
-name: vaanix_app
+﻿name: vaanix_app
 description: >
   VaaniX — A Sanskrit-first AI-powered language learning companion for Indian students.
   Built around Van, an emotionally intelligent AI duck companion.
@@ -51,7 +51,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
 
   # Crash reporting (production error visibility)
-  sentry_flutter: ^8.9.0
+  sentry_flutter: ^9.0.0
 
   # AI — Google Gemini SDK (first real online ModelAdapter)
   google_generative_ai: ^0.4.6
