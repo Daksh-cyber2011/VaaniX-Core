@@ -157,7 +157,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                             isSelected &&
                             !isCorrect;
 
-                        Color tileColor = Theme.of(context).cardTheme.color;
+                        Color tileColor = Theme.of(context).cardTheme.color ?? Colors.white;
                         Color borderColor = AppColors.borderLight;
                         if (showCorrect) {
                           tileColor = AppColors.success.withValues(alpha: 0.1);

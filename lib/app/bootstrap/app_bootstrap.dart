@@ -45,6 +45,7 @@ Future<void> _loadEnvironment() async {
   }
 }
 
+
 /// Tags the Sentry scope with environment metadata so crashes can be
 /// filtered by flavor / release in the dashboard.
 void _configureSentryScope() {
@@ -56,13 +57,6 @@ void _configureSentryScope() {
   });
 }
 
-Future<void> _loadEnvironment() async {
-  try {
-    await dotenv.load(fileName: AppConstants.envFilePath);
-  } catch (e, st) {
-    reportError(e, st, context: 'dotenv.load');
-  }
-}
 
 Future<void> _initializeSupabase() async {
   if (!AppEnvironment.isSupabaseConfigured) {

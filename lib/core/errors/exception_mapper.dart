@@ -87,6 +87,7 @@ abstract final class ExceptionMapper {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return const TimeoutFailure();
+      case DioExceptionType.transformTimeout:
       case DioExceptionType.connectionError:
         return const NetworkFailure();
       case DioExceptionType.badResponse:
@@ -109,6 +110,8 @@ abstract final class ExceptionMapper {
             return ValidationFailure(message: serverMsg ?? 'Invalid input.');
           case 429:
             return const RateLimitFailure();
+          case null:
+            return ServerFailure(message: serverMsg ?? 'Server error occurred');
           case >= 500:
             return ServerFailure(
               message: serverMsg ?? 'Server error occurred',
@@ -142,9 +145,9 @@ abstract final class ExceptionMapper {
       if (data is String && data.isNotEmpty) return data;
       if (data is Map) {
         // Most common: {"message": "..."}
-        if (data['message'] is String) return data['message'];
+        if (data['message'] is String) return data['message'] as String;
         // Alternative: {"error": "..."}
-        if (data['error'] is String) return data['error'];
+        if (data['error'] is String) return data['error'] as String;
         // FastAPI: {"detail": "string"} or {"detail": [{...}]}
         final detail = data['detail'];
         if (detail is String) return detail;
@@ -155,7 +158,7 @@ abstract final class ExceptionMapper {
           }
         }
         // Some APIs nest under "errors"
-        if (data['errors'] is String) return data['errors'];
+        if (data['errors'] is String) return data['errors'] as String;
       }
     } catch (_) {
       // ignore

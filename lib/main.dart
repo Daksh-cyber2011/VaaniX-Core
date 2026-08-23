@@ -39,7 +39,6 @@ Future<void> main() async {
       // Report all framework errors, not just uncaught ones.
       options.reportSilentFlutterErrors = true;
       // Consider an app "healthy" if no errors for 5 seconds after launch.
-      options.autoAppStartSession = true;
     },
     appRunner: () async {
       await runZonedGuarded<Future<void>>(

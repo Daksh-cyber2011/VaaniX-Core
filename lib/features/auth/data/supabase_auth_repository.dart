@@ -13,7 +13,7 @@
 
 import 'dart:async';
 
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException, AuthApiException, AuthUser;
 
 import 'package:vaanix_app/core/errors/exception_mapper.dart';
 import 'package:vaanix_app/core/errors/exceptions.dart';
@@ -106,7 +106,7 @@ class SupabaseAuthRepository implements AuthRepository {
       // InvalidCredentialsFailure if the message contains 'credential').
       final oauthProvider = OAuthProvider.values.firstWhere(
         (p) => p.name == provider,
-        orElse: () => throw AuthApiException(
+        orElse: () => throw Exception(
           'Unknown OAuth provider: "$provider". '
           'Supported providers: '
           '${OAuthProvider.values.map((p) => p.name).join(', ')}.',
@@ -175,11 +175,11 @@ class SupabaseAuthRepository implements AuthRepository {
       id: user.id,
       email: user.email,
       phone: user.phone,
-      displayName: meta['name']?.toString() ??
-          meta['full_name']?.toString() ??
-          meta['user_name']?.toString(),
-      photoUrl: meta['avatar_url']?.toString() ??
-          meta['picture']?.toString(),
+      displayName: meta?['name']?.toString() ??
+          meta?['full_name']?.toString() ??
+          meta?['user_name']?.toString(),
+      photoUrl: meta?['avatar_url']?.toString() ??
+          meta?['picture']?.toString(),
     );
   }
 
