@@ -8,12 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';
+import 'package:vaanix_app/features/van/domain/van_event.dart';
 import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
+import 'package:vaanix_app/features/van/presentation/van_visual_renderer.dart';
 
 export 'package:vaanix_app/features/van/domain/van_state.dart';
 
-class VanWidget extends ConsumerStatefulWidget {
+class VanWidget extends StatefulWidget {
   const VanWidget({
     super.key,
     this.state = VanState.idle,
@@ -24,7 +26,8 @@ class VanWidget extends ConsumerStatefulWidget {
     this.dialogueText,
     this.isLoading = false,
     this.useController = false,
-    this.assetCatalog = VanAssetCatalog.placeholder,
+    this.assetCatalog = VanAssetCatalog.v1,
+    this.visualBuilder,
     this.semanticLabel,
   });
 
@@ -40,13 +43,14 @@ class VanWidget extends ConsumerStatefulWidget {
   /// of the supplied [state]. Existing call sites remain presentation-only.
   final bool useController;
   final VanAssetCatalog assetCatalog;
+  final VanVisualBuilder? visualBuilder;
   final String? semanticLabel;
 
   @override
-  ConsumerState<VanWidget> createState() => _VanWidgetState();
+  State<VanWidget> createState() => _VanWidgetState();
 }
 
-class _VanWidgetState extends ConsumerState<VanWidget>
+class _VanWidgetState extends State<VanWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _idleController;
   late Animation<double> _breatheAnimation;
@@ -72,26 +76,31 @@ class _VanWidgetState extends ConsumerState<VanWidget>
 
   @override
   Widget build(BuildContext context) {
-    final presentation = widget.useController ? ref.watch(vanControllerProvider) : null;
+    if (widget.useController) {
+      return Consumer(
+        builder: (context, ref, child) => _buildVan(
+          context,
+          presentation: ref.watch(vanControllerProvider),
+          onDefaultTap: () => ref.read(vanControllerProvider.notifier).dispatch(
+                const VanEvent(VanEventType.companionTapped),
+              ),
+        ),
+      );
+    }
+    return _buildVan(context);
+  }
+
+  Widget _buildVan(
+    BuildContext context, {
+    VanPresentationState? presentation,
+    VoidCallback? onDefaultTap,
+  }) {
     final state = presentation?.current ?? widget.state;
     final dialogueText = presentation?.message ?? widget.dialogueText;
     final isLoading = presentation?.isLoading ?? widget.isLoading;
     final asset = widget.assetCatalog.assetFor(state);
     final reducedMotion = MediaQuery.of(context).disableAnimations;
-    final defaultTap = widget.useController && state.definition.allowsUserInteraction
-        ? () => ref.read(vanControllerProvider.notifier).dispatch(
-              const VanEvent(VanEventType.companionTapped),
-            )
-        : null;
-    final tilt = switch (state) {
-      VanState.thinking => -0.04,
-      VanState.caring || VanState.sad => 0.03,
-      VanState.funny => -0.08,
-      VanState.surprised => 0.05,
-      VanState.achievement => 0.02,
-      _ => 0.0,
-    };
-
+    final defaultTap = state.definition.allowsUserInteraction ? onDefaultTap : null;
     return Semantics(
       button: widget.onTap != null || widget.onLongPress != null || defaultTap != null,
       label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
@@ -111,18 +120,29 @@ class _VanWidgetState extends ConsumerState<VanWidget>
           AnimatedBuilder(
             animation: _breatheAnimation,
             builder: (context, child) {
-              return Transform.scale(
-                scale: !reducedMotion && state == VanState.idle
-                    ? _breatheAnimation.value
-                    : 1.0,
-                child: Transform.rotate(angle: reducedMotion ? 0 : tilt, child: child),
+              final motion = _VanFallbackMotion.resolve(
+                state,
+                _idleController.value,
+                reducedMotion,
+              );
+              final fallbackBody = _VanBody(
+                size: widget.size,
+                state: state,
+                assetId: asset.id,
+                motion: motion,
+              );
+              final visual = reducedMotion
+                  ? fallbackBody
+                  : widget.visualBuilder?.call(context, asset, fallbackBody) ??
+                      VanVisualRenderer(asset: asset, fallback: fallbackBody);
+              return Transform.translate(
+                offset: Offset(0, motion.verticalOffset * widget.size),
+                child: Transform.rotate(
+                  angle: motion.rotation,
+                  child: Transform.scale(scale: motion.scale, child: visual),
+                ),
               );
             },
-            child: _VanBody(
-              size: widget.size,
-              state: state,
-              assetId: asset.id,
-            ),
           ),
         ],
       ),
@@ -132,15 +152,22 @@ class _VanWidgetState extends ConsumerState<VanWidget>
 }
 
 class _VanBody extends StatelessWidget {
-  const _VanBody({required this.size, required this.state, required this.assetId});
+  const _VanBody({
+    required this.size,
+    required this.state,
+    required this.assetId,
+    required this.motion,
+  });
 
   final double size;
   final VanState state;
   final String assetId;
+  final _VanFallbackMotion motion;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      key: const ValueKey('van-flutter-fallback'),
       width: size,
       height: size,
       child: Stack(
