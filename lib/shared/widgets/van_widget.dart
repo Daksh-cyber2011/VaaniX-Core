@@ -1,14 +1,18 @@
-/// Van Widget — AI Companion Display
+/// VAN's responsive companion widget and approved-art fallback renderer.
 ///
-/// Widget for Van the duck companion.
-/// Renders emotional states, breathing animation, speech bubble, and taps.
+/// The state and event contracts live in `features/van`; this widget only
+/// turns a presentation state into a visual. Until approved source animation
+/// files arrive, [_VanFallbackPainter] provides a deliberately polished 2D
+/// vector fallback rather than a missing asset or generic icon.
+library;
+
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/domain/van_event.dart';
+import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
 import 'package:vaanix_app/features/van/presentation/van_visual_renderer.dart';
@@ -39,8 +43,7 @@ class VanWidget extends StatefulWidget {
   final String? dialogueText;
   final bool isLoading;
 
-  /// When true, render the global event-driven [VanController] state instead
-  /// of the supplied [state]. Existing call sites remain presentation-only.
+  /// Renders the global event-driven presentation instead of [state].
   final bool useController;
   final VanAssetCatalog assetCatalog;
   final VanVisualBuilder? visualBuilder;
@@ -52,42 +55,36 @@ class VanWidget extends StatefulWidget {
 
 class _VanWidgetState extends State<VanWidget>
     with SingleTickerProviderStateMixin {
-  late AnimationController _idleController;
-  late Animation<double> _breatheAnimation;
+  late final AnimationController _motionController;
 
   @override
   void initState() {
     super.initState();
-    _idleController = AnimationController(
-      duration: Duration(milliseconds: AppConstants.vanIdleCycleDurationMs),
+    _motionController = AnimationController(
+      duration:
+          const Duration(milliseconds: AppConstants.vanIdleCycleDurationMs),
       vsync: this,
-    )..repeat(reverse: true);
-
-    _breatheAnimation = Tween<double>(begin: 1.0, end: 1.04).animate(
-      CurvedAnimation(parent: _idleController, curve: Curves.easeInOut),
-    );
+    )..repeat();
   }
 
   @override
   void dispose() {
-    _idleController.dispose();
+    _motionController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.useController) {
-      return Consumer(
-        builder: (context, ref, child) => _buildVan(
-          context,
-          presentation: ref.watch(vanControllerProvider),
-          onDefaultTap: () => ref.read(vanControllerProvider.notifier).dispatch(
-                const VanEvent(VanEventType.companionTapped),
-              ),
-        ),
-      );
-    }
-    return _buildVan(context);
+    if (!widget.useController) return _buildVan(context);
+    return Consumer(
+      builder: (context, ref, _) => _buildVan(
+        context,
+        presentation: ref.watch(vanControllerProvider),
+        onDefaultTap: () => ref.read(vanControllerProvider.notifier).dispatch(
+              const VanEvent(VanEventType.companionTapped),
+            ),
+      ),
+    );
   }
 
   Widget _buildVan(
@@ -96,60 +93,57 @@ class _VanWidgetState extends State<VanWidget>
     VoidCallback? onDefaultTap,
   }) {
     final state = presentation?.current ?? widget.state;
-    final dialogueText = presentation?.message ?? widget.dialogueText;
-    final isLoading = presentation?.isLoading ?? widget.isLoading;
+    final dialogue = presentation?.message ?? widget.dialogueText;
+    final loading = presentation?.isLoading ?? widget.isLoading;
     final asset = widget.assetCatalog.assetFor(state);
-    final reducedMotion = MediaQuery.of(context).disableAnimations;
+    final reducedMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final defaultTap =
         state.definition.allowsUserInteraction ? onDefaultTap : null;
+    final hasBubble = widget.showSpeechBubble && (dialogue != null || loading);
+
     return Semantics(
       button: widget.onTap != null ||
           widget.onLongPress != null ||
           defaultTap != null,
       label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: widget.onTap ?? defaultTap,
         onLongPress: widget.onLongPress,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Speech bubble (shown above Van)
-            if (widget.showSpeechBubble && (dialogueText != null || isLoading))
-              _SpeechBubble(text: dialogueText, isLoading: isLoading),
-            if (widget.showSpeechBubble && (dialogueText != null || isLoading))
-              const SizedBox(height: 8),
-
-            // Van character
+            if (hasBubble) _SpeechBubble(text: dialogue, isLoading: loading),
+            if (hasBubble) const SizedBox(height: 8),
             AnimatedBuilder(
-              animation: _breatheAnimation,
-              builder: (context, child) {
+              animation: _motionController,
+              builder: (context, _) {
                 final motion = _VanFallbackMotion.resolve(
                   state,
-                  _idleController.value,
+                  _motionController.value,
                   reducedMotion,
                 );
-                final fallbackBody = _VanBody(
-                  size: widget.size,
-                  state: state,
-                  assetId: asset.id,
-                  motion: motion,
+                final fallback = RepaintBoundary(
+                  key: const ValueKey('van-flutter-fallback'),
+                  child: _VanFallbackBody(
+                    size: widget.size,
+                    state: state,
+                    motion: motion,
+                  ),
                 );
                 final visual = reducedMotion
-                    ? fallbackBody
-                    : widget.visualBuilder
-                            ?.call(context, asset, fallbackBody) ??
-                        VanVisualRenderer(asset: asset, fallback: fallbackBody);
+                    ? fallback
+                    : widget.visualBuilder?.call(context, asset, fallback) ??
+                        VanVisualRenderer(asset: asset, fallback: fallback);
                 return Transform.translate(
                   offset: Offset(0, motion.verticalOffset * widget.size),
                   child: Transform.rotate(
                     angle: motion.rotation,
                     child: Transform.scale(
                       scale: motion.scale,
-                      child: SizedBox(
-                        width: widget.size,
-                        height: widget.size,
-                        child: visual,
-                      ),
+                      child: SizedBox.square(
+                          dimension: widget.size, child: visual),
                     ),
                   ),
                 );
@@ -162,20 +156,19 @@ class _VanWidgetState extends State<VanWidget>
   }
 }
 
-/// Programmatic fallback motion for Van until the final vector/Lottie assets
-/// land. Computes a subtle breathing scale and a gentle vertical bob from the
-/// idle animation value, honoring the system "reduced motion" accessibility
-/// preference. Non-idle states render statically.
+@immutable
 class _VanFallbackMotion {
   const _VanFallbackMotion({
-    this.verticalOffset = 0.0,
-    this.rotation = 0.0,
-    this.scale = 1.0,
-    this.wingAngle = 0.0,
-    this.eyeOpenness = 1.0,
-    this.pupilOffset = 0.0,
-    this.beakHeightFactor = 0.10,
+    this.verticalOffset = 0,
+    this.rotation = 0,
+    this.scale = 1,
+    this.wingAngle = 0,
+    this.eyeOpenness = 1,
+    this.pupilOffset = Offset.zero,
+    this.beakHeightFactor = .14,
     this.showSparkles = false,
+    this.wink = false,
+    this.tuftLift = 0,
   });
 
   final double verticalOffset;
@@ -183,315 +176,451 @@ class _VanFallbackMotion {
   final double scale;
   final double wingAngle;
   final double eyeOpenness;
-  final double pupilOffset;
+  final Offset pupilOffset;
   final double beakHeightFactor;
   final bool showSparkles;
+  final bool wink;
+  final double tuftLift;
 
+  /// The animation is phase-based rather than random, keeping screenshots,
+  /// tests, and state changes predictable while still avoiding rigid motion.
   factory _VanFallbackMotion.resolve(
     VanState state,
-    double animationValue,
+    double progress,
     bool reducedMotion,
   ) {
     if (reducedMotion) {
-      return const _VanFallbackMotion();
+      return _staticPoseFor(state);
     }
-    final wave = Curves.easeInOut.transform(animationValue);
-    final breathe = state == VanState.idle ? wave * 0.025 : 0.0;
-    final bob = state == VanState.idle ? (wave - 0.5) * 0.018 : 0.0;
-    final blink = animationValue > 0.94 ? 0.16 : 1.0;
+    final phase = progress * math.pi * 2;
+    final slowWave = math.sin(phase);
+    final quickWave = math.sin(phase * 2);
+    final blink = _blinkAt(progress) ? .16 : 1.0;
+    final idle = state == VanState.idle;
     return _VanFallbackMotion(
-      verticalOffset: bob,
+      verticalOffset: switch (state) {
+        VanState.achievement => -math.max(0, slowWave) * .055,
+        VanState.happy => -math.max(0, slowWave) * .018,
+        _ => idle ? slowWave * .012 : 0,
+      },
       scale: switch (state) {
-        VanState.achievement => 1.0 + wave * 0.06,
-        VanState.surprised => 1.02,
-        VanState.error => 0.98,
-        _ => 1.0 + breathe,
+        VanState.achievement => 1 + math.max(0, slowWave) * .055,
+        VanState.surprised => 1.025,
+        VanState.error => .99,
+        _ => 1 + (idle ? slowWave.abs() * .014 : 0),
       },
       rotation: switch (state) {
-        VanState.thinking => -0.055,
-        VanState.caring || VanState.sad => 0.045,
-        VanState.funny => -0.075 + wave * 0.15,
-        VanState.error => (wave - 0.5) * 0.06,
-        _ => 0.0,
+        VanState.thinking => -.06 + slowWave * .012,
+        VanState.caring => .045,
+        VanState.sad => .055,
+        VanState.funny => -.075 + slowWave * .035,
+        VanState.error => quickWave * .035,
+        _ => 0,
       },
       wingAngle: switch (state) {
-        VanState.achievement => 0.55 + wave * 0.25,
-        VanState.happy || VanState.surprised => 0.24,
-        VanState.speaking => 0.06 + wave * 0.10,
-        VanState.caring => -0.10,
-        _ => 0.0,
+        VanState.achievement => .62 + quickWave * .15,
+        VanState.happy => .18 + math.max(0, quickWave) * .13,
+        VanState.surprised => .34,
+        VanState.speaking => .08 + quickWave * .1,
+        VanState.caring => -.12,
+        VanState.funny => .17,
+        _ => idle ? slowWave * .035 : 0,
       },
-      eyeOpenness: state == VanState.sad ? 0.65 : blink,
+      eyeOpenness: switch (state) {
+        VanState.focus => .82,
+        VanState.sad => .68,
+        VanState.caring => .82,
+        VanState.surprised => 1.16,
+        _ => blink,
+      },
       pupilOffset: switch (state) {
-        VanState.thinking => 0.22,
-        VanState.focus => 0.05,
-        VanState.caring || VanState.sad => -0.08,
-        _ => 0.0,
+        VanState.thinking => const Offset(.17, -.20),
+        VanState.focus => const Offset(0, .14),
+        VanState.caring || VanState.sad => const Offset(-.06, .08),
+        VanState.surprised => const Offset(0, -.08),
+        _ => idle ? Offset(slowWave * .07, 0) : Offset.zero,
       },
-      beakHeightFactor: state == VanState.speaking
-          ? 0.08 + wave * 0.07
-          : state == VanState.surprised
-              ? 0.14
-              : 0.10,
+      beakHeightFactor: switch (state) {
+        VanState.speaking => .13 + (quickWave + 1) * .045,
+        VanState.surprised => .27,
+        VanState.achievement => .2,
+        VanState.sad || VanState.caring => .1,
+        _ => .14,
+      },
       showSparkles:
           state == VanState.achievement || state == VanState.surprised,
+      wink: state == VanState.funny,
+      tuftLift: switch (state) {
+        VanState.achievement || VanState.surprised => .12 + slowWave * .04,
+        VanState.sad => -.06,
+        _ => idle ? slowWave * .03 : 0,
+      },
     );
+  }
+
+  static _VanFallbackMotion _staticPoseFor(VanState state) =>
+      _VanFallbackMotion(
+        rotation: switch (state) {
+          VanState.thinking => -.06,
+          VanState.caring => .045,
+          VanState.sad => .055,
+          VanState.funny => -.075,
+          _ => 0,
+        },
+        wingAngle: switch (state) {
+          VanState.achievement => .65,
+          VanState.happy => .2,
+          VanState.surprised => .34,
+          VanState.caring => -.12,
+          VanState.funny => .17,
+          _ => 0,
+        },
+        eyeOpenness: switch (state) {
+          VanState.focus => .82,
+          VanState.sad => .68,
+          VanState.caring => .82,
+          VanState.surprised => 1.16,
+          _ => 1,
+        },
+        pupilOffset: switch (state) {
+          VanState.thinking => const Offset(.17, -.20),
+          VanState.focus => const Offset(0, .14),
+          VanState.caring || VanState.sad => const Offset(-.06, .08),
+          VanState.surprised => const Offset(0, -.08),
+          _ => Offset.zero,
+        },
+        beakHeightFactor: switch (state) {
+          VanState.speaking => .19,
+          VanState.surprised => .27,
+          VanState.achievement => .2,
+          VanState.sad || VanState.caring => .1,
+          _ => .14,
+        },
+        showSparkles:
+            state == VanState.achievement || state == VanState.surprised,
+        wink: state == VanState.funny,
+        tuftLift: switch (state) {
+          VanState.achievement || VanState.surprised => .12,
+          VanState.sad => -.06,
+          _ => 0,
+        },
+      );
+
+  static bool _blinkAt(double progress) {
+    // Two brief, gentle blinks per 3.5-second breathing cycle.
+    return (progress > .22 && progress < .255) ||
+        (progress > .78 && progress < .805);
   }
 }
 
-class _VanBody extends StatelessWidget {
-  const _VanBody({
+class _VanFallbackBody extends StatelessWidget {
+  const _VanFallbackBody({
     required this.size,
     required this.state,
-    required this.assetId,
     required this.motion,
   });
 
   final double size;
   final VanState state;
-  final String assetId;
   final _VanFallbackMotion motion;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      key: const ValueKey('van-flutter-fallback'),
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (motion.showSparkles) ...[
-            Positioned(
-              top: size * 0.10,
-              left: size * 0.07,
-              child: Icon(
-                Icons.auto_awesome_rounded,
-                color: AppColors.xp,
-                size: size * 0.12,
-              ),
-            ),
-            Positioned(
-              top: size * 0.25,
-              right: size * 0.05,
-              child: Icon(
-                Icons.star_rounded,
-                color: AppColors.xp,
-                size: size * 0.10,
-              ),
-            ),
-          ],
-          // Signature feather tuft: a stable silhouette cue from the Bible.
-          Positioned(
-            top: size * 0.005,
-            child: Semantics(
-              label: assetId,
-              excludeSemantics: true,
-              child: Container(
-                width: size * 0.13,
-                height: size * 0.10,
-                decoration: BoxDecoration(
-                  color: AppColors.vanYellow,
-                  borderRadius: BorderRadius.circular(size * 0.08),
-                ),
-              ),
-            ),
-          ),
-          // Body (≈35% of height per design bible)
-          Positioned(
-            bottom: size * 0.15,
-            child: Container(
-              width: size * 0.55,
-              height: size * 0.40,
-              decoration: BoxDecoration(
-                color: AppColors.vanYellow,
-                borderRadius: BorderRadius.circular(size * 0.2),
-              ),
-            ),
-          ),
-          // Rounded wings function as expressive hands, per the VAN Bible.
-          Positioned(
-            bottom: size * 0.29,
-            left: size * 0.08,
-            child: Transform.rotate(
-              angle: -motion.wingAngle,
-              alignment: Alignment.bottomRight,
-              child: _VanWing(size: size * 0.24),
-            ),
-          ),
-          Positioned(
-            bottom: size * 0.29,
-            right: size * 0.08,
-            child: Transform.rotate(
-              angle: motion.wingAngle,
-              alignment: Alignment.bottomLeft,
-              child: _VanWing(size: size * 0.24),
-            ),
-          ),
-          // Default blue hoodie. Final vector/Lottie art can replace this
-          // fallback through VanAssetCatalog without changing this API.
-          Positioned(
-            bottom: size * 0.19,
-            child: Container(
-              width: size * 0.58,
-              height: size * 0.18,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(size * 0.13),
-              ),
-              child: Center(
-                child: Container(
-                  width: size * 0.035,
-                  height: size * 0.065,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    borderRadius: BorderRadius.circular(size * 0.03),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Head (≈45% of height per design bible — circular)
-          Positioned(
-            top: size * 0.05,
-            child: Container(
-              width: size * 0.60,
-              height: size * 0.55,
-              decoration: BoxDecoration(
-                color: AppColors.vanYellow,
-                borderRadius: BorderRadius.circular(size * 0.30),
-              ),
-              child: Stack(
-                children: [
-                  // Eyes
-                  Positioned(
-                    top: size * 0.14,
-                    left: size * 0.10,
-                    child: _VanEye(
-                      size: size * 0.08,
-                      state: state,
-                      openness: motion.eyeOpenness,
-                      pupilOffset: motion.pupilOffset,
-                    ),
-                  ),
-                  Positioned(
-                    top: size * 0.14,
-                    right: size * 0.10,
-                    child: _VanEye(
-                      size: size * 0.08,
-                      state: state,
-                      openness: motion.eyeOpenness,
-                      pupilOffset: motion.pupilOffset,
-                    ),
-                  ),
-                  // Beak
-                  Positioned(
-                    bottom: size * 0.08,
-                    left: size * 0.18,
-                    right: size * 0.18,
-                    child: Container(
-                      height: size * motion.beakHeightFactor,
-                      decoration: BoxDecoration(
-                        color: AppColors.vanOrange,
-                        borderRadius: BorderRadius.circular(size * 0.05),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Feet (orange, visible below body)
-          Positioned(
-            bottom: size * 0.02,
-            left: size * 0.18,
-            child: _VanFoot(size: size * 0.12),
-          ),
-          Positioned(
-            bottom: size * 0.02,
-            right: size * 0.18,
-            child: _VanFoot(size: size * 0.12),
-          ),
-        ],
+    return CustomPaint(
+      painter: _VanFallbackPainter(
+        state: state,
+        motion: motion,
+        darkMode: Theme.of(context).brightness == Brightness.dark,
       ),
+      child: const SizedBox.expand(),
     );
   }
 }
 
-class _VanEye extends StatelessWidget {
-  const _VanEye({
-    required this.size,
+/// A flat, soft-vector VAN construction. It deliberately uses no heavy
+/// outlines, emoji, or Material glyphs so it stays visually consistent until
+/// final Lottie/vector art is approved and supplied through the asset catalog.
+class _VanFallbackPainter extends CustomPainter {
+  const _VanFallbackPainter({
     required this.state,
-    required this.openness,
-    required this.pupilOffset,
+    required this.motion,
+    required this.darkMode,
   });
 
-  final double size;
   final VanState state;
-  final double openness;
-  final double pupilOffset;
+  final _VanFallbackMotion motion;
+  final bool darkMode;
+
+  static const _feather = Color(0xFFF4C74A);
+  static const _cream = Color(0xFFFFE7A3);
+  static const _wing = Color(0xFFF8D76B);
+  static const _eye = Color(0xFF263044);
+  static const _hoodie = Color(0xFF3678D7);
+  static const _hoodieShade = Color(0xFF2864BB);
+  static const _beak = Color(0xFFF08B3E);
+  static const _beakShade = Color(0xFFDD7130);
 
   @override
-  Widget build(BuildContext context) {
-    final isHappy = state == VanState.happy || state == VanState.achievement;
-    return Container(
-      width: size,
-      height: isHappy ? size * 0.6 : size * openness,
-      decoration: BoxDecoration(
-        color: const Color(0xFF1C1C2E),
-        borderRadius: BorderRadius.circular(size),
+  void paint(Canvas canvas, Size size) {
+    final s = math.min(size.width, size.height);
+    final origin = Offset((size.width - s) / 2, (size.height - s) / 2);
+    canvas.save();
+    canvas.translate(origin.dx, origin.dy);
+
+    if (motion.showSparkles) _paintSparkles(canvas, s);
+    _paintFeet(canvas, s);
+    _paintBodyAndWings(canvas, s);
+    _paintHoodie(canvas, s);
+    _paintHead(canvas, s);
+    canvas.restore();
+  }
+
+  void _paintSparkles(Canvas canvas, double s) {
+    final paint = Paint()
+      ..color = const Color(0xFFF5C447).withValues(alpha: .9);
+    _diamond(canvas, Offset(.16 * s, .22 * s), .045 * s, paint);
+    _diamond(canvas, Offset(.84 * s, .34 * s), .032 * s, paint);
+    if (state == VanState.achievement) {
+      _diamond(canvas, Offset(.76 * s, .12 * s), .022 * s, paint);
+      _diamond(canvas, Offset(.25 * s, .44 * s), .018 * s, paint);
+    }
+  }
+
+  void _paintFeet(Canvas canvas, double s) {
+    final paint = Paint()..color = _beak;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+            center: Offset(.40 * s, .86 * s), width: .17 * s, height: .075 * s),
+        Radius.circular(.06 * s),
       ),
-      child: isHappy
-          ? null
-          : Align(
-              alignment: Alignment(0.3 + pupilOffset, -0.3),
-              child: Container(
-                width: size * 0.25,
-                height: size * 0.25,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
+      paint,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+            center: Offset(.60 * s, .86 * s), width: .17 * s, height: .075 * s),
+        Radius.circular(.06 * s),
+      ),
+      paint,
     );
   }
-}
 
-class _VanWing extends StatelessWidget {
-  const _VanWing({required this.size});
+  void _paintBodyAndWings(Canvas canvas, double s) {
+    final wingPaint = Paint()..color = _wing;
+    _paintWing(canvas, Offset(.30 * s, .61 * s), -motion.wingAngle, false, s,
+        wingPaint);
+    _paintWing(
+        canvas, Offset(.70 * s, .61 * s), motion.wingAngle, true, s, wingPaint);
 
-  final double size;
+    final body = Rect.fromCenter(
+      center: Offset(.5 * s, .62 * s),
+      width: .53 * s,
+      height: .42 * s,
+    );
+    canvas.drawOval(body, Paint()..color = _feather);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(.5 * s, .68 * s),
+        width: .31 * s,
+        height: .22 * s,
+      ),
+      Paint()..color = _cream.withValues(alpha: .7),
+    );
+  }
+
+  void _paintWing(Canvas canvas, Offset pivot, double angle, bool flip,
+      double s, Paint paint) {
+    canvas.save();
+    canvas.translate(pivot.dx, pivot.dy);
+    canvas.rotate(flip ? angle : -angle);
+    final rect = Rect.fromCenter(
+      center: Offset(flip ? .045 * s : -.045 * s, .015 * s),
+      width: .20 * s,
+      height: .27 * s,
+    );
+    canvas.drawOval(rect, paint);
+    canvas.restore();
+  }
+
+  void _paintHoodie(Canvas canvas, double s) {
+    final shell = RRect.fromRectAndCorners(
+      Rect.fromLTWH(.245 * s, .59 * s, .51 * s, .22 * s),
+      topLeft: Radius.circular(.13 * s),
+      topRight: Radius.circular(.13 * s),
+      bottomLeft: Radius.circular(.075 * s),
+      bottomRight: Radius.circular(.075 * s),
+    );
+    canvas.drawRRect(shell, Paint()..color = _hoodie);
+    canvas.drawArc(
+      Rect.fromCenter(
+          center: Offset(.5 * s, .62 * s), width: .31 * s, height: .18 * s),
+      math.pi,
+      math.pi,
+      false,
+      Paint()
+        ..color = _hoodieShade
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = .028 * s,
+    );
+    final string = Paint()
+      ..color = Colors.white.withValues(alpha: .85)
+      ..strokeWidth = .012 * s
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+        Offset(.455 * s, .665 * s), Offset(.43 * s, .72 * s), string);
+    canvas.drawLine(
+        Offset(.545 * s, .665 * s), Offset(.57 * s, .72 * s), string);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(.40 * s, .735 * s, .20 * s, .045 * s),
+        Radius.circular(.03 * s),
+      ),
+      Paint()..color = _hoodieShade.withValues(alpha: .65),
+    );
+    final logo = Paint()
+      ..color = Colors.white.withValues(alpha: .9)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .012 * s
+      ..strokeCap = StrokeCap.round;
+    final mark = Path()
+      ..moveTo(.485 * s, .69 * s)
+      ..lineTo(.5 * s, .71 * s)
+      ..lineTo(.515 * s, .69 * s);
+    canvas.drawPath(mark, logo);
+  }
+
+  void _paintHead(Canvas canvas, double s) {
+    _paintTuft(canvas, s);
+    final head = Rect.fromCenter(
+      center: Offset(.5 * s, .36 * s),
+      width: .63 * s,
+      height: .53 * s,
+    );
+    canvas.drawOval(head, Paint()..color = _feather);
+    _paintEyes(canvas, s);
+    _paintBeak(canvas, s);
+  }
+
+  void _paintTuft(Canvas canvas, double s) {
+    final baseY = (.115 - motion.tuftLift) * s;
+    final paint = Paint()..color = _feather;
+    for (final tuft in <(double, double, double)>[
+      (.45, -.06, -.36),
+      (.50, -.11, 0),
+      (.55, -.06, .36),
+    ]) {
+      canvas.save();
+      canvas.translate(tuft.$1 * s, (baseY + tuft.$2 * s));
+      canvas.rotate(tuft.$3);
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset.zero, width: .085 * s, height: .17 * s),
+        paint,
+      );
+      canvas.restore();
+    }
+  }
+
+  void _paintEyes(Canvas canvas, double s) {
+    final left = Offset(.395 * s, .335 * s);
+    final right = Offset(.605 * s, .335 * s);
+    if (state == VanState.happy || state == VanState.achievement) {
+      _happyEye(canvas, left, s);
+      _happyEye(canvas, right, s);
+      return;
+    }
+    _eyeShape(canvas, left, s, motion.wink ? .12 : motion.eyeOpenness, false);
+    _eyeShape(canvas, right, s, motion.eyeOpenness, true);
+  }
+
+  void _eyeShape(
+      Canvas canvas, Offset center, double s, double openness, bool right) {
+    final eyeWidth = .105 * s;
+    final eyeHeight = .145 * s * openness;
+    canvas.drawOval(
+      Rect.fromCenter(center: center, width: eyeWidth, height: eyeHeight),
+      Paint()..color = _eye,
+    );
+    if (openness < .25) return;
+    final pupil = center +
+        Offset(
+          motion.pupilOffset.dx * eyeWidth * .35,
+          motion.pupilOffset.dy * eyeHeight * .35,
+        );
+    canvas.drawCircle(
+      pupil + Offset(right ? -.014 * s : .014 * s, -.026 * s),
+      .018 * s,
+      Paint()..color = Colors.white.withValues(alpha: .96),
+    );
+  }
+
+  void _happyEye(Canvas canvas, Offset center, double s) {
+    final paint = Paint()
+      ..color = _eye
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = .027 * s
+      ..strokeCap = StrokeCap.round;
+    canvas.drawArc(
+      Rect.fromCenter(center: center, width: .115 * s, height: .08 * s),
+      0,
+      math.pi,
+      false,
+      paint,
+    );
+  }
+
+  void _paintBeak(Canvas canvas, double s) {
+    final center = Offset(.5 * s, .50 * s);
+    final height = math.max(.065 * s, motion.beakHeightFactor * s);
+    final top = RRect.fromRectAndRadius(
+      Rect.fromCenter(
+          center: center - Offset(0, height * .19),
+          width: .23 * s,
+          height: height * .52),
+      Radius.circular(height),
+    );
+    final bottom = RRect.fromRectAndRadius(
+      Rect.fromCenter(
+          center: center + Offset(0, height * .20),
+          width: .21 * s,
+          height: height * .48),
+      Radius.circular(height),
+    );
+    canvas.drawRRect(top, Paint()..color = _beak);
+    canvas.drawRRect(bottom, Paint()..color = _beakShade);
+    if (state == VanState.sad || state == VanState.caring) {
+      final paint = Paint()
+        ..color = _beakShade.withValues(alpha: .65)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = .009 * s;
+      canvas.drawArc(
+        Rect.fromCenter(
+            center: center + Offset(0, height * .08),
+            width: .12 * s,
+            height: .06 * s),
+        math.pi,
+        math.pi,
+        false,
+        paint,
+      );
+    }
+  }
+
+  void _diamond(Canvas canvas, Offset center, double radius, Paint paint) {
+    final path = Path()
+      ..moveTo(center.dx, center.dy - radius)
+      ..lineTo(center.dx + radius * .58, center.dy)
+      ..lineTo(center.dx, center.dy + radius)
+      ..lineTo(center.dx - radius * .58, center.dy)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size * 0.72,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF9D96E),
-        borderRadius: BorderRadius.circular(size * 0.6),
-      ),
-    );
-  }
-}
-
-class _VanFoot extends StatelessWidget {
-  const _VanFoot({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size * 0.5,
-      decoration: BoxDecoration(
-        color: AppColors.vanOrange,
-        borderRadius: BorderRadius.circular(size * 0.25),
-      ),
-    );
-  }
+  bool shouldRepaint(covariant _VanFallbackPainter oldDelegate) =>
+      oldDelegate.state != state ||
+      oldDelegate.motion != motion ||
+      oldDelegate.darkMode != darkMode;
 }
 
 class _SpeechBubble extends StatelessWidget {
@@ -502,43 +631,79 @@ class _SpeechBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      constraints: const BoxConstraints(maxWidth: 260),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+    final media = MediaQuery.maybeOf(context);
+    final maxWidth = math.max(
+      80.0,
+      math.min(300.0, (media?.size.width ?? 300) - 32),
+    );
+    final theme = Theme.of(context);
+    return Semantics(
+      liveRegion: isLoading,
+      label: text ?? 'Van is thinking',
+      child: CustomPaint(
+        painter: _BubbleTailPainter(color: theme.colorScheme.surface),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: .18)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .06),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isLoading) ...[
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(width: 9),
+              ],
+              Flexible(
+                child: Text(
+                  text ?? 'Thinking…',
+                  style: theme.textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (isLoading) ...[
-            const SizedBox(
-              width: 14,
-              height: 14,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            const SizedBox(width: 8),
-          ],
-          Flexible(
-            child: Text(
-              text ?? 'Thinking…',
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
       ),
     );
   }
+}
+
+class _BubbleTailPainter extends CustomPainter {
+  const _BubbleTailPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width * .5 - 9, size.height - 1)
+      ..lineTo(size.width * .5, size.height + 7)
+      ..lineTo(size.width * .5 + 9, size.height - 1)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _BubbleTailPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
