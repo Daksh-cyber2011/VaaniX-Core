@@ -46,8 +46,7 @@ class ConnectivityService {
           r == ConnectivityResult.mobile ||
           r == ConnectivityResult.ethernet ||
           r == ConnectivityResult.vpn ||
-          r == ConnectivityResult.bluetooth ||
-          r == ConnectivityResult.tethering,
+          r == ConnectivityResult.bluetooth,
     );
     return online ? ConnectivityStatus.online : ConnectivityStatus.offline;
   }

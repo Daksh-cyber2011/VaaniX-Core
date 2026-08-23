@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
+import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// Loads chapters from JSON, falls back to hardcoded Dart on any error.
@@ -70,7 +71,7 @@ Future<List<QuizQuestion>> loadQuizForChapter(String chapterId) async {
 
     for (final quiz in quizzesJson) {
       final quizMap = quiz as Map<String, dynamic>;
-      if (quizMap['chapterId'] as String? == chapterId) {
+      if ((quizMap['chapterId'] as String?) == chapterId) {
         final questions = quizMap['questions'] as List<dynamic>? ?? [];
         return questions
             .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>))

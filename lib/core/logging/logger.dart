@@ -72,7 +72,7 @@ abstract final class AppLogger {
         stackTrace: stackTrace,
         withScope: (scope) {
           scope.setTag('log_tag', tag ?? 'unknown');
-          scope.setLevel(SentryLevel.error);
+          scope.level = SentryLevel.error;
           scope.setExtra('message', message);
         },
       );
