@@ -10,6 +10,7 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -24,6 +25,18 @@ class ExamScreen extends ConsumerStatefulWidget {
 
 class _ExamScreenState extends ConsumerState<ExamScreen> {
   bool _submitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(vanControllerProvider.notifier).dispatch(
+              const VanEvent(VanEventType.quizStarted),
+            );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,9 +263,35 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                         ? null
                         : () {
                             if (state.answered) {
+                              if (state.currentIndex + 1 >= notifier.total) {
+                                final score = state.score;
+                                final isPerfect = score == notifier.total;
+                                ref.read(vanControllerProvider.notifier).dispatch(
+                                      VanEvent(
+                                        isPerfect
+                                            ? VanEventType.perfectScore
+                                            : VanEventType.quizCompleted,
+                                        message: isPerfect
+                                            ? 'A perfect score — wonderful work!'
+                                            : 'You finished the quiz. Nice effort!',
+                                      ),
+                                    );
+                              }
                               notifier.next();
                             } else {
                               notifier.submit();
+                              final correct = state.selectedOption ==
+                                  question.correctIndex;
+                              ref.read(vanControllerProvider.notifier).dispatch(
+                                    VanEvent(
+                                      correct
+                                          ? VanEventType.quizAnswerCorrect
+                                          : VanEventType.quizAnswerWrong,
+                                      message: correct
+                                          ? 'Nice thinking!'
+                                          : 'Almost there. Let\'s learn from this one.',
+                                    ),
+                                  );
                             }
                           },
                   ),

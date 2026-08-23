@@ -20,6 +20,7 @@ import 'package:vaanix_app/features/achievements/presentation/providers/achievem
 import 'package:vaanix_app/features/learn/presentation/widgets/lesson_content_view.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class LessonContentScreen extends ConsumerStatefulWidget {
@@ -41,6 +42,15 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+              VanEventType.lessonStarted,
+              message: 'Let\'s explore ${widget.lesson.title}.',
+              payload: {'lessonId': widget.lesson.id},
+            ));
+      }
+    });
   }
 
   @override
@@ -67,6 +77,11 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
     final notifier = ref.read(completedLessonIdsProvider.notifier);
     await notifier.markComplete(widget.lesson);
     ref.invalidate(xpTotalProvider);
+    ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+          VanEventType.lessonCompleted,
+          message: 'Nice work — you completed ${widget.lesson.title}!',
+          payload: {'lessonId': widget.lesson.id},
+        ));
 
     // ── Achievement check ──────────────────────────────────────────
     // After completing a lesson, check if any lesson-count achievements
@@ -87,6 +102,11 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
     // Show achievement celebration if any were unlocked.
     if (mounted && newlyUnlocked.isNotEmpty) {
       for (final ach in newlyUnlocked) {
+        ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+              VanEventType.achievementUnlocked,
+              message: 'I\'ll remember this: ${ach.title}!',
+              payload: {'achievementId': ach.id},
+            ));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -125,6 +145,10 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 4),
+            child: VanWidget(useController: true, size: 34),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Chip(
