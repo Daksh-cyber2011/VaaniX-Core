@@ -4,23 +4,16 @@
 /// Renders emotional states, breathing animation, speech bubble, and taps.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/features/van/domain/van_state.dart';
+import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
+import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
 
-/// The emotional state Van should display.
-enum VanState {
-  idle,        // Normal breathing, idle animations
-  happy,       // Correct answer, login, streak
-  thinking,    // Processing, waiting, explaining
-  focus,       // During quizzes
-  caring,      // User struggling
-  surprised,   // Achievements
-  sad,         // Mild only
-  funny,       // Humor moments
-  achievement, // Streaks, milestones
-}
+export 'package:vaanix_app/features/van/domain/van_state.dart';
 
-class VanWidget extends StatefulWidget {
+class VanWidget extends ConsumerStatefulWidget {
   const VanWidget({
     super.key,
     this.state = VanState.idle,
@@ -29,6 +22,10 @@ class VanWidget extends StatefulWidget {
     this.onLongPress,
     this.showSpeechBubble = false,
     this.dialogueText,
+    this.isLoading = false,
+    this.useController = false,
+    this.assetCatalog = VanAssetCatalog.placeholder,
+    this.semanticLabel,
   });
 
   final VanState state;
@@ -37,12 +34,19 @@ class VanWidget extends StatefulWidget {
   final VoidCallback? onLongPress;
   final bool showSpeechBubble;
   final String? dialogueText;
+  final bool isLoading;
+
+  /// When true, render the global event-driven [VanController] state instead
+  /// of the supplied [state]. Existing call sites remain presentation-only.
+  final bool useController;
+  final VanAssetCatalog assetCatalog;
+  final String? semanticLabel;
 
   @override
-  State<VanWidget> createState() => _VanWidgetState();
+  ConsumerState<VanWidget> createState() => _VanWidgetState();
 }
 
-class _VanWidgetState extends State<VanWidget>
+class _VanWidgetState extends ConsumerState<VanWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _idleController;
   late Animation<double> _breatheAnimation;
@@ -68,16 +72,34 @@ class _VanWidgetState extends State<VanWidget>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final presentation = widget.useController ? ref.watch(vanControllerProvider) : null;
+    final state = presentation?.current ?? widget.state;
+    final dialogueText = presentation?.message ?? widget.dialogueText;
+    final isLoading = presentation?.isLoading ?? widget.isLoading;
+    final asset = widget.assetCatalog.assetFor(state);
+    final reducedMotion = MediaQuery.of(context).disableAnimations;
+    final tilt = switch (state) {
+      VanState.thinking => -0.04,
+      VanState.caring || VanState.sad => 0.03,
+      VanState.funny => -0.08,
+      VanState.surprised => 0.05,
+      VanState.achievement => 0.02,
+      _ => 0.0,
+    };
+
+    return Semantics(
+      button: widget.onTap != null || widget.onLongPress != null,
+      label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
+      child: GestureDetector(
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Speech bubble (shown above Van)
-          if (widget.showSpeechBubble && widget.dialogueText != null)
-            _SpeechBubble(text: widget.dialogueText!),
-          if (widget.showSpeechBubble && widget.dialogueText != null)
+          if (widget.showSpeechBubble && (dialogueText != null || isLoading))
+            _SpeechBubble(text: dialogueText, isLoading: isLoading),
+          if (widget.showSpeechBubble && (dialogueText != null || isLoading))
             const SizedBox(height: 8),
 
           // Van character
@@ -85,28 +107,31 @@ class _VanWidgetState extends State<VanWidget>
             animation: _breatheAnimation,
             builder: (context, child) {
               return Transform.scale(
-                scale: widget.state == VanState.idle
+                scale: !reducedMotion && state == VanState.idle
                     ? _breatheAnimation.value
                     : 1.0,
-                child: child,
+                child: Transform.rotate(angle: reducedMotion ? 0 : tilt, child: child),
               );
             },
             child: _VanBody(
               size: widget.size,
-              state: widget.state,
+              state: state,
+              assetId: asset.id,
             ),
           ),
         ],
+      ),
       ),
     );
   }
 }
 
 class _VanBody extends StatelessWidget {
-  const _VanBody({required this.size, required this.state});
+  const _VanBody({required this.size, required this.state, required this.assetId});
 
   final double size;
   final VanState state;
+  final String assetId;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +141,22 @@ class _VanBody extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
+          // Signature feather tuft: a stable silhouette cue from the Bible.
+          Positioned(
+            top: size * 0.005,
+            child: Semantics(
+              label: assetId,
+              excludeSemantics: true,
+              child: Container(
+                width: size * 0.13,
+                height: size * 0.10,
+                decoration: BoxDecoration(
+                  color: AppColors.vanYellow,
+                  borderRadius: BorderRadius.circular(size * 0.08),
+                ),
+              ),
+            ),
+          ),
           // Body (≈35% of height per design bible)
           Positioned(
             bottom: size * 0.15,
@@ -125,6 +166,19 @@ class _VanBody extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.vanYellow,
                 borderRadius: BorderRadius.circular(size * 0.2),
+              ),
+            ),
+          ),
+          // Default blue hoodie. Final vector/Lottie art can replace this
+          // fallback through VanAssetCatalog without changing this API.
+          Positioned(
+            bottom: size * 0.19,
+            child: Container(
+              width: size * 0.58,
+              height: size * 0.18,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(size * 0.13),
               ),
             ),
           ),
@@ -237,9 +291,10 @@ class _VanFoot extends StatelessWidget {
 }
 
 class _SpeechBubble extends StatelessWidget {
-  const _SpeechBubble({required this.text});
+  const _SpeechBubble({required this.text, required this.isLoading});
 
-  final String text;
+  final String? text;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -260,10 +315,25 @@ class _SpeechBubble extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodyMedium,
-        textAlign: TextAlign.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isLoading) ...[
+            const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Text(
+              text ?? 'Thinking…',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }
