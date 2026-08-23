@@ -49,6 +49,11 @@ class VanController extends StateNotifier<VanPresentationState> {
   /// Sends [event] through the resolver. Returns false when a current,
   /// non-interruptible or higher-priority reaction must remain visible.
   bool dispatch(VanEvent event) {
+    if (event.type == VanEventType.aiResponseFinished ||
+        event.type == VanEventType.userIdle) {
+      settle();
+      return true;
+    }
     final next = VanReactionResolver.resolve(event);
     if (!canPresent(next)) return false;
 
