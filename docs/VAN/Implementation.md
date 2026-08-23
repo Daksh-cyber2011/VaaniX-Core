@@ -56,9 +56,23 @@ celebration.
 ## Animation and assets
 
 There are currently no shipped VAN art assets. V1 therefore uses a lightweight
-Flutter renderer with breathing, pose tilt, accessibility-aware reduced motion,
-the required feather tuft, hoodie, and semantic labeling. This avoids an asset
-load failure and is Android/iOS safe.
+Flutter `CustomPainter` renderer with a soft-vector duck silhouette, warm yellow
+feathers, signature three-feather tuft, rounded orange beak and feet, blue hoodie
+with drawstrings/mark, cream belly, and state-specific eyes, wing gestures and
+beak poses. It uses no generic icons or emoji. This avoids an asset load failure+
+and is Android/iOS safe while retaining an approved-art replacement boundary.
+
+The fallback motion is deterministic and phase-based: idle uses breathing,
+gentle vertical movement, eye tracking and two brief blinks; thinking/focus,
+caring/sad, funny, speaking, achievement, surprised, and error each have a
+distinct pose or controlled motion. Achievement/surprise alone use restrained
+painted sparkles. When `MediaQuery.disableAnimations` is enabled, VAN keeps its
+state-specific posture but removes bobbing, scale changes, blinking, speaking
+pulses and animated wing/sparkle effects. The painter sits in a repaint boundary,
+and its ticker naturally pauses under Flutter's `TickerMode` when inactive.
+
+Speech bubbles constrain themselves to the available viewport, wrap at user text
+scaling, include a small visual tail, and announce loading text as a live region.
 
 `VanAssetCatalog` and `VanVisualBuilder` separate state from visual technology.
 Final Lottie (or another renderer) can be injected per `VanWidget` and must
@@ -72,4 +86,5 @@ public default name.
 
 `test/features/van/van_controller_test.dart` covers initial state, event
 resolution, AI/Learn/Exam mappings, priority, critical interruption, timed
-fallback, and fallback widget rendering. Tests do not require final art.
+fallback, every supported fallback state, reduced-motion asset bypass, and a
+narrow text-scaled speech bubble. Tests do not require final art.

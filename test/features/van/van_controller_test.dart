@@ -115,4 +115,71 @@ void main() {
     expect(find.byKey(const ValueKey('van-flutter-fallback')), findsOneWidget);
     expect(find.text('Ready when you are.'), findsOneWidget);
   });
+
+  testWidgets('every supported presentation state has a fallback visual',
+      (tester) async {
+    for (final state in VanState.values) {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(body: Center(child: VanWidget(state: state, size: 120))),
+      ));
+
+      expect(
+        find.byKey(const ValueKey('van-flutter-fallback')),
+        findsOneWidget,
+        reason: '${state.name} should remain legible without final art assets',
+      );
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets(
+      'reduced motion keeps the accessible fallback over an asset builder',
+      (tester) async {
+    var builderCalled = false;
+    await tester.pumpWidget(MaterialApp(
+      home: MediaQuery(
+        data: const MediaQueryData(disableAnimations: true),
+        child: Scaffold(
+          body: VanWidget(
+            state: VanState.achievement,
+            visualBuilder: (context, asset, fallback) {
+              builderCalled = true;
+              return const SizedBox(key: ValueKey('external-visual'));
+            },
+          ),
+        ),
+      ),
+    ));
+
+    expect(builderCalled, isFalse);
+    expect(find.byKey(const ValueKey('van-flutter-fallback')), findsOneWidget);
+    expect(find.byKey(const ValueKey('external-visual')), findsNothing);
+  });
+
+  testWidgets('speech bubble wraps safely at a narrow text-scaled width',
+      (tester) async {
+    await tester.binding.setSurfaceSize(const Size(260, 500));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(const MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(
+          size: Size(260, 500),
+          textScaler: TextScaler.linear(1.5),
+        ),
+        child: Scaffold(
+          body: Center(
+            child: VanWidget(
+              size: 100,
+              showSpeechBubble: true,
+              dialogueText: 'Let us take this one step at a time together.',
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    expect(find.text('Let us take this one step at a time together.'),
+        findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
