@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 /// Events are intentionally domain-oriented so features do not depend on a
 /// particular Van widget or animation implementation.
 enum VanEventType {
+  appOpened,
   lessonStarted,
   lessonCompleted,
   quizStarted,

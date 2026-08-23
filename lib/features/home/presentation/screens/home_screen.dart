@@ -14,6 +14,7 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/streak_badge.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -34,6 +35,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // is opened. Fire-and-forget; the provider handles persistence.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(userProfileProvider.notifier).recordDailyActivity();
+      ref.read(vanControllerProvider.notifier).dispatch(
+            const VanEvent(
+              VanEventType.appOpened,
+              message: 'Welcome back! Ready to learn together?',
+            ),
+          );
     });
   }
 
@@ -51,9 +58,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final companionName = profile.resolvedCompanionName;
     final streak = profile.currentStreak;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12
-        ? 'सुप्रभातम्'
-        : (hour < 17 ? 'शुभ अपराह्नः' : 'शुभ सायं');
+    final greeting =
+        hour < 12 ? 'सुप्रभातम्' : (hour < 17 ? 'शुभ अपराह्नः' : 'शुभ सायं');
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -81,7 +87,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 4),
                   CircleAvatar(
                     radius: 18,
-                    backgroundColor: colorScheme.primary.withValues(alpha: 0.12),
+                    backgroundColor:
+                        colorScheme.primary.withValues(alpha: 0.12),
                     child: Icon(
                       Icons.person_outline,
                       size: 20,
@@ -122,8 +129,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     VanWidget(
-                      state: VanState.happy,
                       size: 200,
+                      useController: true,
                       showSpeechBubble: true,
                       dialogueText:
                           "Ready to learn with $companionName, $greeting! 🦆",

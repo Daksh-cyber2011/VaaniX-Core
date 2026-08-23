@@ -80,7 +80,8 @@ void main() {
     });
   });
 
-  testWidgets('finite reactions return to idle deterministically', (tester) async {
+  testWidgets('finite reactions return to idle deterministically',
+      (tester) async {
     final controller = VanController();
     addTearDown(controller.dispose);
 
