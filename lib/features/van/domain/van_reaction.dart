@@ -29,6 +29,7 @@ class VanReaction {
 abstract final class VanReactionResolver {
   static VanReaction resolve(VanEvent event) {
     final state = switch (event.type) {
+      VanEventType.appOpened => VanState.happy,
       VanEventType.lessonStarted => VanState.happy,
       VanEventType.lessonCompleted => VanState.achievement,
       VanEventType.quizStarted => VanState.focus,

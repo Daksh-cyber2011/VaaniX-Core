@@ -143,7 +143,14 @@ class _VanWidgetState extends State<VanWidget>
                   offset: Offset(0, motion.verticalOffset * widget.size),
                   child: Transform.rotate(
                     angle: motion.rotation,
-                    child: Transform.scale(scale: motion.scale, child: visual),
+                    child: Transform.scale(
+                      scale: motion.scale,
+                      child: SizedBox(
+                        width: widget.size,
+                        height: widget.size,
+                        child: visual,
+                      ),
+                    ),
                   ),
                 );
               },
@@ -155,32 +162,50 @@ class _VanWidgetState extends State<VanWidget>
   }
 }
 
-/// State-specific motion for the Flutter renderer while final Lottie assets
-/// remain unavailable. It stays deliberately subtle and honors reduced motion.
+/// Programmatic fallback motion for Van until the final vector/Lottie assets
+/// land. Computes a subtle breathing scale and a gentle vertical bob from the
+/// idle animation value, honoring the system "reduced motion" accessibility
+/// preference. Non-idle states render statically.
 class _VanFallbackMotion {
   const _VanFallbackMotion({
     this.verticalOffset = 0.0,
     this.rotation = 0.0,
     this.scale = 1.0,
+    this.wingAngle = 0.0,
+    this.eyeOpenness = 1.0,
+    this.pupilOffset = 0.0,
+    this.beakHeightFactor = 0.10,
+    this.showSparkles = false,
   });
 
   final double verticalOffset;
   final double rotation;
   final double scale;
+  final double wingAngle;
+  final double eyeOpenness;
+  final double pupilOffset;
+  final double beakHeightFactor;
+  final bool showSparkles;
 
   factory _VanFallbackMotion.resolve(
     VanState state,
     double animationValue,
     bool reducedMotion,
   ) {
-    if (reducedMotion) return const _VanFallbackMotion();
-
+    if (reducedMotion) {
+      return const _VanFallbackMotion();
+    }
     final wave = Curves.easeInOut.transform(animationValue);
+    final breathe = state == VanState.idle ? wave * 0.025 : 0.0;
+    final bob = state == VanState.idle ? (wave - 0.5) * 0.018 : 0.0;
+    final blink = animationValue > 0.94 ? 0.16 : 1.0;
     return _VanFallbackMotion(
-      verticalOffset: switch (state) {
-        VanState.idle => (wave - 0.5) * 0.018,
-        VanState.achievement => -wave * 0.035,
-        _ => 0.0,
+      verticalOffset: bob,
+      scale: switch (state) {
+        VanState.achievement => 1.0 + wave * 0.06,
+        VanState.surprised => 1.02,
+        VanState.error => 0.98,
+        _ => 1.0 + breathe,
       },
       rotation: switch (state) {
         VanState.thinking => -0.055,
@@ -189,13 +214,27 @@ class _VanFallbackMotion {
         VanState.error => (wave - 0.5) * 0.06,
         _ => 0.0,
       },
-      scale: switch (state) {
-        VanState.idle => 1.0 + wave * 0.025,
-        VanState.achievement => 1.0 + wave * 0.06,
-        VanState.surprised => 1.02,
-        VanState.error => 0.98,
-        _ => 1.0,
+      wingAngle: switch (state) {
+        VanState.achievement => 0.55 + wave * 0.25,
+        VanState.happy || VanState.surprised => 0.24,
+        VanState.speaking => 0.06 + wave * 0.10,
+        VanState.caring => -0.10,
+        _ => 0.0,
       },
+      eyeOpenness: state == VanState.sad ? 0.65 : blink,
+      pupilOffset: switch (state) {
+        VanState.thinking => 0.22,
+        VanState.focus => 0.05,
+        VanState.caring || VanState.sad => -0.08,
+        _ => 0.0,
+      },
+      beakHeightFactor: state == VanState.speaking
+          ? 0.08 + wave * 0.07
+          : state == VanState.surprised
+              ? 0.14
+              : 0.10,
+      showSparkles:
+          state == VanState.achievement || state == VanState.surprised,
     );
   }
 }
@@ -222,6 +261,26 @@ class _VanBody extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
+          if (motion.showSparkles) ...[
+            Positioned(
+              top: size * 0.10,
+              left: size * 0.07,
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                color: AppColors.xp,
+                size: size * 0.12,
+              ),
+            ),
+            Positioned(
+              top: size * 0.25,
+              right: size * 0.05,
+              child: Icon(
+                Icons.star_rounded,
+                color: AppColors.xp,
+                size: size * 0.10,
+              ),
+            ),
+          ],
           // Signature feather tuft: a stable silhouette cue from the Bible.
           Positioned(
             top: size * 0.005,
@@ -250,6 +309,25 @@ class _VanBody extends StatelessWidget {
               ),
             ),
           ),
+          // Rounded wings function as expressive hands, per the VAN Bible.
+          Positioned(
+            bottom: size * 0.29,
+            left: size * 0.08,
+            child: Transform.rotate(
+              angle: -motion.wingAngle,
+              alignment: Alignment.bottomRight,
+              child: _VanWing(size: size * 0.24),
+            ),
+          ),
+          Positioned(
+            bottom: size * 0.29,
+            right: size * 0.08,
+            child: Transform.rotate(
+              angle: motion.wingAngle,
+              alignment: Alignment.bottomLeft,
+              child: _VanWing(size: size * 0.24),
+            ),
+          ),
           // Default blue hoodie. Final vector/Lottie art can replace this
           // fallback through VanAssetCatalog without changing this API.
           Positioned(
@@ -260,6 +338,16 @@ class _VanBody extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(size * 0.13),
+              ),
+              child: Center(
+                child: Container(
+                  width: size * 0.035,
+                  height: size * 0.065,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(size * 0.03),
+                  ),
+                ),
               ),
             ),
           ),
@@ -279,12 +367,22 @@ class _VanBody extends StatelessWidget {
                   Positioned(
                     top: size * 0.14,
                     left: size * 0.10,
-                    child: _VanEye(size: size * 0.08, state: state),
+                    child: _VanEye(
+                      size: size * 0.08,
+                      state: state,
+                      openness: motion.eyeOpenness,
+                      pupilOffset: motion.pupilOffset,
+                    ),
                   ),
                   Positioned(
                     top: size * 0.14,
                     right: size * 0.10,
-                    child: _VanEye(size: size * 0.08, state: state),
+                    child: _VanEye(
+                      size: size * 0.08,
+                      state: state,
+                      openness: motion.eyeOpenness,
+                      pupilOffset: motion.pupilOffset,
+                    ),
                   ),
                   // Beak
                   Positioned(
@@ -292,7 +390,7 @@ class _VanBody extends StatelessWidget {
                     left: size * 0.18,
                     right: size * 0.18,
                     child: Container(
-                      height: size * 0.10,
+                      height: size * motion.beakHeightFactor,
                       decoration: BoxDecoration(
                         color: AppColors.vanOrange,
                         borderRadius: BorderRadius.circular(size * 0.05),
@@ -321,17 +419,24 @@ class _VanBody extends StatelessWidget {
 }
 
 class _VanEye extends StatelessWidget {
-  const _VanEye({required this.size, required this.state});
+  const _VanEye({
+    required this.size,
+    required this.state,
+    required this.openness,
+    required this.pupilOffset,
+  });
 
   final double size;
   final VanState state;
+  final double openness;
+  final double pupilOffset;
 
   @override
   Widget build(BuildContext context) {
     final isHappy = state == VanState.happy || state == VanState.achievement;
     return Container(
       width: size,
-      height: isHappy ? size * 0.6 : size,
+      height: isHappy ? size * 0.6 : size * openness,
       decoration: BoxDecoration(
         color: const Color(0xFF1C1C2E),
         borderRadius: BorderRadius.circular(size),
@@ -339,7 +444,7 @@ class _VanEye extends StatelessWidget {
       child: isHappy
           ? null
           : Align(
-              alignment: const Alignment(0.3, -0.3),
+              alignment: Alignment(0.3 + pupilOffset, -0.3),
               child: Container(
                 width: size * 0.25,
                 height: size * 0.25,
@@ -349,6 +454,24 @@ class _VanEye extends StatelessWidget {
                 ),
               ),
             ),
+    );
+  }
+}
+
+class _VanWing extends StatelessWidget {
+  const _VanWing({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size * 0.72,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9D96E),
+        borderRadius: BorderRadius.circular(size * 0.6),
+      ),
     );
   }
 }

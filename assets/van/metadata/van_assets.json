@@ -1,22 +1,23 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "characterId": "duck",
   "publicName": "Van",
   "defaultOutfit": "hoodie_default",
   "fallbackRenderer": "flutter",
   "assetFormat": "lottie",
   "dimensions": { "width": 512, "height": 512 },
+  "status": "visual_asset_blocker",
   "assets": [
-    { "id": "duck_idle_loop", "state": "idle", "path": "assets/van/animations/duck_idle_loop.json", "loop": true, "available": false },
-    { "id": "duck_happy_short", "state": "happy", "path": "assets/van/animations/duck_happy_short.json", "loop": false, "available": false },
-    { "id": "duck_thinking_loop", "state": "thinking", "path": "assets/van/animations/duck_thinking_loop.json", "loop": true, "available": false },
-    { "id": "duck_focus_loop", "state": "focus", "path": "assets/van/animations/duck_focus_loop.json", "loop": true, "available": false },
-    { "id": "duck_caring_short", "state": "caring", "path": "assets/van/animations/duck_caring_short.json", "loop": false, "available": false },
-    { "id": "duck_surprised_short", "state": "surprised", "path": "assets/van/animations/duck_surprised_short.json", "loop": false, "available": false },
-    { "id": "duck_sad_soft", "state": "sad", "path": "assets/van/animations/duck_sad_soft.json", "loop": false, "available": false },
-    { "id": "duck_funny_short", "state": "funny", "path": "assets/van/animations/duck_funny_short.json", "loop": false, "available": false },
-    { "id": "duck_achievement_celebrate", "state": "achievement", "path": "assets/van/animations/duck_achievement_celebrate.json", "loop": false, "available": false },
-    { "id": "duck_speaking_loop", "state": "speaking", "path": "assets/van/animations/duck_speaking_loop.json", "loop": true, "available": false },
-    { "id": "duck_error_soft", "state": "error", "path": "assets/van/animations/duck_error_soft.json", "loop": false, "available": false }
+    { "id": "duck_idle_loop", "state": "idle", "animation": "breathing_blink_look", "format": "lottie", "path": "assets/van/animations/duck_idle_loop.json", "durationMs": 3500, "loop": true, "fallback": "flutter_idle", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_happy_short", "state": "happy", "animation": "soft_smile_wing_lift", "format": "lottie", "path": "assets/van/animations/duck_happy_short.json", "durationMs": 1400, "loop": false, "fallback": "flutter_happy", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_thinking_loop", "state": "thinking", "animation": "look_up_consider", "format": "lottie", "path": "assets/van/animations/duck_thinking_loop.json", "durationMs": 600, "loop": true, "fallback": "flutter_thinking", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_focus_loop", "state": "focus", "animation": "calm_reading_focus", "format": "lottie", "path": "assets/van/animations/duck_focus_loop.json", "durationMs": 1200, "loop": true, "fallback": "flutter_focus", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_caring_short", "state": "caring", "animation": "gentle_nod_support", "format": "lottie", "path": "assets/van/animations/duck_caring_short.json", "durationMs": 2400, "loop": false, "fallback": "flutter_caring", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_surprised_short", "state": "surprised", "animation": "warm_wow", "format": "lottie", "path": "assets/van/animations/duck_surprised_short.json", "durationMs": 1800, "loop": false, "fallback": "flutter_surprised", "requiredV1": false, "status": "pending_art", "available": false },
+    { "id": "duck_sad_soft", "state": "sad", "animation": "mild_concern", "format": "lottie", "path": "assets/van/animations/duck_sad_soft.json", "durationMs": 1800, "loop": false, "fallback": "flutter_sad", "requiredV1": false, "status": "pending_art", "available": false },
+    { "id": "duck_funny_short", "state": "funny", "animation": "playful_wink", "format": "lottie", "path": "assets/van/animations/duck_funny_short.json", "durationMs": 1200, "loop": false, "fallback": "flutter_funny", "requiredV1": false, "status": "pending_art", "available": false },
+    { "id": "duck_achievement_celebrate", "state": "achievement", "animation": "jump_wing_celebrate", "format": "lottie", "path": "assets/van/animations/duck_achievement_celebrate.json", "durationMs": 2600, "loop": false, "fallback": "flutter_achievement", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_speaking_loop", "state": "speaking", "animation": "talking_gesture", "format": "lottie", "path": "assets/van/animations/duck_speaking_loop.json", "durationMs": 2200, "loop": true, "fallback": "flutter_speaking", "requiredV1": true, "status": "pending_art", "available": false },
+    { "id": "duck_error_soft", "state": "error", "animation": "gentle_recovery", "format": "lottie", "path": "assets/van/animations/duck_error_soft.json", "durationMs": 2600, "loop": false, "fallback": "flutter_error", "requiredV1": true, "status": "pending_art", "available": false }
   ]
 }
