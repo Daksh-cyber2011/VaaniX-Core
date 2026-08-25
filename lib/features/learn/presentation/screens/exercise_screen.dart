@@ -117,10 +117,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       _masteryRecorded = true;
       final ids = notifier.masteredExerciseIds;
       if (ids.isNotEmpty) {
-        ref.read(recordMasteryProvider)(widget.lesson.id, ids);
-        ref
-            .read(masteredExercisesProvider(widget.lesson.id).notifier)
-            .refresh();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          ref.read(recordMasteryProvider)(widget.lesson.id, ids);
+          ref
+              .read(masteredExercisesProvider(widget.lesson.id).notifier)
+              .refresh();
+        });
       }
     }
 
