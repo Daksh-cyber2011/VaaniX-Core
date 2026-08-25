@@ -87,6 +87,9 @@ void main() {
     expect(find.text('100% mastered'), findsOneWidget);
 
     // Mastery was persisted (fire-and-forget completed during pumps).
+    // Let Van's speech-bubble auto-dismiss timers (2.6 s) fire so the
+    // test framework's pending-timer check stays quiet.
+    await tester.pump(const Duration(seconds: 3));
     final mastered = container
         .read(progressRepositoryProvider)
         .getMasteredExercises(lessonId)

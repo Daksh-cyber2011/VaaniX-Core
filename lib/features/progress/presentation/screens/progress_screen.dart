@@ -40,7 +40,7 @@ class ProgressScreen extends ConsumerWidget {
 
     // Gamification state (pure helpers, tested in gamification_test).
     final level = levelFromXp(xp);
-    final levelProgress = levelProgress(xp);
+    final progressPct = levelProgress(xp);
     final xpInto = xpIntoLevel(xp);
     final xpNext = xpForNextLevel(level);
 
@@ -119,7 +119,7 @@ class ProgressScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           _LevelCard(
             level: level,
-            levelProgress: levelProgress,
+            levelProgress: progressPct,
             xpInto: xpInto,
             xpNext: xpNext,
           ),
