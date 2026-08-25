@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
@@ -332,6 +333,32 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                   : const Text('Quiz already completed — no extra XP'),
             ),
           );
+          // Exam completions must also drive the achievement checker
+          // (quiz category + perfect-score achievements live on this path).
+          final checker = ref.read(achievementCheckerProvider);
+          final newlyUnlocked = await checker.checkAchievements(
+            quizScorePercentage: notifier.total == 0
+                ? 0
+                : ((state.score / notifier.total) * 100).round(),
+          );
+          if (!mounted) return;
+          for (final ach in newlyUnlocked) {
+            ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+                  VanEventType.achievementUnlocked,
+                  message: 'I\'ll remember this: ${ach.title}!',
+                  payload: {'achievementId': ach.id},
+                ));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Achievement Unlocked: ${ach.title}!'
+                  '${ach.xpReward > 0 ? ' (+${ach.xpReward} XP)' : ''}',
+                ),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
         },
         onBack: _backToSetup,
       );

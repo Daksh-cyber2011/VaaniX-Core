@@ -66,4 +66,7 @@ abstract class ILocalStorageService {
   bool containsKey(String key);
   Future<bool> remove(String key);
   Future<bool> clear();
+
+  /// All keys currently present in storage (for prefix-scoped cleanup).
+  Set<String> get keys;
 }

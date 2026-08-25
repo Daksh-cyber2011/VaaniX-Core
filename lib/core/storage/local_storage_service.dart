@@ -61,8 +61,7 @@ class LocalStorageService implements ILocalStorageService {
   // ─── Streaks / Activity ─────────────────────────────────────────────────────
 
   @override
-  int get currentStreak =>
-      _prefs.getInt(AppConstants.keyCurrentStreak) ?? 0;
+  int get currentStreak => _prefs.getInt(AppConstants.keyCurrentStreak) ?? 0;
 
   @override
   Future<void> setCurrentStreak(int streak) =>
@@ -82,8 +81,7 @@ class LocalStorageService implements ILocalStorageService {
   int get xpTotal => _prefs.getInt(AppConstants.keyXpTotal) ?? 0;
 
   @override
-  Future<void> setXpTotal(int xp) =>
-      _prefs.setInt(AppConstants.keyXpTotal, xp);
+  Future<void> setXpTotal(int xp) => _prefs.setInt(AppConstants.keyXpTotal, xp);
 
   @override
   List<String> get completedLessonIds =>
@@ -144,7 +142,8 @@ class LocalStorageService implements ILocalStorageService {
   @override
   Future<void> clearAiConversations() async {
     // Remove all keys starting with 'ai_conversation_'.
-    final keys = _prefs.getKeys().where((k) => k.startsWith('ai_conversation_'));
+    final keys =
+        _prefs.getKeys().where((k) => k.startsWith('ai_conversation_'));
     for (final key in keys) {
       await _prefs.remove(key);
     }
@@ -169,4 +168,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<bool> clear() => _prefs.clear();
+
+  @override
+  Set<String> get keys => _prefs.getKeys();
 }

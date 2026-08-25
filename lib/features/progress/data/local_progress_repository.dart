@@ -120,8 +120,8 @@ class LocalProgressRepository implements ProgressRepository {
     List<String> ids,
   ) {
     return guardAsync(() async {
-      final existing =
-          getMasteredExercises(lessonId).fold((_) => const <String>[], (v) => v);
+      final existing = getMasteredExercises(lessonId)
+          .fold((_) => const <String>[], (v) => v);
       final merged = {...existing, ...ids}.toList()..sort();
       await _storage.setString(
         '$_masteredPrefix$lessonId',
@@ -144,6 +144,9 @@ class LocalProgressRepository implements ProgressRepository {
         _storage.setCompletedQuizIds(const []),
         _storage.setXpTotal(0),
         for (final id in quizIds) _storage.setQuizAttempts(id, '[]'),
+        // Exercise mastery is per-lesson; purge every mastered_* key.
+        for (final key in _storage.keys)
+          if (key.startsWith(_masteredPrefix)) _storage.remove(key),
       ]);
     });
   }
@@ -152,13 +155,14 @@ class LocalProgressRepository implements ProgressRepository {
 
   /// Append [result] to the persisted attempt history for [quizId].
   Future<void> _appendAttempt(String quizId, QuizResult result) async {
-    final current = getQuizAttempts(quizId).fold((_) => <QuizResult>[], (v) => v);
+    final current =
+        getQuizAttempts(quizId).fold((_) => <QuizResult>[], (v) => v);
     final next = [...current, result];
-    _storage.setQuizAttempts(quizId, jsonEncode(next.map((r) => r.toJson()).toList()));
+    _storage.setQuizAttempts(
+        quizId, jsonEncode(next.map((r) => r.toJson()).toList()));
   }
 
   /// Award [AppConstants.xpPerCorrectAnswer] XP per correct answer.
   /// Uses the centralized constant to prevent drift across modules.
-  int _quizXp(int score, int total) =>
-      score * AppConstants.xpPerCorrectAnswer;
+  int _quizXp(int score, int total) => score * AppConstants.xpPerCorrectAnswer;
 }

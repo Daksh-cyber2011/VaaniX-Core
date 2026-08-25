@@ -108,5 +108,20 @@ void main() {
       await repo.recordMasteredExercises('l7', ['e1', 'e2']);
       expect(readXp(), 0);
     });
+
+    test('reset clears exercise mastery keys as well', () async {
+      await repo.recordMasteredExercises('l8', ['e1', 'e2']);
+      await repo.recordMasteredExercises('l9', ['e3']);
+      await repo.reset();
+      final cleared = repo
+          .getMasteredExercises('l8')
+          .fold((_) => fail('expected success'), (v) => v);
+      final clearedOther = repo
+          .getMasteredExercises('l9')
+          .fold((_) => fail('expected success'), (v) => v);
+      expect(cleared, isEmpty);
+      expect(clearedOther, isEmpty);
+      expect(readXp(), 0);
+    });
   });
 }
