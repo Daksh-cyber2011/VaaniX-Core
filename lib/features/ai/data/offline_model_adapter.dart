@@ -1,16 +1,21 @@
-/// VaaniX AI — Offline Model Adapter
+/// VaaniX AI - Offline Model Adapter
 ///
 /// The always-available, dependency-free [ModelAdapter]. It is the registry's
 /// fallback when no remote provider is configured, so the AI seam is fully
-/// functional (returns encouraging, persona-aware canned replies) even before
-/// any LLM credentials exist. This keeps the app runnable and the pipeline
-/// exercised in every build.
+/// functional even before any LLM credentials exist.
 ///
-/// When a real adapter (Gemini/GLM/…) is registered AND available, the
+/// Instead of a generic "I am offline" echo, this adapter powers a real
+/// offline Sanskrit tutor: intent detection (greetings, translation lookups,
+/// numbers, family words, grammar cards, practice quizzes with grading),
+/// grounded in the seeded curriculum via [OfflineTutor]. It still explains
+/// that it is offline whenever a request needs a real model.
+///
+/// When a real adapter (Gemini/GLM/...) is registered AND available, the
 /// [AIService] prefers it; this adapter only serves direct calls or the
 /// offline fallback path.
 
 import 'package:vaanix_app/core/utils/result.dart';
+import 'package:vaanix_app/features/ai/data/offline_tutor.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
@@ -18,6 +23,12 @@ import 'package:vaanix_app/features/ai/domain/model_adapter.dart';
 
 class OfflineModelAdapter implements ModelAdapter {
   OfflineModelAdapter();
+
+  static const OfflineTutor _tutor = OfflineTutor();
+
+  /// Per-conversation cursor into [OfflineTutor.practiceQuestions].
+  /// Deterministic per conversation so retries and "skip" behave predictably.
+  final Map<String, int> _practiceCursor = {};
 
   int _counter = 0;
 
@@ -36,12 +47,17 @@ class OfflineModelAdapter implements ModelAdapter {
     required AiConfig config,
   }) {
     return guardAsync(() async {
-      final reply = _buildReply(context);
+      final pending = _pendingQuestion(context);
+      final reply = _buildReply(context, pending);
+      _afterReply(context, pending, reply);
       return AiMessage.assistant(
         id: _nextId(),
-        content: reply,
+        content: reply.text,
         createdAt: DateTime.now().toUtc(),
-        metadata: const {'provider': 'offline'},
+        metadata: {
+          'provider': 'offline',
+          if (reply.nextQuestion != null) 'practiceQId': reply.nextQuestion!.id,
+        },
       );
     });
   }
@@ -52,46 +68,76 @@ class OfflineModelAdapter implements ModelAdapter {
     required AiConfig config,
   }) async* {
     // Emit the reply word-by-word to exercise the streaming seam without a
-    // real backend. Adapters that buffer natively can mimic this shape.
-    final words = _buildReply(context).split(' ');
-    final buffer = StringBuffer();
+    // real backend.
+    final pending = _pendingQuestion(context);
+    final reply = _buildReply(context, pending);
+    final words = reply.text.split(' ');
     for (var i = 0; i < words.length; i++) {
       final chunk = i == 0 ? words[i] : ' ${words[i]}';
-      buffer.write(chunk);
       final isLast = i == words.length - 1;
       yield ok(AiStreamDelta(content: chunk, done: isLast));
       await Future<void>.delayed(const Duration(milliseconds: 30));
     }
+    _afterReply(context, pending, reply);
   }
 
   @override
   void dispose() {
-    // No resources to release.
+    // No resources to release; the practice cursor map is small and owned by
+    // this adapter instance for the app's lifetime.
   }
 
-  // ──────────────────────────────────────────────────────────────────
-  // Reply composition
-  // ──────────────────────────────────────────────────────────────────
+  // ---------------------------------------------------------------------
+  // Tutor wiring
+  // ---------------------------------------------------------------------
 
-  String _buildReply(ConversationContext context) {
-    final learner = context.learner;
-    final name = learner.displayName.trim();
-    final companion = learner.companionName.trim().isEmpty
-        ? 'Van'
-        : learner.companionName.trim();
-    final last = context.lastMessage?.content.trim() ?? '';
-
-    if (last.isEmpty) {
-      return name.isEmpty
-          ? 'नमस्ते! I am $companion, your Sanskrit buddy. 🦆 What shall we learn today?'
-          : 'नमस्ते $name! I am $companion. Ready to practice some Sanskrit? 🦆';
+  /// The outstanding practice question, if the most recent assistant reply
+  /// was one. Detected from the transcript alone (no metadata dependency),
+  /// so it works for both the complete() and stream() paths.
+  PracticeQuestion? _pendingQuestion(ConversationContext context) {
+    AiMessage? lastAssistant;
+    for (final message in context.messages.reversed) {
+      if (message.role == AiRole.assistant) {
+        lastAssistant = message;
+        break;
+      }
     }
+    if (lastAssistant == null || !lastAssistant.content.contains('Practice:')) {
+      return null;
+    }
+    for (final q in OfflineTutor.practiceQuestions) {
+      if (lastAssistant.content.contains(q.question)) return q;
+    }
+    return null;
+  }
 
-    final greeting = name.isEmpty ? '' : '$name, ';
-    return '$greeting'
-        "I'm running offline right now, but I'm still here to cheer you on! 🦆 "
-        'Once a learning model is connected I can answer: "$last" in detail. '
-        'Keep going — every word counts!';
+  OfflineTutorReply _buildReply(
+    ConversationContext context,
+    PracticeQuestion? pending,
+  ) {
+    return _tutor.reply(
+      message: context.lastMessage?.content ?? '',
+      displayName: context.learner.displayName,
+      companionName: context.learner.companionName,
+      pendingQuestion: pending,
+      practiceIndex: _practiceCursor[context.conversationId] ?? 0,
+    );
+  }
+
+  /// Advances the practice cursor when a fresh question was asked, or when a
+  /// pending question was answered correctly or skipped. A wrong retry keeps
+  /// the same question.
+  void _afterReply(
+    ConversationContext context,
+    PracticeQuestion? pending,
+    OfflineTutorReply reply,
+  ) {
+    final advanced = reply.nextQuestion != null &&
+        (pending == null || pending.id != reply.nextQuestion!.id);
+    if (advanced) {
+      _practiceCursor[context.conversationId] =
+          (_practiceCursor[context.conversationId] ?? 0) + 1;
+    }
   }
 
   String _nextId() {
