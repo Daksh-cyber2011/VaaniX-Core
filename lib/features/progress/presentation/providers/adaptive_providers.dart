@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
+import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -28,9 +28,9 @@ List<String> allQuizIds() {
 
 /// quizId -> persisted attempt history (newest last). Loaded from the
 /// progress repository; invalidate to refresh after a completed exam.
-final quizAttemptsIndexProvider =
-    StateNotifierProvider<QuizAttemptsIndexNotifier, Map<String, List<QuizResult>>>(
-        (ref) => QuizAttemptsIndexNotifier(ref.watch(progressRepositoryProvider)));
+final quizAttemptsIndexProvider = StateNotifierProvider<
+        QuizAttemptsIndexNotifier, Map<String, List<QuizResult>>>(
+    (ref) => QuizAttemptsIndexNotifier(ref.watch(progressRepositoryProvider)));
 
 class QuizAttemptsIndexNotifier
     extends StateNotifier<Map<String, List<QuizResult>>> {
@@ -43,9 +43,12 @@ class QuizAttemptsIndexNotifier
   Future<void> _load() async {
     final index = <String, List<QuizResult>>{};
     for (final quizId in allQuizIds()) {
-      _repo.getQuizAttempts(quizId).fold((_) {}, (attempts) {
-        if (attempts.isNotEmpty) index[quizId] = attempts;
-      });
+      _repo.getQuizAttempts(quizId).fold(
+        (_) {},
+        (List<QuizResult> attempts) {
+          if (attempts.isNotEmpty) index[quizId] = attempts;
+        },
+      );
     }
     state = index;
   }

@@ -15,6 +15,7 @@ import 'package:vaanix_app/features/achievements/presentation/providers/achievem
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -328,6 +329,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           // screen's "Quizzes Done" card updates reactively.
           ref.invalidate(xpTotalProvider);
           ref.invalidate(completedQuizIdsProvider);
+          ref.invalidate(quizAttemptsIndexProvider);
+          ref.invalidate(adaptiveNextActionProvider);
           // Surface the actual XP earned (0 on repeat completions due to
           // the idempotency guard added in Segment 1).
           final xpEarned = result.fold(

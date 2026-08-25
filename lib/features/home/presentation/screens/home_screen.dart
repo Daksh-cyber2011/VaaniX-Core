@@ -22,6 +22,8 @@ import 'package:vaanix_app/features/learn/presentation/providers/exercise_provid
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/domain/adaptive.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -53,8 +55,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  void _openNextLesson(String lessonId) {
-    context.go(RouteNames.lessonContent.replaceFirst(':lessonId', lessonId));
+  void _openAction(NextAction action) {
+    final route = _actionRoute(action);
+    if (route != null) context.go(route);
+  }
+
+  String? _actionRoute(NextAction action) {
+    switch (action.action) {
+      case AdaptiveAction.startJourney:
+      case AdaptiveAction.continueLesson:
+        final id = action.lessonId;
+        return id == null
+            ? RouteNames.learn
+            : RouteNames.lessonContent.replaceFirst(':lessonId', id);
+      case AdaptiveAction.practiceWeakTopic:
+        final id = action.lessonId;
+        return id == null
+            ? RouteNames.learn
+            : RouteNames.lessonPractice.replaceFirst(':lessonId', id);
+      case AdaptiveAction.takeChapterExam:
+        return RouteNames.exam;
+      case AdaptiveAction.allDone:
+        return RouteNames.chat;
+    }
+  }
+
+  IconData _actionIcon(AdaptiveAction action) {
+    switch (action) {
+      case AdaptiveAction.startJourney:
+      case AdaptiveAction.continueLesson:
+        return Icons.menu_book_rounded;
+      case AdaptiveAction.practiceWeakTopic:
+        return Icons.fitness_center_rounded;
+      case AdaptiveAction.takeChapterExam:
+        return Icons.quiz_rounded;
+      case AdaptiveAction.allDone:
+        return Icons.celebration_rounded;
+    }
+  }
+
+  Lesson? _lessonById(List<Chapter> chapters, String lessonId) {
+    for (final chapter in chapters) {
+      for (final lesson in chapter.lessons) {
+        if (lesson.id == lessonId) return lesson;
+      }
+    }
+    return null;
   }
 
   @override
@@ -75,11 +121,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : '\u0936\u0941\u092D\u0930\u093E\u0924\u094D\u0930\u093F\u0903'); // shubharatrih
 
     // Real learning state from live providers.
+    final nextAction = ref.watch(adaptiveNextActionProvider);
+    final Lesson? nextLesson = nextAction.lessonId == null
+        ? null
+        : curriculumAsync.maybeWhen(
+            data: (chapters) => _lessonById(chapters, nextAction.lessonId!),
+            orElse: () => null,
+          );
     final completedSet = completedIds.toSet();
-    final Lesson? nextLesson = curriculumAsync.maybeWhen(
-      data: (chapters) => nextLessonInCurriculum(chapters, completedSet),
-      orElse: () => null,
-    );
     final totalLessons = curriculumAsync.maybeWhen(
       data: (chapters) =>
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length),
@@ -87,7 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
 
     // Practice mastery for the highlighted lesson (real persisted state).
-    final practiceLessonId = nextLesson?.id;
+    final practiceLessonId = nextAction.lessonId;
     final masteredIds = practiceLessonId == null
         ? const <String>[]
         : ref.watch(masteredExercisesProvider(practiceLessonId));
@@ -177,21 +226,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       size: 160,
                       useController: true,
                       showSpeechBubble: true,
-                      dialogueText:
-                          "Ready to learn with $companionName? I'll help you "
-                          'every step of the way!',
+                      dialogueText: nextAction.vanMessage,
                     ),
                     const Spacer(),
                     _ContinueCard(
+                      action: nextAction,
                       nextLesson: nextLesson,
                       completedCount: completedSet.length,
                       totalLessons: totalLessons,
                       masteredCount: masteredIds.length,
                       totalExercises: lessonExercises.length,
-                      onOpen: nextLesson == null
-                          ? null
-                          : () => _openNextLesson(nextLesson.id),
-                      onAllDone: () => context.go(RouteNames.exam),
+                      onTap: () => _openAction(nextAction),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -203,18 +248,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
               child: PrimaryButton(
-                onPressed: nextLesson == null
-                    ? () => context.go(RouteNames.learn)
-                    : () => _openNextLesson(nextLesson.id),
-                icon: Icon(
-                  nextLesson == null
-                      ? Icons.celebration_rounded
-                      : Icons.menu_book_rounded,
-                  color: Colors.white,
-                ),
-                label: nextLesson == null
-                    ? "Start Today's Lesson"
-                    : 'Continue: ${nextLesson.title}',
+                onPressed: () => _openAction(nextAction),
+                icon: Icon(_actionIcon(nextAction.action), color: Colors.white),
+                label: nextAction.label,
               ),
             ),
             Padding(
@@ -296,30 +332,46 @@ class _SecondaryCta extends StatelessWidget {
   }
 }
 
-/// Live "continue learning" card: next unfinished lesson + progress.
+/// Live next-action card inside the Nest. Driven entirely by the adaptive
+/// engine - the title, subtitle and icon change with the recommended action.
 class _ContinueCard extends StatelessWidget {
   const _ContinueCard({
+    required this.action,
     required this.nextLesson,
     required this.completedCount,
     required this.totalLessons,
     required this.masteredCount,
     required this.totalExercises,
-    required this.onOpen,
-    required this.onAllDone,
+    required this.onTap,
   });
 
+  final NextAction action;
   final Lesson? nextLesson;
   final int completedCount;
   final int totalLessons;
   final int masteredCount;
   final int totalExercises;
-  final VoidCallback? onOpen;
-  final VoidCallback onAllDone;
+  final VoidCallback onTap;
+
+  IconData get _icon {
+    switch (action.action) {
+      case AdaptiveAction.startJourney:
+      case AdaptiveAction.continueLesson:
+        return Icons.menu_book_rounded;
+      case AdaptiveAction.practiceWeakTopic:
+        return Icons.fitness_center_rounded;
+      case AdaptiveAction.takeChapterExam:
+        return Icons.quiz_rounded;
+      case AdaptiveAction.allDone:
+        return Icons.celebration_rounded;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final done = nextLesson == null && totalLessons > 0;
+    final showProgress = action.action == AdaptiveAction.continueLesson ||
+        action.action == AdaptiveAction.startJourney;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -330,11 +382,7 @@ class _ContinueCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            done ? Icons.emoji_events_rounded : Icons.menu_book_rounded,
-            color: colorScheme.primary,
-            size: 28,
-          ),
+          Icon(_icon, color: colorScheme.primary, size: 28),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -342,19 +390,19 @@ class _ContinueCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  done ? 'All lessons complete!' : 'Continue learning',
+                  action.title,
                   style: AppTextStyles.labelMedium(color: colorScheme.primary),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  done
-                      ? 'Take an exam to keep the streak alive'
-                      : nextLesson?.title ?? 'Loading...',
+                  action.subtitle,
                   style: AppTextStyles.titleSmall(),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (totalExercises > 0 && nextLesson != null) ...[
+                if (showProgress &&
+                    totalExercises > 0 &&
+                    nextLesson != null) ...[
                   const SizedBox(height: 2),
                   Text(
                     masteredCount >= totalExercises
@@ -364,7 +412,7 @@ class _ContinueCard extends StatelessWidget {
                         AppTextStyles.bodySmall(color: AppColors.subtextLight),
                   ),
                 ],
-                if (totalLessons > 0) ...[
+                if (showProgress && totalLessons > 0) ...[
                   const SizedBox(height: 2),
                   Text(
                     '$completedCount of $totalLessons lessons done',
@@ -375,17 +423,10 @@ class _ContinueCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          done
-              ? IconButton(
-                  onPressed: onAllDone,
-                  icon: const Icon(Icons.arrow_forward_rounded),
-                  color: colorScheme.primary,
-                  tooltip: 'Take an exam',
-                )
-              : TextButton(
-                  onPressed: onOpen,
-                  child: const Text('Go'),
-                ),
+          TextButton(
+            onPressed: onTap,
+            child: const Text('Go'),
+          ),
         ],
       ),
     );

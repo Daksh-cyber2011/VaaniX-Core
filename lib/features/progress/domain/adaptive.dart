@@ -135,11 +135,15 @@ NextAction computeNextAction({
   }
 
   // 2. First chapter whose lessons are done but whose exam is not passed.
-  final Chapter? examReadyChapter = curriculum.where((c) {
-    final chapterDone =
-        c.lessons.every((l) => completedLessons.contains(l.id));
-    return chapterDone && !_chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId);
-  }).cast<Chapter?>().firstWhere((c) => c != null, orElse: () => null);
+  final Chapter? examReadyChapter = curriculum
+      .where((c) {
+        final chapterDone =
+            c.lessons.every((l) => completedLessons.contains(l.id));
+        return chapterDone &&
+            !_chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId);
+      })
+      .cast<Chapter?>()
+      .firstWhere((c) => c != null, orElse: () => null);
 
   if (examReadyChapter != null) {
     return NextAction(
@@ -157,13 +161,16 @@ NextAction computeNextAction({
   }
 
   // 3. Weak spot: earliest completed lesson with unmastered exercises.
-  final Lesson? weakLesson = allLessons.where((l) {
-    if (!completedLessons.contains(l.id)) return false;
-    final total = exerciseCountByLesson[l.id] ?? 0;
-    if (total == 0) return false;
-    final mastered = masteredExerciseIdsByLesson[l.id]?.length ?? 0;
-    return mastered < total;
-  }).cast<Lesson?>().firstWhere((l) => l != null, orElse: () => null);
+  final Lesson? weakLesson = allLessons
+      .where((l) {
+        if (!completedLessons.contains(l.id)) return false;
+        final total = exerciseCountByLesson[l.id] ?? 0;
+        if (total == 0) return false;
+        final mastered = masteredExerciseIdsByLesson[l.id]?.length ?? 0;
+        return mastered < total;
+      })
+      .cast<Lesson?>()
+      .firstWhere((l) => l != null, orElse: () => null);
 
   if (weakLesson != null) {
     final total = exerciseCountByLesson[weakLesson.id] ?? 0;
@@ -182,16 +189,14 @@ NextAction computeNextAction({
   }
 
   // 4. Fresh start vs. next lesson.
-  final Lesson? next =
-      _nextLessonInCurriculum(curriculum, completedLessons);
+  final Lesson? next = _nextLessonInCurriculum(curriculum, completedLessons);
   if (completedLessons.isEmpty && next != null) {
     return NextAction(
       action: AdaptiveAction.startJourney,
       label: 'Start Learning',
       title: 'Your journey begins',
       subtitle: next.title,
-      vanMessage:
-          'Namaste! Let us begin with ${next.title}. I will guide you '
+      vanMessage: 'Namaste! Let us begin with ${next.title}. I will guide you '
           'every step of the way.',
       lessonId: next.id,
     );
@@ -203,8 +208,7 @@ NextAction computeNextAction({
       title: 'Continue learning',
       subtitle: '${completedLessons.length} of ${allLessonIds.length} '
           'lessons done - keep the momentum!',
-      vanMessage:
-          'Ready for ${next.title}? Let us keep going together.',
+      vanMessage: 'Ready for ${next.title}? Let us keep going together.',
       lessonId: next.id,
     );
   }
