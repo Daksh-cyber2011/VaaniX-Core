@@ -15,7 +15,7 @@ import 'package:vaanix_app/features/achievements/presentation/providers/achievem
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 
-ProviderContainer ProviderContainerFor(SharedPreferences prefs) {
+ProviderContainer makeContainer(SharedPreferences prefs) {
   return ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
@@ -38,7 +38,7 @@ void main() {
       Future<void>.delayed(const Duration(milliseconds: 1));
 
   test('first_lesson unlocks once, awards bonus XP exactly once', () async {
-    final container = ProviderContainerFor(
+    final container = makeContainer(
       await prefsFuture,
     );
     addTearDown(container.dispose);
@@ -65,7 +65,7 @@ void main() {
   });
 
   test('first_quiz unlocks after a quiz completion', () async {
-    final container = ProviderContainerFor(await prefsFuture);
+    final container = makeContainer(await prefsFuture);
     addTearDown(container.dispose);
 
     final repo = container.read(progressRepositoryProvider);
@@ -77,7 +77,7 @@ void main() {
   });
 
   test('perfect_quiz only unlocks on a 100% trigger', () async {
-    final container = ProviderContainerFor(await prefsFuture);
+    final container = makeContainer(await prefsFuture);
     addTearDown(container.dispose);
 
     final repo = container.read(progressRepositoryProvider);
@@ -92,7 +92,7 @@ void main() {
   });
 
   test('van_friend unlocks only via the chat trigger', () async {
-    final container = ProviderContainerFor(await prefsFuture);
+    final container = makeContainer(await prefsFuture);
     addTearDown(container.dispose);
 
     final checker = container.read(achievementCheckerProvider);
@@ -104,11 +104,37 @@ void main() {
   });
 
   test('empty account is safe: nothing unlocks, no crash', () async {
-    final container = ProviderContainerFor(await prefsFuture);
+    final container = makeContainer(await prefsFuture);
     addTearDown(container.dispose);
 
     final newly =
         await container.read(achievementCheckerProvider).checkAchievements();
     expect(newly, isEmpty);
+  });
+
+  test('a fresh app never re-reports already-unlocked achievements', () async {
+    // Session 1: unlock first_lesson.
+    final first = makeContainer(await prefsFuture);
+    final repo = first.read(progressRepositoryProvider);
+    await repo.completeLesson(const Lesson(
+      id: 'l_race',
+      chapterId: 'chx',
+      title: 'Race Lesson',
+      xpReward: 10,
+    ));
+    final unlocked =
+        await first.read(achievementCheckerProvider).checkAchievements();
+    expect(unlocked.map((a) => a.id), contains('first_lesson'));
+    first.dispose();
+
+    // Session 2 (same storage, brand-new provider graph): the async unlock
+    // map may still be pending - the checker must consult persisted state
+    // so nothing is re-unlocked or re-announced.
+    final second = makeContainer(await prefsFuture);
+    addTearDown(second.dispose);
+    final again =
+        await second.read(achievementCheckerProvider).checkAchievements();
+    expect(again, isEmpty,
+        reason: 'persisted unlocks must never be re-reported');
   });
 }

@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
-import 'package:vaanix_app/features/ai/domain/ai_message.dart';
+
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
@@ -194,7 +194,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   /// Show a dialog with detailed AI usage stats.
   void _showUsageDialog(BuildContext context, DailyUsage usage) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Row(
@@ -212,8 +212,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 '${usage.requestCount} / ${TokenUsageTracker.dailyRequestLimit}'),
             _usageRow('Tokens used',
                 '${_formatTokens(usage.totalTokens)} / ${_formatTokens(TokenUsageTracker.dailyTokenLimit)}'),
-            _usageRow('Remaining requests',
-                '${usage.remainingRequests}'),
+            _usageRow('Remaining requests', '${usage.remainingRequests}'),
             const SizedBox(height: 12),
             // Request usage bar
             ClipRRect(
@@ -254,7 +253,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(label, style: AppTextStyles.bodyMedium()),
           Text(value,
               style: AppTextStyles.bodyMedium(
-                  color: AppColors.primary,)),
+                color: AppColors.primary,
+              )),
         ],
       ),
     );
@@ -305,8 +305,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const VanWidget(useController: true, size: 32),
           const SizedBox(width: 8),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
                   ? AppColors.surfaceDark

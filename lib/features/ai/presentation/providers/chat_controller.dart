@@ -14,7 +14,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/features/ai/domain/ai_config.dart';
+
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';

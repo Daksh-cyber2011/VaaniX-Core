@@ -77,7 +77,7 @@ class AiRateLimiter {
   Future<void> awaitSlot() async {
     final delay = nextAvailableDelay;
     if (delay > Duration.zero) {
-      await Future.delayed(delay);
+      await Future<void>.delayed(delay);
     }
     recordRequest();
   }

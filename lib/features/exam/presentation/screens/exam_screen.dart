@@ -53,6 +53,14 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     ref
         .read(vanControllerProvider.notifier)
         .dispatch(const VanEvent(VanEventType.quizStarted));
+    // The family provider for this config may still hold a FINISHED attempt
+    // from a previous run (stale-provider hazard when retaking the same
+    // topic + level after "Change topic"). Restart it so the learner always
+    // gets a fresh question set, never the cached result screen.
+    final current = ref.read(examQuizProvider(_config));
+    if (current.finished) {
+      ref.read(examQuizProvider(_config).notifier).restart();
+    }
     setState(() {
       _confirming = false;
       _started = true;

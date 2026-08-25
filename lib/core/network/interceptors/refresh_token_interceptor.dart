@@ -81,7 +81,7 @@ class RefreshTokenInterceptor extends Interceptor {
       // Retry the original request via the same Dio instance so the full
       // interceptor chain runs again (Auth re-attaches token, Logging
       // logs, Retry handles network errors).
-      final response = await dio.fetch(err.requestOptions);
+      final response = await dio.fetch<dynamic>(err.requestOptions);
 
       handler.resolve(response);
     } on DioException catch (e) {

@@ -20,11 +20,6 @@ class LocalConversationMemory implements ConversationMemory {
 
   final ILocalStorageService _storage;
 
-  /// Prefix for all conversation storage keys.
-  static const String _keyPrefix = 'ai_conversation_';
-
-  String _key(String conversationId) => '$_keyPrefix$conversationId';
-
   @override
   Future<Result<List<AiMessage>>> load(String conversationId) {
     return guardAsync(() async {

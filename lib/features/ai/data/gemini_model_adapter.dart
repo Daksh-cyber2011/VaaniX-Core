@@ -103,7 +103,7 @@ class GeminiModelAdapter implements ModelAdapter {
       // follow-up in a long conversation). We check if the transcript
       // is short enough that the question makes sense in isolation.
       if (_responseCache != null && context.transcript.length <= 2) {
-        final cached = await _responseCache!.get(sanitizedInput);
+        final cached = await _responseCache.get(sanitizedInput);
         if (cached != null) {
           // Cache hit! Return instantly without consuming API quota.
           return AiMessage.assistant(
@@ -151,7 +151,7 @@ class GeminiModelAdapter implements ModelAdapter {
       // ── Cache store ────────────────────────────────────────────────
       // Cache the Q&A pair for future reuse.
       if (_responseCache != null && context.transcript.length <= 2) {
-        await _responseCache!.put(sanitizedInput, responseText);
+        await _responseCache.put(sanitizedInput, responseText);
       }
 
       // Extract usage metadata if available.
@@ -161,7 +161,7 @@ class GeminiModelAdapter implements ModelAdapter {
 
       // ── Usage tracking ─────────────────────────────────────────────
       if (_usageTracker != null && usage != null) {
-        await _usageTracker!.recordUsage(
+        await _usageTracker.recordUsage(
           promptTokens: promptTokens,
           completionTokens: completionTokens,
         );
@@ -172,7 +172,8 @@ class GeminiModelAdapter implements ModelAdapter {
         'model': config.model.isEmpty ? 'gemini-1.5-flash' : config.model,
         'promptTokens': promptTokens,
         'completionTokens': completionTokens,
-        'totalTokens': usage?.totalTokenCount ?? (promptTokens + completionTokens),
+        'totalTokens':
+            usage?.totalTokenCount ?? (promptTokens + completionTokens),
       };
 
       return AiMessage.assistant(
@@ -213,7 +214,8 @@ class GeminiModelAdapter implements ModelAdapter {
       );
 
       final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
-      final responseStream = chat.sendMessageStream(Content.text(sanitizedInput));
+      final responseStream =
+          chat.sendMessageStream(Content.text(sanitizedInput));
 
       await for (final response in responseStream) {
         final text = response.text;
@@ -243,7 +245,9 @@ class GeminiModelAdapter implements ModelAdapter {
   Failure _mapException(Object error) {
     final msg = error.toString().toLowerCase();
 
-    if (msg.contains('rate limit') || msg.contains('429') || msg.contains('quota')) {
+    if (msg.contains('rate limit') ||
+        msg.contains('429') ||
+        msg.contains('quota')) {
       return const AiRateLimitFailure();
     }
     if (msg.contains('content filter') ||

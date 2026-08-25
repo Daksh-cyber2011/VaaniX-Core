@@ -18,7 +18,7 @@ import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/core/utils/result.dart';
-import 'package:vaanix_app/features/auth/domain/auth_session.dart';
+
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -61,9 +61,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
-    await _runAuth(() => ref
-        .read(authRepositoryProvider)
-        .signInWithOAuth(provider: 'google'));
+    await _runAuth(() =>
+        ref.read(authRepositoryProvider).signInWithOAuth(provider: 'google'));
   }
 
   /// Type-safe auth runner. Accepts a typed `Future<Result<T>>` action
@@ -80,7 +79,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     }
     if (password.length < 6) {
       if (mounted) {
-        setState(() => _errorMessage = 'Password must be at least 6 characters.');
+        setState(
+            () => _errorMessage = 'Password must be at least 6 characters.');
       }
       return;
     }
@@ -149,9 +149,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 state: _isBusy ? VanState.thinking : VanState.happy,
                 size: 120,
                 showSpeechBubble: true,
-                dialogueText: _isBusy
-                    ? "Hang on... 🦆"
-                    : "Let's get you started! 🦆",
+                dialogueText:
+                    _isBusy ? "Hang on... 🦆" : "Let's get you started! 🦆",
               ),
               const SizedBox(height: 24),
               Text(
@@ -169,8 +168,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               if (_errorMessage != null) ...[
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
@@ -185,7 +184,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       Expanded(
                         child: Text(
                           _errorMessage!,
-                          style: AppTextStyles.bodySmall(color: AppColors.error),
+                          style:
+                              AppTextStyles.bodySmall(color: AppColors.error),
                         ),
                       ),
                     ],
@@ -218,7 +218,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   hintText: 'At least 6 characters',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
-                    tooltip: _obscurePassword ? 'Show password' : 'Hide password',
+                    tooltip:
+                        _obscurePassword ? 'Show password' : 'Hide password',
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_outlined

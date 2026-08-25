@@ -13,10 +13,9 @@
 
 import 'dart:async';
 
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException, AuthApiException, AuthUser;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    hide AuthException, AuthApiException, AuthUser;
 
-import 'package:vaanix_app/core/errors/exception_mapper.dart';
-import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/auth/domain/auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_session.dart';
@@ -157,12 +156,12 @@ class SupabaseAuthRepository implements AuthRepository {
     final user = session.user;
     return AuthSession(
       status: AuthStatus.authenticated,
-      user: user == null ? null : _toUser(user),
+      user: _toUser(user),
       accessToken: session.accessToken,
       refreshToken: session.refreshToken,
-      expiresAt: session.expiresAt != null
-          ? DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000)
-          : null,
+      expiresAt: session.expiresAt == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000),
     );
   }
 
@@ -178,8 +177,7 @@ class SupabaseAuthRepository implements AuthRepository {
       displayName: meta?['name']?.toString() ??
           meta?['full_name']?.toString() ??
           meta?['user_name']?.toString(),
-      photoUrl: meta?['avatar_url']?.toString() ??
-          meta?['picture']?.toString(),
+      photoUrl: meta?['avatar_url']?.toString() ?? meta?['picture']?.toString(),
     );
   }
 

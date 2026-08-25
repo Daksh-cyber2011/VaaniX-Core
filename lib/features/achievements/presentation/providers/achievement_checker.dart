@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/achievements/data/achievement_repository.dart';
 import 'package:vaanix_app/features/achievements/domain/achievement.dart';
-import 'package:vaanix_app/features/achievements/domain/achievement_definitions.dart';
+
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -41,11 +41,19 @@ class AchievementChecker {
     bool didChatWithVan = false,
   }) async {
     final repo = _ref.read(achievementRepositoryProvider);
+    // Authoritative persisted unlock map, awaited: the async provider may
+    // still be pending right after app start, and reading its cached empty
+    // map would re-report already-unlocked achievements.
+    final persistedUnlocked =
+        await _ref.read(unlockedAchievementsProvider.future);
     final progressList = _ref.read(allAchievementsProgressProvider);
     final newlyUnlocked = <Achievement>[];
 
     for (final progress in progressList) {
-      if (progress.isUnlocked) continue; // already unlocked
+      if (progress.isUnlocked) continue; // already unlocked (UI cache)
+      if (persistedUnlocked.containsKey(progress.achievement.id)) {
+        continue; // already unlocked (authoritative persistence)
+      }
 
       final ach = progress.achievement;
       bool shouldUnlock = false;

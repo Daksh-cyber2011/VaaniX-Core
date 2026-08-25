@@ -158,6 +158,63 @@ void main() {
     });
   });
 
+  group('every lesson plays end-to-end', () {
+    test('each curriculum lesson can be answered to full mastery', () {
+      var lessonsChecked = 0;
+      for (final chapter in sanskritCurriculum) {
+        for (final lesson in chapter.lessons) {
+          final exercises = exercisesByLesson[lesson.id] ?? const [];
+          if (exercises.isEmpty) continue; // empty-state handled elsewhere
+          lessonsChecked++;
+          final notifier = ExerciseNotifier(exercises);
+          for (var i = 0; i < notifier.total; i++) {
+            if (notifier.current.type == ExerciseType.ordering) {
+              // Ordering exercises need every item tapped in order.
+              for (final item in notifier.current.items) {
+                notifier.addChosenItem(item);
+              }
+            } else {
+              notifier.select(notifier.currentCorrectDisplayIndex);
+            }
+            notifier.submit();
+            expect(notifier.currentAnswerIsCorrect, isTrue,
+                reason: '${lesson.id} exercise $i must be answerable');
+            notifier.next();
+          }
+          expect(notifier.state.finished, isTrue,
+              reason: '${lesson.id} session must finish');
+          expect(notifier.masteredExerciseIds, hasLength(notifier.total),
+              reason: '${lesson.id} must reach full mastery');
+        }
+      }
+      expect(lessonsChecked, greaterThanOrEqualTo(8),
+          reason: 'the sweep should cover all authored lessons');
+    });
+
+    test('retry after a wrong answer never double-counts mastery', () {
+      for (final exercises in exercisesByLesson.values) {
+        if (exercises.isEmpty) continue;
+        final notifier = ExerciseNotifier(exercises);
+        // Answer the first exercise wrong, then correctly on retry.
+        final wrong = [for (var i = 0; i < exercises.length; i++) i]
+            .firstWhere((i) => i != notifier.currentCorrectDisplayIndex);
+        notifier.select(wrong);
+        notifier.submit();
+        expect(notifier.currentAnswerIsCorrect, isFalse);
+        notifier.retry();
+        notifier.select(notifier.currentCorrectDisplayIndex);
+        notifier.submit();
+        expect(notifier.currentAnswerIsCorrect, isTrue);
+        expect(notifier.masteredExerciseIds, hasLength(1));
+        notifier.next();
+        // Second exercise, right first try.
+        notifier.select(notifier.currentCorrectDisplayIndex);
+        notifier.submit();
+        expect(notifier.masteredExerciseIds, hasLength(2));
+      }
+    });
+  });
+
   group('seeded content', () {
     test('every curriculum lesson has at least 2 exercises', () {
       for (final chapter in sanskritCurriculum) {

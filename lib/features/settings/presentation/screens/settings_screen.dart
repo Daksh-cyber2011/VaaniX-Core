@@ -49,7 +49,8 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                const Icon(Icons.brightness_6_outlined, color: AppColors.primary),
+                const Icon(Icons.brightness_6_outlined,
+                    color: AppColors.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -105,13 +106,15 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editCompanionName(context, ref, companionName),
             child: Row(
               children: [
-                const Icon(Icons.emoji_nature_outlined, color: AppColors.primary),
+                const Icon(Icons.emoji_nature_outlined,
+                    color: AppColors.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Companion Name', style: AppTextStyles.titleMedium()),
+                      Text('Companion Name',
+                          style: AppTextStyles.titleMedium()),
                       Text(
                         companionName,
                         style: AppTextStyles.bodySmall(
@@ -131,7 +134,8 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editPersonality(context, ref, personality),
             child: Row(
               children: [
-                Icon(personality?.emoji != null
+                Icon(
+                    personality?.emoji != null
                         ? Icons.emoji_emotions_outlined
                         : Icons.mood_bad_outlined,
                     color: AppColors.primary),
@@ -145,7 +149,7 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         personality == null
                             ? 'Not set'
-                            : '${personality!.emoji} ${personality.label}',
+                            : '${personality.emoji} ${personality.label}',
                         style: AppTextStyles.bodySmall(
                             color: AppColors.subtextLight),
                       ),
@@ -197,9 +201,7 @@ class SettingsScreen extends ConsumerWidget {
                     children: [
                       Text('CBSE Class', style: AppTextStyles.titleMedium()),
                       Text(
-                        selectedClass != null
-                            ? selectedClass.label
-                            : 'Not set',
+                        selectedClass != null ? selectedClass.label : 'Not set',
                         style: AppTextStyles.bodySmall(
                             color: AppColors.subtextLight),
                       ),
@@ -319,8 +321,7 @@ class SettingsScreen extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () =>
-                Navigator.pop(ctx, controller.text.trim()),
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             child: const Text('Save'),
           ),
         ],
@@ -360,7 +361,9 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (result != null) {
-      await ref.read(userProfileProvider.notifier).updatePersonalityMode(result);
+      await ref
+          .read(userProfileProvider.notifier)
+          .updatePersonalityMode(result);
     }
   }
 
