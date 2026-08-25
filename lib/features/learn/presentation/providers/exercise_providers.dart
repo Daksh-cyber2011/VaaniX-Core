@@ -79,6 +79,16 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
 
   int get total => _exercises.length;
 
+  /// Ids of exercises answered correctly at least once this session
+  /// (index order; used to persist per-lesson mastery without XP effects).
+  List<String> get masteredExerciseIds {
+    final indices = _scored.toList()..sort();
+    return [for (final i in indices) _exercises[i].id];
+  }
+
+  /// Indices answered correctly at least once this session (unmodifiable).
+  Set<int> get masteredIndices => Set.unmodifiable(_scored);
+
   Exercise get current => _exercises[state.currentIndex];
 
   List<String> get currentOptions => _display[state.currentIndex].options;

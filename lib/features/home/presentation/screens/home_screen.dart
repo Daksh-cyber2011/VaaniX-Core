@@ -16,6 +16,9 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
@@ -82,6 +85,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length),
       orElse: () => 0,
     );
+
+    // Practice mastery for the highlighted lesson (real persisted state).
+    final practiceLessonId = nextLesson?.id;
+    final masteredIds = practiceLessonId == null
+        ? const <String>[]
+        : ref.watch(masteredExercisesProvider(practiceLessonId));
+    final lessonExercises = practiceLessonId == null
+        ? const <Exercise>[]
+        : ref.watch(exercisesForLessonProvider(practiceLessonId));
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -174,6 +186,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       nextLesson: nextLesson,
                       completedCount: completedSet.length,
                       totalLessons: totalLessons,
+                      masteredCount: masteredIds.length,
+                      totalExercises: lessonExercises.length,
                       onOpen: nextLesson == null
                           ? null
                           : () => _openNextLesson(nextLesson.id),
@@ -288,6 +302,8 @@ class _ContinueCard extends StatelessWidget {
     required this.nextLesson,
     required this.completedCount,
     required this.totalLessons,
+    required this.masteredCount,
+    required this.totalExercises,
     required this.onOpen,
     required this.onAllDone,
   });
@@ -295,6 +311,8 @@ class _ContinueCard extends StatelessWidget {
   final Lesson? nextLesson;
   final int completedCount;
   final int totalLessons;
+  final int masteredCount;
+  final int totalExercises;
   final VoidCallback? onOpen;
   final VoidCallback onAllDone;
 
@@ -336,6 +354,16 @@ class _ContinueCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (totalExercises > 0 && nextLesson != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    masteredCount >= totalExercises
+                        ? 'Practice complete \u2713 $masteredCount/$totalExercises'
+                        : 'Practice: $masteredCount of $totalExercises mastered',
+                    style:
+                        AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                  ),
+                ],
                 if (totalLessons > 0) ...[
                   const SizedBox(height: 2),
                   Text(

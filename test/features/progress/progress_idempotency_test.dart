@@ -76,4 +76,37 @@ void main() {
       expect(history, isEmpty);
     });
   });
+
+  group('exercise mastery persistence', () {
+    test('records mastery and merges idempotently (dedupe + sort)', () async {
+      await repo.recordMasteredExercises('l3', ['e1', 'e2']);
+      await repo.recordMasteredExercises('l3', ['e2', 'e3']);
+      final ids = repo
+          .getMasteredExercises('l3')
+          .fold((_) => fail('expected mastery success'), (v) => v);
+      expect(ids, ['e1', 'e2', 'e3']);
+    });
+
+    test('mastery is isolated per lesson', () async {
+      await repo.recordMasteredExercises('l4', ['e1']);
+      final other = repo
+          .getMasteredExercises('l5')
+          .fold((_) => fail('expected success'), (v) => v);
+      expect(other, isEmpty);
+    });
+
+    test('corrupt mastery data is treated as empty, not a crash', () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('mastered_exercises_l6', 'not-json{');
+      final ids = repo
+          .getMasteredExercises('l6')
+          .fold((_) => fail('expected success'), (v) => v);
+      expect(ids, isEmpty);
+    });
+
+    test('mastery never awards XP', () async {
+      await repo.recordMasteredExercises('l7', ['e1', 'e2']);
+      expect(readXp(), 0);
+    });
+  });
 }

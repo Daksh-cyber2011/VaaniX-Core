@@ -31,6 +31,19 @@ abstract class ProgressRepository {
   /// Total XP earned.
   Result<int> getXp();
 
+  /// Exercise ids the learner has mastered (answered correctly at least
+  /// once) for [lessonId]. Empty when never practised. Corrupt data is
+  /// treated as empty rather than crashing.
+  Result<List<String>> getMasteredExercises(String lessonId);
+
+  /// Record exercise mastery for [lessonId] as an idempotent union of
+  /// [ids]. Awarding no XP (lesson XP is the only XP gate), repeat
+  /// records simply merge, so practice sessions can safely re-run.
+  Future<Result<void>> recordMasteredExercises(
+    String lessonId,
+    List<String> ids,
+  );
+
   /// Reset all progress (used by Settings → reset account).
   Future<Result<void>> reset();
 }

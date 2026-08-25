@@ -26,6 +26,7 @@ class Exercise {
     this.correctIndex,
     this.items = const [],
     this.explanation,
+    this.hint,
   });
 
   final String id;
@@ -44,6 +45,9 @@ class Exercise {
 
   /// Feedback shown after answering.
   final String? explanation;
+
+  /// Optional nudge shown before answering (only when authored).
+  final String? hint;
 
   /// True when the exercise data is well-formed.
   bool get isValid => type == ExerciseType.ordering

@@ -18,6 +18,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
   'ls_alphabet_vowels': const [
     Exercise(
       id: 'ex_ls_alphabet_vowels_1',
+      hint:
+          'The 13 vowels count short and long forms (a/aa, i/ii, u/uu) as separate letters, plus e, ai, o, au.',
       lessonId: 'ls_alphabet_vowels',
       type: ExerciseType.mcq,
       prompt: 'How many vowels (svara) does Sanskrit have?',
@@ -38,6 +40,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_alphabet_vowels_3',
+      hint:
+          'Fire in Sanskrit is agni; the first sound is the short a, like the a in the word about.',
       lessonId: 'ls_alphabet_vowels',
       type: ExerciseType.mcq,
       prompt: 'The word अग्नि (agni) starts with which vowel sound?',
@@ -68,6 +72,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_alphabet_consonants_2',
+      hint:
+          'The consonants are arranged in five groups of five (ka, ca, ta, tha, pa), plus a few more at the end.',
       lessonId: 'ls_alphabet_consonants',
       type: ExerciseType.mcq,
       prompt: 'How many consonants does Sanskrit have?',
@@ -107,6 +113,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_alphabet_barakhadi_2',
+      hint:
+          'A matra is a vowel sign. Question marks stand for a consonant, a vowel sign, and their combination.',
       lessonId: 'ls_alphabet_barakhadi',
       type: ExerciseType.mcq,
       prompt: 'क + आ = ?',
@@ -148,6 +156,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_words_greetings_2',
+      hint:
+          'This greeting is used in the morning; su means good and prabhata relates to dawn.',
       lessonId: 'ls_words_greetings',
       type: ExerciseType.mcq,
       prompt: 'सुप्रभातम् (suprabhātam) means?',
@@ -157,6 +167,7 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_words_greetings_3',
+      hint: 'It is what you say after someone helps you - a thank-you.',
       lessonId: 'ls_words_greetings',
       type: ExerciseType.mcq,
       prompt: 'धन्यवादः (dhanyavādaḥ) means?',
@@ -199,6 +210,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_words_family_3',
+      hint:
+          'The root mat tells you this relative is from the mother side of the family.',
       lessonId: 'ls_words_family',
       type: ExerciseType.mcq,
       prompt: 'Who is a मातुल (mātula)?',
@@ -234,6 +247,7 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_words_numbers_2',
+      hint: 'Think of chatur, the number that comes just before five.',
       lessonId: 'ls_words_numbers',
       type: ExerciseType.mcq,
       prompt: 'चत्वारि (catvāri) means?',
@@ -243,6 +257,7 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_words_numbers_3',
+      hint: 'eka means one and dasa means ten; the word for 11 joins them.',
       lessonId: 'ls_words_numbers',
       type: ExerciseType.mcq,
       prompt: 'The word एकादश (ekādaśa) for 11 combines:',
@@ -272,6 +287,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
   'ls_sentences_intro': const [
     Exercise(
       id: 'ex_ls_sentences_intro_1',
+      hint:
+          'mama means my and nama means name; it is how you introduce yourself.',
       lessonId: 'ls_sentences_intro',
       type: ExerciseType.mcq,
       prompt: 'मम नाम (mama nāma) means?',
@@ -325,6 +342,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_sentences_questions_2',
+      hint:
+          'When you lose your book you ask this word to find out where it is.',
       lessonId: 'ls_sentences_questions',
       type: ExerciseType.mcq,
       prompt: 'कुत्र (kutra) asks?',
@@ -343,6 +362,8 @@ final Map<String, List<Exercise>> exercisesByLesson = {
     ),
     Exercise(
       id: 'ex_ls_sentences_questions_4',
+      hint:
+          'It begins a question about the way something is done - the how question word.',
       lessonId: 'ls_sentences_questions',
       type: ExerciseType.fillBlank,
       prompt: 'कथम् (katham) asks ___?',

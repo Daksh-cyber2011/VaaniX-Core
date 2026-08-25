@@ -99,6 +99,37 @@ class LocalProgressRepository implements ProgressRepository {
   @override
   Result<int> getXp() => ok(_storage.xpTotal);
 
+  static const String _masteredPrefix = 'mastered_exercises_';
+
+  @override
+  Result<List<String>> getMasteredExercises(String lessonId) {
+    final raw = _storage.getString('$_masteredPrefix$lessonId');
+    if (raw == null || raw.isEmpty) return ok(const <String>[]);
+    try {
+      final list = jsonDecode(raw) as List<dynamic>;
+      return ok(list.whereType<String>().toList());
+    } catch (_) {
+      // Corrupt mastery JSON - treat as no mastery rather than crashing.
+      return ok(const <String>[]);
+    }
+  }
+
+  @override
+  Future<Result<void>> recordMasteredExercises(
+    String lessonId,
+    List<String> ids,
+  ) {
+    return guardAsync(() async {
+      final existing =
+          getMasteredExercises(lessonId).fold((_) => const <String>[], (v) => v);
+      final merged = {...existing, ...ids}.toList()..sort();
+      await _storage.setString(
+        '$_masteredPrefix$lessonId',
+        jsonEncode(merged),
+      );
+    });
+  }
+
   @override
   Future<Result<void>> reset() {
     return guardAsync(() async {

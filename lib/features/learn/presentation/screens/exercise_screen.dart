@@ -34,6 +34,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   bool _isCompleting = false;
   bool _completionDone = false;
 
+  /// True once the finished session's mastery has been persisted
+  /// (fire-and-forget; recordMasteredExercises is an idempotent union).
+  bool _masteryRecorded = false;
+
+  /// Exercise id whose hint is revealed (null = no hint shown).
+  String? _hintRevealedFor;
+
   @override
   void initState() {
     super.initState();
@@ -104,6 +111,18 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ref.read(exerciseSessionProvider(widget.lesson.id).notifier);
     final completed = ref.watch(completedLessonIdsProvider);
     final isAlreadyDone = completed.contains(widget.lesson.id);
+
+    // Persist mastery exactly once per finished session (idempotent union).
+    if (state.finished && !_masteryRecorded) {
+      _masteryRecorded = true;
+      final ids = notifier.masteredExerciseIds;
+      if (ids.isNotEmpty) {
+        ref.read(recordMasteryProvider)(widget.lesson.id, ids);
+        ref
+            .read(masteredExercisesProvider(widget.lesson.id).notifier)
+            .refresh();
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -233,6 +252,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   style: AppTextStyles.headlineSmall(),
                 ),
               ),
+              if (exercise.hint != null && !state.answered) ...[
+                const SizedBox(height: 8),
+                _hintArea(context, exercise),
+              ],
               const SizedBox(height: 20),
               if (isOrdering)
                 _orderingArea(context, state, notifier, exercise)
@@ -247,6 +270,48 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             ],
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _hintArea(BuildContext context, Exercise exercise) {
+    final revealed = _hintRevealedFor == exercise.id;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton.icon(
+          onPressed: () {
+            setState(() {
+              _hintRevealedFor = revealed ? null : exercise.id;
+            });
+          },
+          icon: Icon(
+            revealed
+                ? Icons.lightbulb_outline_rounded
+                : Icons.lightbulb_rounded,
+            size: 18,
+            color: AppColors.accent,
+          ),
+          label: Text(
+            revealed ? 'Hide hint' : 'Hint',
+            style: AppTextStyles.labelLarge(color: AppColors.accent),
+          ),
+        ),
+        if (revealed)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border:
+                  Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+            ),
+            child: Text(
+              exercise.hint!,
+              style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            ),
+          ),
       ],
     );
   }
@@ -552,7 +617,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             PrimaryButton.secondary(
               label: 'Practise Again',
               icon: const Icon(Icons.refresh_rounded, size: 20),
-              onPressed: () => notifier.restart(),
+              onPressed: () {
+                setState(() => _masteryRecorded = false);
+                notifier.restart();
+              },
             ),
             const SizedBox(height: 12),
             TextButton(

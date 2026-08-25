@@ -180,4 +180,51 @@ void main() {
       }
     });
   });
+
+  group('mastery tracking', () {
+    test('masteredExerciseIds lists first-try-correct ids in order', () {
+      final notifier = ExerciseNotifier([_mcq('ex_a'), _mcq('ex_b')]);
+      // Wrong answer first, then a retry-correct answer: never counted.
+      final wrong =
+          [0, 1, 2].firstWhere((i) => i != notifier.currentCorrectDisplayIndex);
+      notifier.select(wrong);
+      notifier.submit();
+      expect(notifier.currentAnswerIsCorrect, isFalse);
+      notifier.retry();
+      notifier.select(notifier.currentCorrectDisplayIndex);
+      notifier.submit();
+      expect(notifier.currentAnswerIsCorrect, isTrue);
+      expect(notifier.masteredExerciseIds, ['ex_a']);
+      // Advance and answer the second exercise correctly first try.
+      notifier.next();
+      notifier.select(notifier.currentCorrectDisplayIndex);
+      notifier.submit();
+      expect(notifier.masteredExerciseIds, ['ex_a', 'ex_b']);
+      expect(notifier.masteredIndices, {0, 1});
+    });
+
+    test('restart clears session mastery', () {
+      final notifier = ExerciseNotifier([_mcq('ex_a'), _mcq('ex_b')]);
+      notifier.select(notifier.currentCorrectDisplayIndex);
+      notifier.submit();
+      expect(notifier.masteredExerciseIds, ['ex_a']);
+      notifier.restart();
+      expect(notifier.masteredExerciseIds, isEmpty);
+    });
+
+    test('hint is optional, preserved, and does not affect validity', () {
+      const withHint = Exercise(
+        id: 'ex_h',
+        lessonId: 'ls_x',
+        type: ExerciseType.mcq,
+        prompt: 'p',
+        options: ['a', 'b'],
+        correctIndex: 1,
+        hint: 'try the second one',
+      );
+      expect(withHint.hint, 'try the second one');
+      expect(_mcq('ex_n').hint, isNull);
+      expect(withHint.isValid, isTrue);
+    });
+  });
 }

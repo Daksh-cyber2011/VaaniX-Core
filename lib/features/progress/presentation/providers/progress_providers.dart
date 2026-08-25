@@ -59,6 +59,44 @@ class _CompletedQuizIdsNotifier extends StateNotifier<List<String>> {
   }
 }
 
+/// Reactive list of mastered exercise ids per lesson (family keyed by
+/// lessonId). Powers Home's "unfinished practice" surfacing and the
+/// Progress screen's mastery counts.
+final masteredExercisesProvider = StateNotifierProvider.family<
+    _MasteredExercisesNotifier, List<String>, String>(
+  (ref, lessonId) => _MasteredExercisesNotifier(
+    ref.watch(progressRepositoryProvider),
+    lessonId,
+  ),
+);
+
+/// Fire-and-forget persistence hook: records a finished practice
+/// session's mastered exercise ids for [lessonId] (idempotent union).
+final recordMasteryProvider =
+    Provider<Future<void> Function(String lessonId, List<String> ids)>((ref) {
+  final repo = ref.watch(progressRepositoryProvider);
+  return (lessonId, ids) async {
+    await repo.recordMasteredExercises(lessonId, ids);
+  };
+});
+
+class _MasteredExercisesNotifier extends StateNotifier<List<String>> {
+  _MasteredExercisesNotifier(this._repo, this._lessonId) : super(const []) {
+    _load();
+  }
+
+  final ProgressRepository _repo;
+  final String _lessonId;
+
+  void _load() {
+    final result = _repo.getMasteredExercises(_lessonId);
+    result.fold((_) => null, (ids) => state = ids);
+  }
+
+  /// Re-reads persisted mastery (called after a practice session saves).
+  void refresh() => _load();
+}
+
 class _XpNotifier extends StateNotifier<int> {
   _XpNotifier(this._repo) : super(0) {
     final result = _repo.getXp();
