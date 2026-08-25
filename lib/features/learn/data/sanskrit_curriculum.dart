@@ -13,6 +13,7 @@
 /// Lesson content strings are defined in [sanskrit_lesson_content.dart].
 
 import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
+import 'package:vaanix_app/features/learn/data/unit2_lesson_content.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// The full V1 curriculum, ordered by chapter → lesson.
@@ -52,6 +53,18 @@ final List<Chapter> sanskritCurriculum = [
         xpReward: 20,
         order: 2,
         content: kBarakhadiContent,
+      ),
+      Lesson(
+        id: 'ls_alphabet_conjuncts',
+        chapterId: 'ch_alphabet',
+        title:
+            '\u0938\u0902\u092F\u0941\u0915\u094D\u0924\u093E\u0915\u094D\u0937\u0930 – Conjunct Consonants',
+        subtitle:
+            'Join consonants: \u0915\u094D\u0937, \u0924\u094D\u0930, \u091C\u094D\u091E',
+        difficulty: Difficulty.intermediate,
+        xpReward: 20,
+        order: 3,
+        content: kConjunctsContent,
       ),
     ],
   ),
@@ -116,6 +129,56 @@ final List<Chapter> sanskritCurriculum = [
         xpReward: 25,
         order: 1,
         content: kQuestionsContent,
+      ),
+      Lesson(
+        id: 'ls_sentences_translation',
+        chapterId: 'ch_sentences',
+        title: '\u0905\u0928\u0941\u0935\u093E\u0926 – Translation Practice',
+        subtitle: 'Subject-Object-Verb sentences',
+        difficulty: Difficulty.intermediate,
+        xpReward: 20,
+        order: 2,
+        content: kTranslationContent,
+      ),
+    ],
+  ),
+  Chapter(
+    id: 'ch_grammar',
+    title:
+        '\u0935\u094D\u092F\u093E\u0915\u0930\u0928\u092E\u094D – Basic Grammar',
+    subtitle: 'Nouns, pronouns and verbs',
+    order: 3,
+    lessons: [
+      Lesson(
+        id: 'ls_grammar_nouns_cases',
+        chapterId: 'ch_grammar',
+        title: '\u0935\u093F\u092D\u0915\u094D\u0924\u093F – Nouns & Cases',
+        subtitle: 'The 8 cases of a noun',
+        difficulty: Difficulty.beginner,
+        xpReward: 20,
+        order: 0,
+        content: kNounCasesContent,
+      ),
+      Lesson(
+        id: 'ls_grammar_pronouns',
+        chapterId: 'ch_grammar',
+        title: '\u0938\u0930\u094D\u0935\u0928\u093E\u092E – Pronouns',
+        subtitle:
+            '\u0905\u0939\u0902, \u0924\u094D\u0935\u092E\u094D, \u0938\u0903, \u0938\u093E, \u0924\u0924\u094D',
+        difficulty: Difficulty.beginner,
+        xpReward: 15,
+        order: 1,
+        content: kPronounsContent,
+      ),
+      Lesson(
+        id: 'ls_grammar_verbs',
+        chapterId: 'ch_grammar',
+        title: '\u0932\u0915\u093E\u0930 – Basic Verbs',
+        subtitle: 'The present tense (\u0932\u0924\u094D)',
+        difficulty: Difficulty.intermediate,
+        xpReward: 20,
+        order: 2,
+        content: kVerbsContent,
       ),
     ],
   ),
@@ -195,6 +258,31 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
       correctIndex: 1,
       explanation:
           'The short-i matra (\u093F) is the only one written on the left of a consonant.',
+    ),
+    QuizQuestion(
+      id: 'q_alpha_11',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which of these is a conjunct consonant?',
+      options: const ['\u0915\u094D\u0937', '\u0915', '\u0906', '\u0924'],
+      correctIndex: 0,
+      explanation:
+          '\u0915\u094D\u0937 = \u0915 + \u0937 joined into one letter with the \u0939\u0932\u094D\u0905\u0928\u094D\u0924.',
+    ),
+    QuizQuestion(
+      id: 'q_alpha_12',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.intermediate,
+      prompt: '\u0924\u094D\u0930 is formed from?',
+      options: const [
+        '\u0924 + \u0930',
+        '\u0915 + \u0937',
+        '\u091C + \u091E',
+        '\u0938 + \u0935'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0924\u094D\u0930 = \u0924 + \u0930, as in \u0924\u094D\u0930\u092F\u0903 (three) and \u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D (field).',
     ),
   ],
   'ch_words': [
@@ -355,6 +443,151 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
       correctIndex: 0,
       explanation:
           '\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) means "why".',
+    ),
+    QuizQuestion(
+      id: 'q_sent_7',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
+      prompt:
+          '"\u092E\u093E\u0924\u093E \u0905\u0928\u094D\u0928\u092E\u094D \u092A\u091A\u0924\u093F" means?',
+      options: const [
+        'Mother cooks food',
+        'Mother reads a book',
+        'The girl drinks water',
+        'Mother goes to school'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092E\u093E\u0924\u093E (mother) + \u0905\u0928\u094D\u0928\u092E\u094D (food) + \u092A\u091A\u0924\u093F (cooks): mother cooks food.',
+    ),
+    QuizQuestion(
+      id: 'q_sent_8',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which word order does a Sanskrit sentence follow?',
+      options: const [
+        'Subject-Object-Verb',
+        'Subject-Verb-Object',
+        'Verb-Subject-Object',
+        'Object-Verb-Subject'
+      ],
+      correctIndex: 0,
+      explanation:
+          'SOV: "\u0930\u093E\u092E\u0903 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u0924\u093F" – Ram a fruit eats.',
+    ),
+  ],
+  'ch_grammar': [
+    QuizQuestion(
+      id: 'q_gram_1',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.beginner,
+      prompt: 'How many cases does a Sanskrit noun have?',
+      options: const ['6', '7', '8', '10'],
+      correctIndex: 2,
+      explanation:
+          'Sanskrit has 8 cases, from \u092A\u094D\u0930\u0925\u092E\u093E (nominative) to \u0938\u092E\u094D\u092C\u094B\u0927\u0928 (vocative).',
+    ),
+    QuizQuestion(
+      id: 'q_gram_2',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which case marks the subject (\u0915\u0930\u094D\u0924\u093E)?',
+      options: const [
+        '\u092A\u094D\u0930\u0925\u092E\u093E',
+        '\u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E',
+        '\u0937\u0937\u094D\u0920\u0940',
+        '\u0938\u092A\u094D\u0924\u092E\u0940'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092A\u094D\u0930\u0925\u092E\u093E (nominative) is the subject case: \u092C\u093E\u0932\u0915\u0903 - the boy.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_3',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which pronoun means "I"?',
+      options: const [
+        '\u0905\u0939\u0902',
+        '\u0924\u094D\u0935\u092E\u094D',
+        '\u0938\u0903',
+        '\u0938\u093E'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0905\u0939\u0902 = I. \u0905\u0939\u0902 \u092A\u0920\u093E\u092E\u093F - I read.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_4',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which pronoun means "she"?',
+      options: const [
+        '\u0938\u093E',
+        '\u0938\u0903',
+        '\u0924\u0924\u094D',
+        '\u0924\u094D\u0935\u092E\u094D'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0938\u093E = she; \u0938\u0903 = he; \u0924\u0924\u094D = it.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_5',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.intermediate,
+      prompt:
+          'In "\u0930\u093E\u092E\u0903 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u0924\u093F", what is the object (\u0915\u0930\u094D\u092E)?',
+      options: const [
+        '\u092B\u0932\u092E\u094D',
+        '\u0930\u093E\u092E\u0903',
+        '\u0916\u093E\u0926\u0924\u093F',
+        '\u0905\u0939\u0902'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092B\u0932\u092E\u094D (fruit) receives the action - it is \u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E, the object case.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_6',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.intermediate,
+      prompt:
+          'Which is the third-person singular present form of \u092A\u0920\u094D?',
+      options: const [
+        '\u092A\u0920\u0924\u093F',
+        '\u092A\u0920\u0928\u094D\u0924\u093F',
+        '\u092A\u0920\u093E\u092E\u093F',
+        '\u092A\u0920\u0938\u093F'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092A\u0920\u0924\u093F = he/she reads. The ending -\u0924\u093F marks he/she/it.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_7',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.intermediate,
+      prompt: '\u092C\u093E\u0932\u0915\u0938\u094D\u092F means?',
+      options: const ['of the boy', 'to the boy', 'by the boy', 'from the boy'],
+      correctIndex: 0,
+      explanation:
+          '\u092C\u093E\u0932\u0915\u0938\u094D\u092F is \u0937\u0937\u094D\u0920\u0940 (genitive): "of the boy" - \u092C\u093E\u0932\u0915\u0938\u094D\u092F \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D, the boy\'s book.',
+    ),
+    QuizQuestion(
+      id: 'q_gram_8',
+      chapterId: 'ch_grammar',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which sentence means "I go to school"?',
+      options: const [
+        '\u0905\u0939\u0902 \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F',
+        '\u0905\u0939\u0902 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u093E\u092E\u093F',
+        '\u0924\u094D\u0935\u092E\u094D \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F',
+        '\u0938\u0903 \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D \u092A\u0920\u0924\u093F'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0905\u0939\u0902 \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F - I / to school / go: subject-object-verb.',
     ),
   ],
 };

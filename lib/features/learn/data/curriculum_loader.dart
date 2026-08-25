@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
+import 'package:vaanix_app/features/learn/data/unit2_lesson_content.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// Loads chapters from JSON, falls back to hardcoded Dart on any error.
@@ -100,6 +101,7 @@ Map<String, String> _buildContentMap() {
     'ls_words_numbers': kNumbersContent,
     'ls_sentences_intro': kIntroContent,
     'ls_sentences_questions': kQuestionsContent,
+    ...unit2LessonContent,
   };
 }
 

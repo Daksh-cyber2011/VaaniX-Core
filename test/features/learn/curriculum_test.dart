@@ -92,14 +92,18 @@ void main() {
   });
 
   group('Seed curriculum', () {
-    test('has three ordered chapters and eight lessons', () {
-      expect(sanskritCurriculum, hasLength(3));
-      expect(sanskritCurriculum.map((c) => c.id),
-          ['ch_alphabet', 'ch_words', 'ch_sentences']);
-      expect(sanskritCurriculum.map((c) => c.order), [0, 1, 2]);
+    test('implements four ordered syllabus chapters and thirteen lessons', () {
+      expect(sanskritCurriculum, hasLength(4));
+      expect(sanskritCurriculum.map((c) => c.id), [
+        'ch_alphabet',
+        'ch_words',
+        'ch_sentences',
+        'ch_grammar',
+      ]);
+      expect(sanskritCurriculum.map((c) => c.order), [0, 1, 2, 3]);
       final totalLessons =
           sanskritCurriculum.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(totalLessons, 8);
+      expect(totalLessons, 13);
     });
 
     test('every lesson has non-empty id, title, and chapterId', () {
@@ -114,7 +118,8 @@ void main() {
 
     test('quizzes exist per chapter with valid options', () {
       expect(chapterQuizzes.keys,
-          containsAll(['ch_alphabet', 'ch_words', 'ch_sentences']));
+          containsAll(
+              ['ch_alphabet', 'ch_words', 'ch_sentences', 'ch_grammar']));
       chapterQuizzes.forEach((chapterId, questions) {
         expect(questions, isNotEmpty, reason: 'no quiz for $chapterId');
         for (final q in questions) {

@@ -372,4 +372,337 @@ final Map<String, List<Exercise>> exercisesByLesson = {
       explanation: 'katham = how.',
     ),
   ],
+  // ---------------------------------------------------------------
+  // Chapter 1 (expanded): Conjunct Consonants
+  // ---------------------------------------------------------------
+  'ls_alphabet_conjuncts': const [
+    Exercise(
+      id: 'ex_ls_alphabet_conjuncts_1',
+      hint:
+          'It is the small diagonal mark under a consonant that removes its built-in "a".',
+      lessonId: 'ls_alphabet_conjuncts',
+      type: ExerciseType.mcq,
+      prompt: 'What does the halanta \u094D do to a consonant?',
+      options: [
+        'Removes its built-in vowel',
+        'Adds a long vowel',
+        'Doubles the consonant',
+        'Makes it an independent letter'
+      ],
+      correctIndex: 0,
+      explanation:
+          'Every consonant hides an "a" (ka, ta...). The halanta \u094D removes it: \u0915\u094D = k only, so \u0915\u094D + \u0937 can blend into \u0915\u094D\u0937.',
+    ),
+    Exercise(
+      id: 'ex_ls_alphabet_conjuncts_2',
+      hint: 'A conjunct is two consonants written as ONE unit.',
+      lessonId: 'ls_alphabet_conjuncts',
+      type: ExerciseType.mcq,
+      prompt:
+          'Which of these is a conjunct consonant (\u0938\u0902\u092F\u0941\u0915\u094D\u0924\u093E\u0915\u094D\u0937\u0930)?',
+      options: ['\u0915\u094D\u0937', '\u0915', '\u0906', '\u0924'],
+      correctIndex: 0,
+      explanation:
+          '\u0915\u094D\u0937 is \u0915\u094D + \u0937 joined into one letter. \u0915, \u0906 and \u0924 are single letters, not conjuncts.',
+    ),
+    Exercise(
+      id: 'ex_ls_alphabet_conjuncts_3',
+      hint:
+          '\u0924\u094D\u0930 starts with \u0924\u094D (the "t" without a vowel).',
+      lessonId: 'ls_alphabet_conjuncts',
+      type: ExerciseType.fillBlank,
+      prompt: '\u0924\u094D\u0930 = \u0924\u094D + which letter?',
+      options: ['\u0930', '\u0935', '\u0923', '\u0928'],
+      correctIndex: 0,
+      explanation:
+          '\u0924\u094D\u0930 = \u0924\u094D + \u0930. Examples: \u0924\u094D\u0930\u092F\u0903 (three), \u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D (field).',
+    ),
+    Exercise(
+      id: 'ex_ls_alphabet_conjuncts_4',
+      hint:
+          '\u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D is a three-part word: the conjunct with -\u0947, then \u0924\u094D\u0930, then -\u092E\u094D.',
+      lessonId: 'ls_alphabet_conjuncts',
+      type: ExerciseType.ordering,
+      prompt:
+          'Arrange the parts to spell \u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D (field).',
+      items: ['\u0915\u094D\u0937\u0947', '\u0924\u094D\u0930', '\u092E\u094D'],
+      explanation:
+          '\u0915\u094D\u0937\u0947 + \u0924\u094D\u0930 + \u092E\u094D = \u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D, exactly as in the lesson table.',
+    ),
+  ],
+
+  // ---------------------------------------------------------------
+  // Chapter 4: Basic Grammar - Nouns & Cases
+  // ---------------------------------------------------------------
+  'ls_grammar_nouns_cases': const [
+    Exercise(
+      id: 'ex_ls_grammar_nouns_cases_1',
+      hint:
+          'Nominative, accusative, instrumental, dative, ablative, genitive, locative, vocative.',
+      lessonId: 'ls_grammar_nouns_cases',
+      type: ExerciseType.mcq,
+      prompt:
+          'How many cases (\u0935\u093F\u092D\u0915\u094D\u0924\u093F) does a Sanskrit noun have?',
+      options: ['6', '7', '8', '10'],
+      correctIndex: 2,
+      explanation:
+          'Sanskrit has 8 cases: \u092A\u094D\u0930\u0925\u092E\u093E to \u0938\u092E\u094D\u092C\u094B\u0927\u0928. The ending of the noun shows its job.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_nouns_cases_2',
+      hint: 'It is the case that does the action - the subject.',
+      lessonId: 'ls_grammar_nouns_cases',
+      type: ExerciseType.mcq,
+      prompt: 'Which case marks the SUBJECT (\u0915\u0930\u094D\u0924\u093E)?',
+      options: [
+        '\u092A\u094D\u0930\u0925\u092E\u093E (nominative)',
+        '\u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E (accusative)',
+        '\u0937\u0937\u094D\u0920\u0940 (genitive)',
+        '\u0938\u092A\u094D\u0924\u092E\u0940 (locative)'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092A\u094D\u0930\u0925\u092E\u093E (nominative) is the subject case: \u092C\u093E\u0932\u0915\u0903 \u0916\u093E\u0926\u0924\u093F - the boy eats.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_nouns_cases_3',
+      hint:
+          'The object form of \u092C\u093E\u0932\u0915 ends like \u092B\u0932\u092E\u094D - with -\u092E\u094D.',
+      lessonId: 'ls_grammar_nouns_cases',
+      type: ExerciseType.fillBlank,
+      prompt:
+          '\u092C\u093E\u0932\u0915\u0903 is nominative. The ACCUSATIVE (object) form is ___',
+      options: [
+        '\u092C\u093E\u0932\u0915\u092E\u094D',
+        '\u092C\u093E\u0932\u0915\u0947\u0928',
+        '\u092C\u093E\u0932\u0915\u093E\u0924\u094D',
+        '\u092C\u093E\u0932\u0915\u0938\u094D\u092F'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E adds -\u092E\u094D: \u092C\u093E\u0932\u0915\u092E\u094D. \u0930\u093E\u092E\u0903 \u092C\u093E\u0932\u0915\u092E\u094D pasyati - Ram sees the boy.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_nouns_cases_4',
+      hint: 'They run 1-4 in the lesson table order.',
+      lessonId: 'ls_grammar_nouns_cases',
+      type: ExerciseType.ordering,
+      prompt: 'Order the first four cases as they appear in the lesson.',
+      items: [
+        '\u092A\u094D\u0930\u0925\u092E\u093E',
+        '\u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E',
+        '\u0924\u0943\u0924\u0940\u092F\u093E',
+        '\u091A\u0924\u0941\u0930\u094D\u0925\u0940'
+      ],
+      explanation:
+          '1 \u092A\u094D\u0930\u0925\u092E\u093E (subject), 2 \u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E (object), 3 \u0924\u0943\u0924\u0940\u092F\u093E (with/by), 4 \u091A\u0924\u0941\u0930\u094D\u0925\u0940 (to/for).',
+    ),
+  ],
+
+  // ---------------------------------------------------------------
+  // Chapter 4: Basic Grammar - Pronouns
+  // ---------------------------------------------------------------
+  'ls_grammar_pronouns': const [
+    Exercise(
+      id: 'ex_ls_grammar_pronouns_1',
+      hint: 'It is the first person singular pronoun.',
+      lessonId: 'ls_grammar_pronouns',
+      type: ExerciseType.mcq,
+      prompt: 'Which Sanskrit word means "I"?',
+      options: [
+        '\u0905\u0939\u0902',
+        '\u0924\u094D\u0935\u092E\u094D',
+        '\u0938\u0903',
+        '\u0938\u093E'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0905\u0939\u0902 = I. With a verb: \u0905\u0939\u0902 \u092A\u0920\u093E\u092E\u093F - I read.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_pronouns_2',
+      hint: 'It is the feminine third person singular pronoun.',
+      lessonId: 'ls_grammar_pronouns',
+      type: ExerciseType.mcq,
+      prompt: 'Which word means "she"?',
+      options: [
+        '\u0938\u093E',
+        '\u0938\u0903',
+        '\u0924\u0924\u094D',
+        '\u0905\u0939\u0902'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0938\u093E = she (\u0938\u0903 = he, \u0924\u0924\u094D = it). \u0938\u093E \u092A\u0920\u0924\u093F - she reads.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_pronouns_3',
+      hint: 'He/she/it all take the same verb form in this lesson.',
+      lessonId: 'ls_grammar_pronouns',
+      type: ExerciseType.fillBlank,
+      prompt: '___ \u092A\u0920\u0924\u093F means "He reads".',
+      options: [
+        '\u0938\u0903',
+        '\u0938\u093E',
+        '\u0905\u0939\u0902',
+        '\u0924\u094D\u0935\u092E\u094D'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0938\u0903 = he: \u0938\u0903 \u092A\u0920\u0924\u093F. \u0938\u093E \u092A\u0920\u0924\u093F = she reads.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_pronouns_4',
+      hint:
+          'Start with yourself, then the person you are talking to, then he, she, it.',
+      lessonId: 'ls_grammar_pronouns',
+      type: ExerciseType.ordering,
+      prompt: 'Arrange the pronouns in the order of the lesson table.',
+      items: [
+        '\u0905\u0939\u0902',
+        '\u0924\u094D\u0935\u092E\u094D',
+        '\u0938\u0903',
+        '\u0938\u093E',
+        '\u0924\u0924\u094D'
+      ],
+      explanation:
+          '\u0905\u0939\u0902 (I), \u0924\u094D\u0935\u092E\u094D (you), \u0938\u0903 (he), \u0938\u093E (she), \u0924\u0924\u094D (it) - the pronoun set from the lesson.',
+    ),
+  ],
+
+  // ---------------------------------------------------------------
+  // Chapter 4: Basic Grammar - Verbs
+  // ---------------------------------------------------------------
+  'ls_grammar_verbs': const [
+    Exercise(
+      id: 'ex_ls_grammar_verbs_1',
+      hint: 'The tense used for "I read / you read / he reads".',
+      lessonId: 'ls_grammar_verbs',
+      type: ExerciseType.mcq,
+      prompt:
+          '\u0932\u0924\u094D \u0932\u0915\u093E\u0930 expresses which tense?',
+      options: ['Present', 'Past', 'Future', 'Imperative'],
+      correctIndex: 0,
+      explanation:
+          '\u0932\u0924\u094D is the present tense: \u092A\u0920\u0924\u093F - he reads / is reading.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_verbs_2',
+      hint:
+          'They = \u0924\u0947, and the plural ending is -\u0928\u094D\u0924\u093F.',
+      lessonId: 'ls_grammar_verbs',
+      type: ExerciseType.mcq,
+      prompt: 'Which form means "They read"?',
+      options: [
+        '\u092A\u0920\u0928\u094D\u0924\u093F',
+        '\u092A\u0920\u0924\u093F',
+        '\u092A\u0920\u093E\u092E\u093F',
+        '\u092A\u0920\u0925'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092A\u0920\u0928\u094D\u0924\u093F = they read (3rd person plural, ending -\u0928\u094D\u0924\u093F).',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_verbs_3',
+      hint: 'He takes the -\u0924\u093F ending.',
+      lessonId: 'ls_grammar_verbs',
+      type: ExerciseType.fillBlank,
+      prompt: '\u0938\u0903 ___ (He reads).',
+      options: [
+        '\u092A\u0920\u0924\u093F',
+        '\u092A\u0920\u0928\u094D\u0924\u093F',
+        '\u092A\u0920\u0938\u093F',
+        '\u092A\u0920\u093E\u092E\u0903'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0938\u0903 \u092A\u0920\u0924\u093F - he reads. The -\u0924\u093F ending marks he/she/it.',
+    ),
+    Exercise(
+      id: 'ex_ls_grammar_verbs_4',
+      hint:
+          'Start with "I", end with "they": -\u092E\u093F, -\u0938\u093F, -\u0924\u093F, -\u092E\u0903, -\u0925, -\u0928\u094D\u0924\u093F.',
+      lessonId: 'ls_grammar_verbs',
+      type: ExerciseType.ordering,
+      prompt:
+          'Arrange the six forms of \u092A\u0920\u094D in \u0932\u0924\u094D exactly as in the lesson.',
+      items: [
+        '\u092A\u0920\u093E\u092E\u093F',
+        '\u092A\u0920\u0938\u093F',
+        '\u092A\u0920\u0924\u093F',
+        '\u092A\u0920\u093E\u092E\u0903',
+        '\u092A\u0920\u0925',
+        '\u092A\u0920\u0928\u094D\u0924\u093F'
+      ],
+      explanation:
+          '\u092A\u0920\u093E\u092E\u093F, \u092A\u0920\u0938\u093F, \u092A\u0920\u0924\u093F, \u092A\u0920\u093E\u092E\u0903, \u092A\u0920\u0925, \u092A\u0920\u0928\u094D\u0924\u093F - the full present-tense chant.',
+    ),
+  ],
+
+  // ---------------------------------------------------------------
+  // Chapter 3 (expanded): Translation Practice
+  // ---------------------------------------------------------------
+  'ls_sentences_translation': const [
+    Exercise(
+      id: 'ex_ls_sentences_translation_1',
+      hint:
+          '\u0930\u093E\u092E\u0903 eats something - the fruit is the object.',
+      lessonId: 'ls_sentences_translation',
+      type: ExerciseType.mcq,
+      prompt:
+          '"\u0930\u093E\u092E\u0903 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u0924\u093F" means?',
+      options: [
+        'Ram eats a fruit',
+        'Ram reads a book',
+        'Sita drinks water',
+        'Ram goes to school'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0930\u093E\u092E\u0903 (Ram) + \u092B\u0932\u092E\u094D (fruit) + \u0916\u093E\u0926\u0924\u093F (eats): Subject-Object-Verb.',
+    ),
+    Exercise(
+      id: 'ex_ls_sentences_translation_2',
+      hint:
+          'I = \u0905\u0939\u0902, book = \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D, read = \u092A\u0920\u093E\u092E\u093F.',
+      lessonId: 'ls_sentences_translation',
+      type: ExerciseType.mcq,
+      prompt: 'How do you say "I read a book"?',
+      options: [
+        '\u0905\u0939\u0902 \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D \u092A\u0920\u093E\u092E\u093F',
+        '\u092E\u092E \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D',
+        '\u0905\u0939\u0902 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u093E\u092E\u093F',
+        '\u0924\u094D\u0935\u092E\u094D \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D \u092A\u0920\u0938\u093F'
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0905\u0939\u0902 (I) + \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D (book) + \u092A\u0920\u093E\u092E\u093F (read). Verb last!',
+    ),
+    Exercise(
+      id: 'ex_ls_sentences_translation_3',
+      hint: 'Sanskrit puts the verb at the END of the sentence.',
+      lessonId: 'ls_sentences_translation',
+      type: ExerciseType.fillBlank,
+      prompt: 'Sanskrit word order is Subject - ___ - Verb.',
+      options: ['Object', 'Adjective', 'Question word', 'Conjunction'],
+      correctIndex: 0,
+      explanation:
+          'SOV: Subject - Object - Verb. English says "Ram eats a fruit"; Sanskrit says "Ram a fruit eats".',
+    ),
+    Exercise(
+      id: 'ex_ls_sentences_translation_4',
+      hint: 'I / school / go - in SOV order.',
+      lessonId: 'ls_sentences_translation',
+      type: ExerciseType.ordering,
+      prompt: 'Order the words to say "I go to school".',
+      items: [
+        '\u0905\u0939\u0902',
+        '\u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D',
+        '\u0917\u091A\u094D\u091B\u093E\u092E\u093F'
+      ],
+      explanation:
+          '\u0905\u0939\u0902 \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F - subject, object, verb.',
+    ),
+  ],
 };

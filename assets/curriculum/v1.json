@@ -33,6 +33,15 @@
           "xpReward": 20,
           "order": 2,
           "difficulty": "intermediate"
+        },
+        {
+          "id": "ls_alphabet_conjuncts",
+          "chapterId": "ch_alphabet",
+          "title": "\u0938\u0902\u092F\u0941\u0915\u094D\u0924\u093E\u0915\u094D\u0937\u0930 \u2013 Conjunct Consonants",
+          "subtitle": "Join consonants: \u0915\u094D\u0937, \u0924\u094D\u0930, \u091C\u094D\u091E",
+          "xpReward": 20,
+          "order": 3,
+          "difficulty": "intermediate"
         }
       ]
     },
@@ -94,6 +103,50 @@
           "xpReward": 25,
           "order": 1,
           "difficulty": "advanced"
+        },
+        {
+          "id": "ls_sentences_translation",
+          "chapterId": "ch_sentences",
+          "title": "\u0905\u0928\u0941\u0935\u093E\u0926 \u2013 Translation Practice",
+          "subtitle": "Subject-Object-Verb sentences",
+          "xpReward": 20,
+          "order": 2,
+          "difficulty": "intermediate"
+        }
+      ]
+    },
+    {
+      "id": "ch_grammar",
+      "title": "\u0935\u094D\u092F\u093E\u0915\u0930\u0928\u092E\u094D \u2013 Basic Grammar",
+      "subtitle": "Nouns, pronouns and verbs",
+      "order": 3,
+      "lessons": [
+        {
+          "id": "ls_grammar_nouns_cases",
+          "chapterId": "ch_grammar",
+          "title": "\u0935\u093F\u092D\u0915\u094D\u0924\u093F \u2013 Nouns & Cases",
+          "subtitle": "The 8 cases of a noun",
+          "xpReward": 20,
+          "order": 0,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_grammar_pronouns",
+          "chapterId": "ch_grammar",
+          "title": "\u0938\u0930\u094D\u0935\u0928\u093E\u092E \u2013 Pronouns",
+          "subtitle": "\u0905\u0939\u0902, \u0924\u094D\u0935\u092E\u094D, \u0938\u0903, \u0938\u093E, \u0924\u0924\u094D",
+          "xpReward": 15,
+          "order": 1,
+          "difficulty": "beginner"
+        },
+        {
+          "id": "ls_grammar_verbs",
+          "chapterId": "ch_grammar",
+          "title": "\u0932\u0915\u093E\u0930 \u2013 Basic Verbs",
+          "subtitle": "The present tense (\u0932\u0924\u094D)",
+          "xpReward": 20,
+          "order": 2,
+          "difficulty": "intermediate"
         }
       ]
     }
@@ -157,6 +210,22 @@
           "options": ["Long a (\u093E)", "Short i (\u093F)", "Short u (\u0941)", "Long u (\u0942)"],
           "correctIndex": 1,
           "explanation": "The short-i matra (\u093F) is the only one written on the left of a consonant."
+        },
+        {
+          "id": "q_alpha_11",
+          "difficulty": "beginner",
+          "prompt": "Which of these is a conjunct consonant?",
+          "options": ["\u0915\u094D\u0937", "\u0915", "\u0906", "\u0924"],
+          "correctIndex": 0,
+          "explanation": "\u0915\u094D\u0937 = \u0915 + \u0937 joined into one letter with the \u0939\u0932\u094D\u0905\u0928\u094D\u0924."
+        },
+        {
+          "id": "q_alpha_12",
+          "difficulty": "intermediate",
+          "prompt": "\u0924\u094D\u0930 is formed from?",
+          "options": ["\u0924 + \u0930", "\u0915 + \u0937", "\u091C + \u091E", "\u0938 + \u0935"],
+          "correctIndex": 0,
+          "explanation": "\u0924\u094D\u0930 = \u0924 + \u0930, as in \u0924\u094D\u0930\u092F\u0903 (three) and \u0915\u094D\u0937\u0947\u0924\u094D\u0930\u092E\u094D (field)."
         }
       ]
     },
@@ -267,6 +336,91 @@
           "options": ["Why", "How", "Where", "When"],
           "correctIndex": 0,
           "explanation": "\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) means \"why\"."
+        },
+        {
+          "id": "q_sent_7",
+          "difficulty": "intermediate",
+          "prompt": "\"\u092E\u093E\u0924\u093E \u0905\u0928\u094D\u0928\u092E\u094D \u092A\u091A\u0924\u093F\" means?",
+          "options": ["Mother cooks food", "Mother reads a book", "The girl drinks water", "Mother goes to school"],
+          "correctIndex": 0,
+          "explanation": "\u092E\u093E\u0924\u093E (mother) + \u0905\u0928\u094D\u0928\u092E\u094D (food) + \u092A\u091A\u0924\u093F (cooks): mother cooks food."
+        },
+        {
+          "id": "q_sent_8",
+          "difficulty": "intermediate",
+          "prompt": "Which word order does a Sanskrit sentence follow?",
+          "options": ["Subject-Object-Verb", "Subject-Verb-Object", "Verb-Subject-Object", "Object-Verb-Subject"],
+          "correctIndex": 0,
+          "explanation": "SOV: \"\u0930\u093E\u092E\u0903 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u0924\u093F\" \u2013 Ram a fruit eats."
+        }
+      ]
+    },
+    {
+      "chapterId": "ch_grammar",
+      "questions": [
+        {
+          "id": "q_gram_1",
+          "difficulty": "beginner",
+          "prompt": "How many cases does a Sanskrit noun have?",
+          "options": ["6", "7", "8", "10"],
+          "correctIndex": 2,
+          "explanation": "Sanskrit has 8 cases, from \u092A\u094D\u0930\u0925\u092E\u093E (nominative) to \u0938\u092E\u094D\u092C\u094B\u0927\u0928 (vocative)."
+        },
+        {
+          "id": "q_gram_2",
+          "difficulty": "beginner",
+          "prompt": "Which case marks the subject (\u0915\u0930\u094D\u0924\u093E)?",
+          "options": ["\u092A\u094D\u0930\u0925\u092E\u093E", "\u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E", "\u0937\u0937\u094D\u0920\u0940", "\u0938\u092A\u094D\u0924\u092E\u0940"],
+          "correctIndex": 0,
+          "explanation": "\u092A\u094D\u0930\u0925\u092E\u093E (nominative) is the subject case: \u092C\u093E\u0932\u0915\u0903 - the boy."
+        },
+        {
+          "id": "q_gram_3",
+          "difficulty": "beginner",
+          "prompt": "Which pronoun means \"I\"?",
+          "options": ["\u0905\u0939\u0902", "\u0924\u094D\u0935\u092E\u094D", "\u0938\u0903", "\u0938\u093E"],
+          "correctIndex": 0,
+          "explanation": "\u0905\u0939\u0902 = I. \u0905\u0939\u0902 \u092A\u0920\u093E\u092E\u093F - I read."
+        },
+        {
+          "id": "q_gram_4",
+          "difficulty": "beginner",
+          "prompt": "Which pronoun means \"she\"?",
+          "options": ["\u0938\u093E", "\u0938\u0903", "\u0924\u0924\u094D", "\u0924\u094D\u0935\u092E\u094D"],
+          "correctIndex": 0,
+          "explanation": "\u0938\u093E = she; \u0938\u0903 = he; \u0924\u0924\u094D = it."
+        },
+        {
+          "id": "q_gram_5",
+          "difficulty": "intermediate",
+          "prompt": "In \"\u0930\u093E\u092E\u0903 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u0924\u093F\", what is the object (\u0915\u0930\u094D\u092E)?",
+          "options": ["\u092B\u0932\u092E\u094D", "\u0930\u093E\u092E\u0903", "\u0916\u093E\u0926\u0924\u093F", "\u0905\u0939\u0902"],
+          "correctIndex": 0,
+          "explanation": "\u092B\u0932\u092E\u094D (fruit) receives the action - it is \u0926\u094D\u0935\u093F\u0924\u0940\u092F\u093E, the object case."
+        },
+        {
+          "id": "q_gram_6",
+          "difficulty": "intermediate",
+          "prompt": "Which is the third-person singular present form of \u092A\u0920\u094D?",
+          "options": ["\u092A\u0920\u0924\u093F", "\u092A\u0920\u0928\u094D\u0924\u093F", "\u092A\u0920\u093E\u092E\u093F", "\u092A\u0920\u0938\u093F"],
+          "correctIndex": 0,
+          "explanation": "\u092A\u0920\u0924\u093F = he/she reads. The ending -\u0924\u093F marks he/she/it."
+        },
+        {
+          "id": "q_gram_7",
+          "difficulty": "intermediate",
+          "prompt": "\u092C\u093E\u0932\u0915\u0938\u094D\u092F means?",
+          "options": ["of the boy", "to the boy", "by the boy", "from the boy"],
+          "correctIndex": 0,
+          "explanation": "\u092C\u093E\u0932\u0915\u0938\u094D\u092F is \u0937\u0937\u094D\u0920\u0940 (genitive): \"of the boy\" - \u092C\u093E\u0932\u0915\u0938\u094D\u092F \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D, the boy's book."
+        },
+        {
+          "id": "q_gram_8",
+          "difficulty": "intermediate",
+          "prompt": "Which sentence means \"I go to school\"?",
+          "options": ["\u0905\u0939\u0902 \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F", "\u0905\u0939\u0902 \u092B\u0932\u092E\u094D \u0916\u093E\u0926\u093E\u092E\u093F", "\u0924\u094D\u0935\u092E\u094D \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F", "\u0938\u0903 \u092A\u0941\u0938\u094D\u0924\u0915\u092E\u094D \u092A\u0920\u0924\u093F"],
+          "correctIndex": 0,
+          "explanation": "\u0905\u0939\u0902 \u0935\u093F\u0926\u094D\u092F\u093E\u0932\u092F\u092E\u094D \u0917\u091A\u094D\u091B\u093E\u092E\u093F - I / to school / go: subject-object-verb."
         }
       ]
     }
