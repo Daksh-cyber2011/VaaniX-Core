@@ -152,6 +152,50 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
       correctIndex: 1,
       explanation: 'क (ka) is a velar consonant.',
     ),
+    QuizQuestion(
+      id: 'q_alpha_4',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which of these is a vowel?',
+      options: const ['\u0915', '\u0906', '\u092A', '\u092E'],
+      correctIndex: 1,
+      explanation: '\u0906 (aa) is the long vowel "a".',
+    ),
+    QuizQuestion(
+      id: 'q_alpha_5',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.beginner,
+      prompt: 'How many consonants does Sanskrit have?',
+      options: const ['23', '33', '43', '53'],
+      correctIndex: 1,
+      explanation:
+          'Sanskrit has 33 consonants organized into 5 groups (vargas).',
+    ),
+    QuizQuestion(
+      id: 'q_alpha_6',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which speech group does \u0915 (ka) belong to?',
+      options: const ['Dentals', 'Velars', 'Labials', 'Retroflex'],
+      correctIndex: 1,
+      explanation:
+          '\u0915 (ka) is a velar - produced at the back of the throat.',
+    ),
+    QuizQuestion(
+      id: 'q_alpha_7',
+      chapterId: 'ch_alphabet',
+      difficulty: Difficulty.intermediate,
+      prompt: 'In barakhadi, which matra attaches on the LEFT of a consonant?',
+      options: const [
+        'Long a (\u093E)',
+        'Short i (\u093F)',
+        'Short u (\u0941)',
+        'Long u (\u0942)'
+      ],
+      correctIndex: 1,
+      explanation:
+          'The short-i matra (\u093F) is the only one written on the left of a consonant.',
+    ),
   ],
   'ch_words': [
     QuizQuestion(
@@ -170,6 +214,76 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
       options: const ['द्वे', 'त्रीणि', 'एकम्', 'चत्वारि'],
       correctIndex: 2,
     ),
+    QuizQuestion(
+      id: 'q_words_3',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.beginner,
+      prompt: 'How do you say "good morning" in Sanskrit?',
+      options: const [
+        '\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D',
+        '\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903',
+        '\u0915\u0943\u092A\u092F\u093E',
+        '\u0928\u092E\u0938\u094D\u0924\u0947',
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D (suprabhatam) means "good morning".',
+    ),
+    QuizQuestion(
+      id: 'q_words_4',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.beginner,
+      prompt: 'Which word means "mother"?',
+      options: const [
+        '\u092A\u093F\u0924\u093E',
+        '\u092A\u0941\u0924\u094D\u0930\u0903',
+        '\u092E\u093E\u0924\u093E',
+        '\u092D\u0917\u093F\u0928\u0940',
+      ],
+      correctIndex: 2,
+      explanation: '\u092E\u093E\u0924\u093E (maataa) means mother.',
+    ),
+    QuizQuestion(
+      id: 'q_words_5',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.intermediate,
+      prompt:
+          '\u092E\u093E\u0924\u0941\u0932\u0903 (maatulah) refers to which relative?',
+      options: const [
+        "Mother's brother",
+        "Father's brother",
+        "Mother's sister",
+        'Grandfather',
+      ],
+      correctIndex: 0,
+      explanation:
+          "\u092E\u093E\u0924\u0941\u0932\u0903 (maatulah) is the mother's brother.",
+    ),
+    QuizQuestion(
+      id: 'q_words_6',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.intermediate,
+      prompt: 'What number is \u0926\u094D\u0935\u093E\u0926\u0936 (dvadasha)?',
+      options: const ['10', '11', '12', '20'],
+      correctIndex: 2,
+      explanation:
+          '\u0926\u094D\u0935\u093E\u0926\u0936 = dve (two) + dasha (ten) = 12.',
+    ),
+    QuizQuestion(
+      id: 'q_words_7',
+      chapterId: 'ch_words',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which word means "twenty"?',
+      options: const [
+        '\u0935\u093F\u0902\u0936\u0924\u093F\u0903',
+        '\u0936\u0924\u092E\u094D',
+        '\u0928\u0935',
+        '\u0926\u0936',
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u0935\u093F\u0902\u0936\u0924\u093F\u0903 (vimshatih) means twenty; \u0936\u0924\u092E\u094D (satam) is a hundred.',
+    ),
   ],
   'ch_sentences': [
     QuizQuestion(
@@ -187,6 +301,60 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
       prompt: '"किम्" is used to ask?',
       options: const ['Where', 'When', 'What', 'Why'],
       correctIndex: 2,
+    ),
+    QuizQuestion(
+      id: 'q_sent_3',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which word means "I" in Sanskrit?',
+      options: const [
+        '\u0905\u0939\u092E\u094D',
+        '\u092E\u092E',
+        '\u0928\u093E\u092E',
+        '\u0915\u093F\u092E\u094D',
+      ],
+      correctIndex: 0,
+      explanation: '\u0905\u0939\u092E\u094D (aham) means "I".',
+    ),
+    QuizQuestion(
+      id: 'q_sent_4',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
+      prompt: 'Which question word means "where"?',
+      options: const [
+        '\u0915\u0941\u0924\u094D\u0930',
+        '\u0915\u0926\u093E',
+        '\u0915\u0925\u092E\u094D',
+        '\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D',
+      ],
+      correctIndex: 0,
+      explanation: '\u0915\u0941\u0924\u094D\u0930 (kutra) means "where".',
+    ),
+    QuizQuestion(
+      id: 'q_sent_5',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.intermediate,
+      prompt: 'How do you say "My name is ..." in Sanskrit?',
+      options: const [
+        '\u092E\u092E \u0928\u093E\u092E ...',
+        '\u0928\u093E\u092E \u092E\u092E ...',
+        '\u0905\u0939\u092E\u094D \u091B\u093E\u0924\u094D\u0930\u0903',
+        '\u0915\u093F\u092E\u094D \u090F\u0924\u0924\u094D',
+      ],
+      correctIndex: 0,
+      explanation:
+          '\u092E\u092E \u0928\u093E\u092E ... (mama nama ...) means "My name is ...".',
+    ),
+    QuizQuestion(
+      id: 'q_sent_6',
+      chapterId: 'ch_sentences',
+      difficulty: Difficulty.advanced,
+      prompt:
+          'What does \u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) ask for?',
+      options: const ['Why', 'How', 'Where', 'When'],
+      correctIndex: 0,
+      explanation:
+          '\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) means "why".',
     ),
   ],
 };

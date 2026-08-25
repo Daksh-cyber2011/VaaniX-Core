@@ -125,6 +125,38 @@
           "options": ["अ", "क", "आ", "ई"],
           "correctIndex": 1,
           "explanation": "क (ka) is a velar consonant."
+        },
+        {
+          "id": "q_alpha_4",
+          "difficulty": "beginner",
+          "prompt": "Which of these is a vowel?",
+          "options": ["\u0915", "\u0906", "\u092A", "\u092E"],
+          "correctIndex": 1,
+          "explanation": "\u0906 (aa) is the long vowel \"a\"."
+        },
+        {
+          "id": "q_alpha_5",
+          "difficulty": "beginner",
+          "prompt": "How many consonants does Sanskrit have?",
+          "options": ["23", "33", "43", "53"],
+          "correctIndex": 1,
+          "explanation": "Sanskrit has 33 consonants organized into 5 groups (vargas)."
+        },
+        {
+          "id": "q_alpha_6",
+          "difficulty": "intermediate",
+          "prompt": "Which speech group does \u0915 (ka) belong to?",
+          "options": ["Dentals", "Velars", "Labials", "Retroflex"],
+          "correctIndex": 1,
+          "explanation": "\u0915 (ka) is a velar - produced at the back of the throat."
+        },
+        {
+          "id": "q_alpha_7",
+          "difficulty": "intermediate",
+          "prompt": "In barakhadi, which matra attaches on the LEFT of a consonant?",
+          "options": ["Long a (\u093E)", "Short i (\u093F)", "Short u (\u0941)", "Long u (\u0942)"],
+          "correctIndex": 1,
+          "explanation": "The short-i matra (\u093F) is the only one written on the left of a consonant."
         }
       ]
     },
@@ -144,6 +176,46 @@
           "prompt": "How do you say \"one\" in Sanskrit?",
           "options": ["द्वे", "त्रीणि", "एकम्", "चत्वारि"],
           "correctIndex": 2
+        },
+        {
+          "id": "q_words_3",
+          "difficulty": "beginner",
+          "prompt": "How do you say \"good morning\" in Sanskrit?",
+          "options": ["\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D", "\u0927\u0928\u094D\u092F\u0935\u093E\u0926\u0903", "\u0915\u0943\u092A\u092F\u093E", "\u0928\u092E\u0938\u094D\u0924\u0947"],
+          "correctIndex": 0,
+          "explanation": "\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D (suprabhatam) means \"good morning\"."
+        },
+        {
+          "id": "q_words_4",
+          "difficulty": "beginner",
+          "prompt": "Which word means \"mother\"?",
+          "options": ["\u092A\u093F\u0924\u093E", "\u092A\u0941\u0924\u094D\u0930\u0903", "\u092E\u093E\u0924\u093E", "\u092D\u0917\u093F\u0928\u0940"],
+          "correctIndex": 2,
+          "explanation": "\u092E\u093E\u0924\u093E (maataa) means mother."
+        },
+        {
+          "id": "q_words_5",
+          "difficulty": "intermediate",
+          "prompt": "\u092E\u093E\u0924\u0941\u0932\u0903 (maatulah) refers to which relative?",
+          "options": ["Mother's brother", "Father's brother", "Mother's sister", "Grandfather"],
+          "correctIndex": 0,
+          "explanation": "\u092E\u093E\u0924\u0941\u0932\u0903 (maatulah) is the mother's brother."
+        },
+        {
+          "id": "q_words_6",
+          "difficulty": "intermediate",
+          "prompt": "What number is \u0926\u094D\u0935\u093E\u0926\u0936 (dvadasha)?",
+          "options": ["10", "11", "12", "20"],
+          "correctIndex": 2,
+          "explanation": "\u0926\u094D\u0935\u093E\u0926\u0936 = dve (two) + dasha (ten) = 12."
+        },
+        {
+          "id": "q_words_7",
+          "difficulty": "intermediate",
+          "prompt": "Which word means \"twenty\"?",
+          "options": ["\u0935\u093F\u0902\u0936\u0924\u093F\u0903", "\u0936\u0924\u092E\u094D", "\u0928\u0935", "\u0926\u0936"],
+          "correctIndex": 0,
+          "explanation": "\u0935\u093F\u0902\u0936\u0924\u093F\u0903 (vimshatih) means twenty; \u0936\u0924\u092E\u094D (satam) is a hundred."
         }
       ]
     },
@@ -163,6 +235,38 @@
           "prompt": "\"किम्\" is used to ask?",
           "options": ["Where", "When", "What", "Why"],
           "correctIndex": 2
+        },
+        {
+          "id": "q_sent_3",
+          "difficulty": "intermediate",
+          "prompt": "Which word means \"I\" in Sanskrit?",
+          "options": ["\u0905\u0939\u092E\u094D", "\u092E\u092E", "\u0928\u093E\u092E", "\u0915\u093F\u092E\u094D"],
+          "correctIndex": 0,
+          "explanation": "\u0905\u0939\u092E\u094D (aham) means \"I\"."
+        },
+        {
+          "id": "q_sent_4",
+          "difficulty": "intermediate",
+          "prompt": "Which question word means \"where\"?",
+          "options": ["\u0915\u0941\u0924\u094D\u0930", "\u0915\u0926\u093E", "\u0915\u0925\u092E\u094D", "\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D"],
+          "correctIndex": 0,
+          "explanation": "\u0915\u0941\u0924\u094D\u0930 (kutra) means \"where\"."
+        },
+        {
+          "id": "q_sent_5",
+          "difficulty": "intermediate",
+          "prompt": "How do you say \"My name is ...\" in Sanskrit?",
+          "options": ["\u092E\u092E \u0928\u093E\u092E ...", "\u0928\u093E\u092E \u092E\u092E ...", "\u0905\u0939\u092E\u094D \u091B\u093E\u0924\u094D\u0930\u0903", "\u0915\u093F\u092E\u094D \u090F\u0924\u0924\u094D"],
+          "correctIndex": 0,
+          "explanation": "\u092E\u092E \u0928\u093E\u092E ... (mama nama ...) means \"My name is ...\"."
+        },
+        {
+          "id": "q_sent_6",
+          "difficulty": "advanced",
+          "prompt": "What does \u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) ask for?",
+          "options": ["Why", "How", "Where", "When"],
+          "correctIndex": 0,
+          "explanation": "\u0915\u093F\u092E\u0930\u094D\u0925\u092E\u094D (kimartham) means \"why\"."
         }
       ]
     }
