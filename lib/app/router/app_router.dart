@@ -24,6 +24,7 @@ import 'package:vaanix_app/features/home/presentation/screens/home_screen.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_screen.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/lesson_content_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/exercise_screen.dart';
 import 'package:vaanix_app/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/screens/progress_screen.dart';
@@ -140,12 +141,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     path: 'lesson/:lessonId',
                     name: RouteNames.lessonContentName,
                     builder: (context, state) {
-                      final lessonId =
-                          state.pathParameters['lessonId'] ?? '';
+                      final lessonId = state.pathParameters['lessonId'] ?? '';
                       // Look up the lesson in the curriculum provider.
                       // We use a ConsumerWidget wrapper to read the
                       // provider at build time.
                       return _LessonContentRoute(lessonId: lessonId);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'lesson/:lessonId/practice',
+                    name: RouteNames.lessonPracticeName,
+                    builder: (context, state) {
+                      final lessonId = state.pathParameters['lessonId'] ?? '';
+                      return _ExerciseRoute(lessonId: lessonId);
                     },
                   ),
                 ],
@@ -357,6 +365,80 @@ class _LessonContentRoute extends ConsumerWidget {
         }
 
         return LessonContentScreen(lesson: lesson);
+      },
+    );
+  }
+}
+
+/// Route wrapper resolving a lesson id to a [Lesson] for the practice screen.
+class _ExerciseRoute extends ConsumerWidget {
+  const _ExerciseRoute({required this.lessonId});
+
+  final String lessonId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final curriculumAsync = ref.watch(curriculumProvider);
+
+    return curriculumAsync.when(
+      loading: () => Scaffold(
+        appBar: AppBar(title: const Text('Loading...')),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(
+                'Could not load curriculum: $error',
+                style: const TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton(
+                onPressed: () => context.go(RouteNames.learn),
+                child: const Text('Back to Lessons'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (curriculum) {
+        Lesson? lesson;
+        for (final chapter in curriculum) {
+          for (final l in chapter.lessons) {
+            if (l.id == lessonId) {
+              lesson = l;
+              break;
+            }
+          }
+          if (lesson != null) break;
+        }
+        if (lesson == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Lesson not found')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.search_off_rounded,
+                      size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: () => context.go(RouteNames.learn),
+                    child: const Text('Back to Lessons'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return ExerciseScreen(lesson: lesson);
       },
     );
   }

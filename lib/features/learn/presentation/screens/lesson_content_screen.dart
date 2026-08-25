@@ -13,6 +13,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -232,6 +233,22 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                   style: AppTextStyles.bodyMedium(color: AppColors.success),
                 ),
               ),
+              OutlinedButton(
+                onPressed: () =>
+                    context.go('/learn/lesson/${widget.lesson.id}/practice'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(0, 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  'Practice',
+                  style: AppTextStyles.labelLarge(color: AppColors.primary),
+                ),
+              ),
+              const SizedBox(width: 8),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Back to Lessons'),
@@ -277,7 +294,22 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                 ),
               ),
             ],
-            const SizedBox(width: 12),
+            OutlinedButton(
+              onPressed: () =>
+                  context.go('/learn/lesson/${widget.lesson.id}/practice'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 48),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Practice',
+                style: AppTextStyles.labelLarge(color: AppColors.primary),
+              ),
+            ),
+            const SizedBox(width: 8),
             FilledButton(
               onPressed: (canComplete && !_isCompleting) ? _markComplete : null,
               style: FilledButton.styleFrom(
