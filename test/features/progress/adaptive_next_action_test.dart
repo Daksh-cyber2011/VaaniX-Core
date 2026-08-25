@@ -26,8 +26,8 @@ Lesson _lesson(String id) => Lesson(
       order: 0,
     );
 
-QuizResult _attempt(String quizId, int score, int total) =>
-    QuizResult(quizId: quizId, score: score, total: total, xpEarned: score * 10);
+QuizResult _attempt(String quizId, int score, int total) => QuizResult(
+    quizId: quizId, score: score, total: total, xpEarned: score * 10);
 
 const _chapterQuizIds = {
   'ch1': ['quiz_ch1_beginner', 'quiz_ch1_intermediate'],
@@ -77,11 +77,14 @@ void main() {
       expect(action.lessonId, 'ls_3');
     });
 
-    test('completed lesson with unmastered exercises is recommended for practice',
+    test(
+        'completed lesson with unmastered exercises is recommended for practice',
         () {
       final action = compute(
         completed: {'ls_1'},
-        mastered: {'ls_1': ['ex_1', 'ex_2']},
+        mastered: {
+          'ls_1': ['ex_1', 'ex_2']
+        },
         counts: {'ls_1': 4},
       );
       expect(action.action, AdaptiveAction.practiceWeakTopic);
@@ -92,7 +95,9 @@ void main() {
     test('fully mastered lessons never trigger the weak-topic action', () {
       final action = compute(
         completed: {'ls_1'},
-        mastered: {'ls_1': ['ex_1', 'ex_2', 'ex_3', 'ex_4']},
+        mastered: {
+          'ls_1': ['ex_1', 'ex_2', 'ex_3', 'ex_4']
+        },
         counts: {'ls_1': 4},
       );
       expect(action.action, AdaptiveAction.continueLesson);
