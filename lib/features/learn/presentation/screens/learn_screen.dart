@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -41,13 +42,22 @@ class LearnScreen extends ConsumerWidget {
             itemCount: curriculum.length,
             itemBuilder: (context, i) {
               final chapter = curriculum[i];
-              final doneInChapter = chapter.lessons
-                  .where((l) => completed.contains(l.id))
-                  .length;
+              final doneInChapter =
+                  chapter.lessons.where((l) => completed.contains(l.id)).length;
+              // Real persisted practice mastery per lesson (empty when no
+              // exercises are authored for that lesson yet).
+              final practice = <String, ({int mastered, int total})>{};
+              for (final lesson in chapter.lessons) {
+                final mastered =
+                    ref.watch(masteredExercisesProvider(lesson.id)).length;
+                final total = exercisesByLesson[lesson.id]?.length ?? 0;
+                practice[lesson.id] = (mastered: mastered, total: total);
+              }
               return _ChapterCard(
                 chapter: chapter,
                 completedCount: doneInChapter,
                 completedIds: completed,
+                practice: practice,
                 onTapLesson: (lesson) => _onTapLesson(context, lesson),
               );
             },
@@ -130,19 +140,20 @@ class _ChapterCard extends StatelessWidget {
     required this.chapter,
     required this.completedCount,
     required this.completedIds,
+    required this.practice,
     required this.onTapLesson,
   });
 
   final Chapter chapter;
   final int completedCount;
   final List<String> completedIds;
+  final Map<String, ({int mastered, int total})> practice;
   final ValueChanged<Lesson> onTapLesson;
 
   @override
   Widget build(BuildContext context) {
-    final progress = chapter.lessons.isEmpty
-        ? 0.0
-        : completedCount / chapter.lessons.length;
+    final progress =
+        chapter.lessons.isEmpty ? 0.0 : completedCount / chapter.lessons.length;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -209,7 +220,7 @@ class _ChapterCard extends StatelessWidget {
               ),
               title: Text(lesson.title, style: AppTextStyles.titleSmall()),
               subtitle: Text(
-                '+${lesson.xpReward} XP',
+                _practiceLabel(lesson) ?? '+${lesson.xpReward} XP',
                 style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
               ),
               trailing: Text(
@@ -223,5 +234,14 @@ class _ChapterCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _practiceLabel(Lesson lesson) {
+    final p = practice[lesson.id];
+    if (p == null || p.total == 0) return null;
+    if (p.mastered >= p.total) {
+      return '+${lesson.xpReward} XP \u00b7 Practice \u2713';
+    }
+    return '+${lesson.xpReward} XP \u00b7 ${p.mastered}/${p.total} practised';
   }
 }
