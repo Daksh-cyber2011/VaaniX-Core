@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
@@ -36,6 +37,7 @@ class ExamScreen extends ConsumerStatefulWidget {
 class _ExamScreenState extends ConsumerState<ExamScreen> {
   String? _chapterId;
   Difficulty _difficulty = Difficulty.beginner;
+  bool _confirming = false;
   bool _started = false;
   bool _submitted = false;
 
@@ -43,10 +45,15 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
       ExamConfig(chapterId: _chapterId, difficulty: _difficulty);
 
   void _startExam() {
+    setState(() => _confirming = true);
+  }
+
+  void _beginQuiz() {
     ref
         .read(vanControllerProvider.notifier)
         .dispatch(const VanEvent(VanEventType.quizStarted));
     setState(() {
+      _confirming = false;
       _started = true;
       _submitted = false;
     });
@@ -54,6 +61,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
 
   void _backToSetup() {
     setState(() {
+      _confirming = false;
       _started = false;
       _submitted = false;
     });
@@ -68,7 +76,9 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _started ? _buildQuiz() : _buildSetup();
+    return _confirming
+        ? _buildInstructions()
+        : (_started ? _buildQuiz() : _buildSetup());
   }
 
   // ---------------------------------------------------------------------
@@ -147,6 +157,103 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   }
 
   // ---------------------------------------------------------------------
+  // Instructions: confirm the selected exam before starting
+  // ---------------------------------------------------------------------
+  Widget _buildInstructions() {
+    final all = ref.watch(quizQuestionsProvider);
+    final count = all
+        .where((q) =>
+            (_chapterId == null || q.chapterId == _chapterId) &&
+            q.difficulty == _difficulty)
+        .length;
+    Chapter? chapter;
+    for (final c in sanskritCurriculum) {
+      if (c.id == _chapterId) chapter = c;
+    }
+    final xpPer = AppConstants.xpPerCorrectAnswer;
+    return VaaniXScaffold(
+      title: 'Exam',
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        children: [
+          Text('Ready for the exam?', style: AppTextStyles.headlineSmall()),
+          const SizedBox(height: 8),
+          Text(
+            chapter?.title ?? 'All chapters',
+            style: AppTextStyles.titleMedium(color: AppColors.primary),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${_difficultyLabel(_difficulty)} \u00b7 $count '
+            '${count == 1 ? 'question' : 'questions'}',
+            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+          ),
+          const SizedBox(height: 24),
+          _instructionTile(
+            icon: Icons.feedback_outlined,
+            title: 'Instant feedback',
+            body: 'Every answer is checked right away, with an explanation '
+                'you can learn from.',
+          ),
+          _instructionTile(
+            icon: Icons.emoji_events_outlined,
+            title: 'XP on first completion',
+            body: 'Earn up to $count \u00d7 $xpPer XP points the first time '
+                'you finish this topic + level.',
+          ),
+          _instructionTile(
+            icon: Icons.refresh_rounded,
+            title: 'Retry anytime',
+            body: 'You can retake the exam or change topic whenever you like.',
+          ),
+          const SizedBox(height: 28),
+          PrimaryButton(
+            label: 'Begin Exam',
+            icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
+            onPressed: _beginQuiz,
+          ),
+          const SizedBox(height: 12),
+          PrimaryButton.secondary(
+            label: 'Back to setup',
+            icon: const Icon(Icons.arrow_back_rounded, size: 20),
+            onPressed: _backToSetup,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _instructionTile({
+    required IconData icon,
+    required String title,
+    required String body,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppColors.primary, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppTextStyles.labelLarge()),
+                const SizedBox(height: 2),
+                Text(
+                  body,
+                  style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------
   // Quiz: answer the selected question set
   // ---------------------------------------------------------------------
   Widget _buildQuiz() {
@@ -180,9 +287,20 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     }
 
     if (state.finished) {
+      final attempts = ref
+          .read(progressRepositoryProvider)
+          .getQuizAttempts(config.quizId)
+          .fold<List<QuizResult>>((_) => const [], (v) => v);
+      var bestScore = 0;
+      for (final a in attempts) {
+        if (a.score > bestScore) bestScore = a.score;
+      }
       return _ResultView(
         score: state.score,
         total: notifier.total,
+        bestScore: bestScore,
+        attemptsCount: attempts.length,
+        saved: _submitted,
         onRetry: () {
           ref.read(examQuizProvider(config).notifier).restart();
           setState(() => _submitted = false);
@@ -547,6 +665,9 @@ class _ResultView extends StatelessWidget {
   const _ResultView({
     required this.score,
     required this.total,
+    required this.bestScore,
+    required this.attemptsCount,
+    required this.saved,
     required this.onRetry,
     required this.onPersist,
     required this.onBack,
@@ -554,9 +675,28 @@ class _ResultView extends StatelessWidget {
 
   final int score;
   final int total;
+  final int bestScore;
+  final int attemptsCount;
+  final bool saved;
   final VoidCallback onRetry;
   final Future<void> Function() onPersist;
   final VoidCallback onBack;
+
+  Widget _stat(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: AppTextStyles.titleMedium(color: AppColors.primary),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -586,11 +726,35 @@ class _ResultView extends StatelessWidget {
                 '${(pct * 100).round()}% correct',
                 style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
               ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.15)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _stat('Score', '$score/$total'),
+                    _stat(
+                      'Best',
+                      bestScore > 0 ? '$bestScore/$total' : '-',
+                    ),
+                    _stat('Attempts', '$attemptsCount'),
+                  ],
+                ),
+              ),
               const SizedBox(height: 32),
               PrimaryButton(
-                label: 'Save Progress (+${score * 10} XP)',
+                label: saved
+                    ? 'Progress saved \u2713'
+                    : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
                 icon: const Icon(Icons.save_outlined, color: Colors.white),
-                onPressed: onPersist,
+                onPressed: saved ? null : onPersist,
               ),
               const SizedBox(height: 12),
               PrimaryButton.secondary(
