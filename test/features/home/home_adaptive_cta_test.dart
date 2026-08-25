@@ -1,18 +1,9 @@
-/// Home Adaptive CTA Widget Tests
-///
-/// Home must render a REAL next action derived from persisted state - not a
-/// hardcoded CTA. Three scenarios prove the dynamic behaviour end to end:
-///  - fresh learner  -> Start Learning
-///  - syllabus done, exams pending -> Exam time
-///  - syllabus + exams done -> Revise with VAN
-
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/constants/app_constants.dart';
@@ -48,20 +39,6 @@ const List<String> kAllQuizIds = [
   'quiz_ch_grammar_intermediate',
 ];
 
-/// Serves asset requests straight from disk. flutter_test's fake async never
-/// reliably completes the real platform asset channel, so widget tests that
-/// exercise the real curriculum loader mock the channel deterministically.
-void _mockAssetChannel(TestWidgetsFlutterBinding binding) {
-  binding.defaultBinaryMessenger.setMockMessageHandler(
-    'flutter/assets',
-    (Object? message) async {
-      final key = utf8.decode((message! as ByteData).buffer.asUint8List());
-      final bytes = File(key).readAsBytesSync();
-      return bytes.buffer.asByteData();
-    },
-  );
-}
-
 Map<String, Object> _passingAttempts() {
   final prefs = <String, Object>{};
   for (final id in kAllQuizIds) {
@@ -75,6 +52,7 @@ Map<String, Object> _passingAttempts() {
 Future<void> _pumpHome(WidgetTester tester, Map<String, Object> seed) async {
   SharedPreferences.setMockInitialValues(seed);
   final prefs = await SharedPreferences.getInstance();
+
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -87,8 +65,19 @@ Future<void> _pumpHome(WidgetTester tester, Map<String, Object> seed) async {
       child: const MaterialApp(home: HomeScreen()),
     ),
   );
-  // Let the curriculum load and the adaptive provider settle.
-  for (var i = 0; i < 30; i++) {
+
+  // The curriculum asset is read through the platform channel, which the
+  // fake-async test zone does not deliver reliably. Run the real event loop
+  // briefly so the in-flight load completes and the adaptive provider
+  // recomputes against the REAL curriculum.
+  await tester.runAsync(() async {
+    for (var i = 0; i < 100; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+  });
+
+  // Render the settled state.
+  for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 200));
   }
 }
@@ -98,8 +87,10 @@ Future<void> _drainVan(WidgetTester tester) async {
 }
 
 void main() {
-  final binding = TestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() => _mockAssetChannel(binding));
+  TestWidgetsFlutterBinding.ensureInitialized();
+  // Fonts are not bundled in the test asset tree; the test framework must
+  // not attempt a runtime network fetch for them either.
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   testWidgets('fresh learner sees the Start Learning action', (tester) async {
     tester.view.physicalSize = const Size(900, 2400);
