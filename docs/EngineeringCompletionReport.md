@@ -138,8 +138,12 @@ externally (needs Supabase project + credentials + schema deploy).
   style lints + warnings in untouched older files).
 - `flutter test`: 129/129.
 - `flutter build apk --debug`: SUCCESS (app-debug.apk, ~192.9 MB).
-- `flutter build apk --release`: SUCCESS (verified separately; still
-  signs with the debug key - see blockers).
+- `flutter build apk --release`: FAILED at R8 dexing with `java.lang.OutOfMemoryError: Java heap
+  space` (Gradle heap 2G on a 7.8 GB RAM host). The release pipeline
+  compiles through AOT + asset tree-shaking before R8 runs; fixing
+  requires a larger Gradle heap or a stronger build machine, plus a
+  real keystore anyway (see blockers). Debug APK remains the verified
+  runnable artifact.
 - Devanagari integrity: verified by byte-level Devanagari range counts
   and dedicated Unicode tests; new Devanagari is authored as `\uXXXX`
   escapes for encoding safety.
