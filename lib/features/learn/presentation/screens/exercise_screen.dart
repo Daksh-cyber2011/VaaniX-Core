@@ -1,10 +1,14 @@
-/// Practice Screen — Learn V1 interactive exercises.
+/// Practice Screen - Learn V1 interactive exercises.
 ///
-/// Turns a lesson from "read → mark complete" into
-/// "read → practice → feedback → master → complete". The session is driven
+/// Turns a lesson from "read  mark complete" into
+/// "read  practice  feedback  master  complete". The session is driven
 /// by [ExerciseNotifier] (deterministic ordering/scoring). Finishing the
 /// session lets the student complete the lesson through the existing
 /// idempotent progress path, so XP is awarded exactly once per lesson.
+///
+/// All five engine types render here: mcq / fillBlank (option tiles),
+/// ordering (tap-in-sequence), translation (free text) and matching
+/// (two-column pairing).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,6 +45,18 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   /// Exercise id whose hint is revealed (null = no hint shown).
   String? _hintRevealedFor;
 
+  /// Text entry for the current translation exercise (synced to state).
+  final TextEditingController _answerController = TextEditingController();
+
+  /// Left-column slot selected but not yet paired (matching exercises).
+  int? _pendingLeftIndex;
+
+  @override
+  void dispose() {
+    _answerController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +80,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     ref.invalidate(xpTotalProvider);
     ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
           VanEventType.lessonCompleted,
-          message: 'Nice work — you completed ${widget.lesson.title}!',
+          message: 'Nice work - you completed ${widget.lesson.title}!',
           payload: {'lessonId': widget.lesson.id},
         ));
 
@@ -80,7 +96,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text('Practice complete! +${widget.lesson.xpReward} XP earned! 🎉'),
+            Text('Practice complete! +${widget.lesson.xpReward} XP earned! ✨'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -111,6 +127,17 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ref.read(exerciseSessionProvider(widget.lesson.id).notifier);
     final completed = ref.watch(completedLessonIdsProvider);
     final isAlreadyDone = completed.contains(widget.lesson.id);
+
+    // Keep the translation input in sync with provider state (retry/next
+    // reset it to an empty string server-side).
+    if (_answerController.text != state.answerText) {
+      _answerController.text = state.answerText;
+    }
+    if (_pendingLeftIndex != null &&
+        (state.answered ||
+            state.selectedPairs.any((p) => p.left == _pendingLeftIndex))) {
+      _pendingLeftIndex = null;
+    }
 
     // Persist mastery exactly once per finished session (idempotent union).
     if (state.finished && !_masteryRecorded) {
@@ -186,7 +213,6 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     bool isAlreadyDone,
   ) {
     final exercise = notifier.current;
-    final isOrdering = exercise.type == ExerciseType.ordering;
     final isCurrentCorrect = notifier.currentAnswerIsCorrect;
     final isLast = state.currentIndex + 1 >= notifier.total;
 
@@ -194,6 +220,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       ExerciseType.mcq => 'Choose one',
       ExerciseType.fillBlank => 'Fill the blank',
       ExerciseType.ordering => 'Arrange in order',
+      ExerciseType.translation => 'Translate',
+      ExerciseType.matching => 'Match the pairs',
     };
 
     return Column(
@@ -260,8 +288,12 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 _hintArea(context, exercise),
               ],
               const SizedBox(height: 20),
-              if (isOrdering)
+              if (exercise.type == ExerciseType.ordering)
                 _orderingArea(context, state, notifier, exercise)
+              else if (exercise.type == ExerciseType.translation)
+                _translationArea(context, state, notifier, exercise)
+              else if (exercise.type == ExerciseType.matching)
+                _matchingArea(context, state, notifier, exercise)
               else
                 ..._choiceArea(context, state, notifier, exercise),
               if (state.answered) ...[
@@ -269,7 +301,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 _feedbackCard(exercise, isCurrentCorrect),
               ],
               const SizedBox(height: 20),
-              _actionRow(state, notifier, isOrdering, isCurrentCorrect, isLast),
+              _actionRow(state, notifier, isCurrentCorrect, isLast),
             ],
           ),
         ),
@@ -438,7 +470,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           ),
           child: state.chosenItems.isEmpty
               ? Text(
-                  'Your sequence appears here…',
+                  'Your sequence appears here.',
                   style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
                 )
               : Wrap(
@@ -482,6 +514,216 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     );
   }
 
+  Widget _translationArea(
+    BuildContext context,
+    ExerciseState state,
+    ExerciseNotifier notifier,
+    Exercise exercise,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Type your answer:',
+          style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _answerController,
+          enabled: !state.answered,
+          onChanged: notifier.setAnswerText,
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) {
+            if (state.answerText.trim().isNotEmpty) notifier.submit();
+          },
+          decoration: InputDecoration(
+            hintText: 'e.g. namaste',
+            filled: true,
+            fillColor: Theme.of(context).cardTheme.color ?? Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.borderLight),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.borderLight),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Answers are checked without case or extra spaces.',
+          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+        ),
+      ],
+    );
+  }
+
+  Widget _matchingArea(
+    BuildContext context,
+    ExerciseState state,
+    ExerciseNotifier notifier,
+    Exercise exercise,
+  ) {
+    final rightOptions = notifier.currentOptions;
+    final pairedLeft = state.selectedPairs.map((p) => p.left).toSet();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tap one item from each side to join them:',
+          style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+        ),
+        const SizedBox(height: 12),
+        // Formed pairs
+        if (state.selectedPairs.isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.borderLight),
+            ),
+            child: Column(
+              children: [
+                for (var i = 0; i < state.selectedPairs.length; i++)
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      '${exercise.pairs[state.selectedPairs[i].left].left}  ↔  '
+                      '${rightOptions[state.selectedPairs[i].right]}',
+                      style: AppTextStyles.bodyMedium(),
+                    ),
+                    trailing: state.answered
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.close_rounded,
+                                size: 18, color: AppColors.error),
+                            onPressed: () => notifier.removeMatch(i),
+                          ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _matchColumn(
+                title: 'Left',
+                chips: [
+                  for (var i = 0; i < exercise.pairs.length; i++)
+                    _matchChip(
+                      label: exercise.pairs[i].left,
+                      selected: _pendingLeftIndex == i,
+                      done: pairedLeft.contains(i) || state.answered,
+                      onTap: () {
+                        setState(() {
+                          _pendingLeftIndex = _pendingLeftIndex == i ? null : i;
+                        });
+                      },
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _matchColumn(
+                title: 'Right',
+                chips: [
+                  for (var d = 0; d < rightOptions.length; d++)
+                    _matchChip(
+                      label: rightOptions[d],
+                      selected: false,
+                      done: state.selectedPairs.any((p) => p.right == d) ||
+                          state.answered,
+                      onTap: () {
+                        final pending = _pendingLeftIndex;
+                        if (pending == null) return;
+                        notifier.addMatch(pending, d);
+                        setState(() => _pendingLeftIndex = null);
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Matched pairs appear above - tap ✕ to undo.',
+          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+        ),
+      ],
+    );
+  }
+
+  Widget _matchColumn({
+    required String title,
+    required List<Widget> chips,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+        ),
+        const SizedBox(height: 8),
+        ...chips,
+      ],
+    );
+  }
+
+  Widget _matchChip({
+    required String label,
+    required bool selected,
+    required bool done,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: done ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withValues(alpha: 0.12)
+                : (done
+                    ? AppColors.subtextLight.withValues(alpha: 0.08)
+                    : (Theme.of(context).cardTheme.color ?? Colors.white)),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected
+                  ? AppColors.primary
+                  : (done ? AppColors.borderLight : AppColors.borderLight),
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: AppTextStyles.bodyMedium(
+              color: done ? AppColors.subtextLight : null,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _feedbackCard(Exercise exercise, bool isCorrect) {
     return Container(
       width: double.infinity,
@@ -496,8 +738,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       ),
       child: Text(
         isCorrect
-            ? 'Correct! 🎉'
-            : exercise.explanation ?? 'Not quite — try again!',
+            ? 'Correct! ✨'
+            : exercise.explanation ?? 'Not quite - try again!',
         style: AppTextStyles.bodySmall(
           color: isCorrect ? AppColors.success : AppColors.error,
         ),
@@ -508,15 +750,19 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   Widget _actionRow(
     ExerciseState state,
     ExerciseNotifier notifier,
-    bool isOrdering,
     bool isCurrentCorrect,
     bool isLast,
   ) {
-    final canSubmit = state.answered
-        ? false
-        : (isOrdering
-            ? state.chosenItems.length == notifier.current.items.length
-            : state.selectedIndex != null);
+    final exercise = notifier.current;
+    final bool canSubmit = switch (exercise.type) {
+      ExerciseType.ordering =>
+        state.chosenItems.length == exercise.items.length,
+      ExerciseType.translation => state.answerText.trim().isNotEmpty,
+      ExerciseType.matching =>
+        state.selectedPairs.length == exercise.pairs.length,
+      _ => state.selectedIndex != null,
+    };
+    final isOrdering = exercise.type == ExerciseType.ordering;
 
     return Row(
       children: [
@@ -527,6 +773,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               icon: const Icon(Icons.refresh_rounded, size: 20),
               onPressed: () {
                 notifier.retry();
+                setState(() => _pendingLeftIndex = null);
               },
             ),
           ),
@@ -549,7 +796,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                   : VanEventType.quizAnswerWrong,
                               message: notifier.currentAnswerIsCorrect
                                   ? 'Nice thinking!'
-                                  : 'Almost there — learn and try again.',
+                                  : 'Almost there - learn and try again.',
                             ));
                       }
                     : null)
@@ -563,7 +810,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                 ? VanEventType.perfectScore
                                 : VanEventType.quizCompleted,
                             message: perfect
-                                ? 'Perfect practice — wonderful work!'
+                                ? 'Perfect practice - wonderful work!'
                                 : 'Practice finished. Nice effort!',
                           ));
                     }
@@ -595,8 +842,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               size: 150,
               showSpeechBubble: true,
               dialogueText: passed
-                  ? 'Great practice! ${(pct * 100).round()}% 🎉'
-                  : 'Keep practising — you\'ve got this! 💪',
+                  ? 'Great practice! ${(pct * 100).round()}% ✨'
+                  : 'Keep practising - you\'ve got this! 💪',
             ),
             const SizedBox(height: 24),
             Text('${state.score} / ${notifier.total}',
@@ -609,7 +856,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             const SizedBox(height: 28),
             PrimaryButton(
               label: isAlreadyDone
-                  ? 'Lesson completed ✓'
+                  ? 'Lesson completed ✅'
                   : 'Complete Lesson (+${widget.lesson.xpReward} XP)',
               icon: const Icon(Icons.check_circle_outline_rounded,
                   color: Colors.white),
