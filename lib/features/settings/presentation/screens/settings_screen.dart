@@ -14,6 +14,7 @@ import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/achievements/presentation/providers/achievement_providers.dart';
 import 'package:vaanix_app/core/theme/theme_notifier.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
@@ -431,8 +432,9 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Reset all progress?'),
         content: const Text(
-          'This clears your XP and completed lessons/quizzes. '
-          'Your onboarding profile is kept. This cannot be undone.',
+          'This clears your XP, completed lessons/quizzes, practice '
+          'mastery and achievements. Your onboarding profile is kept. '
+          'This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -451,6 +453,7 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref.read(progressRepositoryProvider).reset();
+      await ref.read(achievementRepositoryProvider).clear();
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
       // leaving completedLessonIdsProvider and completedQuizIdsProvider
@@ -459,6 +462,11 @@ class SettingsScreen extends ConsumerWidget {
       ref.invalidate(xpTotalProvider);
       ref.invalidate(completedLessonIdsProvider);
       ref.invalidate(completedQuizIdsProvider);
+      // Repository-level invalidation also rebuilds every per-lesson
+      // mastered-exercises family instance (stale mastery fix) and the
+      // achievements map.
+      ref.invalidate(progressRepositoryProvider);
+      ref.invalidate(achievementRepositoryProvider);
     }
   }
 
