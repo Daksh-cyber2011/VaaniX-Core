@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
@@ -29,8 +30,9 @@ void main() {
 
     test('maps Learn and Exam lifecycle events to canonical states', () {
       expect(
-        VanReactionResolver.resolve(const VanEvent(VanEventType.lessonStarted))
-            .state,
+        VanReactionResolver.resolve(
+          const VanEvent(VanEventType.lessonStarted),
+        ).state,
         VanState.happy,
       );
       expect(
@@ -40,8 +42,9 @@ void main() {
         VanState.achievement,
       );
       expect(
-        VanReactionResolver.resolve(const VanEvent(VanEventType.quizStarted))
-            .state,
+        VanReactionResolver.resolve(
+          const VanEvent(VanEventType.quizStarted),
+        ).state,
         VanState.focus,
       );
       expect(
@@ -87,8 +90,9 @@ void main() {
     });
   });
 
-  testWidgets('finite reactions return to idle deterministically',
-      (tester) async {
+  testWidgets('finite reactions return to idle deterministically', (
+    tester,
+  ) async {
     final controller = VanController();
     addTearDown(controller.dispose);
 
@@ -98,37 +102,49 @@ void main() {
     expect(controller.state.current, VanState.idle);
   });
 
-  testWidgets('VanWidget renders the Flutter fallback for an unavailable asset',
-      (tester) async {
-    const unavailableCatalog = VanAssetCatalog([
-      VanVisualAsset(
-        id: 'duck_idle_loop',
-        state: VanState.idle,
-        format: VanAssetFormat.lottie,
-        path: 'assets/van/animations/missing.json',
-      ),
-    ]);
-
-    await tester.pumpWidget(const MaterialApp(
-      home: Scaffold(
-        body: VanWidget(
-          assetCatalog: unavailableCatalog,
-          showSpeechBubble: true,
-          dialogueText: 'Ready when you are.',
+  testWidgets(
+    'VanWidget renders the Flutter fallback for an unavailable asset',
+    (tester) async {
+      const unavailableCatalog = VanAssetCatalog([
+        VanVisualAsset(
+          id: 'duck_idle_loop',
+          state: VanState.idle,
+          format: VanAssetFormat.lottie,
+          path: 'assets/van/animations/missing.json',
         ),
-      ),
-    ));
+      ]);
 
-    expect(find.byKey(const ValueKey('van-flutter-fallback')), findsOneWidget);
-    expect(find.text('Ready when you are.'), findsOneWidget);
-  });
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VanWidget(
+              assetCatalog: unavailableCatalog,
+              showSpeechBubble: true,
+              dialogueText: 'Ready when you are.',
+            ),
+          ),
+        ),
+      );
 
-  testWidgets('every supported presentation state has a fallback visual',
-      (tester) async {
+      expect(
+        find.byKey(const ValueKey('van-flutter-fallback')),
+        findsOneWidget,
+      );
+      expect(find.text('Ready when you are.'), findsOneWidget);
+    },
+  );
+
+  testWidgets('every supported presentation state has a fallback visual', (
+    tester,
+  ) async {
     for (final state in VanState.values) {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: Center(child: VanWidget(state: state, size: 120))),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(child: VanWidget(state: state, size: 120)),
+          ),
+        ),
+      );
 
       expect(
         find.byKey(const ValueKey('van-flutter-fallback')),
@@ -140,53 +156,201 @@ void main() {
   });
 
   testWidgets(
-      'reduced motion keeps the accessible fallback over an asset builder',
-      (tester) async {
-    var builderCalled = false;
-    await tester.pumpWidget(MaterialApp(
-      home: MediaQuery(
-        data: const MediaQueryData(disableAnimations: true),
-        child: Scaffold(
-          body: VanWidget(
-            state: VanState.achievement,
-            visualBuilder: (context, asset, fallback) {
-              builderCalled = true;
-              return const SizedBox(key: ValueKey('external-visual'));
-            },
+    'reduced motion keeps the accessible fallback over an asset builder',
+    (tester) async {
+      var builderCalled = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(disableAnimations: true),
+            child: Scaffold(
+              body: VanWidget(
+                state: VanState.achievement,
+                visualBuilder: (context, asset, fallback) {
+                  builderCalled = true;
+                  return const SizedBox(key: ValueKey('external-visual'));
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(builderCalled, isFalse);
+      expect(
+        find.byKey(const ValueKey('van-flutter-fallback')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('external-visual')), findsNothing);
+    },
+  );
+
+  testWidgets('speech bubble wraps safely at a narrow text-scaled width', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(260, 500));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(
+            size: Size(260, 500),
+            textScaler: TextScaler.linear(1.5),
+          ),
+          child: Scaffold(
+            body: Center(
+              child: VanWidget(
+                size: 100,
+                showSpeechBubble: true,
+                dialogueText: 'Let us take this one step at a time together.',
+              ),
+            ),
           ),
         ),
       ),
-    ));
+    );
 
-    expect(builderCalled, isFalse);
-    expect(find.byKey(const ValueKey('van-flutter-fallback')), findsOneWidget);
-    expect(find.byKey(const ValueKey('external-visual')), findsNothing);
+    expect(
+      find.text('Let us take this one step at a time together.'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets('speech bubble wraps safely at a narrow text-scaled width',
+  group('VanController priority and lifecycle hardening', () {
+    test('userIdle never cuts a non-interruptible achievement short', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(VanEvent(
+        VanEventType.lessonCompleted,
+        message: 'Nice work - you completed the lesson!',
+      ));
+      expect(controller.state.current, VanState.achievement);
+      expect(controller.state.message, 'Nice work - you completed the lesson!');
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.userIdle)),
+        isFalse,
+        reason: 'settle is deferred while a protected reaction is visible',
+      );
+      expect(controller.state.current, VanState.achievement);
+      expect(
+        controller.state.message,
+        'Nice work - you completed the lesson!',
+        reason: 'the celebration copy stays until the reaction completes',
+      );
+    });
+
+    test('aiResponseFinished cannot interrupt a critical error reaction', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.errorOccurred));
+      expect(controller.state.current, VanState.error);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.aiResponseFinished)),
+        isFalse,
+      );
+      expect(controller.state.current, VanState.error);
+    });
+
+    test('stale fallback timers cannot fire after a replacement reaction', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect));
+      expect(controller.state.current, VanState.happy);
+      // A same-priority feedback reaction replaces happy and resets the
+      // fallback clock.
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerWrong));
+      expect(controller.state.current, VanState.caring);
+    });
+
+    testWidgets('replacement keeps the new fallback clock (old timer inert)', (
+      tester,
+    ) async {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect));
+      await tester.pump(const Duration(milliseconds: 200));
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerWrong));
+
+      // Past the original happy duration (1400ms): caring must still show.
+      await tester.pump(const Duration(milliseconds: 1300));
+      expect(controller.state.current, VanState.caring);
+      // Caring (2400ms) then finishes on its own clock.
+      await tester.pump(const Duration(milliseconds: 1100));
+      expect(controller.state.current, VanState.idle);
+    });
+
+    test('settle on a sustained thinking state returns to idle', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.aiThinking));
+      expect(controller.state.isLoading, isTrue);
+      expect(controller.settle(), isTrue);
+      expect(controller.state.current, VanState.idle);
+      expect(controller.state.isLoading, isFalse);
+    });
+
+    test('dispatch after dispose is safe and returns false', () {
+      final controller = VanController();
+      controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect));
+      controller.dispose();
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.companionTapped)),
+        isFalse,
+      );
+    });
+  });
+  testWidgets(
+      'useController reflects dispatches and blocks taps while protected',
       (tester) async {
-    await tester.binding.setSurfaceSize(const Size(260, 500));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(const MaterialApp(
-      home: MediaQuery(
-        data: MediaQueryData(
-          size: Size(260, 500),
-          textScaler: TextScaler.linear(1.5),
-        ),
-        child: Scaffold(
+    final controller = VanController();
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        vanControllerProvider.overrideWith((ref) => controller),
+      ],
+      child: const MaterialApp(
+        home: Scaffold(
           body: Center(
             child: VanWidget(
-              size: 100,
+              useController: true,
+              size: 120,
               showSpeechBubble: true,
-              dialogueText: 'Let us take this one step at a time together.',
             ),
           ),
         ),
       ),
     ));
 
-    expect(find.text('Let us take this one step at a time together.'),
-        findsOneWidget);
-    expect(tester.takeException(), isNull);
+    // Idle: no bubble, fallback visible.
+    expect(find.byKey(const ValueKey('van-flutter-fallback')), findsOneWidget);
+    expect(find.text('Thinking.'), findsNothing);
+
+    // Dispatch a celebration with copy: bubble + achievement visual appear.
+    controller.dispatch(VanEvent(
+      VanEventType.lessonCompleted,
+      message: 'Lesson complete!',
+    ));
+    await tester.pump();
+    expect(find.text('Lesson complete!'), findsOneWidget);
+
+    // Achievements do not allow user interaction: tapping must not dispatch
+    // companionTapped (state must remain achievement).
+    await tester.tap(find.byKey(const ValueKey('van-flutter-fallback')));
+    await tester.pump();
+    expect(controller.state.current, VanState.achievement);
+
+    // The protected reaction still finishes on its own clock.
+    await tester.pump(const Duration(milliseconds: 2601));
+    expect(controller.state.current, VanState.idle);
+    expect(controller.state.message, isNull);
   });
 }

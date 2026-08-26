@@ -49,10 +49,10 @@ class VanController extends StateNotifier<VanPresentationState> {
   /// Sends [event] through the resolver. Returns false when a current,
   /// non-interruptible or higher-priority reaction must remain visible.
   bool dispatch(VanEvent event) {
+    if (!mounted) return false;
     if (event.type == VanEventType.aiResponseFinished ||
         event.type == VanEventType.userIdle) {
-      settle();
-      return true;
+      return settle();
     }
     final next = VanReactionResolver.resolve(event);
     if (!canPresent(next)) return false;
@@ -90,10 +90,18 @@ class VanController extends StateNotifier<VanPresentationState> {
   }
 
   /// Ends a sustained state, for example after an AI stream completes.
-  void settle() {
+  ///
+  /// Non-interruptible reactions (celebration, critical error) are never cut
+  /// short: their own fallback timer returns Van to idle when they finish.
+  /// Returns true when Van settled to idle, false when the request was
+  /// deferred so a protected reaction could complete.
+  bool settle() {
+    if (!mounted) return false;
+    if (!state.current.definition.interruptible) return false;
     _fallbackTimer?.cancel();
     ++_reactionSequence;
     _returnTo(VanState.idle);
+    return true;
   }
 
   void _returnTo(VanState fallback) {
