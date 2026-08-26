@@ -85,14 +85,50 @@ bool _chapterExamPassed(
   Map<String, List<String>> quizIdsByChapter,
   Map<String, List<QuizResult>> attemptsByQuizId,
 ) {
+  return bestExamFractionForChapter(
+        chapterId,
+        quizIdsByChapter,
+        attemptsByQuizId,
+      ) >=
+      kExamPassFraction;
+}
+
+/// Best score fraction across every quiz of [chapterId] (0.0 when none).
+/// Used by the Progress screen to surface real exam performance per chapter.
+double bestExamFractionForChapter(
+  String chapterId,
+  Map<String, List<String>> quizIdsByChapter,
+  Map<String, List<QuizResult>> attemptsByQuizId,
+) {
   final ids = quizIdsByChapter[chapterId] ?? const <String>[];
+  var best = 0.0;
   for (final id in ids) {
-    if (_bestAttemptFraction(attemptsByQuizId[id] ?? const []) >=
-        kExamPassFraction) {
-      return true;
+    final fraction = _bestAttemptFraction(attemptsByQuizId[id] ?? const []);
+    if (fraction > best) best = fraction;
+  }
+  return best;
+}
+
+/// Completed lessons whose exercises are not fully mastered, in curriculum
+/// order. Powers both the practice recommendation and the Progress screen's
+/// weak-area list - one engine, no duplicate logic.
+List<Lesson> listWeakLessons({
+  required List<Chapter> curriculum,
+  required Set<String> completedLessons,
+  required Map<String, List<String>> masteredExerciseIdsByLesson,
+  required Map<String, int> exerciseCountByLesson,
+}) {
+  final weak = <Lesson>[];
+  for (final chapter in curriculum) {
+    for (final lesson in chapter.lessons) {
+      if (!completedLessons.contains(lesson.id)) continue;
+      final total = exerciseCountByLesson[lesson.id] ?? 0;
+      if (total == 0) continue;
+      final mastered = masteredExerciseIdsByLesson[lesson.id]?.length ?? 0;
+      if (mastered < total) weak.add(lesson);
     }
   }
-  return false;
+  return weak;
 }
 
 /// Computes the next action from persisted state. All inputs are real
@@ -161,18 +197,15 @@ NextAction computeNextAction({
   }
 
   // 3. Weak spot: earliest completed lesson with unmastered exercises.
-  final Lesson? weakLesson = allLessons
-      .where((l) {
-        if (!completedLessons.contains(l.id)) return false;
-        final total = exerciseCountByLesson[l.id] ?? 0;
-        if (total == 0) return false;
-        final mastered = masteredExerciseIdsByLesson[l.id]?.length ?? 0;
-        return mastered < total;
-      })
-      .cast<Lesson?>()
-      .firstWhere((l) => l != null, orElse: () => null);
+  final weakLessons = listWeakLessons(
+    curriculum: curriculum,
+    completedLessons: completedLessons,
+    masteredExerciseIdsByLesson: masteredExerciseIdsByLesson,
+    exerciseCountByLesson: exerciseCountByLesson,
+  );
 
-  if (weakLesson != null) {
+  if (weakLessons.isNotEmpty) {
+    final weakLesson = weakLessons.first;
     final total = exerciseCountByLesson[weakLesson.id] ?? 0;
     final mastered = masteredExerciseIdsByLesson[weakLesson.id]?.length ?? 0;
     return NextAction(

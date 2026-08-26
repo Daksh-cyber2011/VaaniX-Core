@@ -2,7 +2,8 @@
 ///
 /// Exposes the persisted attempt index (quizId -> attempts) and the derived
 /// [adaptiveNextActionProvider] that Home uses to render the real next
-/// learning action for the current learner state.
+/// learning action for the current learner state, plus the weak-lesson list
+/// and per-chapter exam performance that the Progress screen surfaces.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,8 +55,19 @@ class QuizAttemptsIndexNotifier
   }
 }
 
-/// The single most useful next action, derived purely from persisted state.
-final adaptiveNextActionProvider = Provider<NextAction>((ref) {
+/// Shared assembly of every persisted input the adaptive derivations need.
+/// One place to gather state, watched by all adaptive providers so they
+/// recompute together.
+typedef AdaptiveInputs = ({
+  List<Chapter> curriculum,
+  Set<String> completedLessons,
+  Map<String, List<String>> masteredByLesson,
+  Map<String, int> exerciseCounts,
+  Map<String, List<String>> quizIdsByChapter,
+  Map<String, List<QuizResult>> attemptsIndex,
+});
+
+AdaptiveInputs _adaptiveInputs(Ref ref) {
   final curriculum =
       ref.watch(curriculumProvider).valueOrNull ?? const <Chapter>[];
   final completed = ref.watch(completedLessonIdsProvider).toSet();
@@ -79,12 +91,54 @@ final adaptiveNextActionProvider = Provider<NextAction>((ref) {
         const [];
   }
 
-  return computeNextAction(
+  return (
     curriculum: curriculum,
     completedLessons: completed,
-    masteredExerciseIdsByLesson: masteredByLesson,
-    exerciseCountByLesson: exerciseCounts,
+    masteredByLesson: masteredByLesson,
+    exerciseCounts: exerciseCounts,
     quizIdsByChapter: quizIdsByChapter,
-    attemptsByQuizId: attemptsIndex,
+    attemptsIndex: attemptsIndex,
   );
+}
+
+/// The single most useful next action, derived purely from persisted state.
+final adaptiveNextActionProvider = Provider<NextAction>((ref) {
+  final i = _adaptiveInputs(ref);
+  return computeNextAction(
+    curriculum: i.curriculum,
+    completedLessons: i.completedLessons,
+    masteredExerciseIdsByLesson: i.masteredByLesson,
+    exerciseCountByLesson: i.exerciseCounts,
+    quizIdsByChapter: i.quizIdsByChapter,
+    attemptsByQuizId: i.attemptsIndex,
+  );
+});
+
+/// Completed lessons with unmastered exercises, in curriculum order.
+/// The Progress screen renders this as the weak-area list.
+final weakLessonsProvider = Provider<List<Lesson>>((ref) {
+  final i = _adaptiveInputs(ref);
+  return listWeakLessons(
+    curriculum: i.curriculum,
+    completedLessons: i.completedLessons,
+    masteredExerciseIdsByLesson: i.masteredByLesson,
+    exerciseCountByLesson: i.exerciseCounts,
+  );
+});
+
+/// Best exam fraction (0.0..1.0) per chapter, from real attempt history.
+/// Chapters without attempts are absent, so UIs can show a clear "not
+/// attempted" state instead of a fabricated score.
+final chapterBestFractionProvider = Provider<Map<String, double>>((ref) {
+  final i = _adaptiveInputs(ref);
+  final result = <String, double>{};
+  for (final chapter in i.curriculum) {
+    final best = bestExamFractionForChapter(
+      chapter.id,
+      i.quizIdsByChapter,
+      i.attemptsIndex,
+    );
+    if (best > 0) result[chapter.id] = best;
+  }
+  return result;
 });
