@@ -14,7 +14,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
@@ -74,6 +73,7 @@ class ChatController extends StateNotifier<ChatState> {
   Future<void> _loadExistingConversation() async {
     final memory = _ref.read(conversationMemoryProvider);
     final result = await memory.load(state.conversationId);
+    if (!mounted) return;
     result.fold(
       (_) {}, // keep empty on error
       (messages) {
@@ -140,6 +140,7 @@ class ChatController extends StateNotifier<ChatState> {
 
     result.fold(
       (failure) {
+        if (!mounted) return;
         state = state.copyWith(
           isSending: false,
           error: failure.message,
@@ -150,6 +151,7 @@ class ChatController extends StateNotifier<ChatState> {
         ));
       },
       (updatedContext) async {
+        if (!mounted) return;
         // The updated context includes the assistant's reply appended.
         state = state.copyWith(
           messages: updatedContext.messages,
@@ -172,8 +174,12 @@ class ChatController extends StateNotifier<ChatState> {
 
   /// Start a new conversation (clears current messages + memory).
   Future<void> startNewConversation() async {
+    // Never reset while a reply is in flight - the late response would
+    // clobber the fresh conversation.
+    if (state.isSending) return;
     final memory = _ref.read(conversationMemoryProvider);
     await memory.clear(state.conversationId);
+    if (!mounted) return;
 
     // Generate a new conversation ID.
     final newId = 'conv_${DateTime.now().millisecondsSinceEpoch}';

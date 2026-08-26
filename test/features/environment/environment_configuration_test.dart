@@ -53,5 +53,35 @@ void main() {
       expect(AppEnvironment.isProduction, isTrue);
       expect(AppEnvironment.flavor, Flavor.production);
     });
+
+    test('geminiModel defaults to the current stable flash model', () {
+      expect(AppEnvironment.geminiModel, 'gemini-2.5-flash');
+    });
+
+    test('geminiModel honors the GEMINI_MODEL env override', () {
+      dotenv.testLoad(mergeWith: {
+        AppConstants.geminiModelKey: 'gemini-2.5-flash-lite',
+      });
+      expect(AppEnvironment.geminiModel, 'gemini-2.5-flash-lite');
+    });
+
+    test('isGeminiConfigured is false without a key', () {
+      expect(AppEnvironment.isGeminiConfigured, isFalse);
+    });
+
+    test('isGeminiConfigured rejects template placeholder keys', () {
+      dotenv.testLoad(mergeWith: {
+        AppConstants.geminiApiKey: 'your-gemini-api-key-here',
+      });
+      expect(AppEnvironment.isGeminiConfigured, isFalse,
+          reason: 'a starter .env copy must never enable the online path');
+    });
+
+    test('isGeminiConfigured is true with a real-looking key', () {
+      dotenv.testLoad(mergeWith: {
+        AppConstants.geminiApiKey: 'AIzaSyDummyRealLookingKeyForTests',
+      });
+      expect(AppEnvironment.isGeminiConfigured, isTrue);
+    });
   });
 }

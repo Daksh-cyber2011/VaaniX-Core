@@ -4,6 +4,7 @@
 /// [Failure] types.
 
 import 'package:dio/dio.dart';
+import 'dart:async' as async;
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
@@ -12,6 +13,8 @@ abstract final class ExceptionMapper {
   /// Translate any caught object into a domain [Failure].
   static Failure toFailure(Object error) {
     if (error is Failure) return error;
+
+    if (error is async.TimeoutException) return const TimeoutFailure();
 
     if (error is DioException) return _mapDio(error);
 
@@ -31,7 +34,8 @@ abstract final class ExceptionMapper {
       }
       if (lower.contains('already registered') ||
           lower.contains('already exists')) {
-        return const ConflictFailure('An account with this email already exists.');
+        return const ConflictFailure(
+            'An account with this email already exists.');
       }
       if (lower.contains('rate limit') || lower.contains('too many')) {
         return const RateLimitFailure();

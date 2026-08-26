@@ -58,9 +58,24 @@ class AppEnvironment {
 
   /// Google Gemini API key. Empty when not configured — the AI module
   /// falls back to [OfflineModelAdapter] in that case.
+  /// Google Gemini model name, defaulting to [AppConstants.defaultGeminiModel].
+  /// Configurable via the GEMINI_MODEL env var so the app never hardcodes a
+  /// model string in one place.
+  static String get geminiModel {
+    final configured = dotenv.env[AppConstants.geminiModelKey]?.trim() ?? '';
+    return configured.isNotEmpty ? configured : AppConstants.defaultGeminiModel;
+  }
+
   static String get geminiApiKey =>
       dotenv.env[AppConstants.geminiApiKey]?.trim() ?? '';
 
   /// True when a Gemini API key is present and non-empty.
-  static bool get isGeminiConfigured => geminiApiKey.isNotEmpty;
+  /// True when a real Gemini API key is present. Template placeholders are
+  /// rejected exactly like Supabase's, so a starter `.env` copy never enables
+  /// the online path (offline mode stays authoritative until real credentials
+  /// exist).
+  static bool get isGeminiConfigured {
+    final key = geminiApiKey;
+    return key.isNotEmpty && !key.toLowerCase().contains('your-gemini');
+  }
 }

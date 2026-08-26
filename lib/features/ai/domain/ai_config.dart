@@ -68,7 +68,7 @@ class AiConfig extends Equatable {
   /// Which provider backend should fulfill the request.
   final AiProviderId provider;
 
-  /// Provider-specific model name (e.g. 'gemini-1.5-flash', 'gpt-4o-mini').
+  /// Provider-specific model name (e.g. 'gemini-2.5-flash', 'gpt-4o-mini').
   /// Empty string means "use the adapter's default".
   final String model;
 
@@ -117,6 +117,14 @@ class AiConfig extends Equatable {
       );
 
   @override
-  List<Object?> get props =>
-      [provider, model, temperature, maxTokens, topP, enableStreaming, systemPrompt, extra];
+  List<Object?> get props => [
+        provider,
+        model,
+        temperature,
+        maxTokens,
+        topP,
+        enableStreaming,
+        systemPrompt,
+        extra
+      ];
 }

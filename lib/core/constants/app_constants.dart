@@ -29,6 +29,10 @@ abstract final class AppConstants {
   static const String appEnvKey = 'APP_ENV';
   static const String sentryDsnKey = 'SENTRY_DSN';
   static const String geminiApiKey = 'GEMINI_API_KEY';
+  static const String geminiModelKey = 'GEMINI_MODEL';
+
+  /// Default Gemini model for V1. Configurable via GEMINI_MODEL env.
+  static const String defaultGeminiModel = 'gemini-2.5-flash';
 
   // ============================================================
   // STORAGE KEYS (SharedPreferences)
@@ -82,7 +86,7 @@ abstract final class AppConstants {
   // ============================================================
 
   static const int vanIdleCycleDurationMs = 3500; // 3–4s breathing
-  static const int vanTalkingDurationMs = 500;    // natural lip-sync
+  static const int vanTalkingDurationMs = 500; // natural lip-sync
   static const int vanCelebrationDurationMs = 800;
   static const int vanThinkingDurationMs = 600;
   static const int vanErrorDurationMs = 300;
@@ -118,8 +122,10 @@ abstract final class AppConstants {
   /// Van animation asset names (Lottie .json files)
   static const String vanIdleAnimation = 'assets/animations/van_idle.json';
   static const String vanHappyAnimation = 'assets/animations/van_happy.json';
-  static const String vanThinkingAnimation = 'assets/animations/van_thinking.json';
-  static const String vanCelebrationAnimation = 'assets/animations/van_celebration.json';
+  static const String vanThinkingAnimation =
+      'assets/animations/van_thinking.json';
+  static const String vanCelebrationAnimation =
+      'assets/animations/van_celebration.json';
   static const String vanSadAnimation = 'assets/animations/van_sad.json';
   static const String vanFocusAnimation = 'assets/animations/van_focus.json';
 }

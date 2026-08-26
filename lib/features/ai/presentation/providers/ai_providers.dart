@@ -104,7 +104,7 @@ final defaultAiConfigProvider = Provider<AiConfig>((ref) {
     provider: AppEnvironment.isGeminiConfigured
         ? AiProviderId.gemini
         : AiProviderId.offline,
-    model: AppEnvironment.isGeminiConfigured ? 'gemini-1.5-flash' : '',
+    model: AppEnvironment.isGeminiConfigured ? AppEnvironment.geminiModel : '',
     temperature: 0.7,
     maxTokens: 1024,
     enableStreaming: true,

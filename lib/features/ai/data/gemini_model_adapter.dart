@@ -1,8 +1,10 @@
-/// VaaniX AI — Gemini Model Adapter
+/// VaaniX AI - Gemini Model Adapter
 ///
 /// The first real online [ModelAdapter]. Uses Google's `google_generative_ai`
-/// SDK to call Gemini 1.5 Flash. Falls back to [OfflineModelAdapter] when
-/// no API key is configured.
+/// SDK to call Gemini. Falls back to [OfflineModelAdapter] when no API key
+/// is configured. The model name is configurable via
+/// [AppEnvironment.geminiModel] (GEMINI_MODEL env, default
+/// [AppConstants.defaultGeminiModel]).
 ///
 /// Safety: All inputs are sanitized by [SafetyFilter] before being sent to
 /// Gemini, and all outputs are moderated by [SafetyFilter] before being
@@ -17,10 +19,13 @@
 ///
 /// Error mapping: Gemini SDK exceptions are caught by [guardAsync] and
 /// mapped to AI-specific Failure types via [ExceptionMapper]:
-/// - Rate limit → [AiRateLimitFailure]
-/// - Content filter → [AiContentFilterFailure]
-/// - Context length → [AiContextLengthFailure]
-/// - Other → [AiServiceFailure]
+/// - Rate limit  [AiRateLimitFailure]
+/// - Content filter  [AiContentFilterFailure]
+/// - Context length  [AiContextLengthFailure]
+/// - Timeout  [TimeoutFailure]
+/// - Other  [AiServiceFailure]
+
+import 'dart:async';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
@@ -46,6 +51,9 @@ class GeminiModelAdapter implements ModelAdapter {
         _responseCache = responseCache,
         _usageTracker = usageTracker;
 
+  /// Hard ceiling for a single non-streaming completion request.
+  static const Duration _requestTimeout = Duration(seconds: 30);
+
   final SafetyFilter _safetyFilter;
   final AiRateLimiter _rateLimiter;
   final ResponseCache? _responseCache;
@@ -58,10 +66,14 @@ class GeminiModelAdapter implements ModelAdapter {
   AiProviderId get providerId => AiProviderId.gemini;
 
   @override
-  String get displayName => 'Gemini 1.5 Flash';
+  String get displayName => 'Gemini (${AppEnvironment.geminiModel})';
 
   @override
   bool get isAvailable => AppEnvironment.isGeminiConfigured;
+
+  /// Resolves the model name: request override wins, then env/default.
+  String _modelName(AiConfig config) =>
+      config.model.isEmpty ? AppEnvironment.geminiModel : config.model;
 
   /// Lazily initialize the Gemini model with the API key + system instruction.
   GenerativeModel _getModel(AiConfig config) {
@@ -73,7 +85,7 @@ class GeminiModelAdapter implements ModelAdapter {
     }
 
     _model = GenerativeModel(
-      model: config.model.isEmpty ? 'gemini-1.5-flash' : config.model,
+      model: _modelName(config),
       apiKey: apiKey,
       systemInstruction: Content.system(_safetyFilter.defensiveSystemPrompt()),
       generationConfig: GenerationConfig(
@@ -85,20 +97,32 @@ class GeminiModelAdapter implements ModelAdapter {
     return _model!;
   }
 
+  /// The most recent user message, or null when absent/empty. The adapter
+  /// never fabricates input: a request without a real user message is a
+  /// contract violation and fails cleanly instead of sending garbage.
+  AiMessage? _lastUserMessage(ConversationContext context) {
+    AiMessage? last;
+    for (final message in context.messages) {
+      if (message.role == AiRole.user && message.content.trim().isNotEmpty) {
+        last = message;
+      }
+    }
+    return last;
+  }
+
   @override
   Future<Result<AiMessage>> complete({
     required ConversationContext context,
     required AiConfig config,
   }) {
     return guardAsync(() async {
-      // Extract the latest user message.
-      final lastUserMsg = context.messages.lastWhere(
-        (m) => m.role == AiRole.user,
-        orElse: () => AiMessage.user(id: 'temp', content: 'नमस्ते'),
-      );
+      final lastUserMsg = _lastUserMessage(context);
+      if (lastUserMsg == null) {
+        throw const AiServiceFailure('No user message in context');
+      }
       final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
 
-      // ── Cache check ────────────────────────────────────────────────
+      // Cache check.
       // Only cache if this looks like a standalone question (not a
       // follow-up in a long conversation). We check if the transcript
       // is short enough that the question makes sense in isolation.
@@ -118,7 +142,7 @@ class GeminiModelAdapter implements ModelAdapter {
         }
       }
 
-      // ── Rate limiting ──────────────────────────────────────────────
+      // Rate limiting.
       // Wait for an available slot before sending (stays under 15 RPM).
       await _rateLimiter.awaitSlot();
 
@@ -136,7 +160,13 @@ class GeminiModelAdapter implements ModelAdapter {
 
       // Start a chat session with history.
       final chat = model.startChat(history: history);
-      final response = await chat.sendMessage(Content.text(sanitizedInput));
+      final response =
+          await chat.sendMessage(Content.text(sanitizedInput)).timeout(
+                _requestTimeout,
+                onTimeout: () => throw TimeoutException(
+                  'Gemini completion timed out',
+                ),
+              );
 
       final responseText = response.text;
       if (responseText == null || responseText.isEmpty) {
@@ -148,7 +178,7 @@ class GeminiModelAdapter implements ModelAdapter {
         throw const AiContentFilterFailure();
       }
 
-      // ── Cache store ────────────────────────────────────────────────
+      // Cache store.
       // Cache the Q&A pair for future reuse.
       if (_responseCache != null && context.transcript.length <= 2) {
         await _responseCache.put(sanitizedInput, responseText);
@@ -159,7 +189,7 @@ class GeminiModelAdapter implements ModelAdapter {
       final promptTokens = usage?.promptTokenCount ?? 0;
       final completionTokens = usage?.candidatesTokenCount ?? 0;
 
-      // ── Usage tracking ─────────────────────────────────────────────
+      // Usage tracking.
       if (_usageTracker != null && usage != null) {
         await _usageTracker.recordUsage(
           promptTokens: promptTokens,
@@ -169,7 +199,7 @@ class GeminiModelAdapter implements ModelAdapter {
 
       final metadata = <String, dynamic>{
         'provider': 'gemini',
-        'model': config.model.isEmpty ? 'gemini-1.5-flash' : config.model,
+        'model': _modelName(config),
         'promptTokens': promptTokens,
         'completionTokens': completionTokens,
         'totalTokens':
@@ -190,6 +220,11 @@ class GeminiModelAdapter implements ModelAdapter {
     required ConversationContext context,
     required AiConfig config,
   }) async* {
+    final lastUserMsg = _lastUserMessage(context);
+    if (lastUserMsg == null) {
+      yield err(const AiServiceFailure('No user message in context'));
+      return;
+    }
     try {
       // Rate limiting before streaming.
       await _rateLimiter.awaitSlot();
@@ -208,14 +243,10 @@ class GeminiModelAdapter implements ModelAdapter {
 
       final chat = model.startChat(history: history);
 
-      final lastUserMsg = context.messages.lastWhere(
-        (m) => m.role == AiRole.user,
-        orElse: () => AiMessage.user(id: 'temp', content: 'नमस्ते'),
-      );
-
       final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
-      final responseStream =
-          chat.sendMessageStream(Content.text(sanitizedInput));
+      final responseStream = chat
+          .sendMessageStream(Content.text(sanitizedInput))
+          .timeout(_requestTimeout);
 
       await for (final response in responseStream) {
         final text = response.text;
@@ -243,6 +274,7 @@ class GeminiModelAdapter implements ModelAdapter {
 
   /// Map Gemini SDK exceptions to AI-specific Failures.
   Failure _mapException(Object error) {
+    if (error is TimeoutException) return const TimeoutFailure();
     final msg = error.toString().toLowerCase();
 
     if (msg.contains('rate limit') ||
