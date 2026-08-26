@@ -335,7 +335,7 @@ void main() {
     expect(find.text('Thinking.'), findsNothing);
 
     // Dispatch a celebration with copy: bubble + achievement visual appear.
-    controller.dispatch(VanEvent(
+    controller.dispatch(const VanEvent(
       VanEventType.lessonCompleted,
       message: 'Lesson complete!',
     ));
