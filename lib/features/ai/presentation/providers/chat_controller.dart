@@ -69,11 +69,13 @@ class ChatController extends StateNotifier<ChatState> {
 
   final Ref _ref;
 
+  bool _disposed = false;
+
   /// Load any existing conversation from memory on startup.
   Future<void> _loadExistingConversation() async {
     final memory = _ref.read(conversationMemoryProvider);
     final result = await memory.load(state.conversationId);
-    if (!mounted) return;
+    if (_disposed || !mounted) return;
     result.fold(
       (_) {}, // keep empty on error
       (messages) {
@@ -132,6 +134,9 @@ class ChatController extends StateNotifier<ChatState> {
     );
 
     // Send via the pipeline (handles persona, memory, AI, safety, persistence).
+    // Resolve the achievement checker before the await so no
+    // provider read happens after a possible container disposal.
+    final checker = _ref.read(achievementCheckerProvider);
     final result = await pipeline.send(
       context: context,
       userMessage: userMessage,
@@ -140,7 +145,7 @@ class ChatController extends StateNotifier<ChatState> {
 
     result.fold(
       (failure) {
-        if (!mounted) return;
+        if (_disposed || !mounted) return;
         state = state.copyWith(
           isSending: false,
           error: failure.message,
@@ -151,7 +156,7 @@ class ChatController extends StateNotifier<ChatState> {
         ));
       },
       (updatedContext) async {
-        if (!mounted) return;
+        if (_disposed || !mounted) return;
         // The updated context includes the assistant's reply appended.
         state = state.copyWith(
           messages: updatedContext.messages,
@@ -166,7 +171,6 @@ class ChatController extends StateNotifier<ChatState> {
         // ── Achievement check ──────────────────────────────────────
         // After the first successful chat message, check for the
         // 'van_friend' achievement.
-        final checker = _ref.read(achievementCheckerProvider);
         await checker.checkAchievements(didChatWithVan: true);
       },
     );
@@ -179,7 +183,7 @@ class ChatController extends StateNotifier<ChatState> {
     if (state.isSending) return;
     final memory = _ref.read(conversationMemoryProvider);
     await memory.clear(state.conversationId);
-    if (!mounted) return;
+    if (_disposed || !mounted) return;
 
     // Generate a new conversation ID.
     final newId = 'conv_${DateTime.now().millisecondsSinceEpoch}';
@@ -190,6 +194,12 @@ class ChatController extends StateNotifier<ChatState> {
   /// Clear the error state.
   void clearError() {
     state = state.copyWith(clearError: true);
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 }
 

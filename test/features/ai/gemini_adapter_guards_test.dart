@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:vaanix_app/core/errors/exception_mapper.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
@@ -27,6 +28,8 @@ ConversationContext _contextWithMessages(List<AiMessage> messages) {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() => dotenv.testLoad());
 
   group('GeminiModelAdapter input guards', () {
     test('isAvailable is false when Gemini is unconfigured', () {
