@@ -275,12 +275,6 @@ void main() {
   });
 
   group('engine: matching', () {
-    List<ExerciseNotifier> build() => [
-      ExerciseNotifier(_session([kMatching])),
-    ];
-
-    UserMatch pairFor(int left) => (left: left, right: left);
-
     test('correct pairing scores on first try', () {
       final n = ExerciseNotifier(_session([kMatching]));
       // Right slots are the shuffled display; pair each left with the

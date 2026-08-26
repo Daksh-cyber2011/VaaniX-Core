@@ -17,6 +17,7 @@ import 'package:vaanix_app/features/profile/presentation/providers/profile_provi
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -548,18 +549,23 @@ class _WeakLessonTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.repeat_rounded, color: AppColors.accent),
-      title: Text(lesson.title, style: AppTextStyles.bodyLarge()),
-      subtitle: Text(
-        '$mastered of $total exercises mastered',
-        style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+    // Transparent Material so ListTile ink splashes paint on a Material
+    // ancestor instead of being hidden by the card's DecoratedBox.
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: const Icon(Icons.repeat_rounded, color: AppColors.accent),
+        title: Text(lesson.title, style: AppTextStyles.bodyLarge()),
+        subtitle: Text(
+          '$mastered of $total exercises mastered',
+          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+        ),
+        trailing: const Icon(Icons.chevron_right_rounded,
+            color: AppColors.subtextLight),
+        onTap: () => context
+            .go(RouteNames.lessonPractice.replaceFirst(':lessonId', lesson.id)),
       ),
-      trailing: const Icon(Icons.chevron_right_rounded,
-          color: AppColors.subtextLight),
-      onTap: () => context
-          .go(RouteNames.lessonPractice.replaceFirst(':lessonId', lesson.id)),
     );
   }
 }

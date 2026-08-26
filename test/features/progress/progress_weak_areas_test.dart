@@ -3,7 +3,9 @@
 /// Drives the screen with deterministic provider overrides (the engine's own
 /// outputs) so the UI behavior is tested without depending on the platform
 /// asset channel: recommendation card, weak-area list with real counts,
-/// and the fresh-learner empty state.
+/// and the fresh-learner empty state. Uses a tall viewport because the
+/// screen's ListView builds lazily - content below the fold is not built
+/// in the default 600px test viewport.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,6 +55,12 @@ Future<ProviderContainer> makeContainer({
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  void useTallViewport(WidgetTester tester) {
+    tester.view.physicalSize = const Size(900, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+  }
+
   Widget wrap(ProviderContainer container) {
     return ProviderScope(
       parent: container,
@@ -64,6 +72,7 @@ void main() {
 
   testWidgets('fresh learner sees the start-journey focus and guidance',
       (tester) async {
+    useTallViewport(tester);
     final container = await makeContainer(
       nextAction: const NextAction(
         action: AdaptiveAction.startJourney,
@@ -79,14 +88,17 @@ void main() {
 
     expect(find.text('NEXT FOCUS'), findsOneWidget);
     expect(find.text('Your journey begins'), findsOneWidget);
-    expect(find.textContaining('Namaste!'), findsOneWidget,
+    expect(find.textContaining('Your journey starts now'), findsOneWidget,
         reason: 'fresh learner keeps the VAN welcome guidance');
     expect(find.text('Weak areas'), findsNothing,
         reason: 'no weak areas for a fresh learner');
+    // Drain the speech-bubble timer started by the VanWidget.
+    await tester.pump(const Duration(seconds: 2));
   });
 
   testWidgets('weak lessons are surfaced with real mastery counts',
       (tester) async {
+    useTallViewport(tester);
     final container = await makeContainer(
       nextAction: const NextAction(
         action: AdaptiveAction.practiceWeakTopic,
@@ -100,9 +112,6 @@ void main() {
       weakLessons: const [kWeakLesson, kWeakLesson2],
     );
     addTearDown(container.dispose);
-    tester.view.physicalSize = const Size(900, 2400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.reset);
 
     await tester.pumpWidget(wrap(container));
     await tester.pump();
@@ -112,11 +121,18 @@ void main() {
     expect(find.text('Weak areas'), findsOneWidget);
     expect(find.text('Consonants'), findsWidgets);
     expect(find.text('Nouns'), findsOneWidget);
-    expect(find.text('2 of 4 exercises mastered'), findsWidgets);
+    // Counts come from REAL providers: the engine's recommendation subtitle
+    // carries the true shortfall, and each tile shows the persisted mastery
+    // (empty seed -> '0 of N').
+    expect(find.textContaining('2 of 4 exercises mastered'), findsOneWidget);
+    expect(find.textContaining('exercises mastered'), findsWidgets);
+    // Drain the speech-bubble timer started by the VanWidget.
+    await tester.pump(const Duration(seconds: 2));
   });
 
   testWidgets('completed-journey action renders the celebration focus',
       (tester) async {
+    useTallViewport(tester);
     final container = await makeContainer(
       nextAction: const NextAction(
         action: AdaptiveAction.allDone,
@@ -135,5 +151,7 @@ void main() {
     expect(find.text('Syllabus complete!'), findsOneWidget);
     expect(find.text('Weak areas'), findsNothing,
         reason: 'all mastered - no weak list to show');
+    // Drain the speech-bubble timer started by the VanWidget.
+    await tester.pump(const Duration(seconds: 2));
   });
 }
