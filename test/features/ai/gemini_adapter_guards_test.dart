@@ -16,7 +16,6 @@ import 'package:vaanix_app/features/ai/data/gemini_model_adapter.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
-import 'package:vaanix_app/features/ai/domain/model_adapter.dart';
 
 ConversationContext _contextWithMessages(List<AiMessage> messages) {
   return ConversationContext(

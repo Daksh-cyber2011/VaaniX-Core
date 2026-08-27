@@ -37,6 +37,9 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
 
   Future<void> _load() async {
     final result = await _repo.getProfile();
+    // The constructor fires this unawaited; the provider element may have
+    // been disposed while the read was in flight (app teardown, reset).
+    if (!mounted) return;
     result.fold(
       (_) {}, // keep empty defaults on failure
       (profile) {

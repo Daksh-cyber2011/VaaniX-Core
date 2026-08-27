@@ -22,7 +22,6 @@ import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart'
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/auth/data/noop_auth_repository.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
-import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 
 class _FakePipeline implements ConversationPipeline {
   _FakePipeline(this._send);

@@ -143,8 +143,12 @@ class ChatController extends StateNotifier<ChatState> {
       config: config,
     );
 
-    result.fold(
-      (failure) {
+    // Both branches are async and MUST be awaited: dartz's Either.fold
+    // otherwise discards the returned future, letting this method return
+    // while the achievement check is still running (and racing container
+    // disposal).
+    await result.fold(
+      (failure) async {
         if (_disposed || !mounted) return;
         state = state.copyWith(
           isSending: false,
