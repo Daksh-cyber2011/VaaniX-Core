@@ -436,8 +436,9 @@ class SettingsScreen extends ConsumerWidget {
         title: const Text('Reset all progress?'),
         content: const Text(
           'This clears your XP, completed lessons/quizzes, practice '
-          'mastery and achievements. Your onboarding profile is kept. '
-          'This cannot be undone.',
+          'mastery, exam history, achievements and your day streak. '
+          'Your onboarding profile (companion name, class, goals) is '
+          'kept. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -457,6 +458,10 @@ class SettingsScreen extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(progressRepositoryProvider).reset();
       await ref.read(achievementRepositoryProvider).clear();
+      // The day streak measures learning behavior - it belongs to
+      // progress, not to identity, so Reset clears it too.
+      await ref.read(userProfileRepositoryProvider).resetLearningStreak();
+      ref.invalidate(userProfileProvider);
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
       // leaving completedLessonIdsProvider and completedQuizIdsProvider

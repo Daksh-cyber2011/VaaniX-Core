@@ -34,4 +34,9 @@ abstract class UserProfileRepository {
   ///   - unchanged if already active today.
   /// Returns the new streak count.
   Future<Result<int>> recordDailyActivity();
+
+  /// Clears the learning streak and last-active marker. Part of the
+  /// Settings 'Reset Progress' flow: the streak measures learning
+  /// behavior (progress), while names/class/goals are identity and stay.
+  Future<Result<void>> resetLearningStreak();
 }

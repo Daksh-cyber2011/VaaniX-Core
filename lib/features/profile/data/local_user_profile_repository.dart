@@ -104,6 +104,16 @@ class LocalUserProfileRepository implements UserProfileRepository {
     });
   }
 
+  @override
+  Future<Result<void>> resetLearningStreak() {
+    return guardAsync(() async {
+      await Future.wait([
+        _storage.setCurrentStreak(0),
+        _storage.remove(AppConstants.keyLastActiveDate),
+      ]);
+    });
+  }
+
   /// Returns the UTC midnight ISO-8601 date string for [date].
   String _utcMidnight(DateTime date) {
     return '${date.year.toString().padLeft(4, '0')}'

@@ -130,20 +130,23 @@ class LocalProgressRepository implements ProgressRepository {
     });
   }
 
+  /// Storage-key prefix of per-quiz attempt history (kept in sync with
+  /// LocalStorageService.get/setQuizAttempts).
+  static const String _attemptsPrefix = 'quiz_attempts_';
+
   @override
   Future<Result<void>> reset() {
     return guardAsync(() async {
-      // Collect all quiz_attempt_* keys to clear.
-      // SharedPreferences doesn't expose a prefix-search, so we rely on
-      // the known quizIds from the curriculum. For V1 there's only one
-      // quiz ('v1_practice_quiz'); clearing it is sufficient. Segment 8
-      // will generalize this when per-chapter quizzes land.
-      final quizIds = _storage.completedQuizIds;
+      // Purge by KEY PREFIX, not by the ids currently listed in
+      // completedQuizIds: any orphaned/stale attempt history (schema
+      // evolution, future per-chapter quizzes) must not survive a reset.
       await Future.wait([
         _storage.setCompletedLessonIds(const []),
         _storage.setCompletedQuizIds(const []),
         _storage.setXpTotal(0),
-        for (final id in quizIds) _storage.setQuizAttempts(id, '[]'),
+        // Attempt history under ANY quiz id.
+        for (final key in _storage.keys)
+          if (key.startsWith(_attemptsPrefix)) _storage.remove(key),
         // Exercise mastery is per-lesson; purge every mastered_* key.
         for (final key in _storage.keys)
           if (key.startsWith(_masteredPrefix)) _storage.remove(key),
