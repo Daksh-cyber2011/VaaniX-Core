@@ -42,9 +42,18 @@ Future<void> _loadEnvironment() async {
     await dotenv.load(fileName: AppConstants.envFilePath);
   } catch (e, st) {
     reportError(e, st, context: 'dotenv.load');
+    // The bundled app currently ships assets/env/ WITHOUT a .env file
+    // (only .gitkeep), so this path is the PRODUCTION norm, not an
+    // edge case. Initialize an EMPTY environment so every later
+    // dotenv.env[key] access is safe: flavor defaults to development,
+    // Supabase/Gemini report unconfigured, and the app boots fully
+    // offline instead of crashing with NotInitializedError before the
+    // first frame.
+    if (!dotenv.isInitialized) {
+      dotenv.testLoad();
+    }
   }
 }
-
 
 /// Tags the Sentry scope with environment metadata so crashes can be
 /// filtered by flavor / release in the dashboard.
@@ -52,11 +61,10 @@ void _configureSentryScope() {
   Sentry.configureScope((scope) {
     scope.setTag('flavor', AppEnvironment.flavor.name);
     scope.setTag('release', AppConstants.appVersion);
-    scope.setExtra('supabase_configured',
-        AppEnvironment.isSupabaseConfigured.toString());
+    scope.setExtra(
+        'supabase_configured', AppEnvironment.isSupabaseConfigured.toString());
   });
 }
-
 
 Future<void> _initializeSupabase() async {
   if (!AppEnvironment.isSupabaseConfigured) {
