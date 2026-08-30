@@ -1,10 +1,8 @@
 /// VaaniX Standardized Bottom Sheet Wrapper
 ///
-/// Rounded top sheet container with pull drag handle.
-
+/// Rounded top sheet container with pull drag handle. Wraps content in
+/// SafeArea so actions stay reachable above the system gesture bar.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 class VaaniXBottomSheet extends StatelessWidget {
   const VaaniXBottomSheet({
@@ -21,41 +19,42 @@ class VaaniXBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Drag handle indicator
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: (isDark ? AppColors.subtextDark : AppColors.subtextLight)
-                    .withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Drag handle indicator
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.24),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          if (title != null) ...[
-            Text(
-              title!,
-              style: AppTextStyles.titleLarge(),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
+            if (title != null) ...[
+              Text(
+                title!,
+                style: theme.textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+            ],
+            child,
           ],
-          child,
-        ],
+        ),
       ),
     );
   }

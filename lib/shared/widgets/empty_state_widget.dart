@@ -1,10 +1,8 @@
 /// VaaniX Empty State Widget
 ///
 /// Reusable placeholder UI displayed when a list or view has no data.
-
+/// Fully theme-aware; the icon container carries a soft tint of the accent.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 
 class EmptyStateWidget extends StatelessWidget {
@@ -27,6 +25,10 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = iconColor ?? theme.colorScheme.primary;
+    final subtext = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -36,25 +38,21 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: (iconColor ?? AppColors.primary).withValues(alpha: 0.1),
+                color: accent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: iconColor ?? AppColors.primary,
-              ),
+              child: Icon(icon, size: 44, color: accent),
             ),
             const SizedBox(height: 20),
             Text(
               title,
-              style: AppTextStyles.titleLarge(),
+              style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               description,
-              style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+              style: theme.textTheme.bodyMedium?.copyWith(color: subtext),
               textAlign: TextAlign.center,
             ),
             if (actionLabel != null && onActionPressed != null) ...[

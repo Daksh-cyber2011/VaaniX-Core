@@ -1,5 +1,7 @@
-/// Streak Badge — shows the user's current streak count
-
+/// Streak Badge - shows the user's current streak count.
+///
+/// Uses the brand fire-orange accent with a Material glyph (never emoji) so
+/// it renders identically on every device and in both themes.
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -16,35 +18,40 @@ class StreakBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? 8 : 12,
-        vertical: compact ? 4 : 8,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.streak.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.streak.withValues(alpha: 0.3),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Warm up the fire accent for dark surfaces so it stays vivid.
+    final accent = isDark ? const Color(0xFFFF8C52) : AppColors.streak;
+
+    return Semantics(
+      label: '$streakCount day streak',
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 8 : 12,
+          vertical: compact ? 4 : 6,
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('🔥', style: TextStyle(fontSize: 16)),
-          const SizedBox(width: 4),
-          Text(
-            streakCount.toString(),
-            style: AppTextStyles.labelLarge(color: AppColors.streak),
-          ),
-          if (!compact) ...[
-            const SizedBox(width: 2),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: accent.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.local_fire_department_rounded, size: 16, color: accent),
+            const SizedBox(width: 4),
             Text(
-              'day${streakCount == 1 ? '' : 's'}',
-              style: AppTextStyles.labelSmall(color: AppColors.streak),
+              streakCount.toString(),
+              style: AppTextStyles.labelLarge(color: accent),
             ),
+            if (!compact) ...[
+              const SizedBox(width: 2),
+              Text(
+                'day${streakCount == 1 ? '' : 's'}',
+                style: AppTextStyles.labelSmall(color: accent),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -4,15 +4,14 @@
 /// Matches the elevated button theme defined in [AppTheme].
 ///
 /// Supports loading state, disabled state, and secondary/text variants.
-
+/// The loading spinner color adapts to the variant so it is always visible.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 enum _ButtonVariant { primary, secondary, text }
 
 class PrimaryButton extends StatelessWidget {
-  /// Primary (filled) variant — the default CTA button.
+  /// Primary (filled) variant - the default CTA button.
   const PrimaryButton({
     super.key,
     required this.label,
@@ -52,13 +51,26 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final effectiveOnPressed = isLoading ? null : onPressed;
+
+    // Spinner must contrast with the variant surface:
+    // - filled: light spinner on brand fill
+    // - outlined/text: brand-colored spinner on transparent surface
+    final spinnerColor = switch (_variant) {
+      _ButtonVariant.primary => Colors.white,
+      // Outlined/text variants sit on the surface; brand color stays visible.
+      _ => theme.colorScheme.primary,
+    };
+
+    final labelWidget = Text(label, style: AppTextStyles.labelLarge());
+
     final child = isLoading
-        ? const SizedBox.square(
+        ? SizedBox.square(
             dimension: 22,
             child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              color: AppColors.onBackgroundDark,
+              valueColor: AlwaysStoppedAnimation<Color>(spinnerColor),
             ),
           )
         : icon != null
@@ -68,10 +80,10 @@ class PrimaryButton extends StatelessWidget {
                 children: [
                   icon!,
                   const SizedBox(width: 8),
-                  Text(label, style: AppTextStyles.labelLarge()),
+                  labelWidget,
                 ],
               )
-            : Text(label, style: AppTextStyles.labelLarge());
+            : labelWidget;
 
     switch (_variant) {
       case _ButtonVariant.primary:

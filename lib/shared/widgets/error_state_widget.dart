@@ -1,10 +1,8 @@
 /// VaaniX Error State Widget
 ///
 /// Standardized error view with retry button for failed network/data calls.
-
+/// Fully theme-aware and reduced-motion friendly.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 
 class ErrorStateWidget extends StatelessWidget {
@@ -14,15 +12,21 @@ class ErrorStateWidget extends StatelessWidget {
     required this.message,
     this.onRetry,
     this.retryLabel = 'Try Again',
+    this.icon = Icons.error_outline_rounded,
   });
 
   final String title;
   final String message;
   final VoidCallback? onRetry;
   final String retryLabel;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final errorColor = theme.colorScheme.error;
+    final subtext = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -32,25 +36,21 @@ class ErrorStateWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha: 0.1),
+                color: errorColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.error_outline_rounded,
-                size: 48,
-                color: AppColors.error,
-              ),
+              child: Icon(icon, size: 44, color: errorColor),
             ),
             const SizedBox(height: 20),
             Text(
               title,
-              style: AppTextStyles.titleLarge(),
+              style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               message,
-              style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+              style: theme.textTheme.bodyMedium?.copyWith(color: subtext),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[

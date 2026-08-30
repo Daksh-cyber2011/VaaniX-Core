@@ -3,15 +3,77 @@
 /// Provides both light and dark [ThemeData] instances for [MaterialApp].
 /// All color decisions are documented with their design rationale.
 ///
-/// Design source: VAN Design Bible + PRD Section 6.2
+/// Design source: VAN Design Bible + PRD Section 6.2 + docs/Product/Design-System.md
+///
+/// Component-level styling lives here so screens never re-style Material
+/// widgets locally. Tokens: [AppColors], [AppTextStyles], [AppDimens],
+/// [AppShadows].
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 abstract final class AppTheme {
+  // ============================================================
+  // SHARED WIDGET-LEVEL FRAGMENTS
+  // ============================================================
+
+  static SwitchThemeData _switch(Color primary, Color surface) =>
+      SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.white
+              : surface,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? primary
+              : primary.withValues(alpha: 0.18),
+        ),
+        trackOutlineColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.transparent
+              : primary.withValues(alpha: 0.32),
+        ),
+      );
+
+  static ProgressIndicatorThemeData _progress(Color primary) =>
+      ProgressIndicatorThemeData(
+        color: primary,
+        linearTrackColor: primary.withValues(alpha: 0.12),
+        circularTrackColor: primary.withValues(alpha: 0.15),
+        refreshBackgroundColor: primary.withValues(alpha: 0.15),
+      );
+
+  static TooltipThemeData _tooltip(Color onBackground) => TooltipThemeData(
+        decoration: BoxDecoration(
+          color: onBackground.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+        ),
+        textStyle: AppTextStyles.labelSmall(color: Colors.white),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        waitDuration: const Duration(milliseconds: 500),
+      );
+
+  static ListTileThemeData _listTile(
+    Color primary,
+    Color subtext,
+    Brightness brightness,
+  ) =>
+      ListTileThemeData(
+        iconColor: subtext,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        minLeadingWidth: 24,
+        titleTextStyle: AppTextStyles.bodyLarge(),
+        subtitleTextStyle: AppTextStyles.bodySmall(color: subtext),
+      );
+
   // ============================================================
   // LIGHT THEME
   // ============================================================
@@ -19,6 +81,10 @@ abstract final class AppTheme {
   static ThemeData get light => ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
+        splashFactory: InkRipple.splashFactory,
+        visualDensity: VisualDensity.standard,
+        focusColor: AppColors.focusRingLight,
+        highlightColor: AppColors.primary.withValues(alpha: 0.06),
 
         // Seed color drives Material 3 color scheme generation
         colorScheme: ColorScheme.fromSeed(
@@ -26,6 +92,8 @@ abstract final class AppTheme {
           brightness: Brightness.light,
           primary: AppColors.primary,
           onPrimary: Colors.white,
+          primaryContainer: AppColors.primaryContainerLight,
+          onPrimaryContainer: AppColors.primaryDark,
           secondary: AppColors.vanYellow,
           onSecondary: AppColors.onBackgroundLight,
           tertiary: AppColors.vanOrange,
@@ -50,17 +118,24 @@ abstract final class AppTheme {
           ),
         ),
 
-        // --- Elevated Button — Primary CTA ---
+        // --- Elevated Button - Primary CTA ---
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 56),
+            minimumSize: const Size(double.infinity, AppDimens.primaryActionHeight),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: AppTextStyles.labelLarge(),
             elevation: 0,
+          ).copyWith(
+            // Pressed state: subtle scale of the fill, no elevation jump.
+            overlayColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.pressed)
+                  ? Colors.white.withValues(alpha: 0.14)
+                  : Colors.white.withValues(alpha: 0.08),
+            ),
           ),
         ),
 
@@ -72,6 +147,7 @@ abstract final class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            minimumSize: const Size(0, AppDimens.compactActionHeight),
           ),
         ),
 
@@ -79,12 +155,21 @@ abstract final class AppTheme {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
-            minimumSize: const Size(double.infinity, 56),
+            minimumSize:
+                const Size(double.infinity, AppDimens.primaryActionHeight),
             side: const BorderSide(color: AppColors.primary, width: 1.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: AppTextStyles.labelLarge(),
+          ),
+        ),
+
+        // --- Icon Buttons (48dp touch floor) ---
+        iconButtonTheme: IconButtonThemeData(
+          style: IconButton.styleFrom(
+            minimumSize: const Size.square(AppDimens.minTouchTarget),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
 
@@ -126,6 +211,41 @@ abstract final class AppTheme {
           ),
         ),
 
+        // --- Dialogs ---
+        dialogTheme: DialogThemeData(
+          backgroundColor: AppColors.surfaceLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          titleTextStyle:
+              AppTextStyles.titleLarge(color: AppColors.onSurfaceLight),
+          contentTextStyle:
+              AppTextStyles.bodyMedium(color: AppColors.onSurfaceLight),
+        ),
+
+        // --- Bottom Sheets ---
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: AppColors.surfaceLight,
+          modalBackgroundColor: AppColors.surfaceLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          showDragHandle: false,
+        ),
+
+        // --- Progress indicators ---
+        progressIndicatorTheme: _progress(AppColors.primary),
+
+        // --- Tooltips ---
+        tooltipTheme: _tooltip(AppColors.onBackgroundLight),
+
+        // --- List tiles (settings rows) ---
+        listTileTheme:
+            _listTile(AppColors.primary, AppColors.subtextLight, Brightness.light),
+
+        // --- Switches ---
+        switchTheme: _switch(AppColors.primary, AppColors.subtextLight),
+
         // --- Bottom Navigation ---
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: AppColors.surfaceLight,
@@ -141,6 +261,7 @@ abstract final class AppTheme {
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surfaceLight,
           indicatorColor: AppColors.primary.withValues(alpha: 0.12),
+          height: 68,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const IconThemeData(color: AppColors.primary);
@@ -190,12 +311,18 @@ abstract final class AppTheme {
   static ThemeData get dark => ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
+        splashFactory: InkRipple.splashFactory,
+        visualDensity: VisualDensity.standard,
+        focusColor: AppColors.focusRingDark,
+        highlightColor: AppColors.primaryLight.withValues(alpha: 0.08),
 
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           brightness: Brightness.dark,
           primary: AppColors.primaryLight,
           onPrimary: Colors.white,
+          primaryContainer: AppColors.primaryContainerDark,
+          onPrimaryContainer: AppColors.primaryContainerLight,
           secondary: AppColors.vanYellow,
           onSecondary: AppColors.onBackgroundDark,
           tertiary: AppColors.vanOrange,
@@ -223,12 +350,19 @@ abstract final class AppTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryLight,
             foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 56),
+            minimumSize:
+                const Size(double.infinity, AppDimens.primaryActionHeight),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: AppTextStyles.labelLarge(),
             elevation: 0,
+          ).copyWith(
+            overlayColor: WidgetStateProperty.resolveWith(
+              (states) => states.contains(WidgetState.pressed)
+                  ? Colors.white.withValues(alpha: 0.14)
+                  : Colors.white.withValues(alpha: 0.08),
+            ),
           ),
         ),
 
@@ -239,18 +373,27 @@ abstract final class AppTheme {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            minimumSize: const Size(0, AppDimens.compactActionHeight),
           ),
         ),
 
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primaryLight,
-            minimumSize: const Size(double.infinity, 56),
+            minimumSize:
+                const Size(double.infinity, AppDimens.primaryActionHeight),
             side: const BorderSide(color: AppColors.primaryLight, width: 1.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: AppTextStyles.labelLarge(),
+          ),
+        ),
+
+        iconButtonTheme: IconButtonThemeData(
+          style: IconButton.styleFrom(
+            minimumSize: const Size.square(AppDimens.minTouchTarget),
+            tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
 
@@ -294,6 +437,35 @@ abstract final class AppTheme {
           ),
         ),
 
+        dialogTheme: DialogThemeData(
+          backgroundColor: AppColors.surfaceDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          titleTextStyle:
+              AppTextStyles.titleLarge(color: AppColors.onSurfaceDark),
+          contentTextStyle:
+              AppTextStyles.bodyMedium(color: AppColors.onSurfaceDark),
+        ),
+
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: AppColors.surfaceDark,
+          modalBackgroundColor: AppColors.surfaceDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          showDragHandle: false,
+        ),
+
+        progressIndicatorTheme: _progress(AppColors.primaryLight),
+
+        tooltipTheme: _tooltip(AppColors.onBackgroundDark),
+
+        listTileTheme:
+            _listTile(AppColors.primaryLight, AppColors.subtextDark, Brightness.dark),
+
+        switchTheme: _switch(AppColors.primaryLight, AppColors.subtextDark),
+
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: AppColors.surfaceDark,
           selectedItemColor: AppColors.primaryLight,
@@ -307,6 +479,7 @@ abstract final class AppTheme {
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surfaceDark,
           indicatorColor: AppColors.primaryLight.withValues(alpha: 0.15),
+          height: 68,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const IconThemeData(color: AppColors.primaryLight);

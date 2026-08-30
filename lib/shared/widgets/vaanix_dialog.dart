@@ -1,9 +1,9 @@
 /// VaaniX Standardized Modal Dialog
 ///
 /// Clean, branded alert and confirmation dialogs matching design guidelines.
-
+/// The confirm action adapts to dark mode and uses the semantic danger color
+/// for destructive confirmations.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 
@@ -32,11 +32,10 @@ class VaaniXDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+      backgroundColor: theme.colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -48,14 +47,15 @@ class VaaniXDialog extends StatelessWidget {
             ],
             Text(
               title,
-              style: AppTextStyles.titleLarge(),
+              style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: AppTextStyles.bodyMedium(
-                color: isDark ? AppColors.subtextDark : AppColors.subtextLight,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72),
               ),
               textAlign: TextAlign.center,
             ),
@@ -74,7 +74,9 @@ class VaaniXDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDangerous ? AppColors.error : AppColors.primary,
+                      backgroundColor: isDangerous
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.primary,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(

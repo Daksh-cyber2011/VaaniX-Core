@@ -1,10 +1,8 @@
 /// VaaniX Loading Indicator
 ///
-/// Branded loading spinner using Van's primary/yellow accent color.
-
+/// Branded loading spinner using the theme-aware primary color, with an
+/// optional supporting message. Always adapts to light/dark.
 import 'package:flutter/material.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 class VaaniXLoadingIndicator extends StatelessWidget {
   const VaaniXLoadingIndicator({
@@ -18,6 +16,11 @@ class VaaniXLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final subtext = theme.brightness == Brightness.dark
+        ? theme.colorScheme.onSurface.withValues(alpha: 0.64)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.56);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -26,15 +29,15 @@ class VaaniXLoadingIndicator extends StatelessWidget {
           height: size,
           child: CircularProgressIndicator(
             strokeWidth: 3,
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-            backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.15),
           ),
         ),
         if (message != null) ...[
           const SizedBox(height: 16),
           Text(
             message!,
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: theme.textTheme.bodyMedium?.copyWith(color: subtext),
             textAlign: TextAlign.center,
           ),
         ],
