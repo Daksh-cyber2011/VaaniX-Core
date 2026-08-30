@@ -1,4 +1,4 @@
-/// Onboarding Page 2 — Personality Mode
+﻿/// Onboarding Page 2 â€” Personality Mode
 ///
 /// User selects how they want Van to behave: Cheerleader / Calm / Fun.
 /// Van visually reacts to each selection via VanState change.
@@ -35,7 +35,7 @@ class _ModeOption {
 const _modes = [
   _ModeOption(
     mode: PersonalityMode.cheerleader,
-    emoji: '🎉',
+    emoji: 'ðŸŽ‰',
     title: 'Cheerleader',
     subtitle: 'Energetic hype. Celebrates every win.',
     vanState: VanState.achievement,
@@ -43,7 +43,7 @@ const _modes = [
   ),
   _ModeOption(
     mode: PersonalityMode.calm,
-    emoji: '🌿',
+    emoji: 'ðŸŒ¿',
     title: 'Calm',
     subtitle: 'Patient and steady. Great for focus.',
     vanState: VanState.caring,
@@ -51,7 +51,7 @@ const _modes = [
   ),
   _ModeOption(
     mode: PersonalityMode.fun,
-    emoji: '🦆',
+    emoji: 'ðŸ¦†',
     title: 'Fun',
     subtitle: 'Silly duck puns. Keeps it light.',
     vanState: VanState.funny,
@@ -139,11 +139,11 @@ class ObPersonalityPage extends ConsumerWidget {
   String _modeReaction(PersonalityMode mode, String name) {
     switch (mode) {
       case PersonalityMode.cheerleader:
-        return "LET'S GO $name! 🎉 I'll be your biggest fan!";
+        return "LET'S GO $name! ðŸŽ‰ I'll be your biggest fan!";
       case PersonalityMode.calm:
-        return "Perfect. We'll take it step by step, together. 🌿";
+        return "Perfect. We'll take it step by step, together. ðŸŒ¿";
       case PersonalityMode.fun:
-        return "Quack! This is gonna be a great time 🦆";
+        return "Quack! This is gonna be a great time ðŸ¦†";
     }
   }
 }

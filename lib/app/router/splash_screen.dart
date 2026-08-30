@@ -1,8 +1,9 @@
 /// Splash screen shown immediately on app launch.
 ///
-/// Animates in the VaaniX logo, then performs the first routing decision:
-///   - Onboarding not complete → onboarding flow.
-///   - Otherwise → home (the main app shell).
+/// Animates in the VaaniX brand moment, then performs the first routing
+/// decision:
+///   - Onboarding not complete  onboarding flow.
+///   - Otherwise  home (the main app shell).
 ///
 /// The router's redirect guard (see app_router.dart) remains the
 /// authoritative gate; this just avoids lingering on the splash while the
@@ -17,6 +18,7 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -60,9 +62,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   /// Decides the first real route after the splash animation.
   ///
   /// Order:
-  ///   1. Onboarding not complete → onboarding flow.
-  ///   2. Onboarding complete + Supabase configured + not authenticated → auth.
-  ///   3. Otherwise → home (the main app shell).
+  ///   1. Onboarding not complete  onboarding flow.
+  ///   2. Onboarding complete + Supabase configured + not authenticated  auth.
+  ///   3. Otherwise  home (the main app shell).
   ///
   /// Uses [localStorageServiceProvider] (no feature imports in core) plus a
   /// minimal read of the auth flag via the shared routing helper. The
@@ -100,18 +102,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Van placeholder — will be replaced with Lottie animation
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: AppColors.vanYellow,
-                    borderRadius: BorderRadius.circular(60),
-                  ),
-                  child: const Center(
-                    child: Text('🦆', style: TextStyle(fontSize: 60)),
-                  ),
-                ),
+                // VAN carries the brand moment (replaceable via the asset
+                // catalog once final Lottie artwork is approved).
+                const VanWidget(state: VanState.happy, size: 120),
                 const SizedBox(height: 24),
                 Text(
                   AppConstants.appName,

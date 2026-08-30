@@ -1,4 +1,4 @@
-/// Practice Screen - Learn V1 interactive exercises.
+﻿/// Practice Screen - Learn V1 interactive exercises.
 ///
 /// Turns a lesson from "read  mark complete" into
 /// "read  practice  feedback  master  complete". The session is driven
@@ -51,6 +51,18 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   /// Left-column slot selected but not yet paired (matching exercises).
   int? _pendingLeftIndex;
 
+  // Theme-aware surface / border / subtext tokens (fixes dark-mode washouts).
+  Color get _surface => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.surfaceDark
+      : AppColors.surfaceLight;
+  Color get _borderColor =>
+      Theme.of(context).brightness == Brightness.dark
+          ? AppColors.borderDark
+          : AppColors.borderLight;
+  Color get _subtext => Theme.of(context).brightness == Brightness.dark
+      ? AppColors.subtextDark
+      : AppColors.subtextLight;
+
   @override
   void dispose() {
     _answerController.dispose();
@@ -96,7 +108,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text('Practice complete! +${widget.lesson.xpReward} XP earned! ✨'),
+            Text('Practice complete! +${widget.lesson.xpReward} XP earned! âœ¨'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -110,7 +122,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '🏆 Achievement Unlocked: ${ach.title}!'
+            'ðŸ† Achievement Unlocked: ${ach.title}!'
             '${ach.xpReward > 0 ? ' (+${ach.xpReward} XP)' : ''}',
           ),
           behavior: SnackBarBehavior.floating,
@@ -194,7 +206,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           const SizedBox(height: 16),
           Text(
             'Exercises are being prepared.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: _subtext),
           ),
           const SizedBox(height: 16),
           PrimaryButton(
@@ -240,7 +252,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    value: (state.currentIndex) / notifier.total,
+                    value: (state.currentIndex + 1) / notifier.total,
                     minHeight: 6,
                     backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                     color: AppColors.primary,
@@ -344,7 +356,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             ),
             child: Text(
               exercise.hint!,
-              style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+              style: AppTextStyles.bodyMedium(color: _subtext),
             ),
           ),
       ],
@@ -384,8 +396,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         state.answered && index == notifier.currentCorrectDisplayIndex;
     final isWrong = state.answered && isSelected && !isCorrect;
 
-    Color tileColor = Theme.of(context).cardTheme.color ?? Colors.white;
-    Color borderColor = AppColors.borderLight;
+    Color tileColor = _surface;
+    Color borderColor = _borderColor;
     if (isCorrect) {
       tileColor = AppColors.success.withValues(alpha: 0.1);
       borderColor = AppColors.success;
@@ -455,7 +467,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       children: [
         Text(
           'Tap the items in the correct order:',
-          style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+          style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
         // Chosen sequence
@@ -466,12 +478,12 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.04),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.borderLight),
+            border: Border.all(color: _borderColor),
           ),
           child: state.chosenItems.isEmpty
               ? Text(
                   'Your sequence appears here.',
-                  style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                  style: AppTextStyles.bodySmall(color: _subtext),
                 )
               : Wrap(
                   spacing: 8,
@@ -485,7 +497,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                             ? null
                             : () => notifier.removeChosenItem(i),
                         backgroundColor:
-                            Theme.of(context).cardTheme.color ?? Colors.white,
+                            _surface,
                         side: const BorderSide(
                             color: AppColors.primary, width: 1),
                         deleteIconColor: AppColors.primary,
@@ -505,8 +517,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 onPressed:
                     state.answered ? null : () => notifier.addChosenItem(item),
                 backgroundColor:
-                    Theme.of(context).cardTheme.color ?? Colors.white,
-                side: const BorderSide(color: AppColors.borderLight),
+                    _surface,
+                side: BorderSide(color: _borderColor),
               ),
           ],
         ),
@@ -525,7 +537,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       children: [
         Text(
           'Type your answer:',
-          style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+          style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
         TextField(
@@ -539,14 +551,14 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           decoration: InputDecoration(
             hintText: 'e.g. namaste',
             filled: true,
-            fillColor: Theme.of(context).cardTheme.color ?? Colors.white,
+            fillColor: _surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.borderLight),
+              borderSide: BorderSide(color: _borderColor),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.borderLight),
+              borderSide: BorderSide(color: _borderColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -557,7 +569,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         const SizedBox(height: 8),
         Text(
           'Answers are checked without case or extra spaces.',
-          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+          style: AppTextStyles.bodySmall(color: _subtext),
         ),
       ],
     );
@@ -577,7 +589,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       children: [
         Text(
           'Tap one item from each side to join them:',
-          style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+          style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
         // Formed pairs
@@ -588,7 +600,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.borderLight),
+              border: Border.all(color: _borderColor),
             ),
             child: Column(
               children: [
@@ -597,7 +609,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                      '${exercise.pairs[state.selectedPairs[i].left].left}  ↔  '
+                      '${exercise.pairs[state.selectedPairs[i].left].left}  â†”  '
                       '${rightOptions[state.selectedPairs[i].right]}',
                       style: AppTextStyles.bodyMedium(),
                     ),
@@ -660,8 +672,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Matched pairs appear above - tap ✕ to undo.',
-          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+          'Matched pairs appear above - tap âœ• to undo.',
+          style: AppTextStyles.bodySmall(color: _subtext),
         ),
       ],
     );
@@ -676,7 +688,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       children: [
         Text(
           title,
-          style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+          style: AppTextStyles.labelSmall(color: _subtext),
         ),
         const SizedBox(height: 8),
         ...chips,
@@ -703,20 +715,20 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             color: selected
                 ? AppColors.primary.withValues(alpha: 0.12)
                 : (done
-                    ? AppColors.subtextLight.withValues(alpha: 0.08)
+                    ? _subtext.withValues(alpha: 0.08)
                     : (Theme.of(context).cardTheme.color ?? Colors.white)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected
                   ? AppColors.primary
-                  : (done ? AppColors.borderLight : AppColors.borderLight),
+                  : (done ? _borderColor : _borderColor),
               width: selected ? 2 : 1,
             ),
           ),
           child: Text(
             label,
             style: AppTextStyles.bodyMedium(
-              color: done ? AppColors.subtextLight : null,
+              color: done ? _subtext : null,
             ),
           ),
         ),
@@ -738,7 +750,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       ),
       child: Text(
         isCorrect
-            ? 'Correct! ✨'
+            ? 'Correct! âœ¨'
             : exercise.explanation ?? 'Not quite - try again!',
         style: AppTextStyles.bodySmall(
           color: isCorrect ? AppColors.success : AppColors.error,
@@ -842,8 +854,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               size: 150,
               showSpeechBubble: true,
               dialogueText: passed
-                  ? 'Great practice! ${(pct * 100).round()}% ✨'
-                  : 'Keep practising - you\'ve got this! 💪',
+                  ? 'Great practice! ${(pct * 100).round()}% âœ¨'
+                  : 'Keep practising - you\'ve got this! ðŸ’ª',
             ),
             const SizedBox(height: 24),
             Text('${state.score} / ${notifier.total}',
@@ -851,12 +863,12 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             const SizedBox(height: 8),
             Text(
               '${(pct * 100).round()}% mastered',
-              style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+              style: AppTextStyles.bodyMedium(color: _subtext),
             ),
             const SizedBox(height: 28),
             PrimaryButton(
               label: isAlreadyDone
-                  ? 'Lesson completed ✅'
+                  ? 'Lesson completed âœ…'
                   : 'Complete Lesson (+${widget.lesson.xpReward} XP)',
               icon: const Icon(Icons.check_circle_outline_rounded,
                   color: Colors.white),

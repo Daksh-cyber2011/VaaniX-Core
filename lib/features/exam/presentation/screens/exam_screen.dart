@@ -1,4 +1,4 @@
-/// Exam Screen — Chapter + Difficulty Exam Flow
+﻿/// Exam Screen â€” Chapter + Difficulty Exam Flow
 ///
 /// Exam V1: the student first picks a chapter and a difficulty band, then
 /// answers a deterministic, chapter/difficulty-scoped question set. Answers
@@ -119,7 +119,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           const SizedBox(height: 8),
           Text(
             'Pick a topic and a difficulty level to build your question set.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 20),
           for (final c in chapters) ...[
@@ -196,7 +196,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           Text(
             '${_difficultyLabel(_difficulty)} \u00b7 $count '
             '${count == 1 ? 'question' : 'questions'}',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 24),
           _instructionTile(
@@ -253,7 +253,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 const SizedBox(height: 2),
                 Text(
                   body,
-                  style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                  style: AppTextStyles.bodySmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                 ),
               ],
             ),
@@ -340,8 +340,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: xpEarned > 0
-                  ? Text('+$xpEarned XP earned! 🎉')
-                  : const Text('Quiz already completed — no extra XP'),
+                  ? Text('+$xpEarned XP earned! ðŸŽ‰')
+                  : const Text('Quiz already completed â€” no extra XP'),
             ),
           );
           // Exam completions must also drive the achievement checker
@@ -446,7 +446,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                             state.answered && isSelected && !isCorrect;
 
                         Color tileColor =
-                            Theme.of(context).cardTheme.color ?? Colors.white;
+                            (Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.surfaceLight);
                         Color borderColor = AppColors.borderLight;
                         if (showCorrect) {
                           tileColor = AppColors.success.withValues(alpha: 0.1);
@@ -550,7 +550,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                             ? VanEventType.perfectScore
                                             : VanEventType.quizCompleted,
                                         message: isPerfect
-                                            ? 'A perfect score — wonderful work!'
+                                            ? 'A perfect score â€” wonderful work!'
                                             : 'You finished the quiz. Nice effort!',
                                       ),
                                     );
@@ -610,7 +610,7 @@ class _ChapterTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? AppColors.primary.withValues(alpha: 0.08)
-              : Theme.of(context).cardTheme.color ?? Colors.white,
+              : (Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.surfaceLight),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: selected ? AppColors.primary : AppColors.borderLight,
@@ -628,7 +628,7 @@ class _ChapterTile extends StatelessWidget {
                   Text(
                     subtitle,
                     style:
-                        AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                        AppTextStyles.bodySmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                   ),
                 ],
               ),
@@ -639,7 +639,7 @@ class _ChapterTile extends StatelessWidget {
               style: AppTextStyles.labelLarge(color: AppColors.primary),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.chevron_right, color: AppColors.subtextLight),
+            Icon(Icons.chevron_right, color: Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight),
           ],
         ),
       ),
@@ -666,7 +666,7 @@ class _DifficultyChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final foreground = selected
         ? AppColors.primary
-        : (enabled ? AppColors.subtextLight : AppColors.subtextLight);
+        : (enabled ? (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight) : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight));
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(12),
@@ -677,8 +677,8 @@ class _DifficultyChip extends StatelessWidget {
           color: selected
               ? AppColors.primary.withValues(alpha: 0.08)
               : (enabled
-                  ? (Theme.of(context).cardTheme.color ?? Colors.white)
-                  : Colors.grey.withValues(alpha: 0.08)),
+                  ? ((Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.surfaceLight))
+                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: enabled
@@ -691,7 +691,7 @@ class _DifficultyChip extends StatelessWidget {
           style: AppTextStyles.labelLarge(
             color: enabled
                 ? foreground
-                : AppColors.subtextLight.withValues(alpha: 0.5),
+                : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight).withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -720,7 +720,7 @@ class _ResultView extends StatelessWidget {
   final Future<void> Function() onPersist;
   final VoidCallback onBack;
 
-  Widget _stat(String label, String value) {
+  Widget _stat(String label, String value, Color subtext) {
     return Column(
       children: [
         Text(
@@ -730,7 +730,7 @@ class _ResultView extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+          style: AppTextStyles.bodySmall(color: subtext),
         ),
       ],
     );
@@ -740,6 +740,9 @@ class _ResultView extends StatelessWidget {
   Widget build(BuildContext context) {
     final pct = total == 0 ? 0.0 : score / total;
     final passed = pct >= 0.6;
+    final subtext = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.subtextDark
+        : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight);
 
     return VaaniXScaffold(
       title: 'Exam',
@@ -754,15 +757,15 @@ class _ResultView extends StatelessWidget {
                 size: 160,
                 showSpeechBubble: true,
                 dialogueText: passed
-                    ? 'Great job! ${(pct * 100).round()}% 🎉'
-                    : 'Keep practising, you\'ve got this! 💪',
+                    ? 'Great job! ${(pct * 100).round()}% ðŸŽ‰'
+                    : 'Keep practising, you\'ve got this! ðŸ’ª',
               ),
               const SizedBox(height: 32),
               Text('$score / $total', style: AppTextStyles.displaySmall()),
               const SizedBox(height: 8),
               Text(
                 '${(pct * 100).round()}% correct',
-                style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+                style: AppTextStyles.bodyMedium(color: subtext),
               ),
               const SizedBox(height: 16),
               Container(
@@ -777,12 +780,13 @@ class _ResultView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _stat('Score', '$score/$total'),
+                    _stat('Score', '$score/$total', subtext),
                     _stat(
                       'Best',
                       bestScore > 0 ? '$bestScore/$total' : '-',
+                      subtext,
                     ),
-                    _stat('Attempts', '$attemptsCount'),
+                    _stat('Attempts', '$attemptsCount', subtext),
                   ],
                 ),
               ),

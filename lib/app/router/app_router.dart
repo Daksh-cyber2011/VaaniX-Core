@@ -1,7 +1,7 @@
-/// VaaniX Router Configuration
+﻿/// VaaniX Router Configuration
 ///
 /// Declarative navigation with go_router. Route paths and names live in
-/// [RouteNames]; the structure mirrors the app architecture (PRD §7).
+/// [RouteNames]; the structure mirrors the app architecture (PRD Â§7).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +30,7 @@ import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/screens/progress_screen.dart';
 import 'package:vaanix_app/features/settings/presentation/screens/settings_screen.dart';
 import 'package:vaanix_app/features/van_profile/presentation/screens/van_profile_screen.dart';
+import 'package:vaanix_app/shared/widgets/widgets.dart';
 
 /// Routes reachable without onboarding completion or a session.
 const _publicRoutes = <String>{
@@ -39,7 +40,7 @@ const _publicRoutes = <String>{
 };
 
 /// Routes that additionally require authentication (only enforced when
-/// Supabase is configured — see [AppEnvironment.isSupabaseConfigured]).
+/// Supabase is configured â€” see [AppEnvironment.isSupabaseConfigured]).
 const _protectedRoutes = <String>{
   RouteNames.home,
   RouteNames.learn,
@@ -95,7 +96,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ----------------------------------------------------------
-      // ONBOARDING (7 screens — PRD §8.1)
+      // ONBOARDING (7 screens â€” PRD Â§8.1)
       // ----------------------------------------------------------
       GoRoute(
         path: RouteNames.onboarding,
@@ -113,7 +114,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ----------------------------------------------------------
-      // MAIN APP SHELL — StatefulShellRoute with bottom navigation.
+      // MAIN APP SHELL â€” StatefulShellRoute with bottom navigation.
       // ----------------------------------------------------------
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -135,7 +136,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: RouteNames.learnName,
                 builder: (context, state) => const LearnScreen(),
                 routes: [
-                  // Lesson content — nested under /learn so back-nav
+                  // Lesson content â€” nested under /learn so back-nav
                   // returns to the lesson tree.
                   GoRoute(
                     path: 'lesson/:lessonId',
@@ -227,7 +228,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 /// Riverpod provider for [NavigationService].
 ///
 /// Defined here (in app/) because it wires GoRouter (from this file) into
-/// NavigationService (from core/), which would otherwise create a core → app
+/// NavigationService (from core/), which would otherwise create a core â†’ app
 /// circular dependency.
 final navigationServiceProvider = Provider<NavigationService>((ref) {
   final router = ref.watch(appRouterProvider);
@@ -301,29 +302,18 @@ class _LessonContentRoute extends ConsumerWidget {
     return curriculumAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Loading...')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: VaaniXLoadingIndicator(message: 'Preparing your lesson...'),
+        ),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
-              Text(
-                'Could not load curriculum: $error',
-                style: const TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: () => context.go(RouteNames.learn),
-                child: const Text('Back to Lessons'),
-              ),
-            ],
-          ),
+        body: ErrorStateWidget(
+          title: 'Could not load curriculum',
+          message:
+              'Something interrupted the lesson data. Check your connection and try again.',
+          retryLabel: 'Back to Lessons',
+          onRetry: () => context.go(RouteNames.learn),
         ),
       ),
       data: (curriculum) {
@@ -341,25 +331,13 @@ class _LessonContentRoute extends ConsumerWidget {
         if (lesson == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('Lesson Not Found')),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.search_off_rounded,
-                      size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Could not find lesson: $lessonId',
-                    style: const TextStyle(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  OutlinedButton(
-                    onPressed: () => context.go(RouteNames.learn),
-                    child: const Text('Back to Lessons'),
-                  ),
-                ],
-              ),
+            body: EmptyStateWidget(
+              icon: Icons.search_off_rounded,
+              title: 'Lesson not found',
+              description:
+                  'We could not find lesson $lessonId in the curriculum.',
+              actionLabel: 'Back to Lessons',
+              onActionPressed: () => context.go(RouteNames.learn),
             ),
           );
         }
@@ -383,29 +361,18 @@ class _ExerciseRoute extends ConsumerWidget {
     return curriculumAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Loading...')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: VaaniXLoadingIndicator(message: 'Preparing your lesson...'),
+        ),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Error')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline_rounded,
-                  size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
-              Text(
-                'Could not load curriculum: $error',
-                style: const TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              OutlinedButton(
-                onPressed: () => context.go(RouteNames.learn),
-                child: const Text('Back to Lessons'),
-              ),
-            ],
-          ),
+        body: ErrorStateWidget(
+          title: 'Could not load curriculum',
+          message:
+              'Something interrupted the lesson data. Check your connection and try again.',
+          retryLabel: 'Back to Lessons',
+          onRetry: () => context.go(RouteNames.learn),
         ),
       ),
       data: (curriculum) {
@@ -422,19 +389,13 @@ class _ExerciseRoute extends ConsumerWidget {
         if (lesson == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('Lesson not found')),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.search_off_rounded,
-                      size: 64, color: Colors.grey),
-                  const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: () => context.go(RouteNames.learn),
-                    child: const Text('Back to Lessons'),
-                  ),
-                ],
-              ),
+            body: EmptyStateWidget(
+              icon: Icons.search_off_rounded,
+              title: 'Lesson not found',
+              description:
+                  'We could not find lesson $lessonId in the curriculum.',
+              actionLabel: 'Back to Lessons',
+              onActionPressed: () => context.go(RouteNames.learn),
             ),
           );
         }

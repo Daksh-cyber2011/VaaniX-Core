@@ -14,6 +14,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
+import 'package:vaanix_app/core/theme/app_shadows.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 
@@ -27,8 +29,10 @@ import 'package:vaanix_app/features/progress/presentation/providers/adaptive_pro
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
+import 'package:vaanix_app/shared/widgets/progress_meter.dart';
 import 'package:vaanix_app/shared/widgets/streak_badge.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
+import 'package:vaanix_app/shared/widgets/offline_banner.dart';
 import 'package:vaanix_app/shared/widgets/xp_badge.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -144,12 +148,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? const <Exercise>[]
         : ref.watch(exercisesForLessonProvider(practiceLessonId));
 
+    final showJourneyProgress = totalLessons > 0;
+    final journeyProgress =
+        showJourneyProgress ? completedSet.length / totalLessons : 0.0;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final greetingColor = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            // ---- Top bar: streak + XP + level + chat + avatar ----------
+            // ---- Top bar: streak + XP + level + chat + settings ----------
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -162,8 +173,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 10),
                   // Level pill derived from XP (deterministic curve).
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withValues(alpha: 0.10),
                       borderRadius: BorderRadius.circular(999),
@@ -182,29 +193,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor:
-                        colorScheme.primary.withValues(alpha: 0.12),
-                    child: Icon(
-                      Icons.person_outline,
-                      size: 20,
-                      color: colorScheme.primary,
-                    ),
+                  IconButton(
+                    onPressed: () => context.go(RouteNames.settings),
+                    icon: const Icon(Icons.person_outline_rounded),
+                    tooltip: 'Profile and settings',
+                    color: colorScheme.primary,
                   ),
                 ],
               ),
             ),
 
+            // ---- Offline status (appears only when offline) -------------
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: OfflineBanner(),
+            ),
+
             // ---- The Nest: Van + greeting + continue card --------------
             Expanded(
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
+                margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                 decoration: BoxDecoration(
                   color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.nestWarmDark
                       : AppColors.nestWarmLight,
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(AppDimens.radiusXl),
                   border: Border.all(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? AppColors.borderDark
@@ -213,17 +226,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Text(
-                        '$greeting!',
-                        style: AppTextStyles.headlineSmall(
-                            color: AppColors.primary),
+                    const SizedBox(height: 20),
+                    // Sanskrit greeting stays as the brand's warm eyebrow;
+                    // the actionable line lives in Van's speech bubble.
+                    Text(
+                      greeting,
+                      style: AppTextStyles.titleSmall(
+                        color: greetingColor,
                       ),
                     ),
                     const SizedBox(height: 4),
                     VanWidget(
-                      size: 160,
+                      size: AppDimens.vanSizeHero,
                       useController: true,
                       showSpeechBubble: true,
                       dialogueText: nextAction.vanMessage,
@@ -234,6 +248,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       nextLesson: nextLesson,
                       completedCount: completedSet.length,
                       totalLessons: totalLessons,
+                      journeyProgress: journeyProgress,
                       masteredCount: masteredIds.length,
                       totalExercises: lessonExercises.length,
                       onTap: () => _openAction(nextAction),
@@ -305,8 +320,11 @@ class _SecondaryCta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: colorScheme.primary.withValues(alpha: 0.06),
+      color: isDark
+          ? AppColors.surfaceDark
+          : colorScheme.primary.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -332,14 +350,17 @@ class _SecondaryCta extends StatelessWidget {
   }
 }
 
-/// Live next-action card inside the Nest. Driven entirely by the adaptive
-/// engine - the title, subtitle and icon change with the recommended action.
+/// Live next-action hero card inside the Nest. Driven entirely by the
+/// adaptive engine - the title, subtitle and icon change with the
+/// recommended action. The whole card is the tap target; there is no
+/// duplicate "Go" affordance.
 class _ContinueCard extends StatelessWidget {
   const _ContinueCard({
     required this.action,
     required this.nextLesson,
     required this.completedCount,
     required this.totalLessons,
+    required this.journeyProgress,
     required this.masteredCount,
     required this.totalExercises,
     required this.onTap,
@@ -349,6 +370,7 @@ class _ContinueCard extends StatelessWidget {
   final Lesson? nextLesson;
   final int completedCount;
   final int totalLessons;
+  final double journeyProgress;
   final int masteredCount;
   final int totalExercises;
   final VoidCallback onTap;
@@ -369,65 +391,97 @@ class _ContinueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final showProgress = action.action == AdaptiveAction.continueLesson ||
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final subtext = colorScheme.onSurface.withValues(alpha: 0.62);    final showProgress = action.action == AdaptiveAction.continueLesson ||
         action.action == AdaptiveAction.startJourney;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.borderLight),
+        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        boxShadow: AppShadows.raised,
       ),
-      child: Row(
-        children: [
-          Icon(_icon, color: colorScheme.primary, size: 28),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  action.title,
-                  style: AppTextStyles.labelMedium(color: colorScheme.primary),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  action.subtitle,
-                  style: AppTextStyles.titleSmall(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (showProgress &&
-                    totalExercises > 0 &&
-                    nextLesson != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    masteredCount >= totalExercises
-                        ? 'Practice complete \u2713 $masteredCount/$totalExercises'
-                        : 'Practice: $masteredCount of $totalExercises mastered',
-                    style:
-                        AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                ],
-                if (showProgress && totalLessons > 0) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    '$completedCount of $totalLessons lessons done',
-                    style: AppTextStyles.bodySmall(color: Colors.grey),
+                  child: Icon(_icon, color: colorScheme.primary, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        action.title,
+                        style: AppTextStyles.labelMedium(
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        action.subtitle,
+                        style: AppTextStyles.titleSmall(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (showProgress &&
+                          totalExercises > 0 &&
+                          nextLesson != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          masteredCount >= totalExercises
+                              ? 'Practice complete - $masteredCount/$totalExercises'
+                              : 'Practice: $masteredCount of $totalExercises mastered',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                      if (showProgress && totalLessons > 0) ...[
+                        const SizedBox(height: 8),
+                        ProgressMeter(
+                          value: journeyProgress,
+                          height: 6,
+                          semanticLabel:
+                              '$completedCount of $totalLessons lessons completed',
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$completedCount of $totalLessons lessons done',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.primary,
+                  size: 24,
+                ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          TextButton(
-            onPressed: onTap,
-            child: const Text('Go'),
-          ),
-        ],
+        ),
       ),
     );
   }

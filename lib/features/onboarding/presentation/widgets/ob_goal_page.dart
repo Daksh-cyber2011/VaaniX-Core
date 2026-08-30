@@ -1,4 +1,4 @@
-/// Onboarding Page 4 — Daily Goal
+﻿/// Onboarding Page 4 â€” Daily Goal
 ///
 /// User selects their daily learning goal: 5/10/15/20 minutes.
 /// Van reacts to each choice. Per PRD Section 8.1 Screen 5.
@@ -90,13 +90,13 @@ class ObGoalPage extends ConsumerWidget {
   String _vanReaction(int minutes, String name) {
     switch (minutes) {
       case 5:
-        return "5 minutes? I'll take it! Every day counts. 🦆";
+        return "5 minutes? I'll take it! Every day counts. ðŸ¦†";
       case 10:
-        return "10 minutes! That's my favourite streak size! ⭐";
+        return "10 minutes! That's my favourite streak size! â­";
       case 15:
-        return "15 minutes — you mean business! Let's go! 🎉";
+        return "15 minutes â€” you mean business! Let's go! ðŸŽ‰";
       case 20:
-        return "20 MINUTES?! $name, you're a legend! 🏆";
+        return "20 MINUTES?! $name, you're a legend! ðŸ†";
       default:
         return "How much time do you want to study each day?";
     }
@@ -121,11 +121,11 @@ class _GoalTile extends StatelessWidget {
       case 5:
         return 'Starter';
       case 10:
-        return 'Recommended ⭐';
+        return 'Recommended â­';
       case 15:
         return 'Dedicated';
       case 20:
-        return 'Champion 🏆';
+        return 'Champion ðŸ†';
       default:
         return '';
     }

@@ -1,6 +1,6 @@
-/// Learn Screen — Lesson Tree
+/// Learn Screen - Lesson Tree
 ///
-/// Renders the V1 Sanskrit curriculum as chapters → lessons. The curriculum
+/// Renders the V1 Sanskrit curriculum as chapters  lessons. The curriculum
 /// is loaded asynchronously from a JSON asset (Segment 8) via
 /// [curriculumProvider] (now an AsyncNotifierProvider). Shows loading and
 /// error states while the curriculum is being parsed.
@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
@@ -34,7 +35,7 @@ class LearnScreen extends ConsumerWidget {
       title: 'Learn',
       body: curriculumAsync.when(
         loading: () => _loading(context),
-        error: (error, stack) => _error(context, error, ref),
+        error: (error, stack) => _error(context, ref),
         data: (curriculum) {
           if (curriculum.isEmpty) return _empty(context);
           return ListView.builder(
@@ -74,45 +75,50 @@ class LearnScreen extends ConsumerWidget {
         children: [
           const VanWidget(
             state: VanState.thinking,
-            size: 120,
+            size: 140,
             showSpeechBubble: true,
-            dialogueText: 'Loading lessons... 📖',
+            dialogueText: 'Getting your lessons ready...',
           ),
-          const SizedBox(height: 16),
-          const CircularProgressIndicator(),
         ],
       ),
     );
   }
 
-  Widget _error(BuildContext context, Object error, WidgetRef ref) {
+  Widget _error(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const VanWidget(
-            state: VanState.sad,
-            size: 120,
-            showSpeechBubble: true,
-            dialogueText: 'Could not load lessons 😔',
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Error: $error',
-            style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: () => ref.read(curriculumProvider.notifier).reload(),
-            child: const Text('Retry'),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const VanWidget(
+              state: VanState.sad,
+              size: 140,
+              showSpeechBubble: true,
+              dialogueText: 'I could not reach the lesson shelf.',
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Check your connection and try again - your progress is safe.',
+              style: AppTextStyles.bodyMedium(color: subtext),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: () => ref.read(curriculumProvider.notifier).reload(),
+              child: const Text('Try again'),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _empty(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -121,10 +127,16 @@ class LearnScreen extends ConsumerWidget {
             state: VanState.thinking,
             size: 140,
             showSpeechBubble: true,
-            dialogueText: 'No lessons yet! 📚',
+            dialogueText: 'No lessons published yet.',
           ),
           const SizedBox(height: 16),
-          Text('Curriculum is loading', style: AppTextStyles.headlineSmall()),
+          Text('Nothing here yet', style: AppTextStyles.headlineSmall()),
+          const SizedBox(height: 8),
+          Text(
+            'New lessons will appear here once they are published.',
+            style: AppTextStyles.bodyMedium(color: subtext),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -150,17 +162,27 @@ class _ChapterCard extends StatelessWidget {
   final Map<String, ({int mastered, int total})> practice;
   final ValueChanged<Lesson> onTapLesson;
 
+  String _difficultyLabel(Lesson lesson) {
+    final raw = lesson.difficulty.name;
+    if (raw.isEmpty) return raw;
+    return raw[0].toUpperCase() + raw.substring(1);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final progress =
         chapter.lessons.isEmpty ? 0.0 : completedCount / chapter.lessons.length;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.borderLight),
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+        border: Border.all(color: borderColor),
       ),
       child: ExpansionTile(
         shape: const Border(),
@@ -175,8 +197,7 @@ class _ChapterCard extends StatelessWidget {
                   if (chapter.subtitle != null)
                     Text(
                       chapter.subtitle!,
-                      style: AppTextStyles.bodySmall(
-                          color: AppColors.subtextLight),
+                      style: AppTextStyles.bodySmall(color: subtext),
                     ),
                 ],
               ),
@@ -221,11 +242,11 @@ class _ChapterCard extends StatelessWidget {
               title: Text(lesson.title, style: AppTextStyles.titleSmall()),
               subtitle: Text(
                 _practiceLabel(lesson) ?? '+${lesson.xpReward} XP',
-                style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+                style: AppTextStyles.labelSmall(color: subtext),
               ),
               trailing: Text(
-                lesson.difficulty.name,
-                style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+                _difficultyLabel(lesson),
+                style: AppTextStyles.labelSmall(color: subtext),
               ),
               onTap: () => onTapLesson(lesson),
             );

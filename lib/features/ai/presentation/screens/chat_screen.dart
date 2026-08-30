@@ -1,4 +1,4 @@
-/// VaaniX AI — Chat Screen
+﻿/// VaaniX AI â€” Chat Screen
 ///
 /// The conversational surface where the learner talks to Van. Shows a
 /// scrolling list of message bubbles, a typing indicator while Van is
@@ -76,7 +76,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         centerTitle: true,
         actions: [
-          // ─── AI Usage Indicator ──────────────────────────────────
+          // â”€â”€â”€ AI Usage Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           // Shows remaining daily requests as a small chip. Tapping
           // it shows detailed usage in a dialog.
           FutureBuilder(
@@ -131,7 +131,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
-          // ─── Message List ─────────────────────────────────────────
+          // â”€â”€â”€ Message List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           Expanded(
             child: chatState.messages.isEmpty
                 ? _emptyState(companionName)
@@ -154,7 +154,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
           ),
 
-          // ─── Error Banner (if any) ────────────────────────────────
+          // â”€â”€â”€ Error Banner (if any) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (chatState.error != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -180,7 +180,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
 
-          // ─── Input ────────────────────────────────────────────────
+          // â”€â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           ChatInput(
             onSend: (text) {
               ref.read(chatControllerProvider.notifier).sendMessage(text);
@@ -276,7 +276,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             state: VanState.happy,
             size: 120,
             showSpeechBubble: true,
-            dialogueText: 'नमस्ते! Ask me anything about Sanskrit! 🦆',
+            dialogueText: 'à¤¨à¤®à¤¸à¥à¤¤à¥‡! Ask me anything about Sanskrit! ðŸ¦†',
           ),
           const SizedBox(height: 16),
           Text(
@@ -286,7 +286,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(height: 8),
           Text(
             'Type a message below to start learning!',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.subtextDark
+                    : AppColors.subtextLight),
             textAlign: TextAlign.center,
           ),
         ],

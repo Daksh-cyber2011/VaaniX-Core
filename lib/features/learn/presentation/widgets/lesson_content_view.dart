@@ -1,19 +1,23 @@
-/// Lesson Content View — Minimal Markdown Renderer
+/// Lesson Content View - Minimal Markdown Renderer
 ///
 /// Renders the markdown-like lesson content strings (see [Lesson.content]
 /// docstring for format spec) into Flutter widgets.
 ///
 /// Supported block types:
-/// - `# Heading` → H1 heading (headlineSmall, bold, primary color)
-/// - `## Subheading` → H2 heading (titleLarge, bold)
-/// - `### Sub-subheading` → H3 heading (titleMedium, bold)
-/// - Plain text paragraphs → body text (justified)
-/// - `- Bullet item` → bulleted list row
-/// - `> Quote text` → blockquote (left accent border, italic)
-/// - `| Col1 | Col2 | Col3 |` → 3-column table (with `|---|---|---|` separator)
+/// - `# Heading`  H1 heading (headlineSmall, bold, primary color)
+/// - `## Subheading`  H2 heading (titleLarge, bold)
+/// - `### Sub-subheading`  H3 heading (titleMedium, bold)
+/// - Plain text paragraphs  body text (justified)
+/// - `- Bullet item`  bulleted list row
+/// - `> Quote text`  blockquote (left accent border, italic)
+/// - `| Col1 | Col2 | Col3 |`  3-column table (with `|---|---|---|` separator)
 ///
 /// Devanagari text (Unicode range \u0900-\u097F) is rendered with
 /// [AppTextStyles.sanskritBody] for proper font support.
+///
+/// This widget intentionally returns a plain column of blocks: the owning
+/// screen provides the scroll view. Content text is selectable so learners
+/// can copy Sanskrit words for lookup.
 
 import 'package:flutter/material.dart';
 
@@ -32,15 +36,25 @@ class LessonContentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final blocks = _parse(content);
-    return blocks.isEmpty
-        ? const Center(child: Text('This lesson has no content yet.'))
-        : SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: blocks,
-            ),
-          );
+    if (blocks.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Center(
+          child: Text(
+            'This lesson has no content yet.',
+            style: AppTextStyles.bodyMedium(),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: blocks,
+      ),
+    );
   }
 
   /// Parse the markdown-like string into a list of Flutter widgets.
@@ -75,10 +89,10 @@ class LessonContentView extends StatelessWidget {
     for (final raw in lines) {
       final line = raw.trimRight();
 
-      // Skip empty lines — they separate blocks.
+      // Skip empty lines - they separate blocks.
       if (line.trim().isEmpty) {
         flushBullets();
-        // Don't flush tables on empty lines — tables have their own
+        // Don't flush tables on empty lines - tables have their own
         // internal structure and the separator row matters.
         continue;
       }
@@ -151,7 +165,7 @@ class LessonContentView extends StatelessWidget {
   }
 }
 
-// ─── Block widgets ───────────────────────────────────────────────────────────
+// ��� Block widgets �����������������������������������������������������������
 
 class _Heading extends StatelessWidget {
   const _Heading({required this.text, required this.level});
@@ -181,7 +195,7 @@ class _Paragraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasDevanagari = _containsDevanagari(text);
-    return Text(
+    return SelectableText(
       text,
       style: hasDevanagari
           ? AppTextStyles.sanskritBody()
@@ -219,7 +233,7 @@ class _BulletList extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Text(
+                child: SelectableText(
                   item,
                   style: hasDevanagari
                       ? AppTextStyles.sanskritBody()
@@ -242,6 +256,7 @@ class _Blockquote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasDevanagari = _containsDevanagari(text);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -251,13 +266,15 @@ class _Blockquote extends StatelessWidget {
             width: 3,
           ),
         ),
-        color: AppColors.primary.withValues(alpha: 0.04),
+        color: isDark
+            ? AppColors.primaryContainerDark
+            : AppColors.primaryContainerLight,
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(8),
           bottomRight: Radius.circular(8),
         ),
       ),
-      child: Text(
+      child: SelectableText(
         text,
         style: (hasDevanagari
                 ? AppTextStyles.sanskritBody()
@@ -278,13 +295,17 @@ class _ContentTable extends StatelessWidget {
   Widget build(BuildContext context) {
     if (rows.isEmpty) return const SizedBox.shrink();
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+
     final headerRow = rows.first;
     final dataRows = rows.skip(1).toList();
     final columnCount = headerRow.length;
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderLight),
+        border: Border.all(color: borderColor),
         borderRadius: BorderRadius.circular(10),
       ),
       clipBehavior: Clip.antiAlias,
@@ -295,11 +316,11 @@ class _ContentTable extends StatelessWidget {
         },
         border: TableBorder(
           horizontalInside: BorderSide(
-            color: AppColors.borderLight.withValues(alpha: 0.5),
+            color: borderColor.withValues(alpha: 0.5),
             width: 1,
           ),
           verticalInside: BorderSide(
-            color: AppColors.borderLight.withValues(alpha: 0.3),
+            color: borderColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -339,7 +360,7 @@ class _TableCell extends StatelessWidget {
     final hasDevanagari = _containsDevanagari(text);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      child: Text(
+      child: SelectableText(
         text,
         style: isHeader
             ? AppTextStyles.labelMedium(color: AppColors.primary)
@@ -352,10 +373,10 @@ class _TableCell extends StatelessWidget {
   }
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ��� Helpers �����������������������������������������������������������������
 
 /// Returns true if the string contains any Devanagari character
-/// (Unicode range U+0900–U+097F).
+/// (Unicode range U+0900-U+097F).
 bool _containsDevanagari(String text) {
   for (final codeUnit in text.codeUnits) {
     if (codeUnit >= 0x0900 && codeUnit <= 0x097F) return true;
