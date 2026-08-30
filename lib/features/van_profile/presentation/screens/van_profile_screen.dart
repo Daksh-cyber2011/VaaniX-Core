@@ -1,4 +1,4 @@
-/// Van Profile Screen
+﻿/// Van Profile Screen
 ///
 /// Shows Van with his current personality mode and lets the learner change
 /// it inline. Tapping Van plays a reaction. The "Chat with Van" button
@@ -52,14 +52,14 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
               size: 180,
               showSpeechBubble: true,
               dialogueText: mode == null
-                  ? "Hi, I'm $companionName! Tap me! 🦆"
+                  ? "Hi, I'm $companionName! Tap me! ðŸ¦†"
                   : _reaction(mode, companionName),
               onTap: _onTapVan,
             ),
           ),
           const SizedBox(height: 24),
 
-          // ─── Chat with Van CTA ────────────────────────────────────
+          // â”€â”€â”€ Chat with Van CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           PrimaryButton(
             onPressed: () => context.go(RouteNames.chat),
             icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
@@ -69,7 +69,10 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
           const SizedBox(height: 32),
           Text('PERSONALITY',
               style:
-                  AppTextStyles.labelSmall(color: AppColors.subtextLight)),
+                  AppTextStyles.labelSmall(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.subtextDark
+                  : AppColors.subtextLight)),
           const SizedBox(height: 8),
           ...PersonalityMode.values.map((m) {
             final selected = mode == m;
@@ -90,13 +93,35 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                         : Theme.of(context).cardTheme.color,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: selected ? AppColors.primary : AppColors.borderLight,
+                      color: selected
+                          ? AppColors.primary
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.borderDark
+                              : AppColors.borderLight),
                       width: selected ? 2 : 1,
                     ),
                   ),
                   child: Row(
                     children: [
-                      Text(m.emoji, style: const TextStyle(fontSize: 24)),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: (selected
+                                  ? AppColors.primary
+                                  : AppColors.subtextLight)
+                              .withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(_modeIcon(m),
+                            size: 20,
+                            color: selected
+                                ? AppColors.primary
+                                : Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight),
+                      ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Text(m.label, style: AppTextStyles.titleMedium()),
@@ -126,14 +151,20 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
     );
   }
 
+  IconData _modeIcon(PersonalityMode mode) => switch (mode) {
+        PersonalityMode.cheerleader => Icons.celebration_rounded,
+        PersonalityMode.calm => Icons.self_improvement_rounded,
+        PersonalityMode.fun => Icons.mood_rounded,
+      };
+
   String _reaction(PersonalityMode mode, String name) {
     switch (mode) {
       case PersonalityMode.cheerleader:
-        return "LET'S GO! I'm $name, your hype duck! 🎉";
+        return "LET'S GO! I'm $name, your hype duck! ðŸŽ‰";
       case PersonalityMode.calm:
-        return "Hi, I'm $name. We'll go step by step. 🌿";
+        return "Hi, I'm $name. We'll go step by step. ðŸŒ¿";
       case PersonalityMode.fun:
-        return "Quack! $name here, ready to learn! 🦆";
+        return "Quack! $name here, ready to learn! ðŸ¦†";
     }
   }
 }

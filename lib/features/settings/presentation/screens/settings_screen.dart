@@ -1,4 +1,4 @@
-/// Settings Screen
+﻿/// Settings Screen
 ///
 /// Controls app themes (Light/Dark/System), companion info, learning goals,
 /// and account preferences. All preference cards are editable inline via
@@ -42,54 +42,70 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             'APPEARANCE',
-            style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
           VaaniXCard(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.brightness_6_outlined,
-                    color: AppColors.primary),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Theme Mode', style: AppTextStyles.titleMedium()),
-                      Text(
-                        themeMode == ThemeMode.system
-                            ? 'System Default'
-                            : themeMode == ThemeMode.dark
-                                ? 'Dark Mode'
-                                : 'Light Mode',
-                        style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                Row(
+                  children: [
+                    const Icon(Icons.brightness_6_outlined,
+                        color: AppColors.primary),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Theme Mode',
+                              style: AppTextStyles.titleMedium()),
+                          Text(
+                            themeMode == ThemeMode.system
+                                ? 'System Default'
+                                : themeMode == ThemeMode.dark
+                                    ? 'Dark Mode'
+                                    : 'Light Mode',
+                            style: AppTextStyles.bodySmall(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                SegmentedButton<ThemeMode>(
-                  segments: const [
-                    ButtonSegment(
-                      value: ThemeMode.light,
-                      icon: Icon(Icons.light_mode_outlined, size: 18),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.system,
-                      icon: Icon(Icons.settings_suggest_outlined, size: 18),
-                    ),
-                    ButtonSegment(
-                      value: ThemeMode.dark,
-                      icon: Icon(Icons.dark_mode_outlined, size: 18),
                     ),
                   ],
-                  selected: {themeMode},
-                  onSelectionChanged: (selected) {
-                    ref
-                        .read(themeNotifierProvider.notifier)
-                        .setThemeMode(selected.first);
-                  },
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<ThemeMode>(
+                    segments: const [
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        icon: Icon(Icons.light_mode_outlined, size: 18),
+                        label: Text('Light'),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        icon: Icon(Icons.settings_suggest_outlined, size: 18),
+                        label: Text('System'),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        icon: Icon(Icons.dark_mode_outlined, size: 18),
+                        label: Text('Dark'),
+                      ),
+                    ],
+                    selected: {themeMode},
+                    onSelectionChanged: (selected) {
+                      ref
+                          .read(themeNotifierProvider.notifier)
+                          .setThemeMode(selected.first);
+                    },
+                  ),
                 ),
               ],
             ),
@@ -98,7 +114,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'LEARNING PROFILE',
-            style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
 
@@ -118,13 +134,13 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         companionName,
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
                 ),
                 const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.subtextLight),
+                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
               ],
             ),
           ),
@@ -149,15 +165,15 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         personality == null
                             ? 'Not set'
-                            : '${personality.emoji} ${personality.label}',
+                            : personality.label,
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
                 ),
                 const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.subtextLight),
+                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
               ],
             ),
           ),
@@ -177,13 +193,13 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         '$dailyGoal minutes / day',
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
                 ),
                 const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.subtextLight),
+                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
               ],
             ),
           ),
@@ -203,13 +219,13 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         selectedClass != null ? selectedClass.label : 'Not set',
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
                 ),
                 const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.subtextLight),
+                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
               ],
             ),
           ),
@@ -217,7 +233,7 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'PROGRESS',
-            style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
           VaaniXCard(
@@ -236,7 +252,7 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         'Clears XP and completed lessons. Cannot be undone.',
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -247,11 +263,11 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 32),
 
-          // ─── ACCOUNT ─────────────────────────────────────────────────
+          // â”€â”€â”€ ACCOUNT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
           if (AppEnvironment.isSupabaseConfigured) ...[
             Text(
               'ACCOUNT',
-              style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+              style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
             ),
             const SizedBox(height: 8),
             VaaniXCard(
@@ -270,7 +286,7 @@ class SettingsScreen extends ConsumerWidget {
                         Text(
                           'End your session. Your local progress is kept.',
                           style: AppTextStyles.bodySmall(
-                              color: AppColors.subtextLight),
+                              color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                         ),
                       ],
                     ),
@@ -284,7 +300,7 @@ class SettingsScreen extends ConsumerWidget {
           Center(
             child: Text(
               '${AppConstants.appName} v${AppConstants.appVersion}',
-              style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+              style: AppTextStyles.bodySmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
             ),
           ),
           const SizedBox(height: 24),
@@ -293,7 +309,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  // ─── Editors ───────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Editors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   Future<void> _editCompanionName(
     BuildContext context,
@@ -347,7 +363,7 @@ class SettingsScreen extends ConsumerWidget {
             onPressed: () => Navigator.pop(ctx, mode),
             child: Row(
               children: [
-                Text(mode.emoji, style: const TextStyle(fontSize: 22)),
+                Icon(\n                  switch (mode) {\n                    PersonalityMode.cheerleader => Icons.celebration_rounded,\n                    PersonalityMode.calm => Icons.self_improvement_rounded,\n                    PersonalityMode.fun => Icons.mood_rounded,\n                  },\n                  size: 22,\n                  color: AppColors.primary,\n                ),
                 const SizedBox(width: 12),
                 Text(mode.label, style: AppTextStyles.titleMedium()),
                 if (current == mode) ...[
@@ -465,7 +481,7 @@ class SettingsScreen extends ConsumerWidget {
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
       // leaving completedLessonIdsProvider and completedQuizIdsProvider
-      // stale — the Learn and Progress screens kept showing completed
+      // stale â€” the Learn and Progress screens kept showing completed
       // lessons until the providers were re-created (hot restart).
       ref.invalidate(xpTotalProvider);
       ref.invalidate(completedLessonIdsProvider);
@@ -475,6 +491,14 @@ class SettingsScreen extends ConsumerWidget {
       // achievements map.
       ref.invalidate(progressRepositoryProvider);
       ref.invalidate(achievementRepositoryProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Progress cleared. A fresh start!'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 

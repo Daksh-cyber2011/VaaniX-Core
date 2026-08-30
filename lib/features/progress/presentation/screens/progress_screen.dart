@@ -1,8 +1,18 @@
-/// Progress Screen — XP, Streak & Chapter Overview
+/// Progress Screen - XP, Streak & Chapter Overview
 ///
 /// Reads from [userProfileProvider], [xpTotalProvider], and the curriculum to
 /// show the learner's overall progress: total XP, current streak, completed
 /// lesson count, and per-chapter completion bars.
+///
+/// Hierarchy (top to bottom):
+///   1. NEXT FOCUS - the adaptive engine's recommendation is always the
+///      first thing a learner sees.
+///   2. Fresh-learner VAN welcome (only before the first lesson).
+///   3. Stat tiles (XP / streak / lessons / quizzes).
+///   4. Level + mastery meters.
+///   5. Weak areas (real persisted mastery).
+///   6. Chapters with exam performance.
+///   7. Achievements entry.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +29,7 @@ import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/shared/widgets/progress_meter.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -43,6 +54,7 @@ class ProgressScreen extends ConsumerWidget {
         curriculum.fold<int>(0, (s, c) => s + c.lessons.length);
     final completedCount = completed.length;
     final quizCount = completedQuizIds.length;
+    final isFreshLearner = xp == 0 && completedCount == 0;
 
     // Gamification state (pure helpers, tested in gamification_test).
     final level = levelFromXp(xp);
@@ -65,64 +77,71 @@ class ProgressScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          // Hero stats
+          // ---- 1. Adaptive next focus (always first) ------------------
+          _FocusCard(
+            action: nextAction,
+            onTap: _routeForAction(nextAction) == null
+                ? null
+                : () => context.go(_routeForAction(nextAction)!),
+          ),
+          if (isFreshLearner) ...[
+            const SizedBox(height: 8),
+            const VanWidget(
+              state: VanState.happy,
+              size: 120,
+              showSpeechBubble: true,
+              dialogueText: 'Your journey starts now!',
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          // ---- 2. Stat tiles -------------------------------------------
           Row(
             children: [
               Expanded(
-                  child: _StatCard(
-                icon: '⭐',
-                label: 'Total XP',
-                value: '$xp',
-                color: AppColors.xp,
-              )),
+                child: _StatCard(
+                  icon: Icons.bolt_rounded,
+                  label: 'Total XP',
+                  value: '$xp',
+                  color: AppColors.xp,
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
-                  child: _StatCard(
-                icon: '🔥',
-                label: 'Day Streak',
-                value: '${profile.currentStreak}',
-                color: AppColors.streak,
-              )),
+                child: _StatCard(
+                  icon: Icons.local_fire_department_rounded,
+                  label: 'Day Streak',
+                  value: '${profile.currentStreak}',
+                  color: AppColors.streak,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
-                  child: _StatCard(
-                icon: '📚',
-                label: 'Lessons Done',
-                value: '$completedCount',
-                color: AppColors.primary,
-              )),
+                child: _StatCard(
+                  icon: Icons.menu_book_rounded,
+                  label: 'Lessons Done',
+                  value: '$completedCount',
+                  color: AppColors.primary,
+                ),
+              ),
               const SizedBox(width: 12),
               Expanded(
-                  child: _StatCard(
-                icon: '🎯',
-                label: 'Quizzes Done',
-                value: '$quizCount',
-                color: AppColors.success,
-              )),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                  child: _StatCard(
-                icon: '📊',
-                label: 'Completion',
-                value: totalLessons == 0
-                    ? '—'
-                    : '${((completedCount / totalLessons) * 100).round()}%',
-                color: AppColors.vanOrange,
-              )),
-              const SizedBox(width: 12),
-              const Expanded(child: SizedBox()), // spacer for layout balance
+                child: _StatCard(
+                  icon: Icons.quiz_rounded,
+                  label: 'Quizzes Done',
+                  value: '$quizCount',
+                  color: AppColors.success,
+                ),
+              ),
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+          // ---- 3. Level + mastery meters -------------------------------
           _LevelCard(
             level: level,
             levelProgress: progressPct,
@@ -134,24 +153,39 @@ class ProgressScreen extends ConsumerWidget {
             mastered: totalMastered,
             total: totalExercises,
           ),
-          const SizedBox(height: 24),
-          _FocusCard(
-            action: nextAction,
-            onTap: _routeForAction(nextAction) == null
-                ? null
-                : () => context.go(_routeForAction(nextAction)!),
-          ),
-          const SizedBox(height: 12),
-          if (weakLessons.isNotEmpty)
+
+          if (weakLessons.isNotEmpty) ...[
+            const SizedBox(height: 20),
             _WeakAreasCard(
               lessons: weakLessons,
               masteredOf: (lesson) =>
                   ref.watch(masteredExercisesProvider(lesson.id)).length,
               totalOf: (lesson) => exercisesByLesson[lesson.id]?.length ?? 0,
             ),
+          ],
+
+          // ---- 4. Chapters with exam performance -----------------------
           const SizedBox(height: 24),
-          Text('CHAPTERS',
-              style: AppTextStyles.labelSmall(color: AppColors.subtextLight)),
+          Row(
+            children: [
+              Text(
+                'CHAPTERS',
+                style: AppTextStyles.labelSmall(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight,
+                ),
+              ),
+              const Spacer(),
+              if (totalLessons > 0)
+                Text(
+                  '${(completedCount / totalLessons * 100).round()}% complete',
+                  style: AppTextStyles.labelSmall(
+                    color: AppColors.primary,
+                  ),
+                ),
+            ],
+          ),
           const SizedBox(height: 8),
 
           ...curriculum.map((chapter) {
@@ -159,9 +193,11 @@ class ProgressScreen extends ConsumerWidget {
                 chapter.lessons.where((l) => completed.contains(l.id)).length;
             final pct =
                 chapter.lessons.isEmpty ? 0.0 : done / chapter.lessons.length;
+            final best = chapterBest[chapter.id];
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: VaaniXCard(
+                onTap: () => context.go(RouteNames.learn),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -177,28 +213,36 @@ class ProgressScreen extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: pct,
-                        minHeight: 8,
-                        backgroundColor:
-                            AppColors.primary.withValues(alpha: 0.1),
-                        color: AppColors.primary,
-                      ),
+                    ProgressMeter(
+                      value: pct,
+                      height: 8,
+                      semanticLabel:
+                          '$done of ${chapter.lessons.length} lessons in ${chapter.title}',
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      chapterBest[chapter.id] != null
-                          ? 'Exam best: ${(chapterBest[chapter.id]! * 100).round()}%'
-                          : (done == chapter.lessons.length &&
-                                  chapter.lessons.isNotEmpty
-                              ? 'Exam not attempted yet'
-                              : 'Exam not attempted'),
-                      style: AppTextStyles.bodySmall(
-                          color: chapterBest[chapter.id] != null
-                              ? AppColors.success
-                              : AppColors.subtextLight),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            best != null
+                                ? 'Exam best: ${(best * 100).round()}%'
+                                : (done == chapter.lessons.length &&
+                                        chapter.lessons.isNotEmpty
+                                    ? 'Lessons done - take the exam to lock in'
+                                    : 'Exam not attempted'),
+                            style: AppTextStyles.bodySmall(
+                              color: best != null
+                                  ? AppColors.success
+                                  : (Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? AppColors.subtextDark
+                                      : AppColors.subtextLight),
+                            ),
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded,
+                            color: AppColors.subtextLight, size: 20),
+                      ],
                     ),
                   ],
                 ),
@@ -206,8 +250,8 @@ class ProgressScreen extends ConsumerWidget {
             );
           }),
 
-          // ─── Achievements Entry Point ────────────────────────────
-          const SizedBox(height: 24),
+          // ---- 5. Achievements entry ------------------------------------
+          const SizedBox(height: 20),
           VaaniXCard(
             onTap: () => context.go(RouteNames.achievements),
             child: Row(
@@ -223,7 +267,10 @@ class ProgressScreen extends ConsumerWidget {
                       Text(
                         'Tap to see your milestones',
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.subtextDark
+                              : AppColors.subtextLight,
+                        ),
                       ),
                     ],
                   ),
@@ -233,16 +280,6 @@ class ProgressScreen extends ConsumerWidget {
               ],
             ),
           ),
-
-          if (xp == 0 && completedCount == 0) ...[
-            const SizedBox(height: 16),
-            const VanWidget(
-              state: VanState.happy,
-              size: 120,
-              showSpeechBubble: true,
-              dialogueText: 'Your journey starts now! ⭐',
-            ),
-          ],
         ],
       ),
     );
@@ -264,6 +301,8 @@ class _LevelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -283,24 +322,20 @@ class _LevelCard extends StatelessWidget {
               const Spacer(),
               Text(
                 '$xpInto / $xpNext XP',
-                style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                style: AppTextStyles.bodySmall(color: subtext),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: levelProgress.clamp(0.0, 1.0),
-              minHeight: 8,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              color: AppColors.primary,
-            ),
+          ProgressMeter(
+            value: levelProgress.clamp(0.0, 1.0),
+            height: 8,
+            semanticLabel: 'Progress to level ${level + 1}',
           ),
           const SizedBox(height: 6),
           Text(
             '${(levelProgress * 100).round()}% to Level ${level + 1}',
-            style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+            style: AppTextStyles.bodySmall(color: subtext),
           ),
         ],
       ),
@@ -316,6 +351,8 @@ class _MasteredCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final pct = total == 0 ? 0.0 : mastered / total;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -336,26 +373,23 @@ class _MasteredCard extends StatelessWidget {
               const Spacer(),
               Text(
                 total == 0 ? '-' : '$mastered / $total',
-                style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+                style: AppTextStyles.bodySmall(color: subtext),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 8,
-              backgroundColor: AppColors.success.withValues(alpha: 0.1),
-              color: AppColors.success,
-            ),
+          ProgressMeter(
+            value: pct,
+            height: 8,
+            color: AppColors.success,
+            semanticLabel: 'Practice mastery',
           ),
           const SizedBox(height: 6),
           Text(
             total == 0
                 ? 'No practice exercises yet'
                 : '${(pct * 100).round()}% of practice content mastered',
-            style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+            style: AppTextStyles.bodySmall(color: subtext),
           ),
         ],
       ),
@@ -371,13 +405,15 @@ class _StatCard extends StatelessWidget {
     required this.color,
   });
 
-  final String icon;
+  final IconData icon;
   final String label;
   final String value;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -390,11 +426,9 @@ class _StatCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 20)),
+              Icon(icon, size: 18, color: color),
               const SizedBox(width: 6),
-              Text(label,
-                  style:
-                      AppTextStyles.labelSmall(color: AppColors.subtextLight)),
+              Text(label, style: AppTextStyles.labelSmall(color: subtext)),
             ],
           ),
           const SizedBox(height: 8),
@@ -436,6 +470,8 @@ class _FocusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final IconData icon = switch (action.action) {
       AdaptiveAction.startJourney ||
       AdaptiveAction.continueLesson =>
@@ -463,14 +499,13 @@ class _FocusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('NEXT FOCUS',
-                    style: AppTextStyles.labelSmall(
-                        color: AppColors.subtextLight)),
+                    style:
+                        AppTextStyles.labelSmall(color: AppColors.primary)),
                 const SizedBox(height: 2),
                 Text(action.title, style: AppTextStyles.titleMedium()),
                 const SizedBox(height: 2),
                 Text(action.subtitle,
-                    style:
-                        AppTextStyles.bodySmall(color: AppColors.subtextLight)),
+                    style: AppTextStyles.bodySmall(color: subtext)),
               ],
             ),
           ),
@@ -498,6 +533,8 @@ class _WeakAreasCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final visible = lessons.take(5).toList();
     return VaaniXCard(
       child: Column(
@@ -514,7 +551,7 @@ class _WeakAreasCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'Lessons you completed - finish their exercises to lock them in.',
-            style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+            style: AppTextStyles.bodySmall(color: subtext),
           ),
           const SizedBox(height: 8),
           for (final lesson in visible)
@@ -527,7 +564,7 @@ class _WeakAreasCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '+${lessons.length - visible.length} more',
-              style: AppTextStyles.labelSmall(color: AppColors.subtextLight),
+              style: AppTextStyles.labelSmall(color: subtext),
             ),
           ],
         ],
@@ -549,6 +586,8 @@ class _WeakLessonTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     // Transparent Material so ListTile ink splashes paint on a Material
     // ancestor instead of being hidden by the card's DecoratedBox.
     return Material(
@@ -559,10 +598,10 @@ class _WeakLessonTile extends StatelessWidget {
         title: Text(lesson.title, style: AppTextStyles.bodyLarge()),
         subtitle: Text(
           '$mastered of $total exercises mastered',
-          style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+          style: AppTextStyles.bodySmall(color: subtext),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded,
-            color: AppColors.subtextLight),
+        trailing:
+            const Icon(Icons.chevron_right_rounded, color: AppColors.subtextLight),
         onTap: () => context
             .go(RouteNames.lessonPractice.replaceFirst(':lessonId', lesson.id)),
       ),
