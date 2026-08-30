@@ -311,8 +311,7 @@ class _ContentTable extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Table(
         columnWidths: {
-          for (var i = 0; i < columnCount; i++)
-            i: const FlexColumnWidth(1),
+          for (var i = 0; i < columnCount; i++) i: const FlexColumnWidth(1),
         },
         border: TableBorder(
           horizontalInside: BorderSide(

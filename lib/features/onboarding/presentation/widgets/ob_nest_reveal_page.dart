@@ -121,9 +121,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
             ),
           ),
         ),
-
         const SizedBox(height: 16),
-
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -141,7 +139,8 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                   ),
                   borderRadius: BorderRadius.circular(28),
                   border: Border.all(
-                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                    color:
+                        isDark ? AppColors.borderDark : AppColors.borderLight,
                   ),
                 ),
                 child: Stack(
@@ -186,7 +185,6 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                           color: AppColors.xp,
                           size: 17),
                     ),
-
                     Center(
                       child: SlideTransition(
                         position: _vanSlide,
@@ -209,7 +207,6 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
             ),
           ),
         ),
-
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
           child: FadeTransition(
@@ -271,8 +268,8 @@ class _NestDecorState extends State<_NestDecor>
       duration: const Duration(milliseconds: 2500),
       vsync: this,
     )..repeat(reverse: true);
-    _float = Tween<double>(begin: -3, end: 3).animate(
-        CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+    _float = Tween<double>(begin: -3, end: 3)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
   }
 
   @override

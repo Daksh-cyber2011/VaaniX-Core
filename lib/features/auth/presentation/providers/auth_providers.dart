@@ -29,8 +29,6 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return repo;
 });
 
-
-
 /// Emits the current [AuthSession] and every subsequent change.
 final authSessionStreamProvider = StreamProvider<AuthSession>(
   (ref) => ref.watch(authRepositoryProvider).sessionStream,

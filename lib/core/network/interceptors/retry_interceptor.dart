@@ -22,7 +22,8 @@ class RetryInterceptor extends Interceptor {
   final int initialDelayMs;
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+      DioException err, ErrorInterceptorHandler handler) async {
     final extra = err.requestOptions.extra;
     final retryCount = (extra['retry_count'] as int?) ?? 0;
 

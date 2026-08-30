@@ -84,7 +84,8 @@ int _computeCurrent(
     AchievementCategory.quizzes => completedQuizzes,
     AchievementCategory.streak => streak,
     AchievementCategory.xp => xp,
-    AchievementCategory.special => 0, // special achievements are unlocked manually
+    AchievementCategory.special =>
+      0, // special achievements are unlocked manually
   };
 }
 

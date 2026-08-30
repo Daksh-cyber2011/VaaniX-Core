@@ -24,8 +24,7 @@ class OnboardingRepository {
   Future<void> saveDailyGoal(int minutes) =>
       _storage.setDailyGoalMinutes(minutes);
 
-  Future<void> markOnboardingComplete() =>
-      _storage.setOnboardingComplete(true);
+  Future<void> markOnboardingComplete() => _storage.setOnboardingComplete(true);
 
   // ─── READ ──────────────────────────────────────────────────────────────────
 

@@ -37,7 +37,8 @@ class ConnectivityService {
   }
 
   /// True when there is at least one active transport.
-  Future<bool> get isOnline async => (await current) == ConnectivityStatus.online;
+  Future<bool> get isOnline async =>
+      (await current) == ConnectivityStatus.online;
 
   ConnectivityStatus _reduce(List<ConnectivityResult> results) {
     final online = results.any(

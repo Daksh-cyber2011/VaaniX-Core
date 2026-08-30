@@ -98,9 +98,9 @@ abstract final class AppLogger {
   }) {
     final prefix = switch (level) {
       _LogLevel.verbose => '🔍 VERBOSE',
-      _LogLevel.info    => '✅ INFO   ',
-      _LogLevel.warn    => '⚠️  WARN   ',
-      _LogLevel.error   => '🚨 ERROR  ',
+      _LogLevel.info => '✅ INFO   ',
+      _LogLevel.warn => '⚠️  WARN   ',
+      _LogLevel.error => '🚨 ERROR  ',
     };
 
     final label = tag != null ? '[$tag] ' : '';

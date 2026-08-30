@@ -499,8 +499,7 @@ class _FocusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('NEXT FOCUS',
-                    style:
-                        AppTextStyles.labelSmall(color: AppColors.primary)),
+                    style: AppTextStyles.labelSmall(color: AppColors.primary)),
                 const SizedBox(height: 2),
                 Text(action.title, style: AppTextStyles.titleMedium()),
                 const SizedBox(height: 2),
@@ -600,8 +599,8 @@ class _WeakLessonTile extends StatelessWidget {
           '$mastered of $total exercises mastered',
           style: AppTextStyles.bodySmall(color: subtext),
         ),
-        trailing:
-            const Icon(Icons.chevron_right_rounded, color: AppColors.subtextLight),
+        trailing: const Icon(Icons.chevron_right_rounded,
+            color: AppColors.subtextLight),
         onTap: () => context
             .go(RouteNames.lessonPractice.replaceFirst(':lessonId', lesson.id)),
       ),

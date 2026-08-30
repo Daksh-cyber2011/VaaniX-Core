@@ -66,7 +66,8 @@ class VaaniXDialog extends StatelessWidget {
                   Expanded(
                     child: PrimaryButton.secondary(
                       label: cancelLabel!,
-                      onPressed: onCancel ?? () => Navigator.of(context).pop(false),
+                      onPressed:
+                          onCancel ?? () => Navigator.of(context).pop(false),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -83,8 +84,10 @@ class VaaniXDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: onConfirm ?? () => Navigator.of(context).pop(true),
-                    child: Text(confirmLabel, style: AppTextStyles.labelLarge()),
+                    onPressed:
+                        onConfirm ?? () => Navigator.of(context).pop(true),
+                    child:
+                        Text(confirmLabel, style: AppTextStyles.labelLarge()),
                   ),
                 ),
               ],

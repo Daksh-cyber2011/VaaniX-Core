@@ -1,4 +1,4 @@
-﻿/// Onboarding Page 5 € Account Creation
+/// Onboarding Page 5 € Account Creation
 ///
 /// UI shell for auth (Phone OTP / Google Sign-In).
 /// When Supabase is configured, pressing Google/Phone triggers the real
@@ -7,17 +7,17 @@
 /// buttons skip (offline-first).
 /// Per PRD Section 8.1 Screen 6.
 
-import'package:flutter/material.dart';
-import'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import'package:vaanix_app/core/environment/app_environment.dart';
-import'package:vaanix_app/core/theme/app_colors.dart';
-import'package:vaanix_app/core/theme/app_text_styles.dart';
-import'package:vaanix_app/core/utils/result.dart';
-import'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
-import'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import'package:vaanix_app/shared/widgets/primary_button.dart';
-import'package:vaanix_app/shared/widgets/van_widget.dart';
+import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/core/utils/result.dart';
+import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:vaanix_app/shared/widgets/primary_button.dart';
+import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class ObAuthPage extends ConsumerStatefulWidget {
   const ObAuthPage({super.key});
@@ -37,9 +37,8 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
       ref.read(onboardingProvider.notifier).skipAuth();
       return;
     }
-    await _runAuth(() => ref
-        .read(authRepositoryProvider)
-        .signInWithOAuth(provider:'google'));
+    await _runAuth(() =>
+        ref.read(authRepositoryProvider).signInWithOAuth(provider: 'google'));
   }
 
   /// Type-safe auth runner. Accepts a typed `Future<Result<T>>` action
@@ -77,30 +76,26 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
       child: Column(
         children: [
           const SizedBox(height: 32),
-
           VanWidget(
             state: _isBusy ? VanState.thinking : VanState.happy,
             size: 140,
             showSpeechBubble: true,
             dialogueText: _isBusy
-                ?'Signing you in...'
-                :'Let\'s save your progress, $companionName and I are ready!',
+                ? 'Signing you in...'
+                : 'Let\'s save your progress, $companionName and I are ready!',
           ),
-
           const SizedBox(height: 36),
-
           Text(
-'Create your account',
+            'Create your account',
             style: AppTextStyles.headlineMedium(),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-'Your streak and progress are stored safely.',
+            'Your streak and progress are stored safely.',
             style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
             textAlign: TextAlign.center,
           ),
-
           if (_errorMessage != null) ...[
             const SizedBox(height: 16),
             Container(
@@ -108,7 +103,8 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                border:
+                    Border.all(color: AppColors.error.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -125,13 +121,11 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
               ),
             ),
           ],
-
           const SizedBox(height: 36),
-
           if (_canAuth) ...[
             _SocialButton(
               icon: _GoogleIcon(),
-              label:'Continue with Google',
+              label: 'Continue with Google',
               onPressed: _isBusy ? null : _signInWithGoogle,
             ),
             const SizedBox(height: 24),
@@ -149,19 +143,16 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
             ),
             const SizedBox(height: 20),
           ],
-
           PrimaryButton.text(
-            label: _canAuth ?'Skip for now':'Skip € continue offline',
+            label: _canAuth ? 'Skip for now' : 'Skip € continue offline',
             onPressed: _isBusy ? null : notifier.skipAuth,
           ),
-
           const SizedBox(height: 16),
           Text(
-'By continuing, you agree to our Terms of Service\nand Privacy Policy.',
+            'By continuing, you agree to our Terms of Service\nand Privacy Policy.',
             style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 24),
         ],
       ),
@@ -188,8 +179,7 @@ class _SocialButton extends StatelessWidget {
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         minimumSize: const Size(double.infinity, 54),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         backgroundColor: theme.colorScheme.primary,
       ),
       child: Row(
@@ -197,8 +187,7 @@ class _SocialButton extends StatelessWidget {
         children: [
           icon,
           const SizedBox(width: 10),
-          Text(label,
-              style: AppTextStyles.labelLarge(color: Colors.white)),
+          Text(label, style: AppTextStyles.labelLarge(color: Colors.white)),
         ],
       ),
     );
@@ -219,7 +208,7 @@ class _GoogleIcon extends StatelessWidget {
       ),
       child: const Center(
         child: Text(
-'G',
+          'G',
           style: TextStyle(
             color: Color(0xFF4285F4),
             fontWeight: FontWeight.w800,

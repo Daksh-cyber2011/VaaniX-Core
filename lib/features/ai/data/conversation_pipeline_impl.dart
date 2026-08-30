@@ -76,8 +76,8 @@ class ConversationPipelineImpl implements ConversationPipeline {
     // 6. Handle failure — return early without persisting.
     if (result.isLeft()) {
       final failure = result.swap().getOrElse(
-        () => const UnknownFailure('AI generation failed'),
-      );
+            () => const UnknownFailure('AI generation failed'),
+          );
       return Left(failure);
     }
 

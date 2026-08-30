@@ -11,7 +11,6 @@ import 'dart:convert';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 
-
 class AchievementRepository {
   AchievementRepository(this._storage);
 
@@ -50,7 +49,8 @@ class AchievementRepository {
       if (current.containsKey(achievementId)) return current;
 
       final updated = {...current, achievementId: now ?? DateTime.now()};
-      final json = updated.map((k, v) => MapEntry(k, {'unlockedAt': v.toIso8601String()}));
+      final json = updated
+          .map((k, v) => MapEntry(k, {'unlockedAt': v.toIso8601String()}));
       await _storage.setString(_key, jsonEncode(json));
       return updated;
     });

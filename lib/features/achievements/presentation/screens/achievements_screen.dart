@@ -1,4 +1,4 @@
-﻿/// VaaniX Achievements â€” Screen
+/// VaaniX Achievements â€” Screen
 ///
 /// Displays all 10 achievements in a 2-column grid. Each card shows the
 /// achievement icon, title, description, and a progress bar (current/threshold).
@@ -35,8 +35,8 @@ class AchievementsScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.15)),
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
             ),
             child: Row(
               children: [
@@ -63,9 +63,10 @@ class AchievementsScreen extends ConsumerWidget {
                       Text(
                         'Keep learning to unlock more!',
                         style: AppTextStyles.bodySmall(
-                            color: Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.subtextDark
-                                : AppColors.subtextLight),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight),
                       ),
                     ],
                   ),
@@ -88,8 +89,8 @@ class AchievementsScreen extends ConsumerWidget {
   /// learner is to unlocking - the next win is always visible near the top.
   static List<AchievementProgress> _sorted(List<AchievementProgress> all) {
     final unlocked = all.where((a) => a.isUnlocked).toList()
-      ..sort((a, b) => (b.unlockedAt ?? DateTime(0))
-          .compareTo(a.unlockedAt ?? DateTime(0)));
+      ..sort((a, b) =>
+          (b.unlockedAt ?? DateTime(0)).compareTo(a.unlockedAt ?? DateTime(0)));
     final locked = all.where((a) => !a.isUnlocked).toList()
       ..sort((a, b) => b.fraction.compareTo(a.fraction));
     return [...unlocked, ...locked];
@@ -136,9 +137,7 @@ class _AchievementCard extends StatelessWidget {
             ),
             child: Icon(
               _iconForName(ach.iconName),
-              color: isUnlocked
-                  ? AppColors.success
-                  : AppColors.subtextLight,
+              color: isUnlocked ? AppColors.success : AppColors.subtextLight,
               size: 24,
             ),
           ),
@@ -177,8 +176,7 @@ class _AchievementCard extends StatelessWidget {
                   if (progress.unlockedAt != null)
                     Text(
                       'Unlocked ${_formatDate(progress.unlockedAt!)}',
-                      style: AppTextStyles.labelSmall(
-                          color: AppColors.success),
+                      style: AppTextStyles.labelSmall(color: AppColors.success),
                     ),
                 ] else ...[
                   // Progress bar
@@ -187,8 +185,7 @@ class _AchievementCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress.fraction,
                       minHeight: 6,
-                      backgroundColor:
-                          AppColors.primary.withValues(alpha: 0.1),
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                       color: AppColors.primary,
                     ),
                   ),
@@ -209,8 +206,7 @@ class _AchievementCard extends StatelessWidget {
           if (ach.xpReward > 0) ...[
             const SizedBox(width: 8),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.xp.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),

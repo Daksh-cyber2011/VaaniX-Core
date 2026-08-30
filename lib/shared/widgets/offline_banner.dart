@@ -31,8 +31,7 @@ class OfflineBanner extends ConsumerWidget {
           : Container(
               width: double.infinity,
               margin: margin,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: isDark
                     ? AppColors.warningContainerDark
@@ -44,9 +43,7 @@ class OfflineBanner extends ConsumerWidget {
                   Icon(
                     Icons.wifi_off_rounded,
                     size: 18,
-                    color: isDark
-                        ? const Color(0xFFFFB74D)
-                        : AppColors.warning,
+                    color: isDark ? const Color(0xFFFFB74D) : AppColors.warning,
                   ),
                   const SizedBox(width: 10),
                   Expanded(

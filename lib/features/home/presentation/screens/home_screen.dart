@@ -153,7 +153,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         showJourneyProgress ? completedSet.length / totalLessons : 0.0;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final greetingColor = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+    final greetingColor =
+        isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -173,8 +174,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 10),
                   // Level pill derived from XP (deterministic curve).
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: colorScheme.primary.withValues(alpha: 0.10),
                       borderRadius: BorderRadius.circular(999),
@@ -394,7 +395,8 @@ class _ContinueCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final subtext = colorScheme.onSurface.withValues(alpha: 0.62);    final showProgress = action.action == AdaptiveAction.continueLesson ||
+    final subtext = colorScheme.onSurface.withValues(alpha: 0.62);
+    final showProgress = action.action == AdaptiveAction.continueLesson ||
         action.action == AdaptiveAction.startJourney;
 
     return Container(
@@ -402,7 +404,8 @@ class _ContinueCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
         boxShadow: AppShadows.raised,
       ),
       child: Material(

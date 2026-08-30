@@ -111,6 +111,5 @@ class AchievementProgress extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [achievement, current, isUnlocked, unlockedAt];
+  List<Object?> get props => [achievement, current, isUnlocked, unlockedAt];
 }

@@ -35,8 +35,8 @@ class VaaniXCard extends StatelessWidget {
 
     final effectiveBg = backgroundColor ??
         (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
-    final effectiveBorder = borderColor ??
-        (isDark ? AppColors.borderDark : AppColors.borderLight);
+    final effectiveBorder =
+        borderColor ?? (isDark ? AppColors.borderDark : AppColors.borderLight);
 
     final cardChild = Container(
       padding: padding,

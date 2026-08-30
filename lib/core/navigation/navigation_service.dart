@@ -98,13 +98,13 @@ class NavigationService {
 
   // ─── Typed Route Helpers ──────────────────────────────────────────────────
 
-  void goSplash()     => go(RouteNames.splash);
+  void goSplash() => go(RouteNames.splash);
   void goOnboarding() => go(RouteNames.onboarding);
-  void goAuth()       => go(RouteNames.auth);
-  void goHome()       => go(RouteNames.home);
-  void goLearn()      => go(RouteNames.learn);
-  void goExam()       => go(RouteNames.exam);
-  void goProgress()   => go(RouteNames.progress);
+  void goAuth() => go(RouteNames.auth);
+  void goHome() => go(RouteNames.home);
+  void goLearn() => go(RouteNames.learn);
+  void goExam() => go(RouteNames.exam);
+  void goProgress() => go(RouteNames.progress);
   void goVanProfile() => go(RouteNames.vanProfile);
-  void goSettings()   => push(RouteNames.settings);
+  void goSettings() => push(RouteNames.settings);
 }

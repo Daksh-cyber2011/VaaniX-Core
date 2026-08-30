@@ -1,4 +1,4 @@
-﻿/// Onboarding Page 3 — Subject Setup
+/// Onboarding Page 3 — Subject Setup
 ///
 /// User selects their CBSE class (6–10).
 /// Board is fixed to CBSE in V1 (per PRD Section 8.1 Screen 4).
@@ -29,20 +29,17 @@ class ObSubjectPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 24),
-
           Center(
             child: VanWidget(
               state: VanState.thinking,
               size: 130,
               showSpeechBubble: true,
               dialogueText: selectedClass == null
-                  ? 'Which class are you in? 📚'
-                  : 'Perfect! ${selectedClass.label} it is! 📚',
+                  ? 'Which class are you in? '
+                  : 'Perfect! ${selectedClass.label} it is!',
             ),
           ),
-
           const SizedBox(height: 32),
-
           Text(
             'Tell $companionName your class',
             style: AppTextStyles.headlineMedium(),
@@ -50,11 +47,12 @@ class ObSubjectPage extends ConsumerWidget {
           const SizedBox(height: 6),
           Text(
             'Board: CBSE \u00b7 Subject: Sanskrit',
-            style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+            style: AppTextStyles.bodyMedium(
+                color: (Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.subtextDark
+                    : AppColors.subtextLight)),
           ),
-
           const SizedBox(height: 28),
-
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -75,7 +73,6 @@ class ObSubjectPage extends ConsumerWidget {
               );
             },
           ),
-
           if (selectedClass != null) ...[
             const SizedBox(height: 24),
             Container(
@@ -88,20 +85,23 @@ class ObSubjectPage extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Text('📚', style: TextStyle(fontSize: 20)),
+                  const Text('', style: TextStyle(fontSize: 20)),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${selectedClass.label} · CBSE Sanskrit',
-                        style: AppTextStyles.titleSmall(
-                            color: AppColors.primary),
+                        '${selectedClass.label} \u00b7 CBSE Sanskrit',
+                        style:
+                            AppTextStyles.titleSmall(color: AppColors.primary),
                       ),
                       Text(
                         'Curriculum-aligned lessons ready for you!',
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -109,9 +109,7 @@ class ObSubjectPage extends ConsumerWidget {
               ),
             ),
           ],
-
           const Spacer(),
-
           PrimaryButton(
             label: 'Continue',
             onPressed: selectedClass != null
@@ -142,9 +140,8 @@ class _ClassChip extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
       decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary
-            : Theme.of(context).cardTheme.color,
+        color:
+            isSelected ? AppColors.primary : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isSelected ? AppColors.primary : AppColors.borderLight,

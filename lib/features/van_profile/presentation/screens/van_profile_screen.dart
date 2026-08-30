@@ -1,4 +1,4 @@
-﻿/// Van Profile Screen
+/// Van Profile Screen
 ///
 /// Shows Van with his current personality mode and lets the learner change
 /// it inline. Tapping Van plays a reaction. The "Chat with Van" button
@@ -6,18 +6,18 @@
 /// conversation with Van via the AI pipeline. Reads/writes via
 /// [userProfileProvider].
 
-import'package:flutter/material.dart';
-import'package:flutter_riverpod/flutter_riverpod.dart';
-import'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import'package:vaanix_app/core/constants/route_names.dart';
-import'package:vaanix_app/core/theme/app_colors.dart';
-import'package:vaanix_app/core/theme/app_text_styles.dart';
-import'package:vaanix_app/features/profile/domain/user_profile.dart';
-import'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
-import'package:vaanix_app/shared/widgets/primary_button.dart';
-import'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
-import'package:vaanix_app/shared/widgets/van_widget.dart';
+import 'package:vaanix_app/core/constants/route_names.dart';
+import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/profile/domain/user_profile.dart';
+import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/shared/widgets/primary_button.dart';
+import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
+import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class VanProfileScreen extends ConsumerStatefulWidget {
   const VanProfileScreen({super.key});
@@ -48,7 +48,8 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
         children: [
           Center(
             child: VanWidget(
-              state: _tapState == VanState.happy ? VanState.happy : VanState.idle,
+              state:
+                  _tapState == VanState.happy ? VanState.happy : VanState.idle,
               size: 180,
               showSpeechBubble: true,
               dialogueText: mode == null
@@ -63,16 +64,15 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
           PrimaryButton(
             onPressed: () => context.go(RouteNames.chat),
             icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
-            label:'Chat with $companionName',
+            label: 'Chat with $companionName',
           ),
 
           const SizedBox(height: 32),
           Text('PERSONALITY',
-              style:
-                  AppTextStyles.labelSmall(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.subtextDark
-                  : AppColors.subtextLight)),
+              style: AppTextStyles.labelSmall(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight)),
           const SizedBox(height: 8),
           ...PersonalityMode.values.map((m) {
             final selected = mode == m;
@@ -85,8 +85,8 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                 borderRadius: BorderRadius.circular(16),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: selected
                         ? AppColors.primary.withValues(alpha: 0.08)
@@ -124,7 +124,8 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                       ),
                       const SizedBox(width: 14),
                       Expanded(
-                        child: Text(m.label, style: AppTextStyles.titleMedium()),
+                        child:
+                            Text(m.label, style: AppTextStyles.titleMedium()),
                       ),
                       if (selected)
                         const Icon(Icons.check_circle_rounded,
@@ -139,7 +140,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
           if (mode != null) ...[
             const SizedBox(height: 24),
             PrimaryButton.text(
-              label:'Reset to default',
+              label: 'Reset to default',
               icon: const Icon(Icons.refresh_rounded, size: 18),
               onPressed: () => ref
                   .read(userProfileProvider.notifier)

@@ -73,7 +73,6 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
       child: Column(
         children: [
           const SizedBox(height: 32),
-
           SlideTransition(
             position: _vanSlide,
             child: FadeTransition(
@@ -86,9 +85,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
               ),
             ),
           ),
-
           const SizedBox(height: 40),
-
           Text(
             'Name Your Companion',
             style: AppTextStyles.headlineMedium(),
@@ -99,9 +96,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
             'You can always rename later.',
             style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
           ),
-
           const SizedBox(height: 32),
-
           TextField(
             controller: _controller,
             onChanged: (v) => setState(() {}),
@@ -119,9 +114,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
             style: AppTextStyles.bodyLarge(),
             textCapitalization: TextCapitalization.words,
           ),
-
           const SizedBox(height: 12),
-
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: Text(
@@ -133,9 +126,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
               textAlign: TextAlign.center,
             ),
           ),
-
           const Spacer(),
-
           PrimaryButton(
             label: 'Continue',
             onPressed: _onContinue,

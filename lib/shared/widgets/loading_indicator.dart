@@ -29,7 +29,8 @@ class VaaniXLoadingIndicator extends StatelessWidget {
           height: size,
           child: CircularProgressIndicator(
             strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+            valueColor:
+                AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
             backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.15),
           ),
         ),

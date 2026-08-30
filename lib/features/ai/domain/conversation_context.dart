@@ -94,8 +94,7 @@ class ConversationContext extends Equatable {
       );
 
   /// The most recent message, or null when the transcript is empty.
-  AiMessage? get lastMessage =>
-      messages.isEmpty ? null : messages.last;
+  AiMessage? get lastMessage => messages.isEmpty ? null : messages.last;
 
   /// Only the user + assistant messages (transcript shown to the model).
   List<AiMessage> get transcript => messages

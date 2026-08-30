@@ -58,8 +58,8 @@ Future<void> main() async {
                 ),
                 // Wire the core session manager dependency to the feature's
                 // auth repository (dependency inversion seam).
-                coreAuthRepositoryProvider.overrideWith(
-                  (ref) => ref.read(authRepositoryProvider)),
+                coreAuthRepositoryProvider
+                    .overrideWith((ref) => ref.read(authRepositoryProvider)),
               ],
               child: const VaaniXApp(),
             ),

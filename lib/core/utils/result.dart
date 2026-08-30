@@ -44,4 +44,3 @@ Future<Result<T>> guardAsync<T>(Future<T> Function() action) async {
     return err(ExceptionMapper.toFailure(e));
   }
 }
-

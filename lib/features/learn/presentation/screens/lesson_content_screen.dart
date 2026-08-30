@@ -123,8 +123,9 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
       // One consolidated celebration for the batch (no snackbar stacking).
       if (newlyUnlocked.isNotEmpty) {
         final first = newlyUnlocked.first;
-        final extra =
-            newlyUnlocked.length > 1 ? ' (+${newlyUnlocked.length - 1} more)' : '';
+        final extra = newlyUnlocked.length > 1
+            ? ' (+${newlyUnlocked.length - 1} more)'
+            : '';
         ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
               VanEventType.achievementUnlocked,
               message: 'I\'ll remember this: ${first.title}!',
@@ -339,9 +340,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             FilledButton(
               onPressed: _isCompleting
                   ? null
-                  : (_hasScrolledToBottom
-                      ? _markComplete
-                      : _scrollToBottom),
+                  : (_hasScrolledToBottom ? _markComplete : _scrollToBottom),
               style: FilledButton.styleFrom(
                 backgroundColor: _hasScrolledToBottom
                     ? AppColors.primary

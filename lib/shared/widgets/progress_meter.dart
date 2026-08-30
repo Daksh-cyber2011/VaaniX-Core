@@ -31,8 +31,8 @@ class ProgressMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final clamped = value.clamp(0.0, 1.0);
-    final trackColor = backgroundColor ??
-        theme.colorScheme.primary.withValues(alpha: 0.12);
+    final trackColor =
+        backgroundColor ?? theme.colorScheme.primary.withValues(alpha: 0.12);
 
     final bar = Container(
       height: height,

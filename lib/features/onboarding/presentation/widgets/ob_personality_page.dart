@@ -81,7 +81,6 @@ class ObPersonalityPage extends ConsumerWidget {
       child: Column(
         children: [
           const SizedBox(height: 24),
-
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             switchInCurve: Curves.easeOut,
@@ -95,9 +94,7 @@ class ObPersonalityPage extends ConsumerWidget {
                   : _modeReaction(selected, companionName),
             ),
           ),
-
           const SizedBox(height: 32),
-
           Text(
             'How should $companionName act?',
             style: AppTextStyles.headlineMedium(),
@@ -108,9 +105,7 @@ class ObPersonalityPage extends ConsumerWidget {
             'You can change this anytime in settings.',
             style: AppTextStyles.bodyMedium(color: subtext),
           ),
-
           const SizedBox(height: 28),
-
           ...List.generate(_modes.length, (i) {
             final option = _modes[i];
             final isSelected = selected == option.mode;
@@ -123,9 +118,7 @@ class ObPersonalityPage extends ConsumerWidget {
               ),
             );
           }),
-
           const Spacer(),
-
           PrimaryButton(
             label: 'Continue',
             onPressed: selected != null

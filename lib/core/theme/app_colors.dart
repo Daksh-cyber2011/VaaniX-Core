@@ -1,4 +1,4 @@
-﻿/// VaaniX Color Palette
+/// VaaniX Color Palette
 ///
 /// Derived directly from the VAN Design Bible (02 - VAN / 02 - Visual Design.md)
 /// and the PRD color specifications.
@@ -129,5 +129,4 @@ abstract final class AppColors {
 
   /// Dark-theme shimmer base (the original [shimmer] is light-only).
   static const Color shimmerDark = Color(0xFF2A2A36);
-
 }

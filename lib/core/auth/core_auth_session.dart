@@ -58,7 +58,8 @@ class AuthSession extends Equatable {
   bool get isAuthenticated => status == AuthStatus.authenticated;
 
   /// A session with no user, used as the initial / signed-out state.
-  static const AuthSession empty = AuthSession(status: AuthStatus.unauthenticated);
+  static const AuthSession empty =
+      AuthSession(status: AuthStatus.unauthenticated);
 
   @override
   List<Object?> get props => [status, user, accessToken, expiresAt];

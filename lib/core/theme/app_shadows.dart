@@ -88,8 +88,8 @@ abstract final class AppShadows {
       brightness == Brightness.dark ? floatingDark : floating;
 
   /// Kept for surface-tint experiments; do not use directly in widgets.
-  static Color overlayScrim(Brightness brightness) => brightness ==
-          Brightness.dark
-      ? AppColors.overlay
-      : AppColors.onBackgroundLight.withValues(alpha: 0.45);
+  static Color overlayScrim(Brightness brightness) =>
+      brightness == Brightness.dark
+          ? AppColors.overlay
+          : AppColors.onBackgroundLight.withValues(alpha: 0.45);
 }

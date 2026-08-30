@@ -27,7 +27,8 @@ final supabaseAuthProvider = Provider<GoTrueClient>(
 
 /// Supabase Realtime + PostgREST client for direct DB queries.
 /// (Used for simple CRUD; complex operations go through FastAPI.)
-final supabaseDatabaseProvider = Provider<SupabaseQueryBuilder Function(String)>(
+final supabaseDatabaseProvider =
+    Provider<SupabaseQueryBuilder Function(String)>(
   (ref) {
     final client = ref.watch(supabaseClientProvider);
     return (tableName) => client.from(tableName);

@@ -24,9 +24,8 @@ abstract final class AppTheme {
   static SwitchThemeData _switch(Color primary, Color surface) =>
       SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected)
-              ? Colors.white
-              : surface,
+          (states) =>
+              states.contains(WidgetState.selected) ? Colors.white : surface,
         ),
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
@@ -123,7 +122,8 @@ abstract final class AppTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, AppDimens.primaryActionHeight),
+            minimumSize:
+                const Size(double.infinity, AppDimens.primaryActionHeight),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -240,8 +240,8 @@ abstract final class AppTheme {
         tooltipTheme: _tooltip(AppColors.onBackgroundLight),
 
         // --- List tiles (settings rows) ---
-        listTileTheme:
-            _listTile(AppColors.primary, AppColors.subtextLight, Brightness.light),
+        listTileTheme: _listTile(
+            AppColors.primary, AppColors.subtextLight, Brightness.light),
 
         // --- Switches ---
         switchTheme: _switch(AppColors.primary, AppColors.subtextLight),
@@ -315,7 +315,6 @@ abstract final class AppTheme {
         visualDensity: VisualDensity.standard,
         focusColor: AppColors.focusRingDark,
         highlightColor: AppColors.primaryLight.withValues(alpha: 0.08),
-
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           brightness: Brightness.dark,
@@ -330,10 +329,8 @@ abstract final class AppTheme {
           surface: AppColors.surfaceDark,
           onSurface: AppColors.onSurfaceDark,
         ),
-
         scaffoldBackgroundColor: AppColors.backgroundDark,
         textTheme: AppTextStyles.buildTextTheme(dark: true),
-
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.backgroundDark,
           foregroundColor: AppColors.onBackgroundDark,
@@ -345,7 +342,6 @@ abstract final class AppTheme {
             color: AppColors.onBackgroundDark,
           ),
         ),
-
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryLight,
@@ -365,7 +361,6 @@ abstract final class AppTheme {
             ),
           ),
         ),
-
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primaryLight,
@@ -376,7 +371,6 @@ abstract final class AppTheme {
             minimumSize: const Size(0, AppDimens.compactActionHeight),
           ),
         ),
-
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primaryLight,
@@ -389,14 +383,12 @@ abstract final class AppTheme {
             textStyle: AppTextStyles.labelLarge(),
           ),
         ),
-
         iconButtonTheme: IconButtonThemeData(
           style: IconButton.styleFrom(
             minimumSize: const Size.square(AppDimens.minTouchTarget),
             tapTargetSize: MaterialTapTargetSize.padded,
           ),
         ),
-
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.surfaceVariantDark,
@@ -427,7 +419,6 @@ abstract final class AppTheme {
           hintStyle: AppTextStyles.bodyMedium(color: AppColors.subtextDark),
           labelStyle: AppTextStyles.bodyMedium(color: AppColors.subtextDark),
         ),
-
         cardTheme: CardThemeData(
           color: AppColors.surfaceDark,
           elevation: 0,
@@ -436,7 +427,6 @@ abstract final class AppTheme {
             side: const BorderSide(color: AppColors.borderDark),
           ),
         ),
-
         dialogTheme: DialogThemeData(
           backgroundColor: AppColors.surfaceDark,
           shape: RoundedRectangleBorder(
@@ -447,7 +437,6 @@ abstract final class AppTheme {
           contentTextStyle:
               AppTextStyles.bodyMedium(color: AppColors.onSurfaceDark),
         ),
-
         bottomSheetTheme: const BottomSheetThemeData(
           backgroundColor: AppColors.surfaceDark,
           modalBackgroundColor: AppColors.surfaceDark,
@@ -456,16 +445,11 @@ abstract final class AppTheme {
           ),
           showDragHandle: false,
         ),
-
         progressIndicatorTheme: _progress(AppColors.primaryLight),
-
         tooltipTheme: _tooltip(AppColors.onBackgroundDark),
-
-        listTileTheme:
-            _listTile(AppColors.primaryLight, AppColors.subtextDark, Brightness.dark),
-
+        listTileTheme: _listTile(
+            AppColors.primaryLight, AppColors.subtextDark, Brightness.dark),
         switchTheme: _switch(AppColors.primaryLight, AppColors.subtextDark),
-
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: AppColors.surfaceDark,
           selectedItemColor: AppColors.primaryLight,
@@ -475,7 +459,6 @@ abstract final class AppTheme {
           type: BottomNavigationBarType.fixed,
           elevation: 8,
         ),
-
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surfaceDark,
           indicatorColor: AppColors.primaryLight.withValues(alpha: 0.15),
@@ -493,7 +476,6 @@ abstract final class AppTheme {
             return AppTextStyles.labelSmall(color: AppColors.subtextDark);
           }),
         ),
-
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surfaceVariantDark,
           selectedColor: AppColors.primaryLight.withValues(alpha: 0.2),
@@ -502,7 +484,6 @@ abstract final class AppTheme {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.surfaceVariantDark,
           contentTextStyle: AppTextStyles.bodyMedium(
@@ -513,7 +494,6 @@ abstract final class AppTheme {
           ),
           behavior: SnackBarBehavior.floating,
         ),
-
         dividerTheme: const DividerThemeData(
           color: AppColors.borderDark,
           thickness: 1,

@@ -77,7 +77,8 @@ class SessionManager extends Notifier<AuthSession> {
         'Token refresh failed: ${failure.message}',
         tag: 'SessionManager',
       ),
-      (session) => AppLogger.info('Token refreshed successfully', tag: 'SessionManager'),
+      (session) =>
+          AppLogger.info('Token refreshed successfully', tag: 'SessionManager'),
     );
   }
 
@@ -86,7 +87,8 @@ class SessionManager extends Notifier<AuthSession> {
     AppLogger.info('Signing out', tag: 'SessionManager');
     final result = await ref.read(coreAuthRepositoryProvider).signOut();
     result.fold(
-      (failure) => AppLogger.warn('Sign out error: ${failure.message}', tag: 'SessionManager'),
+      (failure) => AppLogger.warn('Sign out error: ${failure.message}',
+          tag: 'SessionManager'),
       (_) => AppLogger.info('Signed out successfully', tag: 'SessionManager'),
     );
   }

@@ -57,7 +57,8 @@ class StatTile extends StatelessWidget {
               children: [
                 Text(
                   value,
-                  style: AppTextStyles.titleMedium(color: theme.colorScheme.onSurface),
+                  style: AppTextStyles.titleMedium(
+                      color: theme.colorScheme.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

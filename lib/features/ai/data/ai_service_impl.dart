@@ -47,8 +47,7 @@ class AIServiceImpl implements AIService {
   final Map<AiProviderId, ModelAdapter> _adapters = {};
 
   @override
-  Map<AiProviderId, ModelAdapter> get adapters =>
-      Map.unmodifiable(_adapters);
+  Map<AiProviderId, ModelAdapter> get adapters => Map.unmodifiable(_adapters);
 
   @override
   ModelAdapter adapterFor(AiConfig config) {

@@ -1,4 +1,4 @@
-﻿/// Settings Screen
+/// Settings Screen
 ///
 /// Controls app themes (Light/Dark/System), companion info, learning goals,
 /// and account preferences. All preference cards are editable inline via
@@ -42,7 +42,10 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             'APPEARANCE',
-            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+            style: AppTextStyles.labelSmall(
+                color: (Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.subtextDark
+                    : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
           VaaniXCard(
@@ -71,7 +74,10 @@ class SettingsScreen extends ConsumerWidget {
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
                                     ? AppColors.subtextDark
-                                    : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                                    : (Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? AppColors.subtextDark
+                                        : AppColors.subtextLight)),
                           ),
                         ],
                       ),
@@ -114,7 +120,10 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'LEARNING PROFILE',
-            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+            style: AppTextStyles.labelSmall(
+                color: (Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.subtextDark
+                    : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
 
@@ -134,7 +143,10 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         companionName,
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -165,11 +177,12 @@ class SettingsScreen extends ConsumerWidget {
                       Text("Van's Personality",
                           style: AppTextStyles.titleMedium()),
                       Text(
-                        personality == null
-                            ? 'Not set'
-                            : personality.label,
+                        personality == null ? 'Not set' : personality.label,
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -197,7 +210,10 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         '$dailyGoal minutes / day',
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -225,7 +241,10 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         selectedClass != null ? selectedClass.label : 'Not set',
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -241,7 +260,10 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'PROGRESS',
-            style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+            style: AppTextStyles.labelSmall(
+                color: (Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.subtextDark
+                    : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
           VaaniXCard(
@@ -260,7 +282,10 @@ class SettingsScreen extends ConsumerWidget {
                       Text(
                         'Clears XP and completed lessons. Cannot be undone.',
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -275,7 +300,10 @@ class SettingsScreen extends ConsumerWidget {
           if (AppEnvironment.isSupabaseConfigured) ...[
             Text(
               'ACCOUNT',
-              style: AppTextStyles.labelSmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+              style: AppTextStyles.labelSmall(
+                  color: (Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight)),
             ),
             const SizedBox(height: 8),
             VaaniXCard(
@@ -294,7 +322,10 @@ class SettingsScreen extends ConsumerWidget {
                         Text(
                           'End your session. Your local progress is kept.',
                           style: AppTextStyles.bodySmall(
-                              color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                              color: (Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.subtextDark
+                                  : AppColors.subtextLight)),
                         ),
                       ],
                     ),
@@ -308,7 +339,10 @@ class SettingsScreen extends ConsumerWidget {
           Center(
             child: Text(
               '${AppConstants.appName} v${AppConstants.appVersion}',
-              style: AppTextStyles.bodySmall(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+              style: AppTextStyles.bodySmall(
+                  color: (Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight)),
             ),
           ),
           const SizedBox(height: 24),

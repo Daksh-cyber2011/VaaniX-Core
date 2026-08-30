@@ -96,8 +96,8 @@ class _ChatInputState extends State<ChatInput> {
                   fillColor: isDark
                       ? AppColors.surfaceVariantDark
                       : AppColors.surfaceVariantLight,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 10),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,

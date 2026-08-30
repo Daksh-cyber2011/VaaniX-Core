@@ -23,8 +23,9 @@ class DefaultPromptPipeline implements PromptPipeline {
   @override
   String buildPersonaPrompt(ConversationContext context) {
     final learner = context.learner;
-    final companion =
-        learner.companionName.trim().isEmpty ? 'Van' : learner.companionName.trim();
+    final companion = learner.companionName.trim().isEmpty
+        ? 'Van'
+        : learner.companionName.trim();
 
     final base = StringBuffer()
       ..writeln('You are $companion, an emotionally intelligent AI duck '
@@ -32,7 +33,8 @@ class DefaultPromptPipeline implements PromptPipeline {
       ..writeln('Always be warm, encouraging, and age-appropriate.')
       ..writeln('Prefer Sanskrit (Devanagari) with transliteration and a short '
           'English gloss for new words.')
-      ..writeln('Celebrate effort, normalize mistakes, and keep replies concise.');
+      ..writeln(
+          'Celebrate effort, normalize mistakes, and keep replies concise.');
 
     if (learner.displayName.trim().isNotEmpty) {
       base.writeln('The learner\'s name is ${learner.displayName.trim()}; '
@@ -53,7 +55,8 @@ class DefaultPromptPipeline implements PromptPipeline {
         case PersonalityMode.cheerleader:
           base.writeln('Tone: energetic, celebratory, lots of encouragement.');
         case PersonalityMode.calm:
-          base.writeln('Tone: patient, soft, steady; great for anxious learners.');
+          base.writeln(
+              'Tone: patient, soft, steady; great for anxious learners.');
         case PersonalityMode.fun:
           base.writeln('Tone: playful, light duck puns, casual.');
       }

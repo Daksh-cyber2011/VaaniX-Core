@@ -82,8 +82,8 @@ class SessionExpiredFailure extends Failure {
 
 /// Authenticated but forbidden (HTTP 403)
 class ForbiddenFailure extends Failure {
-  const ForbiddenFailure([
-      String message = 'You do not have access to this resource.'])
+  const ForbiddenFailure(
+      [String message = 'You do not have access to this resource.'])
       : super(message: message, code: 'FORBIDDEN');
 }
 
@@ -121,15 +121,14 @@ class ValidationFailure extends Failure {
 
 /// Resource was not found (HTTP 404)
 class NotFoundFailure extends Failure {
-  const NotFoundFailure([
-      String message = 'The requested resource was not found.'])
+  const NotFoundFailure(
+      [String message = 'The requested resource was not found.'])
       : super(message: message, code: 'NOT_FOUND');
 }
 
 /// Resource already exists / conflict (HTTP 409)
 class ConflictFailure extends Failure {
-  const ConflictFailure([
-      String message = 'This resource already exists.'])
+  const ConflictFailure([String message = 'This resource already exists.'])
       : super(message: message, code: 'CONFLICT');
 }
 
@@ -168,7 +167,8 @@ class AiContentFilterFailure extends Failure {
 /// Conversation exceeds the model's context window.
 class AiContextLengthFailure extends Failure {
   const AiContextLengthFailure([
-    String message = 'The conversation is too long. Please start a new conversation.',
+    String message =
+        'The conversation is too long. Please start a new conversation.',
   ]) : super(message: message, code: 'AI_CONTEXT_LENGTH');
 }
 

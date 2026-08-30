@@ -46,15 +46,15 @@ class TokenUsageTracker {
     final usage = await _loadAll();
     final today = _todayKey;
 
-    final todayEntry = (usage[today] as Map<String, dynamic>?) ?? {
-      'requestCount': 0,
-      'promptTokens': 0,
-      'completionTokens': 0,
-      'totalTokens': 0,
-    };
+    final todayEntry = (usage[today] as Map<String, dynamic>?) ??
+        {
+          'requestCount': 0,
+          'promptTokens': 0,
+          'completionTokens': 0,
+          'totalTokens': 0,
+        };
 
-    todayEntry['requestCount'] =
-        (todayEntry['requestCount'] as int) + 1;
+    todayEntry['requestCount'] = (todayEntry['requestCount'] as int) + 1;
     todayEntry['promptTokens'] =
         (todayEntry['promptTokens'] as int) + promptTokens;
     todayEntry['completionTokens'] =
@@ -153,7 +153,8 @@ class DailyUsage {
 
   /// Remaining requests for today.
   int get remainingRequests =>
-      (TokenUsageTracker.dailyRequestLimit - requestCount).clamp(0, TokenUsageTracker.dailyRequestLimit);
+      (TokenUsageTracker.dailyRequestLimit - requestCount)
+          .clamp(0, TokenUsageTracker.dailyRequestLimit);
 }
 
 /// A single day's usage entry (for history display).

@@ -53,16 +53,16 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   static ThemeMode _fromString(String? raw) {
     return switch (raw) {
-      'light'  => ThemeMode.light,
-      'dark'   => ThemeMode.dark,
-      _        => ThemeMode.system,
+      'light' => ThemeMode.light,
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.system,
     };
   }
 
   static String _toString(ThemeMode mode) {
     return switch (mode) {
-      ThemeMode.light  => 'light',
-      ThemeMode.dark   => 'dark',
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
       ThemeMode.system => 'system',
     };
   }
