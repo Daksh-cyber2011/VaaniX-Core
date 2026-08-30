@@ -1,4 +1,4 @@
-﻿/// Onboarding Page 2 â€” Personality Mode
+/// Onboarding Page 2 - Personality Mode
 ///
 /// User selects how they want Van to behave: Cheerleader / Calm / Fun.
 /// Van visually reacts to each selection via VanState change.
@@ -17,7 +17,7 @@ import 'package:vaanix_app/shared/widgets/van_widget.dart';
 class _ModeOption {
   const _ModeOption({
     required this.mode,
-    required this.emoji,
+    required this.icon,
     required this.title,
     required this.subtitle,
     required this.vanState,
@@ -25,7 +25,7 @@ class _ModeOption {
   });
 
   final PersonalityMode mode;
-  final String emoji;
+  final IconData icon;
   final String title;
   final String subtitle;
   final VanState vanState;
@@ -35,7 +35,7 @@ class _ModeOption {
 const _modes = [
   _ModeOption(
     mode: PersonalityMode.cheerleader,
-    emoji: 'ðŸŽ‰',
+    icon: Icons.celebration_rounded,
     title: 'Cheerleader',
     subtitle: 'Energetic hype. Celebrates every win.',
     vanState: VanState.achievement,
@@ -43,7 +43,7 @@ const _modes = [
   ),
   _ModeOption(
     mode: PersonalityMode.calm,
-    emoji: 'ðŸŒ¿',
+    icon: Icons.self_improvement_rounded,
     title: 'Calm',
     subtitle: 'Patient and steady. Great for focus.',
     vanState: VanState.caring,
@@ -51,7 +51,7 @@ const _modes = [
   ),
   _ModeOption(
     mode: PersonalityMode.fun,
-    emoji: 'ðŸ¦†',
+    icon: Icons.mood_rounded,
     title: 'Fun',
     subtitle: 'Silly duck puns. Keeps it light.',
     vanState: VanState.funny,
@@ -67,6 +67,8 @@ class ObPersonalityPage extends ConsumerWidget {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
     final selected = state.personalityMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     final vanState = selected != null
         ? _modes.firstWhere((m) => m.mode == selected).vanState
@@ -104,7 +106,7 @@ class ObPersonalityPage extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'You can change this anytime in settings.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: subtext),
           ),
 
           const SizedBox(height: 28),
@@ -139,11 +141,11 @@ class ObPersonalityPage extends ConsumerWidget {
   String _modeReaction(PersonalityMode mode, String name) {
     switch (mode) {
       case PersonalityMode.cheerleader:
-        return "LET'S GO $name! ðŸŽ‰ I'll be your biggest fan!";
+        return "LET'S GO $name! I'll be your biggest fan!";
       case PersonalityMode.calm:
-        return "Perfect. We'll take it step by step, together. ðŸŒ¿";
+        return "Perfect. We'll take it step by step, together.";
       case PersonalityMode.fun:
-        return "Quack! This is gonna be a great time ðŸ¦†";
+        return 'Quack! This is gonna be a great time';
     }
   }
 }
@@ -161,6 +163,8 @@ class _ModeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
@@ -170,7 +174,9 @@ class _ModeCard extends StatelessWidget {
             : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isSelected ? option.color : AppColors.borderLight,
+          color: isSelected
+              ? option.color
+              : (isDark ? AppColors.borderDark : AppColors.borderLight),
           width: isSelected ? 2 : 1,
         ),
         boxShadow: isSelected
@@ -198,8 +204,7 @@ class _ModeCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(
-                  child: Text(option.emoji,
-                      style: const TextStyle(fontSize: 24)),
+                  child: Icon(option.icon, size: 24, color: option.color),
                 ),
               ),
               const SizedBox(width: 16),
@@ -211,8 +216,7 @@ class _ModeCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       option.subtitle,
-                      style: AppTextStyles.bodySmall(
-                          color: AppColors.subtextLight),
+                      style: AppTextStyles.bodySmall(color: subtext),
                     ),
                   ],
                 ),

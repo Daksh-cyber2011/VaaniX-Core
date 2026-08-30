@@ -139,8 +139,10 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded,
-                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ],
             ),
           ),
@@ -172,8 +174,10 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded,
-                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ],
             ),
           ),
@@ -198,8 +202,10 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded,
-                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ],
             ),
           ),
@@ -224,8 +230,10 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded,
-                    color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ],
             ),
           ),
@@ -363,7 +371,15 @@ class SettingsScreen extends ConsumerWidget {
             onPressed: () => Navigator.pop(ctx, mode),
             child: Row(
               children: [
-                Icon(\n                  switch (mode) {\n                    PersonalityMode.cheerleader => Icons.celebration_rounded,\n                    PersonalityMode.calm => Icons.self_improvement_rounded,\n                    PersonalityMode.fun => Icons.mood_rounded,\n                  },\n                  size: 22,\n                  color: AppColors.primary,\n                ),
+                Icon(
+                  switch (mode) {
+                    PersonalityMode.cheerleader => Icons.celebration_rounded,
+                    PersonalityMode.calm => Icons.self_improvement_rounded,
+                    PersonalityMode.fun => Icons.mood_rounded,
+                  },
+                  size: 22,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 12),
                 Text(mode.label, style: AppTextStyles.titleMedium()),
                 if (current == mode) ...[

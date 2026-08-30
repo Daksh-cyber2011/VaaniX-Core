@@ -10,20 +10,20 @@
 /// ordering (tap-in-sequence), translation (free text) and matching
 /// (two-column pairing).
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import'package:flutter/material.dart';
+import'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
-import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
-import 'package:vaanix_app/features/progress/domain/progress_models.dart';
-import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
-import 'package:vaanix_app/features/van/van.dart';
-import 'package:vaanix_app/shared/widgets/primary_button.dart';
-import 'package:vaanix_app/shared/widgets/van_widget.dart';
-import 'package:vaanix_app/shared/widgets/xp_badge.dart';
+import'package:vaanix_app/core/theme/app_colors.dart';
+import'package:vaanix_app/core/theme/app_text_styles.dart';
+import'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
+import'package:vaanix_app/features/learn/domain/exercise_models.dart';
+import'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
+import'package:vaanix_app/features/progress/domain/progress_models.dart';
+import'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import'package:vaanix_app/features/van/van.dart';
+import'package:vaanix_app/shared/widgets/primary_button.dart';
+import'package:vaanix_app/shared/widgets/van_widget.dart';
+import'package:vaanix_app/shared/widgets/xp_badge.dart';
 
 class ExerciseScreen extends ConsumerStatefulWidget {
   const ExerciseScreen({super.key, required this.lesson});
@@ -76,7 +76,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       if (mounted) {
         ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
               VanEventType.quizStarted,
-              message: 'Practice time! Let\'s master ${widget.lesson.title}.',
+              message:'Practice time! Let\'s master ${widget.lesson.title}.',
               payload: {'lessonId': widget.lesson.id},
             ));
       }
@@ -92,7 +92,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     ref.invalidate(xpTotalProvider);
     ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
           VanEventType.lessonCompleted,
-          message: 'Nice work - you completed ${widget.lesson.title}!',
+          message:'Nice work - you completed ${widget.lesson.title}!',
           payload: {'lessonId': widget.lesson.id},
         ));
 
@@ -108,7 +108,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text('Practice complete! +${widget.lesson.xpReward} XP earned! âœ¨'),
+            Text('Practice complete! +${widget.lesson.xpReward} XP earned!'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -116,14 +116,14 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     for (final ach in newlyUnlocked) {
       ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
             VanEventType.achievementUnlocked,
-            message: 'I\'ll remember this: ${ach.title}!',
+            message:'I\'ll remember this: ${ach.title}!',
             payload: {'achievementId': ach.id},
           ));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'ðŸ† Achievement Unlocked: ${ach.title}!'
-            '${ach.xpReward > 0 ? ' (+${ach.xpReward} XP)' : ''}',
+'Achievement Unlocked: ${ach.title}!'
+'${ach.xpReward > 0 ?'(+${ach.xpReward} XP)':''}',
           ),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 4),
@@ -169,7 +169,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Practice',
+'Practice',
           style: AppTextStyles.titleMedium(),
         ),
         centerTitle: true,
@@ -201,16 +201,16 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             state: VanState.thinking,
             size: 140,
             showSpeechBubble: true,
-            dialogueText: 'No practice exercises for this lesson yet.',
+            dialogueText:'No practice exercises for this lesson yet.',
           ),
           const SizedBox(height: 16),
           Text(
-            'Exercises are being prepared.',
+'Exercises are being prepared.',
             style: AppTextStyles.bodyMedium(color: _subtext),
           ),
           const SizedBox(height: 16),
           PrimaryButton(
-            label: 'Back to lesson',
+            label:'Back to lesson',
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -229,11 +229,11 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     final isLast = state.currentIndex + 1 >= notifier.total;
 
     final String typeLabel = switch (exercise.type) {
-      ExerciseType.mcq => 'Choose one',
-      ExerciseType.fillBlank => 'Fill the blank',
-      ExerciseType.ordering => 'Arrange in order',
-      ExerciseType.translation => 'Translate',
-      ExerciseType.matching => 'Match the pairs',
+      ExerciseType.mcq =>'Choose one',
+      ExerciseType.fillBlank =>'Fill the blank',
+      ExerciseType.ordering =>'Arrange in order',
+      ExerciseType.translation =>'Translate',
+      ExerciseType.matching =>'Match the pairs',
     };
 
     return Column(
@@ -244,7 +244,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           child: Row(
             children: [
               Text(
-                'Q ${state.currentIndex + 1} / ${notifier.total}',
+'Q ${state.currentIndex + 1} / ${notifier.total}',
                 style: AppTextStyles.labelLarge(color: AppColors.primary),
               ),
               const SizedBox(width: 12),
@@ -340,7 +340,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             color: AppColors.accent,
           ),
           label: Text(
-            revealed ? 'Hide hint' : 'Hint',
+            revealed ?'Hide hint':'Hint',
             style: AppTextStyles.labelLarge(color: AppColors.accent),
           ),
         ),
@@ -466,7 +466,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tap the items in the correct order:',
+'Tap the items in the correct order:',
           style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
@@ -482,7 +482,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           ),
           child: state.chosenItems.isEmpty
               ? Text(
-                  'Your sequence appears here.',
+'Your sequence appears here.',
                   style: AppTextStyles.bodySmall(color: _subtext),
                 )
               : Wrap(
@@ -536,7 +536,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Type your answer:',
+'Type your answer:',
           style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
@@ -549,7 +549,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             if (state.answerText.trim().isNotEmpty) notifier.submit();
           },
           decoration: InputDecoration(
-            hintText: 'e.g. namaste',
+            hintText:'e.g. namaste',
             filled: true,
             fillColor: _surface,
             border: OutlineInputBorder(
@@ -568,7 +568,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Answers are checked without case or extra spaces.',
+'Answers are checked without case or extra spaces.',
           style: AppTextStyles.bodySmall(color: _subtext),
         ),
       ],
@@ -588,7 +588,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tap one item from each side to join them:',
+'Tap one item from each side to join them:',
           style: AppTextStyles.bodyMedium(color: _subtext),
         ),
         const SizedBox(height: 12),
@@ -609,8 +609,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     title: Text(
-                      '${exercise.pairs[state.selectedPairs[i].left].left}  â†”  '
-                      '${rightOptions[state.selectedPairs[i].right]}',
+'${exercise.pairs[state.selectedPairs[i].left].left}'
+'${rightOptions[state.selectedPairs[i].right]}',
                       style: AppTextStyles.bodyMedium(),
                     ),
                     trailing: state.answered
@@ -631,7 +631,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           children: [
             Expanded(
               child: _matchColumn(
-                title: 'Left',
+                title:'Left',
                 chips: [
                   for (var i = 0; i < exercise.pairs.length; i++)
                     _matchChip(
@@ -650,7 +650,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _matchColumn(
-                title: 'Right',
+                title:'Right',
                 chips: [
                   for (var d = 0; d < rightOptions.length; d++)
                     _matchChip(
@@ -672,7 +672,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Matched pairs appear above - tap âœ• to undo.',
+'Matched pairs appear above - tap  to undo.',
           style: AppTextStyles.bodySmall(color: _subtext),
         ),
       ],
@@ -750,8 +750,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       ),
       child: Text(
         isCorrect
-            ? 'Correct! âœ¨'
-            : exercise.explanation ?? 'Not quite - try again!',
+            ?'Correct!'
+            : exercise.explanation ??'Not quite - try again!',
         style: AppTextStyles.bodySmall(
           color: isCorrect ? AppColors.success : AppColors.error,
         ),
@@ -781,7 +781,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         if (state.answered && !isCurrentCorrect) ...[
           Expanded(
             child: PrimaryButton.secondary(
-              label: 'Try Again',
+              label:'Try Again',
               icon: const Icon(Icons.refresh_rounded, size: 20),
               onPressed: () {
                 notifier.retry();
@@ -794,8 +794,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         Expanded(
           child: PrimaryButton(
             label: !state.answered
-                ? (isOrdering ? 'Check' : 'Submit')
-                : (isLast ? 'Finish' : 'Next'),
+                ? (isOrdering ?'Check':'Submit')
+                : (isLast ?'Finish':'Next'),
             onPressed: !state.answered
                 ? (canSubmit
                     ? () {
@@ -807,8 +807,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                   ? VanEventType.quizAnswerCorrect
                                   : VanEventType.quizAnswerWrong,
                               message: notifier.currentAnswerIsCorrect
-                                  ? 'Nice thinking!'
-                                  : 'Almost there - learn and try again.',
+                                  ?'Nice thinking!'
+                                  :'Almost there - learn and try again.',
                             ));
                       }
                     : null)
@@ -822,8 +822,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                 ? VanEventType.perfectScore
                                 : VanEventType.quizCompleted,
                             message: perfect
-                                ? 'Perfect practice - wonderful work!'
-                                : 'Practice finished. Nice effort!',
+                                ?'Perfect practice - wonderful work!'
+                                :'Practice finished. Nice effort!',
                           ));
                     }
                     notifier.next();
@@ -854,22 +854,22 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               size: 150,
               showSpeechBubble: true,
               dialogueText: passed
-                  ? 'Great practice! ${(pct * 100).round()}% âœ¨'
-                  : 'Keep practising - you\'ve got this! ðŸ’ª',
+                  ?'Great practice! ${(pct * 100).round()}%'
+                  :'Keep practising - you\'ve got this!',
             ),
             const SizedBox(height: 24),
             Text('${state.score} / ${notifier.total}',
                 style: AppTextStyles.displaySmall()),
             const SizedBox(height: 8),
             Text(
-              '${(pct * 100).round()}% mastered',
+'${(pct * 100).round()}% mastered',
               style: AppTextStyles.bodyMedium(color: _subtext),
             ),
             const SizedBox(height: 28),
             PrimaryButton(
               label: isAlreadyDone
-                  ? 'Lesson completed âœ…'
-                  : 'Complete Lesson (+${widget.lesson.xpReward} XP)',
+                  ?'Lesson completed'
+                  :'Complete Lesson (+${widget.lesson.xpReward} XP)',
               icon: const Icon(Icons.check_circle_outline_rounded,
                   color: Colors.white),
               onPressed:
@@ -877,7 +877,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             ),
             const SizedBox(height: 12),
             PrimaryButton.secondary(
-              label: 'Practise Again',
+              label:'Practise Again',
               icon: const Icon(Icons.refresh_rounded, size: 20),
               onPressed: () {
                 setState(() => _masteryRecorded = false);

@@ -1,4 +1,4 @@
-/// Onboarding Page 3 — Subject Setup
+﻿/// Onboarding Page 3 — Subject Setup
 ///
 /// User selects their CBSE class (6–10).
 /// Board is fixed to CBSE in V1 (per PRD Section 8.1 Screen 4).
@@ -49,8 +49,8 @@ class ObSubjectPage extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Board: CBSE  ·  Subject: Sanskrit',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            'Board: CBSE \u00b7 Subject: Sanskrit',
+            style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
 
           const SizedBox(height: 28),
@@ -101,7 +101,7 @@ class ObSubjectPage extends ConsumerWidget {
                       Text(
                         'Curriculum-aligned lessons ready for you!',
                         style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight),
+                            color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -178,7 +178,9 @@ class _ClassChip extends StatelessWidget {
                 style: AppTextStyles.labelSmall(
                   color: isSelected
                       ? Colors.white70
-                      : AppColors.subtextLight,
+                      : (Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight),
                 ),
               ),
             ],

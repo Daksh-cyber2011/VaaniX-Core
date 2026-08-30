@@ -1,17 +1,17 @@
-﻿/// Onboarding Page 4 â€” Daily Goal
+﻿/// Onboarding Page 4 € Daily Goal
 ///
 /// User selects their daily learning goal: 5/10/15/20 minutes.
 /// Van reacts to each choice. Per PRD Section 8.1 Screen 5.
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import'package:flutter/material.dart';
+import'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/constants/app_constants.dart';
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
-import 'package:vaanix_app/shared/widgets/primary_button.dart';
-import 'package:vaanix_app/shared/widgets/van_widget.dart';
+import'package:vaanix_app/core/constants/app_constants.dart';
+import'package:vaanix_app/core/theme/app_colors.dart';
+import'package:vaanix_app/core/theme/app_text_styles.dart';
+import'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import'package:vaanix_app/shared/widgets/primary_button.dart';
+import'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class ObGoalPage extends ConsumerWidget {
   const ObGoalPage({super.key});
@@ -43,14 +43,14 @@ class ObGoalPage extends ConsumerWidget {
           const SizedBox(height: 32),
 
           Text(
-            'Set your daily goal',
+'Set your daily goal',
             style: AppTextStyles.headlineMedium(),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Even 5 minutes a day builds a habit.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+'Even 5 minutes a day builds a habit.',
+            style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
             textAlign: TextAlign.center,
           ),
 
@@ -71,7 +71,7 @@ class ObGoalPage extends ConsumerWidget {
           const Spacer(),
 
           PrimaryButton(
-            label: 'Continue',
+            label:'Continue',
             onPressed: () => notifier.confirmDailyGoal(),
           ),
           const SizedBox(height: 24),
@@ -90,13 +90,13 @@ class ObGoalPage extends ConsumerWidget {
   String _vanReaction(int minutes, String name) {
     switch (minutes) {
       case 5:
-        return "5 minutes? I'll take it! Every day counts. ðŸ¦†";
+        return "5 minutes? I'll take it! Every day counts.";
       case 10:
-        return "10 minutes! That's my favourite streak size! â­";
+        return "10 minutes! That's my favourite streak size! ";
       case 15:
-        return "15 minutes â€” you mean business! Let's go! ðŸŽ‰";
+        return "15 minutes € you mean business! Let's go! ";
       case 20:
-        return "20 MINUTES?! $name, you're a legend! ðŸ†";
+        return "20 MINUTES?! $name, you're a legend! ";
       default:
         return "How much time do you want to study each day?";
     }
@@ -114,20 +114,20 @@ class _GoalTile extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  String get _label => '$minutes min / day';
+  String get _label =>'$minutes min / day';
 
   String get _badge {
     switch (minutes) {
       case 5:
-        return 'Starter';
+        return'Starter';
       case 10:
-        return 'Recommended â­';
+        return'Recommended';
       case 15:
-        return 'Dedicated';
+        return'Dedicated';
       case 20:
-        return 'Champion ðŸ†';
+        return'Champion';
       default:
-        return '';
+        return'';
     }
   }
 
@@ -173,7 +173,7 @@ class _GoalTile extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '$minutes',
+'$minutes',
                     style: AppTextStyles.titleLarge(
                       color: isSelected ? AppColors.primary : null,
                     ),
@@ -190,7 +190,7 @@ class _GoalTile extends StatelessWidget {
                     style: AppTextStyles.labelSmall(
                       color: isSelected
                           ? AppColors.primary
-                          : AppColors.subtextLight,
+                          : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight),
                     ),
                   ),
                 ],

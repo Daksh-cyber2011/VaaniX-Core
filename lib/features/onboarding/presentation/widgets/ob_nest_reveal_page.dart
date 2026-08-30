@@ -1,6 +1,6 @@
-/// Onboarding Page 6 — The Nest Reveal
+/// Onboarding Page 6 - The Nest Reveal
 ///
-/// First view of The Nest — Van's cozy learning space.
+/// First view of The Nest - Van's cozy learning space.
 /// Per PRD Section 8.1 Screen 7.
 
 import 'package:flutter/material.dart';
@@ -98,6 +98,8 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
   @override
   Widget build(BuildContext context) {
     final companionName = ref.watch(onboardingProvider).resolvedName;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Column(
       children: [
@@ -112,7 +114,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                 const XpBadge(xpTotal: 0, compact: true),
                 const Spacer(),
                 Text(
-                  '✨ The Nest',
+                  'The Nest',
                   style: AppTextStyles.titleSmall(color: AppColors.primary),
                 ),
               ],
@@ -133,39 +135,56 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      AppColors.nestWarmLight,
+                      isDark ? AppColors.nestWarmDark : AppColors.nestWarmLight,
                       AppColors.vanYellow.withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: AppColors.borderLight),
+                  border: Border.all(
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                  ),
                 ),
                 child: Stack(
                   children: [
-                    Positioned(
+                    const Positioned(
                       top: 20,
                       left: 20,
-                      child: _NestDecor(emoji: '📚', size: 28),
+                      child: _NestDecor(
+                          icon: Icons.auto_awesome_rounded,
+                          color: AppColors.vanOrange,
+                          size: 22),
                     ),
-                    Positioned(
+                    const Positioned(
                       top: 20,
                       right: 20,
-                      child: _NestDecor(emoji: '🌱', size: 26),
+                      child: _NestDecor(
+                          icon: Icons.star_rounded,
+                          color: AppColors.vanYellow,
+                          size: 20),
                     ),
-                    Positioned(
+                    const Positioned(
                       bottom: 30,
                       left: 24,
-                      child: _NestDecor(emoji: '📝', size: 22),
+                      child: _NestDecor(
+                          icon: Icons.menu_book_rounded,
+                          color: AppColors.primary,
+                          size: 20),
                     ),
-                    Positioned(
+                    const Positioned(
                       bottom: 30,
                       right: 24,
-                      child: _NestDecor(emoji: '🗺️', size: 22),
+                      child: _NestDecor(
+                          icon: Icons.favorite_rounded,
+                          color: AppColors.vanOrange,
+                          size: 18),
                     ),
-                    Positioned(
+                    const Positioned(
                       top: 60,
                       right: 28,
-                      child: _NestDecor(emoji: '☕', size: 20),
+                      child: _NestDecor(
+                          icon: Icons.emoji_events_rounded,
+                          color: AppColors.xp,
+                          size: 17),
                     ),
 
                     Center(
@@ -178,7 +197,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                             size: 180,
                             showSpeechBubble: true,
                             dialogueText:
-                                'This is where we\'ll study together, $companionName! 🦆',
+                                'This is where we\'ll study together, $companionName!',
                             onTap: () {},
                           ),
                         ),
@@ -205,13 +224,12 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                 const SizedBox(height: 8),
                 Text(
                   'Your learning adventure begins now.',
-                  style: AppTextStyles.bodyMedium(
-                      color: AppColors.subtextLight),
+                  style: AppTextStyles.bodyMedium(color: subtext),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 PrimaryButton(
-                  label: "Let's Start! 🎉",
+                  label: "Let's Start!",
                   isLoading: _isLoading,
                   onPressed: _isLoading ? null : _onStart,
                 ),
@@ -224,10 +242,17 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
   }
 }
 
+/// A softly floating decorative icon inside a warm tinted dot. Gives the
+/// Nest a lived-in feeling without emoji or heavy illustration.
 class _NestDecor extends StatefulWidget {
-  const _NestDecor({required this.emoji, required this.size});
+  const _NestDecor({
+    required this.icon,
+    required this.color,
+    required this.size,
+  });
 
-  final String emoji;
+  final IconData icon;
+  final Color color;
   final double size;
 
   @override
@@ -262,8 +287,15 @@ class _NestDecorState extends State<_NestDecor>
       animation: _float,
       builder: (_, __) => Transform.translate(
         offset: Offset(0, _float.value),
-        child: Text(widget.emoji,
-            style: TextStyle(fontSize: widget.size.toDouble())),
+        child: Container(
+          width: widget.size * 1.8,
+          height: widget.size * 1.8,
+          decoration: BoxDecoration(
+            color: widget.color.withValues(alpha: 0.14),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(widget.icon, size: widget.size, color: widget.color),
+        ),
       ),
     );
   }

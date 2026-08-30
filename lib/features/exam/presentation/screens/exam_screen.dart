@@ -1,32 +1,32 @@
-﻿/// Exam Screen â€” Chapter + Difficulty Exam Flow
+﻿/// Exam Screen € Chapter + Difficulty Exam Flow
 ///
 /// Exam V1: the student first picks a chapter and a difficulty band, then
 /// answers a deterministic, chapter/difficulty-scoped question set. Answers
 /// give immediate feedback + explanation; finishing awards XP and records an
 /// attempt via [progressRepositoryProvider] keyed by the exam configuration.
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import'package:flutter/material.dart';
+import'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/constants/app_constants.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
-import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
-import 'package:vaanix_app/features/progress/domain/progress_models.dart';
-import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
-import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
-import 'package:vaanix_app/features/van/van.dart';
-import 'package:vaanix_app/shared/widgets/primary_button.dart';
-import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
-import 'package:vaanix_app/shared/widgets/van_widget.dart';
-import 'package:vaanix_app/shared/widgets/xp_badge.dart';
+import'package:vaanix_app/core/theme/app_colors.dart';
+import'package:vaanix_app/core/constants/app_constants.dart';
+import'package:vaanix_app/core/theme/app_text_styles.dart';
+import'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
+import'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
+import'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
+import'package:vaanix_app/features/progress/domain/progress_models.dart';
+import'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
+import'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import'package:vaanix_app/features/van/van.dart';
+import'package:vaanix_app/shared/widgets/primary_button.dart';
+import'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
+import'package:vaanix_app/shared/widgets/van_widget.dart';
+import'package:vaanix_app/shared/widgets/xp_badge.dart';
 
 String _difficultyLabel(Difficulty d) => switch (d) {
-      Difficulty.beginner => 'Beginner',
-      Difficulty.intermediate => 'Intermediate',
-      Difficulty.advanced => 'Advanced',
+      Difficulty.beginner =>'Beginner',
+      Difficulty.intermediate =>'Intermediate',
+      Difficulty.advanced =>'Advanced',
     };
 
 class ExamScreen extends ConsumerStatefulWidget {
@@ -111,21 +111,21 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
         _chapterId == null ? 0 : (counts[_chapterId]?[_difficulty] ?? 0);
 
     return VaaniXScaffold(
-      title: 'Exam',
+      title:'Exam',
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
           Text('Choose your exam', style: AppTextStyles.headlineSmall()),
           const SizedBox(height: 8),
           Text(
-            'Pick a topic and a difficulty level to build your question set.',
+'Pick a topic and a difficulty level to build your question set.',
             style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 20),
           for (final c in chapters) ...[
             _ChapterTile(
               title: c.title,
-              subtitle: c.subtitle ?? '',
+              subtitle: c.subtitle ??'',
               totalQuestions: _chapterTotal(counts, c.id),
               selected: _chapterId == c.id,
               onTap: () => setState(() => _chapterId = c.id),
@@ -134,7 +134,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           ],
           const SizedBox(height: 14),
           Text(
-            'Difficulty',
+'Difficulty',
             style: AppTextStyles.labelLarge(color: AppColors.primary),
           ),
           const SizedBox(height: 12),
@@ -156,9 +156,9 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           const SizedBox(height: 28),
           PrimaryButton(
             label: selectedCount > 0
-                ? 'Start Exam ($selectedCount '
-                    '${selectedCount == 1 ? 'question' : 'questions'})'
-                : 'Select a topic & level',
+                ?'Start Exam ($selectedCount'
+'${selectedCount == 1 ?'question':'questions'})'
+                :'Select a topic & level',
             onPressed: selectedCount > 0 ? _startExam : null,
           ),
         ],
@@ -182,49 +182,49 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     }
     final xpPer = AppConstants.xpPerCorrectAnswer;
     return VaaniXScaffold(
-      title: 'Exam',
+      title:'Exam',
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
           Text('Ready for the exam?', style: AppTextStyles.headlineSmall()),
           const SizedBox(height: 8),
           Text(
-            chapter?.title ?? 'All chapters',
+            chapter?.title ??'All chapters',
             style: AppTextStyles.titleMedium(color: AppColors.primary),
           ),
           const SizedBox(height: 4),
           Text(
-            '${_difficultyLabel(_difficulty)} \u00b7 $count '
-            '${count == 1 ? 'question' : 'questions'}',
+'${_difficultyLabel(_difficulty)} \u00b7 $count'
+'${count == 1 ?'question':'questions'}',
             style: AppTextStyles.bodyMedium(color: (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight)),
           ),
           const SizedBox(height: 24),
           _instructionTile(
             icon: Icons.feedback_outlined,
-            title: 'Instant feedback',
-            body: 'Every answer is checked right away, with an explanation '
-                'you can learn from.',
+            title:'Instant feedback',
+            body:'Every answer is checked right away, with an explanation'
+'you can learn from.',
           ),
           _instructionTile(
             icon: Icons.emoji_events_outlined,
-            title: 'XP on first completion',
-            body: 'Earn up to $count \u00d7 $xpPer XP points the first time '
-                'you finish this topic + level.',
+            title:'XP on first completion',
+            body:'Earn up to $count \u00d7 $xpPer XP points the first time'
+'you finish this topic + level.',
           ),
           _instructionTile(
             icon: Icons.refresh_rounded,
-            title: 'Retry anytime',
-            body: 'You can retake the exam or change topic whenever you like.',
+            title:'Retry anytime',
+            body:'You can retake the exam or change topic whenever you like.',
           ),
           const SizedBox(height: 28),
           PrimaryButton(
-            label: 'Begin Exam',
+            label:'Begin Exam',
             icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
             onPressed: _beginQuiz,
           ),
           const SizedBox(height: 12),
           PrimaryButton.secondary(
-            label: 'Back to setup',
+            label:'Back to setup',
             icon: const Icon(Icons.arrow_back_rounded, size: 20),
             onPressed: _backToSetup,
           ),
@@ -274,7 +274,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
 
     if (notifier.total == 0) {
       return VaaniXScaffold(
-        title: 'Exam',
+        title:'Exam',
         actions: [
           TextButton(onPressed: _backToSetup, child: const Text('Change')),
         ],
@@ -286,10 +286,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 state: VanState.thinking,
                 size: 140,
                 showSpeechBubble: true,
-                dialogueText: 'No questions for this level yet.',
+                dialogueText:'No questions for this level yet.',
               ),
               const SizedBox(height: 16),
-              PrimaryButton(label: 'Choose a topic', onPressed: _backToSetup),
+              PrimaryButton(label:'Choose a topic', onPressed: _backToSetup),
             ],
           ),
         ),
@@ -340,8 +340,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: xpEarned > 0
-                  ? Text('+$xpEarned XP earned! ðŸŽ‰')
-                  : const Text('Quiz already completed â€” no extra XP'),
+                  ? Text('+$xpEarned XP earned!')
+                  : const Text('Quiz already completed € no extra XP'),
             ),
           );
           // Exam completions must also drive the achievement checker
@@ -356,14 +356,14 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           for (final ach in newlyUnlocked) {
             ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
                   VanEventType.achievementUnlocked,
-                  message: 'I\'ll remember this: ${ach.title}!',
+                  message:'I\'ll remember this: ${ach.title}!',
                   payload: {'achievementId': ach.id},
                 ));
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Achievement Unlocked: ${ach.title}!'
-                  '${ach.xpReward > 0 ? ' (+${ach.xpReward} XP)' : ''}',
+'Achievement Unlocked: ${ach.title}!'
+'${ach.xpReward > 0 ?'(+${ach.xpReward} XP)':''}',
                 ),
                 behavior: SnackBarBehavior.floating,
                 duration: const Duration(seconds: 4),
@@ -379,7 +379,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     final progress = (state.currentIndex + 1) / notifier.total;
 
     return VaaniXScaffold(
-      title: 'Exam',
+      title:'Exam',
       actions: [
         TextButton(onPressed: _backToSetup, child: const Text('Change')),
       ],
@@ -391,7 +391,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
             child: Row(
               children: [
                 Text(
-                  'Q ${state.currentIndex + 1} / ${notifier.total}',
+'Q ${state.currentIndex + 1} / ${notifier.total}',
                   style: AppTextStyles.labelLarge(color: AppColors.primary),
                 ),
                 const SizedBox(width: 12),
@@ -534,7 +534,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     const SizedBox(height: 8),
                   ],
                   PrimaryButton(
-                    label: state.answered ? 'Next' : 'Submit',
+                    label: state.answered ?'Next':'Submit',
                     onPressed: state.selectedOption == null
                         ? null
                         : () {
@@ -550,8 +550,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                             ? VanEventType.perfectScore
                                             : VanEventType.quizCompleted,
                                         message: isPerfect
-                                            ? 'A perfect score â€” wonderful work!'
-                                            : 'You finished the quiz. Nice effort!',
+                                            ?'A perfect score € wonderful work!'
+                                            :'You finished the quiz. Nice effort!',
                                       ),
                                     );
                               }
@@ -566,8 +566,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                           ? VanEventType.quizAnswerCorrect
                                           : VanEventType.quizAnswerWrong,
                                       message: correct
-                                          ? 'Nice thinking!'
-                                          : 'Almost there. Let\'s learn from this one.',
+                                          ?'Nice thinking!'
+                                          :'Almost there. Let\'s learn from this one.',
                                     ),
                                   );
                             }
@@ -635,7 +635,7 @@ class _ChapterTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              '$totalQuestions',
+'$totalQuestions',
               style: AppTextStyles.labelLarge(color: AppColors.primary),
             ),
             const SizedBox(width: 4),
@@ -687,7 +687,7 @@ class _DifficultyChip extends StatelessWidget {
           ),
         ),
         child: Text(
-          count > 0 ? '$label ($count)' : label,
+          count > 0 ?'$label ($count)': label,
           style: AppTextStyles.labelLarge(
             color: enabled
                 ? foreground
@@ -745,7 +745,7 @@ class _ResultView extends StatelessWidget {
         : (Theme.of(context).brightness == Brightness.dark ? AppColors.subtextDark : AppColors.subtextLight);
 
     return VaaniXScaffold(
-      title: 'Exam',
+      title:'Exam',
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -757,14 +757,14 @@ class _ResultView extends StatelessWidget {
                 size: 160,
                 showSpeechBubble: true,
                 dialogueText: passed
-                    ? 'Great job! ${(pct * 100).round()}% ðŸŽ‰'
-                    : 'Keep practising, you\'ve got this! ðŸ’ª',
+                    ?'Great job! ${(pct * 100).round()}%'
+                    :'Keep practising, you\'ve got this!',
               ),
               const SizedBox(height: 32),
               Text('$score / $total', style: AppTextStyles.displaySmall()),
               const SizedBox(height: 8),
               Text(
-                '${(pct * 100).round()}% correct',
+'${(pct * 100).round()}% correct',
                 style: AppTextStyles.bodyMedium(color: subtext),
               ),
               const SizedBox(height: 16),
@@ -780,27 +780,27 @@ class _ResultView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _stat('Score', '$score/$total', subtext),
+                    _stat('Score','$score/$total', subtext),
                     _stat(
-                      'Best',
-                      bestScore > 0 ? '$bestScore/$total' : '-',
+'Best',
+                      bestScore > 0 ?'$bestScore/$total':'-',
                       subtext,
                     ),
-                    _stat('Attempts', '$attemptsCount', subtext),
+                    _stat('Attempts','$attemptsCount', subtext),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
               PrimaryButton(
                 label: saved
-                    ? 'Progress saved \u2713'
-                    : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
+                    ?'Progress saved \u2713'
+                    :'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
                 icon: const Icon(Icons.save_outlined, color: Colors.white),
                 onPressed: saved ? null : onPersist,
               ),
               const SizedBox(height: 12),
               PrimaryButton.secondary(
-                label: 'Retry',
+                label:'Retry',
                 icon: const Icon(Icons.refresh_rounded, size: 20),
                 onPressed: onRetry,
               ),

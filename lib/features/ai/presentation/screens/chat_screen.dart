@@ -1,4 +1,4 @@
-﻿/// VaaniX AI â€” Chat Screen
+﻿/// VaaniX AI € Chat Screen
 ///
 /// The conversational surface where the learner talks to Van. Shows a
 /// scrolling list of message bubbles, a typing indicator while Van is
@@ -8,19 +8,19 @@
 /// Entry points: Van Profile screen ("Chat with Van" button) and Home
 /// screen (chat icon in the top bar).
 
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import'package:flutter/material.dart';
+import'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
+import'package:vaanix_app/core/theme/app_colors.dart';
+import'package:vaanix_app/core/theme/app_text_styles.dart';
+import'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
 
-import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
-import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
-import 'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
-import 'package:vaanix_app/features/ai/presentation/widgets/message_bubble.dart';
-import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
-import 'package:vaanix_app/shared/widgets/van_widget.dart';
+import'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
+import'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
+import'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
+import'package:vaanix_app/features/ai/presentation/widgets/message_bubble.dart';
+import'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -76,7 +76,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         centerTitle: true,
         actions: [
-          // â”€â”€â”€ AI Usage Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // €€€ AI Usage Indicator €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           // Shows remaining daily requests as a small chip. Tapping
           // it shows detailed usage in a dialog.
           FutureBuilder(
@@ -106,7 +106,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         Icon(Icons.bolt_rounded, size: 14, color: color),
                         const SizedBox(width: 4),
                         Text(
-                          '$remaining',
+'$remaining',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -122,7 +122,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.add_comment_outlined),
-            tooltip: 'New chat',
+            tooltip:'New chat',
             onPressed: () {
               ref.read(chatControllerProvider.notifier).startNewConversation();
             },
@@ -131,7 +131,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
-          // â”€â”€â”€ Message List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // €€€ Message List €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           Expanded(
             child: chatState.messages.isEmpty
                 ? _emptyState(companionName)
@@ -154,7 +154,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
           ),
 
-          // â”€â”€â”€ Error Banner (if any) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // €€€ Error Banner (if any) €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           if (chatState.error != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -180,7 +180,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
 
-          // â”€â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // €€€ Input €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           ChatInput(
             onSend: (text) {
               ref.read(chatControllerProvider.notifier).sendMessage(text);
@@ -209,10 +209,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _usageRow('Requests used',
-                '${usage.requestCount} / ${TokenUsageTracker.dailyRequestLimit}'),
+'${usage.requestCount} / ${TokenUsageTracker.dailyRequestLimit}'),
             _usageRow('Tokens used',
-                '${_formatTokens(usage.totalTokens)} / ${_formatTokens(TokenUsageTracker.dailyTokenLimit)}'),
-            _usageRow('Remaining requests', '${usage.remainingRequests}'),
+'${_formatTokens(usage.totalTokens)} / ${_formatTokens(TokenUsageTracker.dailyTokenLimit)}'),
+            _usageRow('Remaining requests','${usage.remainingRequests}'),
             const SizedBox(height: 12),
             // Request usage bar
             ClipRRect(
@@ -228,8 +228,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Cached responses don\'t count against your quota. '
-              'Van remembers repeated questions to save your limits!',
+'Cached responses don\'t count against your quota.'
+'Van remembers repeated questions to save your limits!',
               style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
             ),
           ],
@@ -261,9 +261,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   String _formatTokens(int tokens) {
-    if (tokens >= 1000000) return '${(tokens / 1000000).toStringAsFixed(1)}M';
-    if (tokens >= 1000) return '${(tokens / 1000).toStringAsFixed(1)}K';
-    return '$tokens';
+    if (tokens >= 1000000) return'${(tokens / 1000000).toStringAsFixed(1)}M';
+    if (tokens >= 1000) return'${(tokens / 1000).toStringAsFixed(1)}K';
+    return'$tokens';
   }
 
   /// Empty state shown when the conversation has no messages yet.
@@ -276,16 +276,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             state: VanState.happy,
             size: 120,
             showSpeechBubble: true,
-            dialogueText: 'à¤¨à¤®à¤¸à¥à¤¤à¥‡! Ask me anything about Sanskrit! ðŸ¦†',
+            dialogueText:'Namaste! Ask me anything about Sanskrit.',
           ),
           const SizedBox(height: 16),
           Text(
-            'Chat with $companionName',
+'Chat with $companionName',
             style: AppTextStyles.headlineSmall(),
           ),
           const SizedBox(height: 8),
           Text(
-            'Type a message below to start learning!',
+'Type a message below to start learning!',
             style: AppTextStyles.bodyMedium(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? AppColors.subtextDark
