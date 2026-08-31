@@ -419,7 +419,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.text('Submit'));
       await tester.pump();
-      expect(find.text('Correct! âœ¨'), findsOneWidget);
+      expect(find.text('Correct!'), findsOneWidget);
       await tester.pump(const Duration(seconds: 2));
     });
 
@@ -452,7 +452,7 @@ void main() {
       await tester.ensureVisible(find.text('Submit'));
       await tester.tap(find.text('Submit'));
       await tester.pump();
-      expect(find.text('Correct! âœ¨'), findsOneWidget);
+      expect(find.text('Correct!'), findsOneWidget);
       expect(n.state.score, 1);
       await tester.pump(const Duration(seconds: 2));
     });

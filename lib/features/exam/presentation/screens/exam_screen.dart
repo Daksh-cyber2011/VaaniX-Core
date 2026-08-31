@@ -1,4 +1,4 @@
-/// Exam Screen € Chapter + Difficulty Exam Flow
+﻿/// Exam Screen € Chapter + Difficulty Exam Flow
 ///
 /// Exam V1: the student first picks a chapter and a difficulty band, then
 /// answers a deterministic, chapter/difficulty-scoped question set. Answers
@@ -159,7 +159,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           const SizedBox(height: 28),
           PrimaryButton(
             label: selectedCount > 0
-                ? 'Start Exam ($selectedCount'
+                ? 'Start Exam ($selectedCount '
                     '${selectedCount == 1 ? 'question' : 'questions'})'
                 : 'Select a topic & level',
             onPressed: selectedCount > 0 ? _startExam : null,
@@ -197,7 +197,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            '${_difficultyLabel(_difficulty)} \u00b7 $count'
+            '${_difficultyLabel(_difficulty)} \u00b7 $count '
             '${count == 1 ? 'question' : 'questions'}',
             style: AppTextStyles.bodyMedium(
                 color: (Theme.of(context).brightness == Brightness.dark
