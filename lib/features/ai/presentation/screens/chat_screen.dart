@@ -1,4 +1,4 @@
-/// VaaniX AI € Chat Screen
+﻿/// VaaniX AI € Chat Screen
 ///
 /// The conversational surface where the learner talks to Van. Shows a
 /// scrolling list of message bubbles, a typing indicator while Van is
@@ -21,6 +21,7 @@ import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.da
 import 'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
 import 'package:vaanix_app/features/ai/presentation/widgets/message_bubble.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/shared/widgets/offline_banner.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -133,6 +134,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: Column(
         children: [
           // €€€ Message List €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // Honest connectivity awareness: lessons keep working offline;
+          // only Van's AI chat needs a connection.
+          const OfflineBanner(margin: EdgeInsets.fromLTRB(16, 8, 16, 0)),
           Expanded(
             child: chatState.messages.isEmpty
                 ? _emptyState(companionName)
