@@ -4,6 +4,7 @@
 /// state. These tests pin the full decision table: fresh start, mid-journey,
 /// weak-topic practice, chapter-exam readiness, exam failure/retake, and the
 /// complete syllabus state.
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 

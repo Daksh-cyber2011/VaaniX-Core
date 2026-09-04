@@ -3,6 +3,7 @@
 /// Reset must clear XP, completed lessons/quizzes, mastery AND attempt
 /// history under ANY quiz id (prefix purge), including orphaned history
 /// that is not referenced by completedQuizIds.
+library;
 
 import 'dart:convert';
 
@@ -54,7 +55,7 @@ void main() {
     await storage.setQuizAttempts(
       'quiz_legacy_v0',
       jsonEncode([
-        QuizResult(
+        const QuizResult(
           quizId: 'quiz_legacy_v0',
           score: 1,
           total: 5,

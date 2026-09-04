@@ -13,6 +13,7 @@
 ///   - Translate provider errors via [ExceptionMapper].
 ///   - Map provider-specific auth/keys from environment, never from request
 ///     config (configs must stay secret-free).
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';

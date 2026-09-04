@@ -16,6 +16,7 @@
 /// - Audit log of blocked attempts
 /// - Configurable strictness levels
 /// - Integration with Gemini's built-in safety settings
+library;
 
 /// Abstract contract so the pipeline can swap implementations.
 abstract class SafetyFilter {

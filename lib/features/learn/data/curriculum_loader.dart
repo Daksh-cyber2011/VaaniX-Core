@@ -11,6 +11,7 @@
 ///
 /// The loader is exposed as an AsyncNotifierProvider so the Learn screen
 /// can show loading/error states while the curriculum is being parsed.
+library;
 
 import 'dart:convert';
 

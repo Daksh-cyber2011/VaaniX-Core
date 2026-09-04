@@ -3,6 +3,7 @@
 /// Global navigator keys are declared here as a standalone file so that
 /// both [app_router.dart] and [navigation_service.dart] can import them
 /// without creating a circular dependency.
+library;
 
 import 'package:flutter/material.dart';
 

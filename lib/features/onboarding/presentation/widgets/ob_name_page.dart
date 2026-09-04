@@ -2,6 +2,7 @@
 ///
 /// Van walks in with a dialogue bubble. User can type a name
 /// or accept the default "Van". Per PRD Section 8.1 Screen 2.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,7 +78,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
             position: _vanSlide,
             child: FadeTransition(
               opacity: _vanFade,
-              child: VanWidget(
+              child: const VanWidget(
                 state: VanState.happy,
                 size: 160,
                 showSpeechBubble: true,

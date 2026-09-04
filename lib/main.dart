@@ -9,6 +9,7 @@
 ///   - Execute the startup sequence via [bootstrap].
 ///   - Launch [VaaniXApp] wrapped in a Riverpod [ProviderScope], injecting
 ///     the async [SharedPreferences] dependency.
+library;
 
 import 'dart:async';
 

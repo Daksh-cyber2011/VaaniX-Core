@@ -3,6 +3,7 @@
 /// Central location for all app-wide string constants, route names,
 /// asset paths, and configuration keys.
 /// Do NOT put secrets here — use the .env file.
+library;
 
 abstract final class AppConstants {
   // ============================================================

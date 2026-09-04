@@ -5,7 +5,6 @@
 /// instead of ad-hoc BoxShadow values.
 library;
 
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -91,5 +90,5 @@ abstract final class AppShadows {
   static Color overlayScrim(Brightness brightness) =>
       brightness == Brightness.dark
           ? AppColors.overlay
-          : AppColors.onBackgroundLight.withValues(alpha: 0.45);
+          : AppColors.onBackgroundLight.withOpacity(0.45);
 }

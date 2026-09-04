@@ -5,6 +5,7 @@
 /// Save, verifies XP-once semantics at the UI level (button disables, repeat
 /// completion snackbar, XP total unchanged), and verifies the achievement
 /// path (snackbars) plus the persisted-unlock race guard.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,21 +26,21 @@ void main() {
   const chapterId = 'ch_alphabet';
 
   final questions = [
-    QuizQuestion(
+    const QuizQuestion(
       id: 'qa_widget_01',
       chapterId: chapterId,
       difficulty: Difficulty.beginner,
       prompt: 'Q1: which is the correct word?',
-      options: const ['not this', 'correct one', 'nor this', 'nor that'],
+      options: ['not this', 'correct one', 'nor this', 'nor that'],
       correctIndex: 1,
       explanation: 'Q1 explained.',
     ),
-    QuizQuestion(
+    const QuizQuestion(
       id: 'qa_widget_02',
       chapterId: chapterId,
       difficulty: Difficulty.beginner,
       prompt: 'Q2: which is the correct word?',
-      options: const ['wrong a', 'wrong b', 'correct two', 'wrong c'],
+      options: ['wrong a', 'wrong b', 'correct two', 'wrong c'],
       correctIndex: 2,
       explanation: 'Q2 explained.',
     ),

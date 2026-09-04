@@ -24,6 +24,7 @@
 /// - Context length  [AiContextLengthFailure]
 /// - Timeout  [TimeoutFailure]
 /// - Other  [AiServiceFailure]
+library;
 
 import 'dart:async';
 
@@ -60,6 +61,7 @@ class GeminiModelAdapter implements ModelAdapter {
   final TokenUsageTracker? _usageTracker;
 
   GenerativeModel? _model;
+  String? _modelSystemInstruction;
   int _counter = 0;
 
   @override
@@ -75,9 +77,27 @@ class GeminiModelAdapter implements ModelAdapter {
   String _modelName(AiConfig config) =>
       config.model.isEmpty ? AppEnvironment.geminiModel : config.model;
 
+  /// The full system instruction for a request: the defensive safety
+  /// prompt PLUS the persona prompt built by the [PromptPipeline] (which
+  /// embeds the bounded learning-context fragment). This is how Van's
+  /// persona and the learner's real progress actually reach Gemini —
+  /// without it the pipeline output would silently never be sent.
+  String _systemInstructionFor(ConversationContext context) {
+    final defensive = _safetyFilter.defensiveSystemPrompt();
+    final persona = context.personaPrompt.trim();
+    if (persona.isEmpty) return defensive;
+    return '$defensive\n\n$persona';
+  }
+
   /// Lazily initialize the Gemini model with the API key + system instruction.
-  GenerativeModel _getModel(AiConfig config) {
-    if (_model != null) return _model!;
+  /// The model object is rebuilt when the system instruction changes (the
+  /// persona embeds per-turn learner context); identical instructions reuse
+  /// the cached instance.
+  GenerativeModel _getModel(AiConfig config, ConversationContext context) {
+    final systemInstruction = _systemInstructionFor(context);
+    if (_model != null && _modelSystemInstruction == systemInstruction) {
+      return _model!;
+    }
 
     final apiKey = AppEnvironment.geminiApiKey;
     if (apiKey.isEmpty) {
@@ -87,13 +107,14 @@ class GeminiModelAdapter implements ModelAdapter {
     _model = GenerativeModel(
       model: _modelName(config),
       apiKey: apiKey,
-      systemInstruction: Content.system(_safetyFilter.defensiveSystemPrompt()),
+      systemInstruction: Content.system(systemInstruction),
       generationConfig: GenerationConfig(
         temperature: config.temperature,
         maxOutputTokens: config.maxTokens,
         topP: config.topP,
       ),
     );
+    _modelSystemInstruction = systemInstruction;
     return _model!;
   }
 
@@ -146,7 +167,7 @@ class GeminiModelAdapter implements ModelAdapter {
       // Wait for an available slot before sending (stays under 15 RPM).
       await _rateLimiter.awaitSlot();
 
-      final model = _getModel(config);
+      final model = _getModel(config, context);
 
       // Build the conversation history for Gemini.
       final history = <Content>[];
@@ -229,7 +250,7 @@ class GeminiModelAdapter implements ModelAdapter {
       // Rate limiting before streaming.
       await _rateLimiter.awaitSlot();
 
-      final model = _getModel(config);
+      final model = _getModel(config, context);
 
       // Build history.
       final history = <Content>[];

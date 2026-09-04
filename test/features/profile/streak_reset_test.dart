@@ -3,6 +3,7 @@
 /// The day streak + last-active marker measure learning behavior, so the
 /// Settings reset flow clears them via [UserProfileRepository.resetLearningStreak].
 /// Identity fields (companion name, class, goal) are untouched.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

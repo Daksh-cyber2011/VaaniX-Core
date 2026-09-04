@@ -8,6 +8,7 @@
 /// chapter/difficulty, and [examQuizProvider] exposes a fresh [QuizNotifier]
 /// per [ExamConfig] (chapter + difficulty) so attempt state resets cleanly
 /// when the user picks a different exam set.
+library;
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

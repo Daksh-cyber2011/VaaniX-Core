@@ -4,6 +4,7 @@
 /// Achievements are milestones that unlock when the learner reaches a
 /// threshold (lessons completed, quizzes passed, streak maintained, XP
 /// earned, or special actions like chatting with Van).
+library;
 
 import 'package:equatable/equatable.dart';
 

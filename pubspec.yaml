@@ -29,9 +29,6 @@ dependencies:
   # Network connectivity awareness (offline detection)
   connectivity_plus: ^6.0.3
 
-  # Google Fonts
-  google_fonts: ^6.2.1
-
   # Animation (Lottie files for Van animations)
   lottie: ^3.1.0
 
@@ -67,6 +64,23 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Fonts — Poppins bundled for offline-first typography.
+  # OFL license: assets/fonts/OFL.txt. Weights map to the scales used by
+  # AppTextStyles (w400 body → w800 display).
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800
 
   # Assets — Van assets, icons, images, environment
   #

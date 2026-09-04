@@ -8,6 +8,7 @@
 /// Tapping a lesson navigates to [LessonContentScreen] where the user reads
 /// the full lesson content and marks it complete. Completed lessons show a
 /// check icon and can be re-read anytime.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,11 +70,11 @@ class LearnScreen extends ConsumerWidget {
   }
 
   Widget _loading(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const VanWidget(
+          VanWidget(
             state: VanState.thinking,
             size: 140,
             showSpeechBubble: true,
@@ -216,7 +217,7 @@ class _ChapterCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 6,
-                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
                 color: AppColors.primary,
               ),
             ),
@@ -230,7 +231,7 @@ class _ChapterCard extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: (isDone ? AppColors.success : AppColors.primary)
-                      .withValues(alpha: 0.12),
+                      .withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

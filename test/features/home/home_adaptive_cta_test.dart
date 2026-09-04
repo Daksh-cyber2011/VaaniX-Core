@@ -5,6 +5,7 @@
 /// button label and VAN's dialogue. The provider is overridden here with
 /// the engine's exact outputs so the widget assertions are deterministic
 /// (the real asset pipeline does not settle reliably in fake-async).
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

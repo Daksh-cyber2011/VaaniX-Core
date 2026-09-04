@@ -222,7 +222,7 @@ void main() {
       final controller = VanController();
       addTearDown(controller.dispose);
 
-      controller.dispatch(VanEvent(
+      controller.dispatch(const VanEvent(
         VanEventType.lessonCompleted,
         message: 'Nice work - you completed the lesson!',
       ));
@@ -295,6 +295,66 @@ void main() {
       expect(controller.settle(), isTrue);
       expect(controller.state.current, VanState.idle);
       expect(controller.state.isLoading, isFalse);
+    });
+
+    test('back-to-back userMessageReceived + aiThinking never flickers '
+        'through an intermediate state', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      // The chat controller dispatches these two synchronously; Van must
+      // land on thinking with the loading flag set, never flash the
+      // userMessageReceived reaction first.
+      controller.dispatch(const VanEvent(VanEventType.userMessageReceived));
+      controller.dispatch(const VanEvent(VanEventType.aiThinking));
+
+      expect(controller.state.current, VanState.thinking);
+      expect(controller.state.isLoading, isTrue);
+      expect(controller.state.reaction?.state, VanState.thinking);
+    });
+
+    test('aiThinking is deferred while a protected celebration is visible '
+        '(no thinking flash over an achievement)', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.lessonCompleted));
+      expect(controller.state.current, VanState.achievement);
+
+      // Thinking is task priority: it must NOT replace the celebration.
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.aiThinking)),
+        isFalse,
+      );
+      expect(controller.state.current, VanState.achievement);
+      expect(controller.state.isLoading, isFalse);
+    });
+
+    test('repeated aiThinking is idempotent (no reset, no flicker)', () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.aiThinking));
+      final first = controller.state;
+      controller.dispatch(const VanEvent(VanEventType.aiThinking));
+      expect(controller.state.current, VanState.thinking);
+      expect(controller.state.isLoading, isTrue);
+      expect(identical(first, controller.state), isFalse,
+          reason: 'state object may be replaced but the presentation state '
+              'must stay thinking/loading');
+    });
+
+    test('a failed AI turn still resolves to error then idle deterministically',
+        () {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.aiThinking));
+      controller.dispatch(const VanEvent(VanEventType.errorOccurred,
+          message: 'I could not connect.'));
+      expect(controller.state.current, VanState.error);
+      expect(controller.state.isLoading, isFalse);
+      expect(controller.state.message, 'I could not connect.');
     });
 
     test('dispatch after dispose is safe and returns false', () {

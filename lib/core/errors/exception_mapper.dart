@@ -2,6 +2,7 @@
 ///
 /// Single bridge between infrastructure-layer exceptions and domain-layer
 /// [Failure] types.
+library;
 
 import 'package:dio/dio.dart';
 import 'dart:async' as async;

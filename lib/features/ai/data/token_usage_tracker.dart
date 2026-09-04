@@ -14,6 +14,7 @@
 ///
 /// The tracker automatically rolls over at midnight — yesterday's usage
 /// is preserved for history but today starts fresh.
+library;
 
 import 'dart:convert';
 

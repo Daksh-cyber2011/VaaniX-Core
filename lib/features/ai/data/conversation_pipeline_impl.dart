@@ -11,6 +11,7 @@
 ///
 /// On failure (generation error OR output moderation failure), memory is
 /// left untouched — the user message is not persisted if Van can't reply.
+library;
 
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/utils/result.dart';
@@ -56,12 +57,14 @@ class ConversationPipelineImpl implements ConversationPipeline {
     );
 
     // 3. Build the full context: prior messages + new user message,
-    //    with persona prompt attached.
+    //    with persona prompt attached. The learning context rides along so
+    //    adapters that re-derive prompts from the context keep seeing it.
     var fullContext = ConversationContext(
       conversationId: context.conversationId,
       learner: context.learner,
       messages: [...priorMessages, userMessage],
       personaPrompt: personaPrompt,
+      learningContext: context.learningContext,
     );
 
     // 4. Truncate to context window (keep last 20 messages).
@@ -127,6 +130,7 @@ class ConversationPipelineImpl implements ConversationPipeline {
       learner: context.learner,
       messages: [...priorMessages, userMessage],
       personaPrompt: personaPrompt,
+      learningContext: context.learningContext,
     );
     fullContext = fullContext.truncated(keep: 20);
 

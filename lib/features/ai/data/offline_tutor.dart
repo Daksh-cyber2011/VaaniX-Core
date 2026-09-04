@@ -13,6 +13,7 @@
 /// When a request falls outside the grounded knowledge the tutor says so
 /// honestly and points the learner at the right lesson - it never pretends
 /// to know something it does not.
+library;
 
 /// The intent categories the offline tutor can safely serve.
 enum OfflineIntent {
@@ -445,7 +446,7 @@ class OfflineTutor {
 
     // -- Answer an outstanding practice question first -------------------
     if (pendingQuestion != null) {
-      final questions = practiceQuestions;
+      const questions = practiceQuestions;
       if (_containsAny(text, ['skip', 'next ', 'agla'])) {
         final next = questions[(practiceIndex + 1) % questions.length];
         return OfflineTutorReply(
@@ -531,7 +532,7 @@ class OfflineTutor {
         );
       case OfflineIntent.orientation:
         if (_containsAny(text, ['help', 'what can you', 'ka kar'])) {
-          return OfflineTutorReply(
+          return const OfflineTutorReply(
             text: 'I can help you with:\n'
                 '• "how do you say X in sanskrit" - word lookups\n'
                 '• "numbers", "greetings", "family" - mini lessons\n'

@@ -2,6 +2,7 @@
 ///
 /// Logs all HTTP requests and responses in debug mode.
 /// Disabled in production to avoid sensitive data in logs.
+library;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

@@ -18,6 +18,7 @@
 /// This widget intentionally returns a plain column of blocks: the owning
 /// screen provides the scroll view. Content text is selectable so learners
 /// can copy Sanskrit words for lookup.
+library;
 
 import 'package:flutter/material.dart';
 
@@ -165,7 +166,7 @@ class LessonContentView extends StatelessWidget {
   }
 }
 
-// ��� Block widgets �����������������������������������������������������������
+// ────────────────────────────────── Block widgets ──────────────────────────────────
 
 class _Heading extends StatelessWidget {
   const _Heading({required this.text, required this.level});
@@ -262,7 +263,7 @@ class _Blockquote extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide(
-            color: AppColors.primary.withValues(alpha: 0.6),
+            color: AppColors.primary.withOpacity(0.6),
             width: 3,
           ),
         ),
@@ -315,11 +316,11 @@ class _ContentTable extends StatelessWidget {
         },
         border: TableBorder(
           horizontalInside: BorderSide(
-            color: borderColor.withValues(alpha: 0.5),
+            color: borderColor.withOpacity(0.5),
             width: 1,
           ),
           verticalInside: BorderSide(
-            color: borderColor.withValues(alpha: 0.3),
+            color: borderColor.withOpacity(0.3),
             width: 1,
           ),
         ),
@@ -327,7 +328,7 @@ class _ContentTable extends StatelessWidget {
           // Header row
           TableRow(
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.08),
+              color: AppColors.primary.withOpacity(0.08),
             ),
             children: [
               for (final cell in headerRow)
@@ -372,7 +373,7 @@ class _TableCell extends StatelessWidget {
   }
 }
 
-// ��� Helpers �����������������������������������������������������������������
+// ────────────────────────────────── Helpers ──────────────────────────────────
 
 /// Returns true if the string contains any Devanagari character
 /// (Unicode range U+0900-U+097F).

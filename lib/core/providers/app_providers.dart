@@ -4,6 +4,7 @@
 /// No feature code should be defined here — only infrastructure.
 ///
 /// Dependency rule: features depend on core; core never imports features.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

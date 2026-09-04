@@ -3,6 +3,7 @@
 /// Lightweight domain types for structured learning content and the learner's
 /// progress through it. These power the Learn tree, Exam quizzes, and the
 /// Progress dashboard.
+library;
 
 import 'package:equatable/equatable.dart';
 

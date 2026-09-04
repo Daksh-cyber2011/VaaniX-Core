@@ -12,6 +12,7 @@
 /// The [navigationServiceProvider] is defined in `app/router/app_router.dart`
 /// (the only place that imports both this service and the GoRouter instance)
 /// to avoid a `core ↔ app` circular dependency.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

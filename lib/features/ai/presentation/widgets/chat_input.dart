@@ -3,6 +3,7 @@
 /// A rounded text field with a send button. Grows up to 4 lines before
 /// scrolling. The send button is disabled when the text is empty or when
 /// [isSending] is true. Enter key sends; shift+enter inserts a newline.
+library;
 
 import 'package:flutter/material.dart';
 
@@ -109,7 +110,7 @@ class _ChatInputState extends State<ChatInput> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide(
-                        color: AppColors.primary.withValues(alpha: 0.4),
+                        color: AppColors.primary.withOpacity(0.4),
                         width: 1.5),
                   ),
                 ),
@@ -120,7 +121,7 @@ class _ChatInputState extends State<ChatInput> {
               decoration: BoxDecoration(
                 color: (_hasText && !widget.isSending)
                     ? AppColors.primary
-                    : AppColors.primary.withValues(alpha: 0.3),
+                    : AppColors.primary.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(

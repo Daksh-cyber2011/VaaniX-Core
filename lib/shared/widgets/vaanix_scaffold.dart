@@ -2,6 +2,7 @@
 ///
 /// A standardized screen wrapper that applies consistent padding,
 /// background color, and optional AppBar styling across all screens.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';

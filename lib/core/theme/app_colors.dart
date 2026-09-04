@@ -5,26 +5,27 @@
 ///
 /// DO NOT change Van's signature colors without founder approval.
 /// They are constitutional to the brand identity.
+library;
 
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   // ============================================================
-  // VAN SIGNATURE COLORS (Constitutional â€” never change)
+  // VAN SIGNATURE COLORS (Constitutional — never change)
   // Source: PRD Section 6.2 & VAN Design Bible Chapter 2
   // ============================================================
 
-  /// Van's body color â€” warm yellow
+  /// Van's body color — warm yellow
   static const Color vanYellow = Color(0xFFF4C74A);
 
-  /// Van's beak and feet â€” warm orange
+  /// Van's beak and feet — warm orange
   static const Color vanOrange = Color(0xFFF07A33);
 
   // ============================================================
   // PRIMARY BRAND PALETTE
   // ============================================================
 
-  /// Primary â€” deep indigo-blue (trustworthy, calm, scholarly)
+  /// Primary — deep indigo-blue (trustworthy, calm, scholarly)
   static const Color primary = Color(0xFF3B4CCA);
 
   /// Primary light variant
@@ -33,10 +34,10 @@ abstract final class AppColors {
   /// Primary dark variant
   static const Color primaryDark = Color(0xFF2A369E);
 
-  /// Accent â€” Van Yellow (used for highlights, streaks, CTAs)
+  /// Accent — Van Yellow (used for highlights, streaks, CTAs)
   static const Color accent = vanYellow;
 
-  /// Secondary accent â€” Van Orange (used for badges, warm moments)
+  /// Secondary accent — Van Orange (used for badges, warm moments)
   static const Color accentOrange = vanOrange;
 
   // ============================================================
@@ -74,7 +75,7 @@ abstract final class AppColors {
   // DARK THEME SURFACES
   // ============================================================
 
-  /// Warm dark â€” NOT pure black; warm tinted to match Van's world
+  /// Warm dark — NOT pure black; warm tinted to match Van's world
   static const Color backgroundDark = Color(0xFF121218);
   static const Color surfaceDark = Color(0xFF1E1E28);
   static const Color surfaceVariantDark = Color(0xFF2A2A36);
@@ -85,7 +86,7 @@ abstract final class AppColors {
 
   // ============================================================
   // NEST BACKGROUND COLORS
-  // The Nest is Van's cozy learning space â€” warm and inviting
+  // The Nest is Van's cozy learning space — warm and inviting
   // ============================================================
 
   static const Color nestWarmLight = Color(0xFFFFF8E7);

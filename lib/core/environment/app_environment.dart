@@ -1,6 +1,7 @@
 /// VaaniX Environment Configuration
 ///
 /// Single source of truth for all environment-derived runtime configuration.
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

@@ -7,6 +7,7 @@
 ///
 /// Content note: this is a starter practice set (3-4 exercises per
 /// lesson). The same structure supports arbitrary scaling.
+library;
 
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 

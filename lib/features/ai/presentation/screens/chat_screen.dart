@@ -7,6 +7,7 @@
 ///
 /// Entry points: Van Profile screen ("Chat with Van" button) and Home
 /// screen (chat icon in the top bar).
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,7 +98,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
+                      color: color.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -158,7 +159,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           if (chatState.error != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: AppColors.error.withValues(alpha: 0.08),
+              color: AppColors.error.withOpacity(0.08),
               child: Row(
                 children: [
                   const Icon(Icons.error_outline_rounded,
@@ -220,7 +221,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: LinearProgressIndicator(
                 value: usage.requestUsageFraction.clamp(0.0, 1.0),
                 minHeight: 8,
-                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
                 color: usage.requestUsageFraction < 0.7
                     ? AppColors.success
                     : AppColors.error,
@@ -326,7 +327,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 2),
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.subtextLight,
                     shape: BoxShape.circle,
                   ),

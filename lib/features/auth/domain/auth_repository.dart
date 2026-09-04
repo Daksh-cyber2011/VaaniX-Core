@@ -1,6 +1,7 @@
 /// VaaniX Auth Repository Contract
 ///
 /// Extends [CoreAuthRepository] for the Auth feature.
+library;
 
 import 'package:vaanix_app/core/auth/core_auth_repository.dart';
 

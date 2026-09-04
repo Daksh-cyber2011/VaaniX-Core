@@ -3,6 +3,7 @@
 /// A lesson with no authored exercises must render the polished empty
 /// state (VAN guidance + back action) instead of crashing on an empty
 /// exercise list.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,8 +46,8 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(
-      ProviderScope(
-        parent: container,
+      UncontrolledProviderScope(
+        container: container,
         child: const MaterialApp(
           home: Scaffold(body: ExerciseScreen(lesson: kEmptyLesson)),
         ),

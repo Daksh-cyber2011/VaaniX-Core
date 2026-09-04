@@ -12,6 +12,7 @@
 /// Future prompt-engineering concerns (RAG context injection, few-shot
 /// examples, localization) chain in by composing this implementation
 /// or replacing it via DI — the [PromptPipeline] contract stays unchanged.
+library;
 
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/domain/prompt_pipeline.dart';
@@ -60,6 +61,18 @@ class DefaultPromptPipeline implements PromptPipeline {
         case PersonalityMode.fun:
           base.writeln('Tone: playful, light duck puns, casual.');
       }
+    }
+
+    // Learning-context injection (V1 §4): the bounded, real progress
+    // snapshot assembled by learningContextProvider travels on the
+    // ConversationContext and is appended here — the single prompt
+    // wording site — so BOTH the Gemini and offline adapters see it via
+    // the persona/system instruction. Empty context injects nothing.
+    final learningFragment = context.learningContextFragment;
+    if (learningFragment.isNotEmpty) {
+      base
+        ..writeln()
+        ..writeln(learningFragment);
     }
 
     return base.toString().trim();

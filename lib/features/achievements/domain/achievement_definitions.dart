@@ -3,6 +3,7 @@
 /// Static list of all 10 V1 achievements. Adding a new achievement is as
 /// simple as appending to this list — the provider, checker, and UI all
 /// react automatically.
+library;
 
 import 'package:vaanix_app/features/achievements/domain/achievement.dart';
 

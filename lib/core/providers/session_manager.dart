@@ -5,6 +5,7 @@
 ///   - Clears local state on sign-out.
 ///   - Exposes a reactive [sessionManagerProvider] that unifies the
 ///     auth session stream.
+library;
 
 import 'dart:async';
 

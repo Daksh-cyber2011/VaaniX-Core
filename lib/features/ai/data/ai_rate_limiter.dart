@@ -12,6 +12,7 @@
 /// The limiter is intentionally simple — it tracks request timestamps in
 /// memory (no persistence needed for per-minute tracking). Daily limits
 /// are tracked by [TokenUsageTracker] which persists to SharedPreferences.
+library;
 
 class AiRateLimiter {
   AiRateLimiter({

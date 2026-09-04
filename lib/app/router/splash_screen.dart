@@ -8,6 +8,7 @@
 /// The router's redirect guard (see app_router.dart) remains the
 /// authoritative gate; this just avoids lingering on the splash while the
 /// guard would otherwise bounce the user.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

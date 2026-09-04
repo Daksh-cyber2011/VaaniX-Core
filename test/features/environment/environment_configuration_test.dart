@@ -4,6 +4,7 @@
 /// missing or placeholder Supabase credentials never enable the cloud path
 /// (offline mode stays authoritative), flavors default safely, and the API
 /// base falls back to a local value. No secrets are required or invented.
+library;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';

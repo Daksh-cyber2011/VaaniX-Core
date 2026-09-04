@@ -2,6 +2,7 @@
 ///
 /// User selects their CBSE class (6–10).
 /// Board is fixed to CBSE in V1 (per PRD Section 8.1 Screen 4).
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,10 +79,10 @@ class ObSubjectPage extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: AppColors.primary.withOpacity(0.06),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.15)),
+                    color: AppColors.primary.withOpacity(0.15)),
               ),
               child: Row(
                 children: [
@@ -150,7 +151,7 @@ class _ClassChip extends StatelessWidget {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.25),
+                  color: AppColors.primary.withOpacity(0.25),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 )

@@ -7,6 +7,7 @@
 /// Memory is keyed by conversation id. A single learner typically has one
 /// active conversation per learning session; long-term recall (summaries,
 /// vector embeddings) is a future concern layered on top of this interface.
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';

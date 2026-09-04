@@ -7,6 +7,7 @@
 /// inside the onboarding flow.
 ///
 /// PRD Section 8.1 Screen 6 / Auth Layer.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -150,7 +151,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 size: 120,
                 showSpeechBubble: true,
                 dialogueText:
-                    _isBusy ? "Hang on... 🦆" : "Let's get you started! 🦆",
+                    _isBusy ? 'Hang on... 🦆' : "Let's get you started! 🦆",
               ),
               const SizedBox(height: 24),
               Text(
@@ -171,10 +172,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.08),
+                    color: AppColors.error.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: AppColors.error.withValues(alpha: 0.3)),
+                        color: AppColors.error.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [

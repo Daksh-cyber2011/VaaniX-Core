@@ -3,9 +3,13 @@
 /// Controls app themes (Light/Dark/System), companion info, learning goals,
 /// and account preferences. All preference cards are editable inline via
 /// dialogs backed by [userProfileProvider].
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/app_constants.dart';
@@ -388,6 +392,7 @@ class SettingsScreen extends ConsumerWidget {
     controller.dispose();
     if (result != null && result.isNotEmpty) {
       await ref.read(userProfileProvider.notifier).updateCompanionName(result);
+      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'companionName'}));
     }
   }
 
@@ -430,6 +435,8 @@ class SettingsScreen extends ConsumerWidget {
       await ref
           .read(userProfileProvider.notifier)
           .updatePersonalityMode(result);
+      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged,
+          {'field': 'personality'}));
     }
   }
 
@@ -462,6 +469,7 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (result != null) {
       await ref.read(userProfileProvider.notifier).updateDailyGoal(result);
+      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'dailyGoal'}));
     }
   }
 
@@ -492,6 +500,7 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (result != null) {
       await ref.read(userProfileProvider.notifier).updateCbseClass(result);
+      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'cbseClass'}));
     }
   }
 
@@ -531,7 +540,7 @@ class SettingsScreen extends ConsumerWidget {
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
       // leaving completedLessonIdsProvider and completedQuizIdsProvider
-      // stale â€” the Learn and Progress screens kept showing completed
+      // stale — the Learn and Progress screens kept showing completed
       // lessons until the providers were re-created (hot restart).
       ref.invalidate(xpTotalProvider);
       ref.invalidate(completedLessonIdsProvider);

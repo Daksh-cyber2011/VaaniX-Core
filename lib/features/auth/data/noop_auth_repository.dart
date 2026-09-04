@@ -8,6 +8,7 @@
 ///
 /// See [auth_providers.dart] for the wiring that selects this implementation
 /// when [AppEnvironment.isSupabaseConfigured] is false.
+library;
 
 import 'dart:async';
 

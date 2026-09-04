@@ -6,6 +6,7 @@
 /// This is the single source of truth consumed by Home, Settings, Progress,
 /// and Learn features. It is persisted locally (offline-first) and synced to
 /// Supabase when a session is available.
+library;
 
 import 'package:equatable/equatable.dart';
 

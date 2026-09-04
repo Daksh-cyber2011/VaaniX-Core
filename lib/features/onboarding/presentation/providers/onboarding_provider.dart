@@ -2,8 +2,13 @@
 ///
 /// [onboardingRepositoryProvider]: provides OnboardingRepository.
 /// [onboardingProvider]: the main StateNotifier for onboarding flow.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_client.dart';
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/onboarding/data/onboarding_repository.dart';
@@ -21,9 +26,11 @@ final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
 
 /// Manages the full onboarding flow state.
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
-  OnboardingNotifier(this._repo) : super(_hydrate(_repo));
+  OnboardingNotifier(this._repo, this._analytics)
+      : super(_hydrate(_repo));
 
   final OnboardingRepository _repo;
+  final AnalyticsClient _analytics;
 
   static OnboardingState _hydrate(OnboardingRepository repo) {
     return OnboardingState(
@@ -98,6 +105,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   Future<void> completeOnboarding() async {
     await _repo.markOnboardingComplete();
+    _analytics.log(const AnalyticsEvent(AnalyticsEventName.onboardingCompleted));
     state = state.copyWith(isComplete: true);
   }
 }
@@ -106,5 +114,5 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 final onboardingProvider =
     StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
   final repo = ref.watch(onboardingRepositoryProvider);
-  return OnboardingNotifier(repo);
+  return OnboardingNotifier(repo, ref.watch(analyticsClientProvider));
 });

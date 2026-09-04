@@ -16,6 +16,7 @@
 /// AppLogger.warn('Retrying after timeout', tag: 'DioClient');
 /// AppLogger.error('Unexpected failure', error: e, stackTrace: st);
 /// ```
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -73,7 +74,7 @@ abstract final class AppLogger {
         withScope: (scope) {
           scope.setTag('log_tag', tag ?? 'unknown');
           scope.level = SentryLevel.error;
-          scope.setExtra('message', message);
+          scope.setTag('log_message', message);
         },
       );
     } else {

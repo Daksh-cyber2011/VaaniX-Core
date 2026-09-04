@@ -1,4 +1,5 @@
 /// VaaniX Shared Widgets Barrel Export
+library;
 
 export 'empty_state_widget.dart';
 export 'error_state_widget.dart';

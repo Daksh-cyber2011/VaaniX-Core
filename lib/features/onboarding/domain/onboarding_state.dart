@@ -7,6 +7,7 @@
 /// (`features/profile/domain/user_profile.dart`) so onboarding, settings,
 /// and Van profile share a single source of truth. They are re-exported here
 /// so existing onboarding imports keep resolving.
+library;
 
 import 'package:vaanix_app/features/profile/domain/user_profile.dart'
     show PersonalityMode, CbseClass;

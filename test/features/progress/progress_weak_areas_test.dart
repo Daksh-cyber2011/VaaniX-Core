@@ -6,6 +6,7 @@
 /// and the fresh-learner empty state. Uses a tall viewport because the
 /// screen's ListView builds lazily - content below the fold is not built
 /// in the default 600px test viewport.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,8 +63,8 @@ void main() {
   }
 
   Widget wrap(ProviderContainer container) {
-    return ProviderScope(
-      parent: container,
+    return UncontrolledProviderScope(
+      container: container,
       child: const MaterialApp(
         home: Scaffold(body: ProgressScreen()),
       ),

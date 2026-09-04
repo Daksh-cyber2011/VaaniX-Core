@@ -15,6 +15,7 @@
 /// client will be wired into an API service layer when the backend is ready.
 /// See lib/core/network/interceptors/refresh_token_interceptor.dart for the
 /// 401-refresh logic that was previously a false docstring claim (Segment 5).
+library;
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

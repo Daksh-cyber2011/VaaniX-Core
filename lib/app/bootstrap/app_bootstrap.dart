@@ -5,6 +5,7 @@
 ///   2. Initialize Sentry (crash reporting) if a DSN is configured.
 ///   3. Initialize Supabase (skipped safely if not configured).
 ///   4. Acquire the [SharedPreferences] singleton (injected into Riverpod).
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -61,7 +62,8 @@ void _configureSentryScope() {
   Sentry.configureScope((scope) {
     scope.setTag('flavor', AppEnvironment.flavor.name);
     scope.setTag('release', AppConstants.appVersion);
-    scope.setExtra(
+    // Structured context (tag) instead of the deprecated setExtra API.
+    scope.setTag(
         'supabase_configured', AppEnvironment.isSupabaseConfigured.toString());
   });
 }
@@ -75,7 +77,7 @@ Future<void> _initializeSupabase() async {
   try {
     await Supabase.initialize(
       url: AppEnvironment.supabaseUrl,
-      anonKey: AppEnvironment.supabaseAnonKey,
+      publishableKey: AppEnvironment.supabaseAnonKey,
     );
   } catch (e, st) {
     reportError(e, st, context: 'Supabase.initialize');

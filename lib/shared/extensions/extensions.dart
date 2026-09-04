@@ -1,6 +1,7 @@
 /// VaaniX Extension Methods
 ///
 /// Utility extensions on built-in types used throughout the app.
+library;
 
 import 'package:flutter/material.dart';
 

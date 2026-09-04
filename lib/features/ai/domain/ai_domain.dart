@@ -6,6 +6,7 @@
 /// ```dart
 /// import 'package:vaanix_app/features/ai/domain/ai_domain.dart';
 /// ```
+library;
 
 export 'ai_config.dart';
 export 'ai_message.dart';

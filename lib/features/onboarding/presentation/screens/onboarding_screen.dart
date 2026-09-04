@@ -15,6 +15,7 @@
 /// PRD Section 8.1 Screen 1. This screen handles Screens 2–7.
 ///
 /// PRD Section 8.1
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -161,7 +162,7 @@ class _PageDot extends StatelessWidget {
         color: isActive
             ? AppColors.primary
             : isPassed
-                ? AppColors.primary.withValues(alpha: 0.35)
+                ? AppColors.primary.withOpacity(0.35)
                 : AppColors.borderLight,
         borderRadius: BorderRadius.circular(4),
       ),

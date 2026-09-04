@@ -3,6 +3,7 @@
 /// Clean, branded alert and confirmation dialogs matching design guidelines.
 /// The confirm action adapts to dark mode and uses the semantic danger color
 /// for destructive confirmations.
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -55,7 +56,7 @@ class VaaniXDialog extends StatelessWidget {
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color:
-                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72),
+                    theme.textTheme.bodyMedium?.color?.withOpacity(0.72),
               ),
               textAlign: TextAlign.center,
             ),

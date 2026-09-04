@@ -2,6 +2,7 @@
 ///
 /// Wires the [AuthRepository] to the Supabase implementation and exposes
 /// reactive accessors consumed by the router and UI.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

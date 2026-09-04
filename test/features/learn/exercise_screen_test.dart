@@ -4,6 +4,7 @@
 /// empty state for lessons without exercises, and the full
 /// answer -> feedback -> finish -> result -> mastery-persisted flow on a
 /// curriculum lesson with real grounded exercises.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

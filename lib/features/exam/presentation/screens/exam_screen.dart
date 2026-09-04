@@ -1,12 +1,16 @@
-﻿/// Exam Screen € Chapter + Difficulty Exam Flow
+/// Exam Screen € Chapter + Difficulty Exam Flow
 ///
 /// Exam V1: the student first picks a chapter and a difficulty band, then
 /// answers a deterministic, chapter/difficulty-scoped question set. Answers
 /// give immediate feedback + explanation; finishing awards XP and records an
 /// attempt via [progressRepositoryProvider] keyed by the exam configuration.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
@@ -51,6 +55,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   }
 
   void _beginQuiz() {
+    ref.log(AnalyticsEvent(AnalyticsEventName.examStarted,
+        {'quizId': _config.quizId}));
     ref
         .read(vanControllerProvider.notifier)
         .dispatch(const VanEvent(VanEventType.quizStarted));
@@ -183,7 +189,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     for (final c in sanskritCurriculum) {
       if (c.id == _chapterId) chapter = c;
     }
-    final xpPer = AppConstants.xpPerCorrectAnswer;
+    const xpPer = AppConstants.xpPerCorrectAnswer;
     return VaaniXScaffold(
       title: 'Exam',
       body: ListView(
@@ -340,6 +346,15 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           ref.invalidate(completedQuizIdsProvider);
           ref.invalidate(quizAttemptsIndexProvider);
           ref.invalidate(adaptiveNextActionProvider);
+          // Analytics: exam outcome with real score.
+          ref.log(AnalyticsEvent(
+            AnalyticsEventName.examCompleted,
+            {
+              'quizId': config.quizId,
+              'score': state.score,
+              'total': notifier.total,
+            },
+          ));
           // Surface the actual XP earned (0 on repeat completions due to
           // the idempotency guard added in Segment 1).
           final xpEarned = result.fold(
@@ -410,7 +425,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                      backgroundColor: AppColors.primary.withOpacity(0.1),
                       color: AppColors.primary,
                     ),
                   ),
@@ -432,10 +447,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.06),
+                      color: AppColors.primary.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.15)),
+                          color: AppColors.primary.withOpacity(0.15)),
                     ),
                     child: Text(
                       question.prompt,
@@ -460,13 +475,13 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                 : AppColors.surfaceLight);
                         Color borderColor = AppColors.borderLight;
                         if (showCorrect) {
-                          tileColor = AppColors.success.withValues(alpha: 0.1);
+                          tileColor = AppColors.success.withOpacity(0.1);
                           borderColor = AppColors.success;
                         } else if (showWrong) {
-                          tileColor = AppColors.error.withValues(alpha: 0.1);
+                          tileColor = AppColors.error.withOpacity(0.1);
                           borderColor = AppColors.error;
                         } else if (isSelected) {
-                          tileColor = AppColors.primary.withValues(alpha: 0.08);
+                          tileColor = AppColors.primary.withOpacity(0.08);
                           borderColor = AppColors.primary;
                         }
 
@@ -534,7 +549,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.vanYellow.withValues(alpha: 0.1),
+                        color: AppColors.vanYellow.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -620,7 +635,7 @@ class _ChapterTile extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withValues(alpha: 0.08)
+              ? AppColors.primary.withOpacity(0.08)
               : (Theme.of(context).brightness == Brightness.dark
                   ? AppColors.surfaceDark
                   : AppColors.surfaceLight),
@@ -699,7 +714,7 @@ class _DifficultyChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withValues(alpha: 0.08)
+              ? AppColors.primary.withOpacity(0.08)
               : (enabled
                   ? ((Theme.of(context).brightness == Brightness.dark
                       ? AppColors.surfaceDark
@@ -707,7 +722,7 @@ class _DifficultyChip extends StatelessWidget {
                   : Theme.of(context)
                       .colorScheme
                       .onSurface
-                      .withValues(alpha: 0.06)),
+                      .withOpacity(0.06)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: enabled
@@ -723,7 +738,7 @@ class _DifficultyChip extends StatelessWidget {
                 : (Theme.of(context).brightness == Brightness.dark
                         ? AppColors.subtextDark
                         : AppColors.subtextLight)
-                    .withValues(alpha: 0.5),
+                    .withOpacity(0.5),
           ),
         ),
       ),
@@ -806,10 +821,10 @@ class _ResultView extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.06),
+                  color: AppColors.primary.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.15)),
+                      color: AppColors.primary.withOpacity(0.15)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

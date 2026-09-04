@@ -3,6 +3,7 @@
 /// The branded linear progress bar: rounded track, soft tinted background,
 /// animated fill. Use for lesson progress, exam progress and mastery rows.
 /// Never pair it with an unnamed percentage - always give [semanticLabel].
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';
 
@@ -32,7 +33,7 @@ class ProgressMeter extends StatelessWidget {
     final theme = Theme.of(context);
     final clamped = value.clamp(0.0, 1.0);
     final trackColor =
-        backgroundColor ?? theme.colorScheme.primary.withValues(alpha: 0.12);
+        backgroundColor ?? theme.colorScheme.primary.withOpacity(0.12);
 
     final bar = Container(
       height: height,

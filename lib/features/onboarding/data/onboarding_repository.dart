@@ -1,6 +1,7 @@
 /// Onboarding Repository — Data Layer
 ///
 /// Persists user onboarding choices via [ILocalStorageService].
+library;
 
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/features/onboarding/domain/onboarding_state.dart';

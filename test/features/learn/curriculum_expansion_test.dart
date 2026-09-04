@@ -5,6 +5,7 @@
 ///  - JSON <-> Dart fallback parity for chapters AND lessons
 ///  - every lesson has grounded exercises
 ///  - every chapter is assessable in the exam bank
+library;
 
 import 'dart:convert';
 import 'dart:io';

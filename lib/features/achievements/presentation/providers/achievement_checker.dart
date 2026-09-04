@@ -12,8 +12,12 @@
 /// The checker is called after every lesson completion, quiz completion,
 /// and streak update. It's also called when the user chats with Van for
 /// the first time (for the 'van_friend' achievement).
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/features/achievements/data/achievement_repository.dart';
 import 'package:vaanix_app/features/achievements/domain/achievement.dart';
@@ -81,6 +85,10 @@ class AchievementChecker {
           (_) {}, // ignore errors
           (_) {
             newlyUnlocked.add(ach);
+            _ref.log(AnalyticsEvent(
+              AnalyticsEventName.achievementUnlocked,
+              {'achievementId': ach.id},
+            ));
 
             // Award bonus XP if the achievement has a reward.
             if (ach.xpReward > 0) {

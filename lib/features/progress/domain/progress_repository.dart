@@ -2,6 +2,7 @@
 ///
 /// Tracks which lessons/quizzes the learner has completed and how much XP
 /// they have earned. Local-first; synced to Supabase when configured.
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';

@@ -4,6 +4,7 @@
 /// Each failure type maps to a specific category of problem.
 ///
 /// Usage: return Left(NetworkFailure('No internet connection'));
+library;
 
 import 'package:equatable/equatable.dart';
 
@@ -34,10 +35,10 @@ class NetworkFailure extends Failure {
 /// Server returned a non-2xx response
 class ServerFailure extends Failure {
   const ServerFailure({
-    String message = 'Server error occurred',
-    String? code,
+    super.message = 'Server error occurred',
+    super.code,
     this.statusCode,
-  }) : super(message: message, code: code);
+  });
 
   final int? statusCode;
 
@@ -106,8 +107,8 @@ class CacheFailure extends Failure {
 /// [field] optionally identifies the offending input field so the UI can
 /// surface inline errors next to the relevant control.
 class ValidationFailure extends Failure {
-  const ValidationFailure({required String message, this.field})
-      : super(message: message, code: 'VALIDATION_ERROR');
+  const ValidationFailure({required super.message, this.field})
+      : super(code: 'VALIDATION_ERROR');
 
   final String? field;
 
@@ -135,9 +136,9 @@ class ConflictFailure extends Failure {
 /// Rate limit exceeded (HTTP 429)
 class RateLimitFailure extends Failure {
   const RateLimitFailure({
-    String message = 'Too many requests. Please try again later.',
+    super.message = 'Too many requests. Please try again later.',
     this.retryAfter,
-  }) : super(message: message, code: 'RATE_LIMIT');
+  }) : super(code: 'RATE_LIMIT');
 
   /// Hint from the server about how long to wait before retrying.
   final Duration? retryAfter;

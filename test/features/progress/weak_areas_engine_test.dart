@@ -4,6 +4,7 @@
 /// bestExamFractionForChapter) plus the provider-level wiring
 /// (weakLessonsProvider, chapterBestFractionProvider) against seeded
 /// persisted state - all real repository data, no fixtures in production.
+library;
 
 import 'dart:convert';
 

@@ -7,6 +7,7 @@
 /// Uses the OS-level connectivity stream from the `connectivity_plus` package
 /// — declared in pubspec so it is a hard dependency. If at any point the
 /// dependency is removed, this service is the only place to change.
+library;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

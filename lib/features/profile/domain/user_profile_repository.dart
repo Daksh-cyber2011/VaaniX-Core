@@ -10,6 +10,7 @@
 /// cloud sync was delegated to it. A real `SupabaseUserProfileRepository`
 /// with sync will be added in a Production milestone when the backend is
 /// ready. Until then, the profile is local-only (offline-first).
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';

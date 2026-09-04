@@ -2,6 +2,7 @@
 ///
 /// Contract defining all local storage capabilities.
 /// Enables mockability for unit testing and decoupling from SharedPreferences.
+library;
 
 abstract class ILocalStorageService {
   // Onboarding

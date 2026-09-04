@@ -15,9 +15,13 @@
 /// // Change it (e.g., from Settings):
 /// ref.read(themeNotifierProvider.notifier).setThemeMode(ThemeMode.dark);
 /// ```
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/logging/logger.dart';
@@ -34,6 +38,8 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   /// Persist and apply a new [ThemeMode].
   Future<void> setThemeMode(ThemeMode mode) async {
+    ref.log(AnalyticsEvent(AnalyticsEventName.themeChanged,
+        {'mode': _toString(mode)}));
     state = mode;
     final storage = ref.read(localStorageServiceProvider);
     await storage.setThemeMode(_toString(mode));

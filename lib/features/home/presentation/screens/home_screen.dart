@@ -7,9 +7,13 @@
 ///
 /// All values come from live providers (profile, XP, completed lessons,
 /// curriculum) - nothing here is static.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/route_names.dart';
@@ -60,6 +64,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _openAction(NextAction action) {
+    ref.log(AnalyticsEvent(
+      AnalyticsEventName.nextActionSelected,
+      {'action': action.action.name},
+    ));
     final route = _actionRoute(action);
     if (route != null) context.go(route);
   }
@@ -177,7 +185,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.10),
+                      color: colorScheme.primary.withOpacity(0.10),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -325,7 +333,7 @@ class _SecondaryCta extends StatelessWidget {
     return Material(
       color: isDark
           ? AppColors.surfaceDark
-          : colorScheme.primary.withValues(alpha: 0.06),
+          : colorScheme.primary.withOpacity(0.06),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -395,7 +403,7 @@ class _ContinueCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final subtext = colorScheme.onSurface.withValues(alpha: 0.62);
+    final subtext = colorScheme.onSurface.withOpacity(0.62);
     final showProgress = action.action == AdaptiveAction.continueLesson ||
         action.action == AdaptiveAction.startJourney;
 
@@ -423,7 +431,7 @@ class _ContinueCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    color: colorScheme.primary.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(_icon, color: colorScheme.primary, size: 24),

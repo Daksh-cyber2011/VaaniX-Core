@@ -13,6 +13,7 @@
 /// When a real adapter (Gemini/GLM/...) is registered AND available, the
 /// [AIService] prefers it; this adapter only serves direct calls or the
 /// offline fallback path.
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/data/offline_tutor.dart';

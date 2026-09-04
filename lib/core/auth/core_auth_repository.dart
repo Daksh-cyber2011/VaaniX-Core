@@ -2,6 +2,7 @@
 ///
 /// Abstract interface for authentication operations.
 /// Feature-specific auth repositories implement this interface.
+library;
 
 import 'package:vaanix_app/core/auth/core_auth_session.dart';
 import 'package:vaanix_app/core/utils/result.dart';

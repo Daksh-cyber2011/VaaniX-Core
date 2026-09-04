@@ -3,6 +3,7 @@
 /// Automatically retries failed requests due to transient network failures
 /// (timeouts, socket exceptions, 503 service unavailable).
 /// Uses exponential backoff with jitter to prevent server thundering herds.
+library;
 
 import 'dart:io';
 import 'dart:math';

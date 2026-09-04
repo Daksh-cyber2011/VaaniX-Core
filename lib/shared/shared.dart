@@ -6,6 +6,7 @@
 /// ```dart
 /// import 'package:vaanix_app/shared/shared.dart';
 /// ```
+library;
 
 export 'extensions/extensions.dart';
 export 'widgets/widgets.dart';

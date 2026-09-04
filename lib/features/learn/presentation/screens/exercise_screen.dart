@@ -9,6 +9,7 @@
 /// All five engine types render here: mcq / fillBlank (option tiles),
 /// ordering (tap-in-sequence), translation (free text) and matching
 /// (two-column pairing).
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -253,7 +254,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   child: LinearProgressIndicator(
                     value: (state.currentIndex + 1) / notifier.total,
                     minHeight: 6,
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                    backgroundColor: AppColors.primary.withOpacity(0.1),
                     color: AppColors.primary,
                   ),
                 ),
@@ -274,7 +275,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     typeLabel,
                     style: AppTextStyles.labelSmall(color: AppColors.primary),
                   ),
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.08),
+                  backgroundColor: AppColors.primary.withOpacity(0.08),
                   side: BorderSide.none,
                   visualDensity: VisualDensity.compact,
                 ),
@@ -284,10 +285,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.06),
+                  color: AppColors.primary.withOpacity(0.06),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.15)),
+                      color: AppColors.primary.withOpacity(0.15)),
                 ),
                 child: Text(
                   exercise.prompt,
@@ -348,10 +349,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.08),
+              color: AppColors.accent.withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
               border:
-                  Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+                  Border.all(color: AppColors.accent.withOpacity(0.3)),
             ),
             child: Text(
               exercise.hint!,
@@ -398,13 +399,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     Color tileColor = _surface;
     Color borderColor = _borderColor;
     if (isCorrect) {
-      tileColor = AppColors.success.withValues(alpha: 0.1);
+      tileColor = AppColors.success.withOpacity(0.1);
       borderColor = AppColors.success;
     } else if (isWrong) {
-      tileColor = AppColors.error.withValues(alpha: 0.1);
+      tileColor = AppColors.error.withOpacity(0.1);
       borderColor = AppColors.error;
     } else if (isSelected) {
-      tileColor = AppColors.primary.withValues(alpha: 0.08);
+      tileColor = AppColors.primary.withOpacity(0.08);
       borderColor = AppColors.primary;
     }
 
@@ -475,7 +476,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           constraints: const BoxConstraints(minHeight: 56),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.04),
+            color: AppColors.primary.withOpacity(0.04),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: _borderColor),
           ),
@@ -595,7 +596,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.04),
+              color: AppColors.primary.withOpacity(0.04),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: _borderColor),
             ),
@@ -710,9 +711,9 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.primary.withValues(alpha: 0.12)
+                ? AppColors.primary.withOpacity(0.12)
                 : (done
-                    ? _subtext.withValues(alpha: 0.08)
+                    ? _subtext.withOpacity(0.08)
                     : (Theme.of(context).cardTheme.color ?? Colors.white)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -739,7 +740,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: (isCorrect ? AppColors.success : AppColors.error)
-            .withValues(alpha: 0.1),
+            .withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCorrect ? AppColors.success : AppColors.error,

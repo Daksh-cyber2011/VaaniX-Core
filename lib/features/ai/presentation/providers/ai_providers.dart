@@ -13,6 +13,7 @@
 /// - [aiServiceProvider] — AIServiceImpl (registers Gemini if configured)
 /// - [conversationPipelineProvider] — ConversationPipelineImpl
 /// - [defaultAiConfigProvider] — picks Gemini when configured, else offline
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

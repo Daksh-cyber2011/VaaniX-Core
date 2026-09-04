@@ -2,6 +2,7 @@
 ///
 /// Rounded top sheet container with pull drag handle. Wraps content in
 /// SafeArea so actions stay reachable above the system gesture bar.
+library;
 import 'package:flutter/material.dart';
 
 class VaaniXBottomSheet extends StatelessWidget {
@@ -39,7 +40,7 @@ class VaaniXBottomSheet extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.24),
+                  color: theme.colorScheme.onSurface.withOpacity(0.24),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

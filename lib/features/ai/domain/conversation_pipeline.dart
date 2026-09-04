@@ -9,6 +9,7 @@
 ///
 /// This is the seam the UI calls. It hides the adapter/pipeline/memory wiring
 /// behind one high-level, failure-first API so screens stay thin.
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';

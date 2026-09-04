@@ -1,6 +1,11 @@
 /// Progress Providers — Riverpod wiring
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_client.dart';
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/progress/data/local_progress_repository.dart';
@@ -14,7 +19,10 @@ final progressRepositoryProvider = Provider<ProgressRepository>((ref) {
 /// Reactive list of completed lesson IDs.
 final completedLessonIdsProvider =
     StateNotifierProvider<_CompletedLessonsNotifier, List<String>>((ref) {
-  return _CompletedLessonsNotifier(ref.watch(progressRepositoryProvider));
+  return _CompletedLessonsNotifier(
+    ref.watch(progressRepositoryProvider),
+    ref.watch(analyticsClientProvider),
+  );
 });
 
 /// Reactive list of completed quiz IDs (at least once each).
@@ -30,16 +38,20 @@ final xpTotalProvider = StateNotifierProvider<_XpNotifier, int>((ref) {
 });
 
 class _CompletedLessonsNotifier extends StateNotifier<List<String>> {
-  _CompletedLessonsNotifier(this._repo) : super(const []) {
+  _CompletedLessonsNotifier(this._repo, this._analytics)
+      : super(const []) {
     final result = _repo.getCompletedLessonIds();
     result.fold((_) => null, (ids) => state = ids);
   }
 
   final ProgressRepository _repo;
+  final AnalyticsClient _analytics;
 
   Future<void> markComplete(Lesson lesson) async {
     if (state.contains(lesson.id)) return;
     state = [...state, lesson.id];
+    _analytics.log(AnalyticsEvent(AnalyticsEventName.lessonCompleted,
+        {'lessonId': lesson.id, 'xp': lesson.xpReward}));
     await _repo.completeLesson(lesson);
   }
 }

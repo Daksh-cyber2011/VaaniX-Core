@@ -7,10 +7,10 @@
 ///
 /// The avatar is rendered through [VanWidget] at strip size so the visual
 /// stays replaceable when final VAN artwork lands.
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
-import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class VanSpeechStrip extends StatelessWidget {

@@ -7,6 +7,7 @@
 /// Quiz attempt history is persisted as JSON strings under per-quizId keys
 /// (`quiz_attempts_<quizId>`), enabling best-score tracking and per-quiz
 /// analytics without requiring a database.
+library;
 
 import 'dart:convert';
 

@@ -3,6 +3,7 @@
 /// Proves the FULL production chain outside the widget tree: persisted
 /// SharedPreferences seed -> progress providers -> adaptive engine output.
 /// Plain (real-async) tests so the curriculum asset load settles for real.
+library;
 
 import 'dart:convert';
 

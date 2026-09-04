@@ -2,6 +2,7 @@
 ///
 /// Uses the brand XP-gold accent with a Material glyph (never emoji) so it
 /// renders identically on every device and in both themes.
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -31,9 +32,9 @@ class XpBadge extends StatelessWidget {
           vertical: compact ? 4 : 6,
         ),
         decoration: BoxDecoration(
-          color: accent.withValues(alpha: 0.12),
+          color: accent.withOpacity(0.12),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: accent.withValues(alpha: 0.35)),
+          border: Border.all(color: accent.withOpacity(0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

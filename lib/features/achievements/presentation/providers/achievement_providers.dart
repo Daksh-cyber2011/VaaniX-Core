@@ -9,6 +9,7 @@
 ///   current values computed from live progress data + isUnlocked from the repo
 /// - [achievementCheckerProvider] — [AchievementChecker] that watches progress
 ///   data and auto-unlocks achievements when thresholds are met
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

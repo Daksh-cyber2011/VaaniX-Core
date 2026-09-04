@@ -8,6 +8,7 @@
 /// Segment 7.5: The GeminiModelAdapter is now constructed with an
 /// [AiRateLimiter], [ResponseCache], and [TokenUsageTracker] for quota
 /// optimization. These are injected from the Riverpod providers.
+library;
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/utils/result.dart';

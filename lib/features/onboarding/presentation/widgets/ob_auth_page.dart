@@ -6,6 +6,7 @@
 /// the user forward automatically. When Supabase is not configured, the
 /// buttons skip (offline-first).
 /// Per PRD Section 8.1 Screen 6.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,10 +102,10 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha: 0.08),
+                color: AppColors.error.withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
                 border:
-                    Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                    Border.all(color: AppColors.error.withOpacity(0.3)),
               ),
               child: Row(
                 children: [
@@ -124,7 +125,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
           const SizedBox(height: 36),
           if (_canAuth) ...[
             _SocialButton(
-              icon: _GoogleIcon(),
+              icon: const _GoogleIcon(),
               label: 'Continue with Google',
               onPressed: _isBusy ? null : _signInWithGoogle,
             ),

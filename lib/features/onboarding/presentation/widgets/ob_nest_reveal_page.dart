@@ -2,6 +2,7 @@
 ///
 /// First view of The Nest - Van's cozy learning space.
 /// Per PRD Section 8.1 Screen 7.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -134,7 +135,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                     end: Alignment.bottomRight,
                     colors: [
                       isDark ? AppColors.nestWarmDark : AppColors.nestWarmLight,
-                      AppColors.vanYellow.withValues(alpha: 0.08),
+                      AppColors.vanYellow.withOpacity(0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(28),
@@ -214,7 +215,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
             child: Column(
               children: [
                 Text(
-                  "Welcome home, $companionName!",
+                  'Welcome home, $companionName!',
                   style: AppTextStyles.headlineSmall(),
                   textAlign: TextAlign.center,
                 ),
@@ -288,7 +289,7 @@ class _NestDecorState extends State<_NestDecor>
           width: widget.size * 1.8,
           height: widget.size * 1.8,
           decoration: BoxDecoration(
-            color: widget.color.withValues(alpha: 0.14),
+            color: widget.color.withOpacity(0.14),
             shape: BoxShape.circle,
           ),
           child: Icon(widget.icon, size: widget.size, color: widget.color),

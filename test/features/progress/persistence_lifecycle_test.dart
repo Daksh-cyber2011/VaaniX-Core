@@ -5,6 +5,7 @@
 /// practice mastery -> lesson completion -> exam attempt -> achievements,
 /// then restart verification, duplicate-completion XP idempotency, and a
 /// full reset that must clear progress, mastery, history AND achievements.
+library;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

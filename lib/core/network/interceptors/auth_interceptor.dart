@@ -8,6 +8,7 @@
 ///
 /// Token refresh / 401 retry logic lives in [RefreshTokenInterceptor], not
 /// here. This interceptor only attaches the token; it does not catch errors.
+library;
 
 import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

@@ -8,6 +8,7 @@
 /// A default implementation ([DefaultPromptPipeline]) assembles the persona
 /// prompt from the learner's personality mode + learner context. Future steps
 /// (retrieval, safety filters, translation) chain in here.
+library;
 
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 

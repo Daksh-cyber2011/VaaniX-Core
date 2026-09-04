@@ -2,6 +2,7 @@
 ///
 /// All route paths and names are centralized here.
 /// Use [name] constants for programmatic navigation to avoid typos.
+library;
 
 abstract final class RouteNames {
   // Paths

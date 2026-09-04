@@ -10,9 +10,13 @@
 ///
 /// If the lesson is already completed, the button reads "Completed" and is
 /// disabled - the user can still re-read the content.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
@@ -45,6 +49,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      ref.log(const AnalyticsEvent(AnalyticsEventName.lessonStarted));
       ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
             VanEventType.lessonStarted,
             message: 'Let\'s explore ${widget.lesson.title}.',
@@ -193,7 +198,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                 '+${widget.lesson.xpReward} XP',
                 style: AppTextStyles.labelSmall(color: AppColors.primary),
               ),
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundColor: AppColors.primary.withOpacity(0.1),
               side: BorderSide.none,
               padding: EdgeInsets.zero,
               visualDensity: VisualDensity.compact,
@@ -344,7 +349,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: _hasScrolledToBottom
                     ? AppColors.primary
-                    : AppColors.primary.withValues(alpha: 0.12),
+                    : AppColors.primary.withOpacity(0.12),
                 minimumSize: const Size(140, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

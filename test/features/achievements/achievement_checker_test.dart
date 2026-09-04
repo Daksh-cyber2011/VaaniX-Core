@@ -4,6 +4,7 @@
 /// persisted progress, bonus XP is awarded exactly once, special
 /// achievements (perfect quiz, Van friend) require their explicit triggers,
 /// and an empty account never crashes or unlocks anything.
+library;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

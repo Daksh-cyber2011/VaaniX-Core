@@ -5,6 +5,7 @@
 ///
 /// Supports loading state, disabled state, and secondary/text variants.
 /// The loading spinner color adapts to the variant so it is always visible.
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 

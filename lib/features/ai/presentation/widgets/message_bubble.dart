@@ -6,6 +6,7 @@
 ///
 /// Devanagari text (U+0900–U+097F) is rendered with [AppTextStyles.sanskritBody]
 /// for proper font support. Long-press copies the message to clipboard.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,7 +110,7 @@ class MessageBubble extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           color: _isUser
-                              ? Colors.white.withValues(alpha: 0.6)
+                              ? Colors.white.withOpacity(0.6)
                               : AppColors.subtextLight,
                         ),
                       ),

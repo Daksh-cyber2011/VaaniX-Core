@@ -16,6 +16,7 @@
 ///
 /// This interceptor does NOT refresh on 403 (Forbidden) — 403 means
 /// authenticated-but-not-permitted, which token refresh cannot fix.
+library;
 
 import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

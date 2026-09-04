@@ -11,6 +11,7 @@
 ///   4. The provider owns its lifecycle and disposes the subscription.
 ///
 /// This keeps a single source of truth (the auth stream) driving navigation.
+library;
 
 import 'dart:async';
 

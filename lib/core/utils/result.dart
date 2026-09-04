@@ -2,6 +2,7 @@
 ///
 /// Re-exports dartz Either for use as a Result type throughout the domain layer.
 /// Also provides helper extensions for cleaner usage.
+library;
 
 export 'package:dartz/dartz.dart' show Either, Left, Right, left, right;
 

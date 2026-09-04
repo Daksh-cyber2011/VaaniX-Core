@@ -15,6 +15,7 @@
 ///
 /// The cache is stored as a JSON string under SharedPreferences key
 /// `ai_response_cache`.
+library;
 
 import 'dart:convert';
 

@@ -5,6 +5,7 @@
 /// learning keeps working; only the AI conversation needs a connection.
 ///
 /// Mount it once under the top of any screen body (or inside an app shell).
+library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/network/connectivity_service.dart';

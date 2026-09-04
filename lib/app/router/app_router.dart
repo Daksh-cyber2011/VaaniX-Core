@@ -1,7 +1,8 @@
-﻿/// VaaniX Router Configuration
+/// VaaniX Router Configuration
 ///
 /// Declarative navigation with go_router. Route paths and names live in
-/// [RouteNames]; the structure mirrors the app architecture (PRD Â§7).
+/// [RouteNames]; the structure mirrors the app architecture (PRD §7).
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ const _publicRoutes = <String>{
 };
 
 /// Routes that additionally require authentication (only enforced when
-/// Supabase is configured â€” see [AppEnvironment.isSupabaseConfigured]).
+/// Supabase is configured — see [AppEnvironment.isSupabaseConfigured]).
 const _protectedRoutes = <String>{
   RouteNames.home,
   RouteNames.learn,
@@ -96,7 +97,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ----------------------------------------------------------
-      // ONBOARDING (7 screens â€” PRD Â§8.1)
+      // ONBOARDING (7 screens — PRD §8.1)
       // ----------------------------------------------------------
       GoRoute(
         path: RouteNames.onboarding,
@@ -114,7 +115,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ----------------------------------------------------------
-      // MAIN APP SHELL â€” StatefulShellRoute with bottom navigation.
+      // MAIN APP SHELL — StatefulShellRoute with bottom navigation.
       // ----------------------------------------------------------
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -136,7 +137,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: RouteNames.learnName,
                 builder: (context, state) => const LearnScreen(),
                 routes: [
-                  // Lesson content â€” nested under /learn so back-nav
+                  // Lesson content — nested under /learn so back-nav
                   // returns to the lesson tree.
                   GoRoute(
                     path: 'lesson/:lessonId',

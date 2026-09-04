@@ -12,6 +12,7 @@
 ///
 /// Domain layer only: this file defines the contract. The implementation
 /// lives in `features/ai/data/`.
+library;
 
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/domain/ai_config.dart';

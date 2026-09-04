@@ -7,6 +7,7 @@
 /// and matching (pair items from two columns). Additional types can be
 /// added by extending [ExerciseType] and the notifier without changing
 /// the rest of the app.
+library;
 
 /// A left/right item pair for a `matching` exercise. Correct pairing is by
 /// INDEX: `pairs[i].left` matches `pairs[i].right`.

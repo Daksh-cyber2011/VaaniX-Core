@@ -3,6 +3,7 @@
 /// Verifies that every settings-editable profile field survives an app
 /// restart, that streaks persist, and that signing out does NOT wipe local
 /// progress (documented product behavior).
+library;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

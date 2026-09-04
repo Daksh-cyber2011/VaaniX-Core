@@ -2,6 +2,7 @@
 ///
 /// Devanagari is authored as `\uXXXX` escapes so the source file stays
 /// encoding-safe. Merged into the curriculum by [CurriculumLoader].
+library;
 
 const String kConjunctsContent =
     '''# \u0938\u0902\u092F\u0941\u0915\u094D\u0924\u093E\u0915\u094D\u0937\u0930 – Conjunct Consonants

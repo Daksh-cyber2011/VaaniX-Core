@@ -6,9 +6,13 @@
 /// Segment 5: [UserProfileNotifier] now reads the auth session to populate
 /// [UserProfile.id] and [UserProfile.isAnonymous]. When the session changes
 /// (sign-in / sign-out), the profile is re-loaded with the updated identity.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/analytics/analytics_client.dart';
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:vaanix_app/core/auth/core_auth_session.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
@@ -28,12 +32,14 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
 /// automatically update [UserProfile.id] and [UserProfile.isAnonymous]
 /// without requiring a manual refresh.
 class UserProfileNotifier extends StateNotifier<UserProfile> {
-  UserProfileNotifier(this._repo, this._session) : super(UserProfile.empty) {
+  UserProfileNotifier(this._repo, this._session, this._analytics)
+      : super(UserProfile.empty) {
     _load();
   }
 
   final UserProfileRepository _repo;
   final AuthSession _session;
+  final AnalyticsClient _analytics;
 
   Future<void> _load() async {
     final result = await _repo.getProfile();
@@ -78,10 +84,14 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
   Future<int> recordDailyActivity() async {
     final result = await _repo.recordDailyActivity();
     final next = result.fold((_) => state.currentStreak, (v) => v);
+    final extended = next > state.currentStreak;
     state = state.copyWith(
       currentStreak: next,
       lastActiveDate: _todayIso(),
     );
+    if (extended) {
+      _analytics.log(const AnalyticsEvent(AnalyticsEventName.streakExtended));
+    }
     return next;
   }
 
@@ -101,5 +111,6 @@ final userProfileProvider =
   return UserProfileNotifier(
     ref.watch(userProfileRepositoryProvider),
     session,
+    ref.watch(analyticsClientProvider),
   );
 });

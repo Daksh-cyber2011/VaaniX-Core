@@ -9,6 +9,7 @@
 /// This file is imported by [sanskrit_curriculum.dart] to attach content
 /// to each Lesson. In Segment 8 this will be replaced by a JSON-driven
 /// curriculum loader, but the content strings will be reused.
+library;
 
 /// Lesson 1: Vowels (स्वराः)
 const String kVowelsContent = '''# स्वराः · Vowels

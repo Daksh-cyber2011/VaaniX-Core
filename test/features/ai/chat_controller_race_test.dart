@@ -3,6 +3,7 @@
 /// Verifies the controller survives disposal while a send is in flight
 /// (no provider mutation after dispose), surfaces failures without
 /// leaving isSending stuck, and blocks conversation resets during sends.
+library;
 
 import 'dart:async';
 

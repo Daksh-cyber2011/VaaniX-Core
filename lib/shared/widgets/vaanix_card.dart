@@ -2,6 +2,7 @@
 ///
 /// Standardized card component with custom surface colors, rounded borders,
 /// optional glassmorphism/gradient highlights, padding, and tap callbacks.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
@@ -47,7 +48,7 @@ class VaaniXCard extends StatelessWidget {
         boxShadow: elevation > 0
             ? [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
                   blurRadius: elevation * 4,
                   offset: Offset(0, elevation * 2),
                 ),

@@ -7,6 +7,7 @@
 /// This enables conversations to survive app restarts. In a future
 /// milestone, a Supabase-backed memory can replace this for cross-device
 /// sync.
+library;
 
 import 'dart:convert';
 

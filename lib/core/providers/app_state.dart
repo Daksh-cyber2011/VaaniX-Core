@@ -11,6 +11,7 @@
 ///
 /// Feature-specific state (auth, progress, etc.) lives in feature providers.
 /// Network connectivity state lives in [connectivityStatusProvider].
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

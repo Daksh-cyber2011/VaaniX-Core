@@ -1,9 +1,10 @@
-﻿/// Exercise Engine Type Tests
+/// Exercise Engine Type Tests
 ///
 /// Synthetic fixtures ONLY (never production curriculum). Proves the engine
 /// genuinely handles every declared type - model validity, renderer
 /// readiness, answer handling, validation, feedback, retry, scoring,
 /// mastery, and malformed/empty data - per the product brief.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -397,7 +398,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp(home: ExerciseScreen(lesson: kLesson)),
+          child: const MaterialApp(home: ExerciseScreen(lesson: kLesson)),
         ),
       );
       await tester.pump(const Duration(milliseconds: 300));

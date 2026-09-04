@@ -7,11 +7,13 @@
 /// - Keeps [sessionManagerProvider] and the app lifecycle observer alive so
 ///   token refresh, sign-out, and foreground/background hooks are active for
 ///   the lifetime of the app.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/app/router/app_router.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:vaanix_app/core/lifecycle/app_lifecycle_observer.dart';
 import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/core/theme/app_theme.dart';
@@ -29,6 +31,10 @@ class VaaniXApp extends ConsumerWidget {
     // and the lifecycle observer so it starts tracking foreground state.
     ref.watch(sessionManagerProvider);
     ref.watch(appLifecycleProvider);
+
+    // Fire the one-shot appOpened analytics event (computes once per
+    // container lifetime, so this is exactly one log per cold start).
+    ref.watch(appOpenedEventProvider);
 
     return MaterialApp.router(
       title: 'VaaniX',

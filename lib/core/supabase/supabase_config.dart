@@ -10,6 +10,7 @@
 /// app never depends on Supabase directly.
 ///
 /// The Supabase instance is initialized in main.dart before runApp().
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

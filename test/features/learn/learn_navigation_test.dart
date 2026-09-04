@@ -3,6 +3,7 @@
 /// Proves every NEW syllabus lesson is reachable through the real Learn
 /// screen: curriculumProvider loads v1.json -> chapter tile expands ->
 /// lesson tile navigates to LessonContentScreen.
+library;
 
 import 'dart:convert';
 import 'dart:io';

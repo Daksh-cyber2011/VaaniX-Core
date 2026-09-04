@@ -10,6 +10,7 @@
 /// it flows through guardAsync → ExceptionMapper.toFailure → the supabase.AuthException
 /// branch → correct Failure type (InvalidCredentialsFailure / NotFoundFailure /
 /// ConflictFailure / RateLimitFailure / UnauthenticatedFailure).
+library;
 
 import 'dart:async';
 

@@ -2,6 +2,7 @@
 ///
 /// Material 3 text field with built-in obscure toggle, prefix/suffix icons,
 /// error validation text, and brand-consistent rounded input styling.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';

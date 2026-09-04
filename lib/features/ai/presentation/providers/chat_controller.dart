@@ -11,12 +11,16 @@
 ///   4. Updates state with the new messages.
 ///
 /// Conversations persist across app restarts via [LocalConversationMemory].
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
+import 'package:vaanix_app/features/ai/presentation/providers/learning_context_provider.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
@@ -115,6 +119,13 @@ class ChatController extends StateNotifier<ChatState> {
       createdAt: DateTime.now().toUtc(),
     );
 
+    // Analytics: conversation start on the very first message, then the
+    // generic send event for every dispatch.
+    _ref.log(const AnalyticsEvent(AnalyticsEventName.aiMessageSent));
+    if (state.messages.isEmpty) {
+      _ref.log(const AnalyticsEvent(AnalyticsEventName.aiConversationStarted));
+    }
+
     // Optimistically add the user message to the UI.
     state = state.copyWith(
       messages: [...state.messages, userMessage],
@@ -125,12 +136,16 @@ class ChatController extends StateNotifier<ChatState> {
     van.dispatch(const VanEvent(VanEventType.userMessageReceived));
     van.dispatch(const VanEvent(VanEventType.aiThinking));
 
-    // Build the conversation context.
+    // Build the conversation context, stamped with the learner's REAL
+    // curriculum state (V1 §4): learningContextProvider → context →
+    // learningContextFragment → prompt pipeline → model adapters.
     final learner = _buildLearnerContext(profile);
+    final learningContext = _ref.read(learningContextProvider);
     final context = ConversationContext(
       conversationId: state.conversationId,
       learner: learner,
       messages: state.messages,
+      learningContext: learningContext,
     );
 
     // Send via the pipeline (handles persona, memory, AI, safety, persistence).
@@ -150,17 +165,19 @@ class ChatController extends StateNotifier<ChatState> {
     await result.fold(
       (failure) async {
         if (_disposed || !mounted) return;
+        _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestFailed));
         state = state.copyWith(
           isSending: false,
           error: failure.message,
         );
-        van.dispatch(VanEvent(
+        van.dispatch(const VanEvent(
           VanEventType.errorOccurred,
           message: 'I couldn\'t connect right now. Let\'s try again soon.',
         ));
       },
       (updatedContext) async {
         if (_disposed || !mounted) return;
+        _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestSucceeded));
         // The updated context includes the assistant's reply appended.
         state = state.copyWith(
           messages: updatedContext.messages,
@@ -197,6 +214,7 @@ class ChatController extends StateNotifier<ChatState> {
 
   /// Clear the error state.
   void clearError() {
+    _ref.log(const AnalyticsEvent(AnalyticsEventName.appErrorRecovered));
     state = state.copyWith(clearError: true);
   }
 

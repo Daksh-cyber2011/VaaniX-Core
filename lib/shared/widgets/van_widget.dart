@@ -377,7 +377,7 @@ class _VanFallbackPainter extends CustomPainter {
 
   void _paintSparkles(Canvas canvas, double s) {
     final paint = Paint()
-      ..color = const Color(0xFFF5C447).withValues(alpha: .9);
+      ..color = const Color(0xFFF5C447).withOpacity(.9);
     _diamond(canvas, Offset(.16 * s, .22 * s), .045 * s, paint);
     _diamond(canvas, Offset(.84 * s, .34 * s), .032 * s, paint);
     if (state == VanState.achievement) {
@@ -425,7 +425,7 @@ class _VanFallbackPainter extends CustomPainter {
         width: .31 * s,
         height: .22 * s,
       ),
-      Paint()..color = _cream.withValues(alpha: .7),
+      Paint()..color = _cream.withOpacity(.7),
     );
   }
 
@@ -464,7 +464,7 @@ class _VanFallbackPainter extends CustomPainter {
         ..strokeWidth = .028 * s,
     );
     final string = Paint()
-      ..color = Colors.white.withValues(alpha: .85)
+      ..color = Colors.white.withOpacity(.85)
       ..strokeWidth = .012 * s
       ..strokeCap = StrokeCap.round;
     canvas.drawLine(
@@ -476,10 +476,10 @@ class _VanFallbackPainter extends CustomPainter {
         Rect.fromLTWH(.40 * s, .735 * s, .20 * s, .045 * s),
         Radius.circular(.03 * s),
       ),
-      Paint()..color = _hoodieShade.withValues(alpha: .65),
+      Paint()..color = _hoodieShade.withOpacity(.65),
     );
     final logo = Paint()
-      ..color = Colors.white.withValues(alpha: .9)
+      ..color = Colors.white.withOpacity(.9)
       ..style = PaintingStyle.stroke
       ..strokeWidth = .012 * s
       ..strokeCap = StrokeCap.round;
@@ -550,7 +550,7 @@ class _VanFallbackPainter extends CustomPainter {
     canvas.drawCircle(
       pupil + Offset(right ? -.014 * s : .014 * s, -.026 * s),
       .018 * s,
-      Paint()..color = Colors.white.withValues(alpha: .96),
+      Paint()..color = Colors.white.withOpacity(.96),
     );
   }
 
@@ -590,7 +590,7 @@ class _VanFallbackPainter extends CustomPainter {
     canvas.drawRRect(bottom, Paint()..color = _beakShade);
     if (state == VanState.sad || state == VanState.caring) {
       final paint = Paint()
-        ..color = _beakShade.withValues(alpha: .65)
+        ..color = _beakShade.withOpacity(.65)
         ..style = PaintingStyle.stroke
         ..strokeWidth = .009 * s;
       canvas.drawArc(
@@ -649,10 +649,10 @@ class _SpeechBubble extends StatelessWidget {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-                color: theme.colorScheme.outline.withValues(alpha: .18)),
+                color: theme.colorScheme.outline.withOpacity(.18)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: .06),
+                color: Colors.black.withOpacity(.06),
                 blurRadius: 12,
                 offset: const Offset(0, 3),
               ),

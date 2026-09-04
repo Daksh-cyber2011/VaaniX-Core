@@ -1,6 +1,7 @@
 /// VaaniX App Error Handler
 ///
 /// Centralizes handling of otherwise-uncaught Flutter and Dart errors.
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:vaanix_app/core/logging/logger.dart';

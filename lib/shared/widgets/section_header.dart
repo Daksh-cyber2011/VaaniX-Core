@@ -3,6 +3,7 @@
 /// A consistent section title with an optional trailing action ("See all").
 /// Use at the top of content groups on Home, Learn, Progress and Settings so
 /// every screen shares one scannable rhythm.
+library;
 import 'package:flutter/material.dart';
 
 class SectionHeader extends StatelessWidget {

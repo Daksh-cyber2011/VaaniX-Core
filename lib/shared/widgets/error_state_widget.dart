@@ -2,6 +2,7 @@
 ///
 /// Standardized error view with retry button for failed network/data calls.
 /// Fully theme-aware and reduced-motion friendly.
+library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 
@@ -25,7 +26,7 @@ class ErrorStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final errorColor = theme.colorScheme.error;
-    final subtext = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
+    final subtext = theme.textTheme.bodyMedium?.color?.withOpacity(0.72);
 
     return Center(
       child: Padding(
@@ -36,7 +37,7 @@ class ErrorStateWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: errorColor.withValues(alpha: 0.1),
+                color: errorColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 44, color: errorColor),

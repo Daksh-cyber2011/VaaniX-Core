@@ -1,10 +1,11 @@
-/// VaaniX Achievements â€” Screen
+/// VaaniX Achievements — Screen
 ///
 /// Displays all 10 achievements in a 2-column grid. Each card shows the
 /// achievement icon, title, description, and a progress bar (current/threshold).
 /// Locked achievements are greyed out; unlocked ones show a checkmark + date.
 ///
 /// Entry points: Progress screen ("Achievements" card) and Settings.
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,10 +34,10 @@ class AchievementsScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.primary.withOpacity(0.06),
               borderRadius: BorderRadius.circular(20),
               border:
-                  Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+                  Border.all(color: AppColors.primary.withOpacity(0.15)),
             ),
             child: Row(
               children: [
@@ -44,7 +45,7 @@ class AchievementsScreen extends ConsumerWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.12),
+                    color: AppColors.primary.withOpacity(0.12),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.emoji_events_rounded,
@@ -113,12 +114,12 @@ class _AchievementCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isUnlocked
-            ? AppColors.success.withValues(alpha: 0.06)
+            ? AppColors.success.withOpacity(0.06)
             : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isUnlocked
-              ? AppColors.success.withValues(alpha: 0.3)
+              ? AppColors.success.withOpacity(0.3)
               : (isDark ? AppColors.borderDark : AppColors.borderLight),
           width: isUnlocked ? 1.5 : 1,
         ),
@@ -131,8 +132,8 @@ class _AchievementCard extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: isUnlocked
-                  ? AppColors.success.withValues(alpha: 0.15)
-                  : AppColors.subtextLight.withValues(alpha: 0.1),
+                  ? AppColors.success.withOpacity(0.15)
+                  : AppColors.subtextLight.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -185,7 +186,7 @@ class _AchievementCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress.fraction,
                       minHeight: 6,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                      backgroundColor: AppColors.primary.withOpacity(0.1),
                       color: AppColors.primary,
                     ),
                   ),
@@ -208,7 +209,7 @@ class _AchievementCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.xp.withValues(alpha: 0.12),
+                color: AppColors.xp.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

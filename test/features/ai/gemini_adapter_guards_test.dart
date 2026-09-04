@@ -4,6 +4,7 @@
 /// user message, and maps timeouts to a typed failure. No API key or
 /// network is required - every path exercised here fails BEFORE any SDK
 /// call, so the tests are hermetic.
+library;
 
 import 'dart:async';
 

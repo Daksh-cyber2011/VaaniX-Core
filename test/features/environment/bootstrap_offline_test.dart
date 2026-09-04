@@ -4,6 +4,7 @@
 /// bundled (the shipped assets/env/ contains only .gitkeep): the app must
 /// boot fully offline - unconfigured Supabase/Gemini, development flavor -
 /// instead of crashing with dotenv's NotInitializedError.
+library;
 
 import 'dart:convert';
 import 'dart:typed_data';

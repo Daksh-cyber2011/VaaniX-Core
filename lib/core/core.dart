@@ -8,6 +8,7 @@
 /// Dependency rule: `core` MUST NOT import from `features` or `app`.
 /// `core` owns only abstractions and infrastructure; it never knows which
 /// feature or screen consumes it.
+library;
 
 // ─── Auth contracts (abstractions consumed by features) ─────────────────────
 export 'auth/core_auth_repository.dart';

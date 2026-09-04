@@ -4,6 +4,7 @@
 /// [adaptiveNextActionProvider] that Home uses to render the real next
 /// learning action for the current learner state, plus the weak-lesson list
 /// and per-chapter exam performance that the Progress screen surfaces.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

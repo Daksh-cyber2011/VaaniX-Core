@@ -7,9 +7,14 @@
 /// All five engine types are handled here: mcq / fillBlank (option
 /// select), ordering (item sequence), translation (normalized free text)
 /// and matching (left/right pairing).
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:vaanix_app/core/analytics/analytics_client.dart';
+import 'package:vaanix_app/core/analytics/analytics_event.dart';
+import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
 import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
@@ -81,7 +86,11 @@ class ExerciseState {
 }
 
 class ExerciseNotifier extends StateNotifier<ExerciseState> {
-  ExerciseNotifier(this._exercises) : super(const ExerciseState()) {
+  /// [analytics] is optional so pure engine tests can construct the
+  /// notifier without any client; production wires the real provider.
+  ExerciseNotifier(this._exercises, [AnalyticsClient? analytics])
+      : _analytics = analytics ?? const NoopAnalyticsClient(),
+        super(const ExerciseState()) {
     _display = [
       for (var i = 0; i < _exercises.length; i++)
         prepareExerciseOptions(_exercises[i], i),
@@ -89,6 +98,7 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
   }
 
   final List<Exercise> _exercises;
+  final AnalyticsClient _analytics;
 
   /// Indices already counted towards the score (no double counting).
   final Set<int> _scored = {};
@@ -207,13 +217,22 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
       _ => _submitChoice(exercise),
     };
     if (correct) {
-      if (_scored.add(state.currentIndex)) {
+      final firstTry = _scored.add(state.currentIndex);
+      if (firstTry) {
         state = state.copyWith(answered: true, score: state.score + 1);
       } else {
         state = state.copyWith(answered: true);
       }
+      _analytics.log(AnalyticsEvent(
+        AnalyticsEventName.exerciseCompleted,
+        {'exerciseId': exercise.id, 'correct': correct, 'firstTry': firstTry},
+      ));
     } else {
       state = state.copyWith(answered: true);
+      _analytics.log(AnalyticsEvent(
+        AnalyticsEventName.exerciseCompleted,
+        {'exerciseId': exercise.id, 'correct': correct, 'firstTry': false},
+      ));
     }
   }
 
@@ -299,5 +318,8 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
 final exerciseSessionProvider =
     StateNotifierProvider.family<ExerciseNotifier, ExerciseState, String>(
         (ref, lessonId) {
-  return ExerciseNotifier(exercisesByLesson[lessonId] ?? const []);
+  return ExerciseNotifier(
+    exercisesByLesson[lessonId] ?? const [],
+    ref.watch(analyticsClientProvider),
+  );
 });

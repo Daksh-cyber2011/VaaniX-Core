@@ -4,6 +4,7 @@
 /// and caught at repository boundaries, then converted to [Failure] types.
 ///
 /// These are NOT propagated to the domain layer.
+library;
 
 /// Base infrastructure exception
 abstract class AppException implements Exception {
@@ -27,10 +28,10 @@ class NetworkException extends AppException {
 
 class ServerException extends AppException {
   const ServerException({
-    String message = 'Server error',
+    super.message = 'Server error',
     this.statusCode,
-    Object? cause,
-  }) : super(message: message, cause: cause);
+    super.cause,
+  });
 
   final int? statusCode;
 }
@@ -45,8 +46,7 @@ class TimeoutException extends AppException {
 // ============================================================
 
 class AuthException extends AppException {
-  const AuthException({required String message, Object? cause})
-      : super(message: message, cause: cause);
+  const AuthException({required super.message, super.cause});
 }
 
 /// Thrown when an auth API call fails for a non-credential reason
@@ -54,8 +54,8 @@ class AuthException extends AppException {
 /// Distinct from [AuthException] so ExceptionMapper can route it to
 /// the appropriate Failure type (NotFound / Conflict / RateLimit).
 class AuthApiException extends AppException {
-  const AuthApiException(String message, {Object? cause})
-      : super(message: message, cause: cause);
+  const AuthApiException(String message, {super.cause})
+      : super(message: message);
 }
 
 class OtpException extends AppException {

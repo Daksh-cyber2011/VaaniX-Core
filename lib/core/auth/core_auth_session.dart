@@ -4,6 +4,7 @@
 /// Placing these in `core/auth/` ensures `core` infrastructure components
 /// (e.g. [SessionManager], router guards) can depend on auth concepts
 /// without violating Clean Architecture layer boundaries (core -> features).
+library;
 
 import 'package:equatable/equatable.dart';
 

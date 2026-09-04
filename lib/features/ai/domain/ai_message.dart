@@ -6,6 +6,7 @@
 ///
 /// Layer rule: `domain` defines the contract; `data` (model adapters) and
 /// `presentation` consume it. Domain never imports either.
+library;
 
 import 'package:equatable/equatable.dart';
 

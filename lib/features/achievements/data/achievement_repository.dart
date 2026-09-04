@@ -5,6 +5,7 @@
 ///
 /// Storage format: JSON map { achievementId: { "unlockedAt": ISO-8601 } }
 /// under key 'ai_achievements_unlocked'.
+library;
 
 import 'dart:convert';
 

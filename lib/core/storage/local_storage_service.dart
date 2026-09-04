@@ -1,6 +1,7 @@
 /// VaaniX Local Storage Service Implementation
 ///
 /// Typed wrapper around [SharedPreferences] implementing [ILocalStorageService].
+library;
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';

@@ -21,7 +21,7 @@ void main() {
 
     test('applies safe defaults for missing optional fields', () {
       final lesson =
-          Lesson.fromJson({'id': 'a', 'title': 'b', 'chapterId': 'c'});
+          Lesson.fromJson(const {'id': 'a', 'title': 'b', 'chapterId': 'c'});
       expect(lesson.difficulty, Difficulty.beginner);
       expect(lesson.xpReward, 10);
       expect(lesson.order, 0);
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('missing lessons default to empty list', () {
-      final chapter = Chapter.fromJson({'id': 'c', 'title': 't'});
+      final chapter = Chapter.fromJson(const {'id': 'c', 'title': 't'});
       expect(chapter.lessons, isEmpty);
     });
   });

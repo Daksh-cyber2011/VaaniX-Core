@@ -10,6 +10,7 @@
 /// preferences + active model) and passed into the [AIService]. It is NOT a
 /// place for secrets — API keys live in environment / secure storage and are
 /// injected into adapters, not into request configs.
+library;
 
 import 'package:equatable/equatable.dart';
 

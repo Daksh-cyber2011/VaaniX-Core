@@ -7,10 +7,12 @@
 ///
 /// Conversation state (the rolling transcript) is owned here; memory
 /// persistence is delegated to a [ConversationMemory] implementation.
+library;
 
 import 'package:equatable/equatable.dart';
 
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
+import 'package:vaanix_app/features/ai/domain/learning_context.dart';
 
 /// Snapshot of the learner passed into every prompt so Van can personalize
 /// responses (e.g. "नमस्ते अर्जुन!"). Populated from the profile feature.
@@ -65,6 +67,7 @@ class ConversationContext extends Equatable {
     required this.learner,
     required this.messages,
     this.personaPrompt = '',
+    this.learningContext = LearningContext.empty,
   });
 
   /// Unique id of this conversation (used by memory adapters for storage keys).
@@ -80,17 +83,29 @@ class ConversationContext extends Equatable {
   /// when non-empty). Built by the prompt pipeline from the personality mode.
   final String personaPrompt;
 
+  /// Bounded snapshot of the learner's real curriculum state. Assembled by
+  /// [learningContextProvider], stamped by ChatController, and injected into
+  /// the persona prompt via [learningContextFragment]. Never sent anywhere
+  /// else — prompt-only, privacy-friendly, size-bounded.
+  final LearningContext learningContext;
+
+  /// Prompt-ready text derived from [learningContext]. Empty string when no
+  /// learning context is known, so the prompt pipeline injects nothing.
+  String get learningContextFragment => learningContext.fragment;
+
   /// A context with no prior messages — the start of a new conversation.
   factory ConversationContext.initial({
     required String conversationId,
     required LearnerContext learner,
     String personaPrompt = '',
+    LearningContext learningContext = LearningContext.empty,
   }) =>
       ConversationContext(
         conversationId: conversationId,
         learner: learner,
         messages: const [],
         personaPrompt: personaPrompt,
+        learningContext: learningContext,
       );
 
   /// The most recent message, or null when the transcript is empty.
@@ -107,6 +122,7 @@ class ConversationContext extends Equatable {
         learner: learner,
         messages: [...messages, message],
         personaPrompt: personaPrompt,
+        learningContext: learningContext,
       );
 
   /// Returns a new context with the persona prompt replaced.
@@ -115,6 +131,7 @@ class ConversationContext extends Equatable {
         learner: learner,
         messages: messages,
         personaPrompt: prompt,
+        learningContext: learningContext,
       );
 
   /// Returns a new context truncated to the most recent [keep] messages,
@@ -126,9 +143,16 @@ class ConversationContext extends Equatable {
       learner: learner,
       messages: messages.sublist(messages.length - keep),
       personaPrompt: personaPrompt,
+      learningContext: learningContext,
     );
   }
 
   @override
-  List<Object?> get props => [conversationId, learner, messages, personaPrompt];
+  List<Object?> get props => [
+        conversationId,
+        learner,
+        messages,
+        personaPrompt,
+        learningContext,
+      ];
 }

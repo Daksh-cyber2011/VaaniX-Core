@@ -12,6 +12,7 @@
 ///   3. practiceWeakTopic - an earlier completed lesson still has unmastered
 ///                       exercises (locked in before moving on)
 ///   4. continueLesson / startJourney - the next unfinished lesson in order
+library;
 
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
@@ -142,7 +143,7 @@ NextAction computeNextAction({
   required Map<String, List<QuizResult>> attemptsByQuizId,
 }) {
   if (curriculum.isEmpty) {
-    return NextAction(
+    return const NextAction(
       action: AdaptiveAction.startJourney,
       label: 'Start Learning',
       title: 'Your journey begins',
@@ -159,7 +160,7 @@ NextAction computeNextAction({
 
   // 1. Complete journey.
   if (allLessonsDone && allExamsPassed) {
-    return NextAction(
+    return const NextAction(
       action: AdaptiveAction.allDone,
       label: 'Revise with VAN',
       title: 'Syllabus complete!',
@@ -247,7 +248,7 @@ NextAction computeNextAction({
   }
 
   // Unreachable in practice (covered by rules 1-2), but be safe.
-  return NextAction(
+  return const NextAction(
     action: AdaptiveAction.allDone,
     label: 'Revise with VAN',
     title: 'Syllabus complete!',

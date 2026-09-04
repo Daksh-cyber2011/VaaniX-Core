@@ -18,6 +18,7 @@
 ///
 /// Registration: attach [AppLifecycleObserver] in [VaaniXApp] or the
 /// root [ConsumerStatefulWidget] using [WidgetsBinding.addObserver].
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

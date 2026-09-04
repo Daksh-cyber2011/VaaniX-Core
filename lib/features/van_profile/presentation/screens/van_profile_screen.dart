@@ -5,6 +5,7 @@
 /// navigates to the [ChatScreen] where the learner can have a real
 /// conversation with Van via the AI pipeline. Reads/writes via
 /// [userProfileProvider].
+library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,7 +90,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: selected
-                        ? AppColors.primary.withValues(alpha: 0.08)
+                        ? AppColors.primary.withOpacity(0.08)
                         : Theme.of(context).cardTheme.color,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
@@ -110,7 +111,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                           color: (selected
                                   ? AppColors.primary
                                   : AppColors.subtextLight)
-                              .withValues(alpha: 0.12),
+                              .withOpacity(0.12),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(_modeIcon(m),
@@ -165,7 +166,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
       case PersonalityMode.calm:
         return "Hi, I'm $name. We'll go step by step.";
       case PersonalityMode.fun:
-        return "Quack! $name here, ready to learn!";
+        return 'Quack! $name here, ready to learn!';
     }
   }
 }
