@@ -20,6 +20,8 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_providers.dart';
 import 'package:vaanix_app/core/theme/theme_notifier.dart';
+import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
+import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -35,6 +37,7 @@ class SettingsScreen extends ConsumerWidget {
     final profile = ref.watch(userProfileProvider);
 
     final companionName = profile.resolvedCompanionName;
+    final displayName = profile.resolvedDisplayName;
     final personality = profile.personalityMode;
     final dailyGoal = profile.dailyGoalMinutes;
     final selectedClass = profile.cbseClass;
@@ -130,6 +133,38 @@ class SettingsScreen extends ConsumerWidget {
                     : AppColors.subtextLight)),
           ),
           const SizedBox(height: 8),
+
+          VaaniXCard(
+            onTap: () => _editDisplayName(context, ref, displayName),
+            child: Row(
+              children: [
+                const Icon(Icons.person_outline_rounded,
+                    color: AppColors.primary),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Your Name', style: AppTextStyles.titleMedium()),
+                      Text(
+                        displayName.isEmpty ? 'Not set' : displayName,
+                        style: AppTextStyles.bodySmall(
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
 
           VaaniXCard(
             onTap: () => _editCompanionName(context, ref, companionName),
@@ -357,6 +392,51 @@ class SettingsScreen extends ConsumerWidget {
 
   // --- Editors----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+  /// Edits the LEARNER's own name (AI personalization). Van greets the
+  /// learner by this name in chat. Empty input clears the name.
+  Future<void> _editDisplayName(
+    BuildContext context,
+    WidgetRef ref,
+    String current,
+  ) async {
+    final controller = TextEditingController(text: current);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Your Name'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 30,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            hintText: 'What should Van call you?',
+            counterText: '',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ''),
+            child: const Text('Clear'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (result == null) return; // cancelled
+    await ref.read(userProfileProvider.notifier).updateDisplayName(result);
+    ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged,
+        {'field': 'displayName'}));
+  }
+
   Future<void> _editCompanionName(
     BuildContext context,
     WidgetRef ref,
@@ -511,9 +591,10 @@ class SettingsScreen extends ConsumerWidget {
         title: const Text('Reset all progress?'),
         content: const Text(
           'This clears your XP, completed lessons/quizzes, practice '
-          'mastery, exam history, achievements and your day streak. '
-          'Your onboarding profile (companion name, class, goals) is '
-          'kept. This cannot be undone.',
+          'mastery, exam history, achievements, your day streak and all '
+          'AI chats with Van (including cached answers and usage stats). '
+          'Your profile (names, class, goals) is kept. This cannot be '
+          'undone.',
         ),
         actions: [
           TextButton(
@@ -536,6 +617,16 @@ class SettingsScreen extends ConsumerWidget {
       // The day streak measures learning behavior - it belongs to
       // progress, not to identity, so Reset clears it too.
       await ref.read(userProfileRepositoryProvider).resetLearningStreak();
+
+      // Phase 4 (defect #9): the reset previously left the whole AI
+      // subsystem behind — persisted conversations, the response cache and
+      // the token-usage history all survived a full reset. The tracker's
+      // clear() was even documented as "used by Settings → reset" but never
+      // called. Clear everything AI-shaped now.
+      await ref.read(conversationMemoryProvider).clearAll();
+      await ref.read(responseCacheProvider).clear();
+      await ref.read(tokenUsageTrackerProvider).clear();
+
       ref.invalidate(userProfileProvider);
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
@@ -550,6 +641,10 @@ class SettingsScreen extends ConsumerWidget {
       // achievements map.
       ref.invalidate(progressRepositoryProvider);
       ref.invalidate(achievementRepositoryProvider);
+      // Rebuild the chat controller (reloads memory, now empty) and the
+      // usage chip (fresh zeroed numbers).
+      ref.invalidate(chatControllerProvider);
+      ref.invalidate(dailyUsageProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

@@ -60,6 +60,13 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
     );
   }
 
+  /// Set the learner's own name (AI personalization). Empty string clears
+  /// it — Van returns to addressing the learner without a name.
+  Future<void> updateDisplayName(String name) async {
+    state = state.copyWith(displayName: name.trim());
+    await _repo.updateDisplayName(name);
+  }
+
   Future<void> updateCompanionName(String name) async {
     state = state.copyWith(companionName: name);
     await _repo.updateCompanionName(name);

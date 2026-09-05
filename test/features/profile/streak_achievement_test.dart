@@ -35,6 +35,10 @@ class _FailingProfileRepository implements UserProfileRepository {
       err(const ServerFailure());
 
   @override
+  Future<Result<void>> updateDisplayName(String name) async =>
+      err(const ServerFailure());
+
+  @override
   Future<Result<void>> updateCompanionName(String name) async =>
       err(const ServerFailure());
 

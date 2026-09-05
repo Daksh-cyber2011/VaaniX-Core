@@ -4,6 +4,12 @@
 /// mode and learner context. This is the only place persona wording lives,
 /// so tone changes are localized and testable.
 ///
+/// Phase 4: the persona is intentionally STABLE across turns. The per-turn
+/// learning-context snapshot is delivered separately — see
+/// [ConversationContext.learningContextMessage] — so adapters can keep the
+/// system instruction (and the model client built from it) unchanged between
+/// requests.
+///
 /// Segment 6: Now uses the [PersonalityMode] enum directly instead of
 /// fragile lowercase string matching. The personality mode is passed as
 /// a string in [LearnerContext.personalityMode] — we map it to the enum
@@ -63,18 +69,15 @@ class DefaultPromptPipeline implements PromptPipeline {
       }
     }
 
-    // Learning-context injection (V1 §4): the bounded, real progress
-    // snapshot assembled by learningContextProvider travels on the
-    // ConversationContext and is appended here — the single prompt
-    // wording site — so BOTH the Gemini and offline adapters see it via
-    // the persona/system instruction. Empty context injects nothing.
-    final learningFragment = context.learningContextFragment;
-    if (learningFragment.isNotEmpty) {
-      base
-        ..writeln()
-        ..writeln(learningFragment);
-    }
-
+    // Learning-context injection (V1 §4, re-shaped in Phase 4): the bounded,
+    // real progress snapshot assembled by learningContextProvider is NO
+    // LONGER appended here. The persona must stay STABLE across turns — it
+    // is the Gemini system instruction, and per-turn churn (streak, XP,
+    // progress) forced a client rebuild on every request, defeating model
+    // reuse. The snapshot now travels as framed message content via
+    // [ConversationContext.learningContextMessage]; adapters append it to
+    // the outgoing user turn. The persona still carries the slow-changing
+    // personalization (names, class, topic, tone).
     return base.toString().trim();
   }
 }

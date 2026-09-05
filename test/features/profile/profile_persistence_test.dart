@@ -39,6 +39,7 @@ void main() {
         'Van',
         reason: 'V1 default companion');
 
+    await repo.updateDisplayName('Arjun');
     await repo.updateCompanionName('Mita');
     await repo.updatePersonalityMode(PersonalityMode.cheerleader);
     await repo.updateCbseClass(CbseClass.class7);
@@ -52,6 +53,8 @@ void main() {
     app = launchApp();
     repo = app.read(userProfileRepositoryProvider);
     final profile = (await repo.getProfile()).fold((_) => null, (v) => v)!;
+    expect(profile.displayName, 'Arjun',
+        reason: 'Phase 4: the learner display name persists (AI persona)');
     expect(profile.companionName, 'Mita');
     expect(profile.personalityMode, PersonalityMode.cheerleader);
     expect(profile.cbseClass, CbseClass.class7);
@@ -62,6 +65,7 @@ void main() {
     // V1 has no server account; the notifier reads local storage, so a
     // "sign out" only ends the session - progress is intentionally kept.
     final afterSignOut = (await repo.getProfile()).fold((_) => null, (v) => v)!;
+    expect(afterSignOut.displayName, 'Arjun');
     expect(afterSignOut.companionName, 'Mita');
     expect(afterSignOut.dailyGoalMinutes, 20);
     expect(afterSignOut.currentStreak, 1);

@@ -11,6 +11,7 @@ library;
 
 import 'package:equatable/equatable.dart';
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/learning_context.dart';
 
@@ -84,14 +85,37 @@ class ConversationContext extends Equatable {
   final String personaPrompt;
 
   /// Bounded snapshot of the learner's real curriculum state. Assembled by
-  /// [learningContextProvider], stamped by ChatController, and injected into
-  /// the persona prompt via [learningContextFragment]. Never sent anywhere
-  /// else — prompt-only, privacy-friendly, size-bounded.
+  /// [learningContextProvider], stamped by ChatController, and delivered to
+  /// adapters as framed per-turn message content via
+  /// [learningContextMessage] (Phase 4: no longer embedded in the persona
+  /// prompt, so the Gemini system instruction stays stable across turns).
+  /// Prompt-only, privacy-friendly, size-bounded.
   final LearningContext learningContext;
 
   /// Prompt-ready text derived from [learningContext]. Empty string when no
   /// learning context is known, so the prompt pipeline injects nothing.
+  ///
+  /// Phase 4 note: this fragment deliberately does NOT travel inside the
+  /// persona/system instruction anymore — it changes turn-to-turn (streak,
+  /// XP, progress), which forced the Gemini client to rebuild its model
+  /// object every request. Adapters inject the FRAMED version below as
+  /// message content instead, keeping the system instruction stable.
   String get learningContextFragment => learningContext.fragment;
+
+  /// The learning-context fragment wrapped in explicit framing markers, ready
+  /// to be prepended to a request's user-turn content by adapters. Empty
+  /// string when there is nothing to inject — adapters append nothing.
+  ///
+  /// The framing wording lives here (next to the fragment it wraps) so every
+  /// adapter presents the snapshot identically, and so the model can tell
+  /// internal progress notes apart from learner speech.
+  String get learningContextMessage {
+    final fragment = learningContextFragment;
+    if (fragment.isEmpty) return '';
+    return '${AppConstants.aiLearningContextHeader}\n'
+        '$fragment\n'
+        '${AppConstants.aiLearningContextFooter}';
+  }
 
   /// A context with no prior messages — the start of a new conversation.
   factory ConversationContext.initial({

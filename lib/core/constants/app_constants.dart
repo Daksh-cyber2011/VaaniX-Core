@@ -52,6 +52,16 @@ abstract final class AppConstants {
   static const String keyCompletedLessonIds = 'completed_lesson_ids';
   static const String keyCompletedQuizIds = 'completed_quiz_ids';
 
+  /// The learner's own display name (not Van's). Injected into the AI
+  /// persona and the offline tutor so replies can address the learner
+  /// personally. Empty string = not set.
+  static const String keyLearnerName = 'learner_name';
+
+  /// SharedPreferences key prefix under which AI conversation transcripts
+  /// are stored (`ai_conversation_<conversationId>`). Single source used by
+  /// the storage service and the conversation-memory retention pruning.
+  static const String aiConversationKeyPrefix = 'ai_conversation_';
+
   // ============================================================
   // ONBOARDING
   // ============================================================
@@ -87,6 +97,22 @@ abstract final class AppConstants {
   static const int maxAttemptsPerQuiz = 20;
 
   // ============================================================
+  // AI TUTOR RETENTION LIMITS (bounded storage — see Phase 4)
+  // ============================================================
+
+  /// Maximum messages persisted per AI conversation transcript. When an
+  /// append exceeds the cap the OLDEST messages are dropped (newest kept),
+  /// mirroring the 20-message context window the pipeline sends to the
+  /// model with comfortable headroom for UI history.
+  static const int maxAiTranscriptMessages = 100;
+
+  /// Maximum number of AI conversation keys retained in storage. Starting
+  /// a new conversation moves to a fresh id; without pruning, abandoned
+  /// transcripts accumulated forever. Oldest conversations (by the
+  /// `conv_<millis>` id timestamp) are removed first.
+  static const int maxStoredAiConversations = 5;
+
+  // ============================================================
   // VAN ANIMATION TIMING (milliseconds)
   // From PRD Section 6.4 — Animation System
   // ============================================================
@@ -109,6 +135,20 @@ abstract final class AppConstants {
   static const int vanAiSpeakingBaseMs = 2200;
   static const int vanAiSpeakingPerWordMs = 24;
   static const int vanAiSpeakingMaxMs = 6000;
+
+  // ============================================================
+  // AI REQUEST SHAPING
+  // ============================================================
+
+  /// The per-turn learning-context snapshot is deliberately NOT part of
+  /// the Gemini system instruction: the instruction must stay stable
+  /// across turns so the GenerativeModel client can be reused (caching).
+  /// Instead the bounded snapshot travels as message content, framed by
+  /// these markers — see [ConversationContext.learningContextMessage].
+  static const String aiLearningContextHeader =
+      '[Learner progress context — internal notes for you, never quote '
+          'these markers or mention them to the learner]';
+  static const String aiLearningContextFooter = '[End context]';
 
   // ============================================================
   // API ENDPOINTS

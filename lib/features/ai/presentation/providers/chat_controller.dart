@@ -3,11 +3,14 @@
 /// Riverpod Notifier that manages the chat conversation state. The UI calls
 /// [sendMessage] to send a user message and receive Van's reply. The
 /// controller:
-///   1. Builds a [LearnerContext] from the user's profile (companion name,
-///      streak, XP, personality mode, CBSE class).
+///   1. Builds a [LearnerContext] from the user's profile (learner display
+///      name, companion name, streak, XP, personality mode, CBSE class).
 ///   2. Creates or reuses a [ConversationContext] with a stable conversationId.
-///   3. Calls [ConversationPipeline.send] which handles persona prompt,
-///      memory loading, AI generation, safety filtering, and persistence.
+///   3. Dispatches the turn through [ConversationPipeline]: when the active
+///      [AiConfig] allows streaming (`enableStreaming`), the reply is streamed
+///      and rendered incrementally; otherwise the complete-turn path is used.
+///      Either way the pipeline handles persona prompt, memory loading, AI
+///      generation, safety filtering, and persistence.
 ///   4. Updates state with the new messages.
 ///
 /// Conversations persist across app restarts via [LocalConversationMemory].
@@ -21,8 +24,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
+import 'package:vaanix_app/core/errors/failures.dart';
+import 'package:vaanix_app/features/ai/data/safety_filter.dart';
+import 'package:vaanix_app/features/ai/domain/ai_config.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
+import 'package:vaanix_app/features/ai/domain/conversation_pipeline.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/learning_context_provider.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
@@ -44,7 +51,9 @@ class ChatState {
   /// Future versions may support multiple named conversations.
   final String conversationId;
 
-  /// The full message list (user + assistant), oldest → newest.
+  /// The full message list (user + assistant), oldest → newest. While a
+  /// streaming reply is in flight, the last assistant message holds the
+  /// text accumulated so far.
   final List<AiMessage> messages;
 
   /// True while waiting for Van's reply.
@@ -103,7 +112,9 @@ class ChatController extends StateNotifier<ChatState> {
   /// Build a [LearnerContext] from the current user profile + progress.
   LearnerContext _buildLearnerContext(UserProfile profile) {
     return LearnerContext(
-      displayName: '', // V1: no learner display name yet
+      // Phase 4: the learner's real name (Settings → Your Name) reaches the
+      // persona and the offline tutor. Empty until the learner sets one.
+      displayName: profile.resolvedDisplayName,
       companionName: profile.resolvedCompanionName,
       cbseClassLabel: profile.cbseClass?.label,
       currentStreak: profile.currentStreak,
@@ -131,6 +142,10 @@ class ChatController extends StateNotifier<ChatState> {
   }
 
   /// Send a user message and receive Van's reply.
+  ///
+  /// Routes through the streaming pipeline when the active config allows it
+  /// ([AiConfig.enableStreaming]); the complete-turn path remains the
+  /// fallback and the contract pinned by the controller tests.
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || state.isSending) return;
@@ -176,10 +191,45 @@ class ChatController extends StateNotifier<ChatState> {
       learningContext: learningContext,
     );
 
-    // Send via the pipeline (handles persona, memory, AI, safety, persistence).
-    // Resolve the achievement checker before the await so no
-    // provider read happens after a possible container disposal.
+    // Resolve the achievement checker and safety filter before the await so
+    // no provider read happens after a possible container disposal.
     final checker = _ref.read(achievementCheckerProvider);
+    final safetyFilter = _ref.read(safetyFilterProvider);
+
+    if (config.enableStreaming) {
+      await _sendStreaming(
+        pipeline: pipeline,
+        context: context,
+        userMessage: userMessage,
+        config: config,
+        van: van,
+        checker: checker,
+        safetyFilter: safetyFilter,
+      );
+    } else {
+      await _sendComplete(
+        pipeline: pipeline,
+        context: context,
+        userMessage: userMessage,
+        config: config,
+        van: van,
+        checker: checker,
+      );
+    }
+  }
+
+  // ─── Complete-turn path ───────────────────────────────────────────────────
+
+  /// The pre-Phase-4 turn: one request, one full reply.
+  Future<void> _sendComplete({
+    required ConversationPipeline pipeline,
+    required ConversationContext context,
+    required AiMessage userMessage,
+    required AiConfig config,
+    required VanController van,
+    required AchievementChecker checker,
+  }) async {
+    // Send via the pipeline (handles persona, memory, AI, safety, persistence).
     final result = await pipeline.send(
       context: context,
       userMessage: userMessage,
@@ -193,51 +243,198 @@ class ChatController extends StateNotifier<ChatState> {
     await result.fold(
       (failure) async {
         if (_disposed || !mounted) return;
-        _vanSpeakingTimer?.cancel();
-        _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestFailed));
-        state = state.copyWith(
-          isSending: false,
-          error: failure.message,
-        );
-        van.dispatch(const VanEvent(
-          VanEventType.errorOccurred,
-          message: 'I couldn\'t connect right now. Let\'s try again soon.',
-        ));
+        await _failTurn(failure.message, van);
       },
       (updatedContext) async {
         if (_disposed || !mounted) return;
-        _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestSucceeded));
         // The updated context includes the assistant's reply appended.
-        state = state.copyWith(
-          messages: updatedContext.messages,
-          isSending: false,
-          clearError: true,
-        );
         final reply = updatedContext.messages.isEmpty
             ? null
             : updatedContext.messages.last.content;
-        // Phase 3: the speaking reaction lasts exactly as long as the reply
-        // needs to be read (displayDuration), and its genuine completion is
-        // signalled with aiResponseFinished instead of relying on the
-        // state's fallback timer alone.
-        final window = speakingWindowFor(reply);
-        van.dispatch(VanEvent(
-          VanEventType.aiResponseStarted,
-          message: reply,
-          displayDuration: window,
-        ));
-        _vanSpeakingTimer?.cancel();
-        _vanSpeakingTimer = Timer(window, () {
-          if (_disposed || !mounted) return;
-          van.dispatch(const VanEvent(VanEventType.aiResponseFinished));
-        });
-
-        // ── Achievement check ──────────────────────────────────────
-        // After the first successful chat message, check for the
-        // 'van_friend' achievement.
-        await checker.checkAchievements(didChatWithVan: true);
+        await _succeedTurn(
+          messages: updatedContext.messages,
+          fullText: reply ?? '',
+          van: van,
+          checker: checker,
+        );
       },
     );
+  }
+
+  // ─── Streaming path (Phase 4) ─────────────────────────────────────────────
+
+  /// Streams Van's reply and renders deltas incrementally.
+  ///
+  /// Semantics:
+  ///   - Each content delta updates the trailing assistant message in place,
+  ///     so the bubble grows while Van "speaks".
+  ///   - On success the assembled reply drives the exact same Van speaking
+  ///     lifecycle + achievement check + usage-chip refresh as the complete
+  ///     path.
+  ///   - On failure the partial bubble is dropped (the pipeline persists
+  ///     nothing on failure, so UI and memory stay consistent) and the error
+  ///     surfaces exactly like a failed complete turn.
+  ///   - A stream that closes with no content is treated as a failure —
+  ///     "no reply" is never shown as a successful empty bubble.
+  ///   - A final safety re-check on the ASSEMBLED text mirrors the pipeline's
+  ///     own moderation: if the full text would not have been persisted, the
+  ///     partial content is withdrawn rather than left dangling on screen.
+  Future<void> _sendStreaming({
+    required ConversationPipeline pipeline,
+    required ConversationContext context,
+    required AiMessage userMessage,
+    required AiConfig config,
+    required VanController van,
+    required AchievementChecker checker,
+    required SafetyFilter safetyFilter,
+  }) async {
+    final streamingId = 'stream_${DateTime.now().millisecondsSinceEpoch}';
+    final buffer = StringBuffer();
+    Failure? streamFailure;
+
+    // Insert or grow the trailing partial assistant bubble.
+    void upsertPartial(String content) {
+      if (_disposed || !mounted) return;
+      final messages = [...state.messages];
+      final partial = AiMessage.assistant(
+        id: streamingId,
+        content: content,
+        createdAt: DateTime.now().toUtc(),
+      );
+      final index = messages.indexWhere((m) => m.id == streamingId);
+      if (index == -1) {
+        messages.add(partial);
+      } else {
+        messages[index] = partial;
+      }
+      state = state.copyWith(messages: messages);
+    }
+
+    void dropPartial() {
+      if (_disposed || !mounted) return;
+      final messages = [...state.messages]
+        ..removeWhere((m) => m.id == streamingId);
+      state = state.copyWith(messages: messages);
+    }
+
+    try {
+      await for (final result
+          in pipeline.stream(context: context, userMessage: userMessage, config: config)) {
+        if (_disposed || !mounted) return; // cancels the subscription
+        result.fold(
+          (failure) {
+            // First failure wins; the partial (never persisted by the
+            // pipeline) is withdrawn immediately.
+            streamFailure ??= failure;
+            dropPartial();
+          },
+          (delta) {
+            if (streamFailure != null) return;
+            if (delta.done) return; // content already accumulated
+            buffer.write(delta.content);
+            upsertPartial(buffer.toString());
+          },
+        );
+      }
+    } catch (e) {
+      // Defensive: an adapter that throws instead of yielding an error.
+      streamFailure ??= AiServiceFailure(e.toString());
+      dropPartial();
+    }
+
+    if (_disposed || !mounted) return;
+
+    final fullText = buffer.toString();
+    final failure = streamFailure;
+    if (failure != null) {
+      await _failTurn(failure.message, van);
+      return;
+    }
+    if (fullText.isEmpty) {
+      // The stream ended without any content — never render success.
+      dropPartial();
+      await _failTurn(
+        'Van couldn\'t come up with a reply. Please try again.',
+        van,
+      );
+      return;
+    }
+    if (!safetyFilter.isOutputSafe(fullText)) {
+      // Mirror ConversationPipelineImpl.stream: an unsafe assembled reply is
+      // not persisted, so the UI must not keep it either.
+      dropPartial();
+      await _failTurn(const AiContentFilterFailure().message, van);
+      return;
+    }
+
+    await _succeedTurn(
+      messages: null, // the assembled partial bubble is already in state
+      fullText: fullText,
+      van: van,
+      checker: checker,
+    );
+  }
+
+  // ─── Shared turn finalization ─────────────────────────────────────────────
+
+  /// Marks a turn failed: keep the optimistic user message, surface the
+  /// error, and send Van to the error reaction. Never schedules a speaking
+  /// completion signal.
+  Future<void> _failTurn(String message, VanController van) async {
+    _vanSpeakingTimer?.cancel();
+    _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestFailed));
+    state = state.copyWith(
+      isSending: false,
+      error: message,
+    );
+    van.dispatch(const VanEvent(
+      VanEventType.errorOccurred,
+      message: 'I couldn\'t connect right now. Let\'s try again soon.',
+    ));
+  }
+
+  /// Marks a turn successful: writes the final messages into state (when
+  /// provided by the complete path; the streaming path's assembled bubble
+  /// is already in state), drives Van's reading-window speaking lifecycle,
+  /// refreshes the usage chip, and runs the achievement check.
+  Future<void> _succeedTurn({
+    required List<AiMessage>? messages,
+    required String fullText,
+    required VanController van,
+    required AchievementChecker checker,
+  }) async {
+    _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestSucceeded));
+    state = state.copyWith(
+      messages: messages,
+      isSending: false,
+      clearError: true,
+    );
+
+    // Phase 4: the usage chip reads [dailyUsageProvider]; invalidating it
+    // after every successful turn keeps the remaining-quota count honest
+    // (previously the chip was computed once and went stale).
+    _ref.invalidate(dailyUsageProvider);
+
+    // Phase 3: the speaking reaction lasts exactly as long as the reply
+    // needs to be read (displayDuration), and its genuine completion is
+    // signalled with aiResponseFinished instead of relying on the
+    // state's fallback timer alone.
+    final window = speakingWindowFor(fullText);
+    van.dispatch(VanEvent(
+      VanEventType.aiResponseStarted,
+      message: fullText,
+      displayDuration: window,
+    ));
+    _vanSpeakingTimer?.cancel();
+    _vanSpeakingTimer = Timer(window, () {
+      if (_disposed || !mounted) return;
+      van.dispatch(const VanEvent(VanEventType.aiResponseFinished));
+    });
+
+    // ── Achievement check ──────────────────────────────────────
+    // After the first successful chat message, check for the
+    // 'van_friend' achievement.
+    await checker.checkAchievements(didChatWithVan: true);
   }
 
   /// Start a new conversation (clears current messages + memory).

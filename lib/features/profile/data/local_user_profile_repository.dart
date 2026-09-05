@@ -30,6 +30,7 @@ class LocalUserProfileRepository implements UserProfileRepository {
           : PersonalityMode.values.asNameMap()[personalityRaw];
 
       return UserProfile(
+        displayName: _storage.learnerName,
         companionName: _storage.companionName,
         personalityMode: personality,
         cbseClass: CbseClass.fromValue(_storage.selectedClass),
@@ -44,6 +45,7 @@ class LocalUserProfileRepository implements UserProfileRepository {
   Future<Result<void>> saveProfile(UserProfile profile) {
     return guardAsync(() async {
       await Future.wait([
+        _storage.setLearnerName(profile.resolvedDisplayName),
         _storage.setCompanionName(profile.resolvedCompanionName),
         if (profile.personalityMode != null)
           _storage.setPersonalityMode(profile.personalityMode!.name),
@@ -56,6 +58,10 @@ class LocalUserProfileRepository implements UserProfileRepository {
       ]);
     });
   }
+
+  @override
+  Future<Result<void>> updateDisplayName(String name) =>
+      guardAsync(() => _storage.setLearnerName(name.trim()));
 
   @override
   Future<Result<void>> updateCompanionName(String name) =>

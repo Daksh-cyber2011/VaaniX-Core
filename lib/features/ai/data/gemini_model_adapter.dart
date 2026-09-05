@@ -28,6 +28,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
@@ -78,10 +79,12 @@ class GeminiModelAdapter implements ModelAdapter {
       config.model.isEmpty ? AppEnvironment.geminiModel : config.model;
 
   /// The full system instruction for a request: the defensive safety
-  /// prompt PLUS the persona prompt built by the [PromptPipeline] (which
-  /// embeds the bounded learning-context fragment). This is how Van's
-  /// persona and the learner's real progress actually reach Gemini —
-  /// without it the pipeline output would silently never be sent.
+  /// prompt PLUS the stable persona prompt built by the [PromptPipeline].
+  /// Phase 4: the per-turn learning-context snapshot no longer rides in
+  /// the persona, so this instruction — and the [GenerativeModel] built
+  /// from it — stays identical across turns and the client is reused
+  /// instead of rebuilt on every request. The learning snapshot travels
+  /// as framed message content (see [composeOutgoingMessage]).
   String _systemInstructionFor(ConversationContext context) {
     final defensive = _safetyFilter.defensiveSystemPrompt();
     final persona = context.personaPrompt.trim();
@@ -90,9 +93,9 @@ class GeminiModelAdapter implements ModelAdapter {
   }
 
   /// Lazily initialize the Gemini model with the API key + system instruction.
-  /// The model object is rebuilt when the system instruction changes (the
-  /// persona embeds per-turn learner context); identical instructions reuse
-  /// the cached instance.
+  /// Because the system instruction is stable across turns (Phase 4), the
+  /// cached instance is reused for the lifetime of the adapter; it is only
+  /// rebuilt when the model name or instruction genuinely changes.
   GenerativeModel _getModel(AiConfig config, ConversationContext context) {
     final systemInstruction = _systemInstructionFor(context);
     if (_model != null && _modelSystemInstruction == systemInstruction) {
@@ -129,6 +132,48 @@ class GeminiModelAdapter implements ModelAdapter {
       }
     }
     return last;
+  }
+
+  /// Builds the Gemini chat history from the transcript.
+  ///
+  /// The outgoing user message ([outgoingMessage]) is EXCLUDED — it is
+  /// passed to `sendMessage` as the new turn. Previously the history
+  /// contained it too, so the model saw the learner's message twice per
+  /// request (duplicated tokens and a duplicated prompt).
+  ///
+  /// @visibleForTesting static so request-shaping regressions are testable
+  /// without network access.
+  @visibleForTesting
+  static List<Content> buildRequestHistory({
+    required List<AiMessage> transcript,
+    required AiMessage outgoingMessage,
+    required String Function(String) sanitize,
+  }) {
+    final history = <Content>[];
+    for (final msg in transcript) {
+      if (identical(msg, outgoingMessage)) continue;
+      if (msg.role == AiRole.user) {
+        history.add(Content.text(sanitize(msg.content)));
+      } else if (msg.role == AiRole.assistant) {
+        history.add(Content.model([TextPart(msg.content)]));
+      }
+    }
+    return history;
+  }
+
+  /// Composes the outgoing user-turn content: the framed learning-context
+  /// message (internal progress notes, when present) followed by the
+  /// sanitized learner text. Delivered as MESSAGE content — never merged
+  /// into the system instruction — so the instruction stays stable and
+  /// the model can tell internal notes apart from learner speech.
+  @visibleForTesting
+  static String composeOutgoingMessage({
+    required String sanitizedUserText,
+    required String learningContextMessage,
+  }) {
+    final contextMessage = learningContextMessage.trim();
+    if (contextMessage.isEmpty) return sanitizedUserText;
+    return '$contextMessage\n\n$sanitizedUserText';
   }
 
   @override
@@ -169,20 +214,21 @@ class GeminiModelAdapter implements ModelAdapter {
 
       final model = _getModel(config, context);
 
-      // Build the conversation history for Gemini.
-      final history = <Content>[];
-      for (final msg in context.transcript) {
-        if (msg.role == AiRole.user) {
-          history.add(Content.text(_safetyFilter.sanitizeInput(msg.content)));
-        } else if (msg.role == AiRole.assistant) {
-          history.add(Content.model([TextPart(msg.content)]));
-        }
-      }
+      // Build the conversation history for Gemini (excluding the outgoing
+      // message — it is sent as the new turn below, not duplicated).
+      final history = buildRequestHistory(
+        transcript: context.transcript,
+        outgoingMessage: lastUserMsg,
+        sanitize: _safetyFilter.sanitizeInput,
+      );
 
       // Start a chat session with history.
       final chat = model.startChat(history: history);
-      final response =
-          await chat.sendMessage(Content.text(sanitizedInput)).timeout(
+      final outgoing = composeOutgoingMessage(
+        sanitizedUserText: sanitizedInput,
+        learningContextMessage: context.learningContextMessage,
+      );
+      final response = await chat.sendMessage(Content.text(outgoing)).timeout(
                 _requestTimeout,
                 onTimeout: () => throw TimeoutException(
                   'Gemini completion timed out',
@@ -252,21 +298,21 @@ class GeminiModelAdapter implements ModelAdapter {
 
       final model = _getModel(config, context);
 
-      // Build history.
-      final history = <Content>[];
-      for (final msg in context.transcript) {
-        if (msg.role == AiRole.user) {
-          history.add(Content.text(_safetyFilter.sanitizeInput(msg.content)));
-        } else if (msg.role == AiRole.assistant) {
-          history.add(Content.model([TextPart(msg.content)]));
-        }
-      }
+      // Build history (excluding the outgoing message).
+      final history = buildRequestHistory(
+        transcript: context.transcript,
+        outgoingMessage: lastUserMsg,
+        sanitize: _safetyFilter.sanitizeInput,
+      );
 
       final chat = model.startChat(history: history);
 
-      final sanitizedInput = _safetyFilter.sanitizeInput(lastUserMsg.content);
+      final outgoing = composeOutgoingMessage(
+        sanitizedUserText: _safetyFilter.sanitizeInput(lastUserMsg.content),
+        learningContextMessage: context.learningContextMessage,
+      );
       final responseStream = chat
-          .sendMessageStream(Content.text(sanitizedInput))
+          .sendMessageStream(Content.text(outgoing))
           .timeout(_requestTimeout);
 
       await for (final response in responseStream) {

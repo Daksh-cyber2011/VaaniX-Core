@@ -81,47 +81,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           // ——— AI Usage Indicator ——————————————————————————————————
           // Shows remaining daily requests as a small chip. Tapping
           // it shows detailed usage in a dialog.
-          FutureBuilder(
-            future: ref.read(tokenUsageTrackerProvider).getTodayUsage(),
-            builder: (context, snapshot) {
-              final usage = snapshot.data ?? DailyUsage.zero();
-              final remaining = usage.remainingRequests;
-              final color = remaining > 100
-                  ? AppColors.success
-                  : (remaining > 20 ? AppColors.warning : AppColors.error);
-
-              return Padding(
-                padding: const EdgeInsets.only(right: 4),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () => _showUsageDialog(context, usage),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.bolt_rounded, size: 14, color: color),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$remaining',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+          //
+          // Phase 4 fix: watches [dailyUsageProvider] — the controller
+          // invalidates it after every successful turn, so the count
+          // refreshes immediately instead of going stale (the old
+          // FutureBuilder read the tracker exactly once per screen build).
+          _usageChip(),
           IconButton(
             icon: const Icon(Icons.add_comment_outlined),
             tooltip: 'New chat',
@@ -193,6 +158,46 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             isSending: chatState.isSending,
           ),
         ],
+      ),
+    );
+  }
+
+  /// The daily-quota chip in the app bar (see the build method for why it
+  /// watches [dailyUsageProvider]).
+  Widget _usageChip() {
+    final usage = ref.watch(dailyUsageProvider).valueOrNull ?? DailyUsage.zero();
+    final remaining = usage.remainingRequests;
+    final color = remaining > 100
+        ? AppColors.success
+        : (remaining > 20 ? AppColors.warning : AppColors.error);
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _showUsageDialog(context, usage),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.bolt_rounded, size: 14, color: color),
+              const SizedBox(width: 4),
+              Text(
+                '$remaining',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

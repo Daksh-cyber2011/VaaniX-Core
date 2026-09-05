@@ -24,6 +24,7 @@ abstract class UserProfileRepository {
 
   // ─── Field-level updates (avoid full overwrites for common edits) ────────
 
+  Future<Result<void>> updateDisplayName(String name);
   Future<Result<void>> updateCompanionName(String name);
   Future<Result<void>> updatePersonalityMode(PersonalityMode mode);
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass);

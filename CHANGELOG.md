@@ -2,6 +2,81 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 4] - 2026-09-05
+
+AI tutor + learning intelligence. Full audit basis:
+`docs/Audits/V1-Audit-Phase0.md` (§5 Phase 4 backlog).
+
+### Added
+- **Streaming replies are live**: the previously dead `pipeline.stream`
+  path (fully built, never called — audit row I) is now wired into the
+  chat controller behind the existing `AiConfig.enableStreaming` flag
+  (production default ON). Deltas render into the trailing message bubble
+  in place, so Van's reply grows while it is generated — a real win on
+  slow connections and for the offline tutor's word-by-word cadence.
+  Success drives the identical Van speaking lifecycle, achievement check
+  and usage-chip refresh as the complete path; `enableStreaming: false`
+  still routes through `send()` (pinned by tests).
+- **Honest streaming failure semantics**: a failed stream withdraws the
+  partial bubble (the pipeline persists nothing on failure — UI and
+  memory stay consistent), a stream that ends with no content surfaces an
+  error instead of a fabricated empty success, and an unsafe ASSEMBLED
+  reply is re-checked with the same SafetyFilter the pipeline uses, so
+  text that would not be persisted is never left dangling on screen.
+- **Learner display name (personalization)**: `UserProfile.displayName`
+  (Settings → LEARNING PROFILE → "Your Name", editable + clearable) is
+  persisted through the profile repository and flows into
+  `LearnerContext.displayName` — the Gemini persona addresses the learner
+  by name and the offline tutor's greetings personalize (`_greet(name)`)
+  instead of the previous hardcoded `''`. Empty = anonymous by design.
+- **`dailyUsageProvider`**: today's AI usage is a watched FutureProvider;
+  the ChatController invalidates it after every successful turn.
+
+### Fixed
+- **Stale usage chip (defect #16)**: the Chat screen's remaining-quota
+  chip read the tracker exactly once per screen build via a
+  `FutureBuilder` and never refreshed — it now watches
+  `dailyUsageProvider` and updates immediately after each send.
+- **Settings reset missed the AI subsystem (defect #9)**: Reset Progress
+  now also clears persisted conversations (`clearAll`), the response
+  cache and the token-usage history (whose `clear()` documented "used by
+  Settings → reset" but was never called), and invalidates the chat
+  controller + usage chip so the UI reflects it instantly. The reset
+  dialog copy says so.
+- **Per-turn context no longer churns the Gemini system instruction**:
+  the bounded learning snapshot was embedded in the persona/system
+  instruction, forcing a `GenerativeModel` rebuild on EVERY request
+  (client caching defeated). The persona is now stable across turns and
+  the snapshot travels as framed per-turn message content
+  (`ConversationContext.learningContextMessage`, header/footer markers in
+  `AppConstants`), appended by the adapter to the outgoing user turn —
+  the model client is reused for the adapter's lifetime.
+- **Duplicated outgoing turn in Gemini history**: the request history was
+  built from the full transcript INCLUDING the last user message, which
+  was then sent again via `sendMessage` — the model saw every new message
+  twice. `buildRequestHistory` now excludes the outgoing message.
+- **Bounded AI transcripts (defect #12)**: persisted conversation
+  transcripts are capped at `AppConstants.maxAiTranscriptMessages` (100,
+  newest kept); conversation KEYS are pruned to the newest
+  `maxStoredAiConversations` (5) by the `conv_<millis>` timestamp
+  (timestamp-less legacy ids sort oldest); and `clear()` now REMOVES the
+  storage key instead of writing an empty-list zombie. The
+  `ai_conversation_` prefix lives in a single constant.
+
+### Tests
+- 358 tests passing (334 existing + 24 new): progressive rendering +
+  failure/empty/unsafe withdrawal semantics, streaming Van lifecycle,
+  usage-provider invalidation, display-name stamping, mid-stream dispose
+  safety; transcript cap sliding window, key removal, conversation
+  pruning (newest-kept, current-never-pruned, legacy-ids-first); Gemini
+  request shaping (history excludes outgoing turn, sanitizer applied,
+  stable instruction across turns, framed context message); Settings
+  reset widget test driving the REAL flow (AI keys cleared, identity
+  kept); display-name persistence round-trip. The learning-context
+  pipeline tests were re-pinned to the new stable-persona contract, and
+  the race/speaking controller tests now explicitly pin the complete-turn
+  path while production defaults to streaming.
+
 ## [Phase 3] - 2026-09-05
 
 VAN experience completion. Full audit basis:

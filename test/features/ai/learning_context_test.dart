@@ -1,13 +1,15 @@
-/// LearningContext Pipeline Tests (V1 §4)
+/// LearningContext Pipeline Tests (V1 §4, re-shaped in Phase 4)
 ///
 /// Proves the full context chain with REAL production code:
 ///   LearningContext → learningContextProvider → ChatController stamp →
-///   ConversationContext.learningContextFragment → PromptPipeline persona →
-///   adapter-visible context.
+///   ConversationContext.learningContextFragment → (stable persona stays
+///   fragment-free; the fragment travels as framed message content via
+///   learningContextMessage) → adapter-visible context.
 ///
 /// The injection tests are the contract: if the fragment stops reaching
-/// the persona prompt (or the context stops reaching the adapter), these
-/// tests fail loudly instead of silently degrading personalization.
+/// the adapter-visible context (or the persona starts churning per turn
+/// again), these tests fail loudly instead of silently degrading
+/// personalization or model-client caching.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,8 +97,12 @@ class _StubPipeline implements ConversationPipeline {
     required ConversationContext context,
     required AiMessage userMessage,
     AiConfig config = const AiConfig(),
-  }) =>
-      const Stream.empty();
+  }) {
+    // Production defaults to streaming, so the stamp test must hold on
+    // BOTH pipeline paths — capture here too.
+    onSend(context);
+    return const Stream.empty();
+  }
 }
 
 class _MemoryStub implements ConversationMemory {
@@ -248,10 +254,11 @@ void main() {
     });
   });
 
-  group('DefaultPromptPipeline injects the fragment', () {
+  group('DefaultPromptPipeline keeps the persona stable', () {
     const pipeline = DefaultPromptPipeline();
 
-    test('persona includes the learning context fragment verbatim', () {
+    test('persona does NOT embed the learning context fragment (Phase 4)',
+        () {
       final lc = LearningContext.bounded(
         currentChapterTitle: 'Devanagari Basics',
         nextActionLabel: 'Practice: Vowel matras',
@@ -265,11 +272,13 @@ void main() {
         messages: const [],
         learningContext: lc,
       ));
-      // The fragment must reach the FINAL persona text — the prompt the
-      // adapters actually receive — not merely exist on the context.
-      expect(persona, contains(lc.fragment));
-      expect(persona, contains('3 of 13 lessons'));
-      expect(persona, contains('Sandhi rules'));
+      // The persona is the Gemini SYSTEM instruction: it must stay stable
+      // across turns so the model client can be reused. The fragment is
+      // per-turn state and travels as message content instead.
+      expect(persona, isNot(contains(lc.fragment)));
+      expect(persona, isNot(contains('LEARNING CONTEXT')));
+      // Slow-changing personalization still lives in the persona.
+      expect(persona, contains('Van'));
     });
 
     test('no learning context means no injected section', () {
@@ -279,6 +288,30 @@ void main() {
         messages: [],
       ));
       expect(persona, isNot(contains('LEARNING CONTEXT')));
+    });
+
+    test('learningContextMessage frames the fragment for message transport',
+        () {
+      final lc = LearningContext.bounded(nextActionLabel: 'Practice: matras');
+      final cc = ConversationContext(
+        conversationId: 'c1',
+        learner: const LearnerContext(),
+        messages: const [],
+        learningContext: lc,
+      );
+      final message = cc.learningContextMessage;
+      expect(message, contains(lc.fragment));
+      expect(message, contains('[Learner progress context'));
+      expect(message, contains('[End context]'));
+    });
+
+    test('learningContextMessage is empty when there is no context', () {
+      const cc = ConversationContext(
+        conversationId: 'c1',
+        learner: LearnerContext(),
+        messages: [],
+      );
+      expect(cc.learningContextMessage, '');
     });
   });
 
@@ -403,8 +436,8 @@ void main() {
           contains('Suggested next step: Start Learning'));
     });
 
-    test('ConversationPipelineImpl builds the persona from the fragment and '
-        'the adapter sees both', () async {
+    test('ConversationPipelineImpl builds a stable persona while the adapter '
+        'sees the fragment as message content', () async {
       final service = _CapturingService();
       final pipeline = ConversationPipelineImpl(
         aiService: service,
@@ -428,8 +461,10 @@ void main() {
       );
       expect(result.isRight(), isTrue);
       final seen = service.lastContext!;
-      // The persona the ADAPTER-visible context carries embeds the fragment.
-      expect(seen.personaPrompt, contains(lc.fragment));
+      // Phase 4: the ADAPTER-visible persona is stable (no fragment churn);
+      // the framed snapshot reaches the adapter as message content.
+      expect(seen.personaPrompt, isNot(contains(lc.fragment)));
+      expect(seen.learningContextMessage, contains(lc.fragment));
       expect(seen.learningContext, lc);
     });
   });

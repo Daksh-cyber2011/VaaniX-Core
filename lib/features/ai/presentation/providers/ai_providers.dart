@@ -111,3 +111,13 @@ final defaultAiConfigProvider = Provider<AiConfig>((ref) {
     enableStreaming: true,
   );
 });
+
+/// Today's AI usage snapshot, watched by the Chat screen's usage chip.
+///
+/// Phase 4 fix (defect #16): the chip previously read the tracker ONCE via
+/// a FutureBuilder and never refreshed, so the count went stale after every
+/// send. The ChatController invalidates this provider after each successful
+/// turn, which rebuilds the chip with fresh numbers.
+final dailyUsageProvider = FutureProvider<DailyUsage>((ref) async {
+  return ref.watch(tokenUsageTrackerProvider).getTodayUsage();
+});

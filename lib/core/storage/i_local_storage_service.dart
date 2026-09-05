@@ -52,6 +52,11 @@ abstract class ILocalStorageService {
   String? get language;
   Future<void> setLanguage(String language);
 
+  // Learner identity — the learner's own display name (not Van's). Used by
+  // the AI persona / offline tutor personalization. Empty string = unset.
+  String get learnerName;
+  Future<void> setLearnerName(String name);
+
   // AI Conversations — JSON-encoded lists of AiMessage maps.
   // Keyed by conversationId. Used by LocalConversationMemory.
   String? getAiConversation(String conversationId);

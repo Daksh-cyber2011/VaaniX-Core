@@ -71,6 +71,11 @@ Future<ProviderContainer> _makeContainer(
       authRepositoryProvider.overrideWithValue(NoopAuthRepository()),
       conversationPipelineProvider.overrideWithValue(_FakePipeline(send)),
       vanControllerProvider.overrideWith((ref) => van),
+      // These tests pin the COMPLETE-turn path (send()); production defaults
+      // to streaming (see chat_streaming_test.dart for that lifecycle).
+      defaultAiConfigProvider.overrideWithValue(
+        const AiConfig(provider: AiProviderId.offline, enableStreaming: false),
+      ),
     ],
   );
 }

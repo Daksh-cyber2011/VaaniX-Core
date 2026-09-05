@@ -59,6 +59,7 @@ enum CbseClass {
 class UserProfile extends Equatable {
   const UserProfile({
     this.id,
+    this.displayName = '',
     this.companionName = 'Van',
     this.personalityMode,
     this.cbseClass,
@@ -70,6 +71,12 @@ class UserProfile extends Equatable {
 
   /// Supabase user id (null while anonymous / offline).
   final String? id;
+
+  /// The learner's own name (empty when not set). Injected into the AI
+  /// persona and the offline tutor so Van can address the learner by
+  /// name. Distinct from [companionName], which is the name the learner
+  /// gave to Van.
+  final String displayName;
 
   /// The name the learner gave to Van.
   final String companionName;
@@ -99,8 +106,13 @@ class UserProfile extends Equatable {
   String get resolvedCompanionName =>
       companionName.trim().isEmpty ? 'Van' : companionName.trim();
 
+  /// Learner's display name with surrounding whitespace trimmed; empty
+  /// string when unset (AI personalization treats empty as anonymous).
+  String get resolvedDisplayName => displayName.trim();
+
   UserProfile copyWith({
     String? id,
+    String? displayName,
     String? companionName,
     PersonalityMode? personalityMode,
     CbseClass? cbseClass,
@@ -111,6 +123,7 @@ class UserProfile extends Equatable {
   }) {
     return UserProfile(
       id: id ?? this.id,
+      displayName: displayName ?? this.displayName,
       companionName: companionName ?? this.companionName,
       personalityMode: personalityMode ?? this.personalityMode,
       cbseClass: cbseClass ?? this.cbseClass,
@@ -124,6 +137,7 @@ class UserProfile extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        displayName,
         companionName,
         personalityMode,
         cbseClass,
