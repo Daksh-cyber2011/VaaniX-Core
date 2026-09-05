@@ -32,6 +32,16 @@ abstract class ProgressRepository {
   /// Total XP earned.
   Result<int> getXp();
 
+  /// Award a one-time bonus XP grant tagged with [sourceId] (for example
+  /// `ach_<achievementId>`). Idempotent per source: repeating the same
+  /// source never double-awards. Bonus XP is tracked in its own ledger and
+  /// never pollutes the completed-lesson / completed-quiz records, so
+  /// lesson counts and journey progress stay truthful.
+  Future<Result<int>> awardBonusXp({
+    required String sourceId,
+    required int amount,
+  });
+
   /// Exercise ids the learner has mastered (answered correctly at least
   /// once) for [lessonId]. Empty when never practised. Corrupt data is
   /// treated as empty rather than crashing.

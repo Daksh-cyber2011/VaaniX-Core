@@ -1,10 +1,12 @@
 /// Exam end-to-end widget QA (the strongest available runtime check on this
 /// machine - no Android emulator).
 ///
-/// Drives the real ExamScreen: setup -> instructions -> quiz -> result ->
-/// Save, verifies XP-once semantics at the UI level (button disables, repeat
-/// completion snackbar, XP total unchanged), and verifies the achievement
-/// path (snackbars) plus the persisted-unlock race guard.
+/// Drives the real ExamScreen: setup -> instructions -> quiz -> result,
+/// verifies the Phase 1 AUTOSAVE contract (the attempt persists the moment
+/// the quiz finishes, without any manual Save tap), XP-once semantics at
+/// the UI level (button disables, repeat completion snackbar, XP total
+/// unchanged), and verifies the achievement path (snackbars) plus the
+/// persisted-unlock race guard.
 library;
 
 import 'package:flutter/material.dart';
@@ -69,8 +71,7 @@ void main() {
       );
 
   /// Answers the current question correctly and advances.
-  Future<void> answerCorrectly(WidgetTester tester, String option,
-      {bool last = false}) async {
+  Future<void> answerCorrectly(WidgetTester tester, String option) async {
     await tester.tap(find.text(option));
     await tester.pump();
     await tester.tap(find.text('Submit'));
@@ -79,7 +80,14 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('exam journey: setup guard, quiz, save-once XP, achievements',
+  /// Settles the autosave chain (completeQuiz -> snackbars -> achievements).
+  Future<void> settleAutosave(WidgetTester tester) async {
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+  }
+
+  testWidgets(
+      'exam journey: setup guard, quiz, AUTOSAVE, XP-once, achievements',
       (tester) async {
     tester.view.physicalSize = const Size(800, 1800);
     tester.view.devicePixelRatio = 1.0;
@@ -111,16 +119,19 @@ void main() {
     expect(find.text('Q 1 / 2'), findsOneWidget);
     await answerCorrectly(tester, 'correct one');
     expect(find.text('Q 2 / 2'), findsOneWidget);
-    await answerCorrectly(tester, 'correct two', last: true);
+    await answerCorrectly(tester, 'correct two');
 
-    // ---- Result ----
+    // ---- Result: AUTOSAVE must persist WITHOUT any manual Save tap ----
     expect(find.textContaining('Great job! 100%'), findsOneWidget);
-    await tester.tap(find.text('Save Progress (+20 XP)'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
+    await settleAutosave(tester);
+    final repo = app.read(progressRepositoryProvider);
+    final attemptsAfterFinish = repo
+        .getQuizAttempts('quiz_ch_alphabet_beginner')
+        .fold<List<QuizResult>>((_) => const [], (v) => v);
+    expect(attemptsAfterFinish, hasLength(1),
+        reason: 'finishing the quiz must autosave the attempt immediately');
     expect(find.text('Progress saved \u2713'), findsOneWidget,
-        reason: 'Save must disable after the first persist');
+        reason: 'autosave must surface as a saved result without a tap');
 
     // XP snackbar + achievement snackbars (queued one after another).
     expect(find.textContaining('+20 XP earned'), findsOneWidget);
@@ -136,14 +147,12 @@ void main() {
         reason: 'perfect score achievement snackbar must appear');
     await tester.pump(const Duration(seconds: 5)); // let snackbars expire
 
-    final repo = app.read(progressRepositoryProvider);
     final xpAfterFirst = repo.getXp().fold((_) => -1, (v) => v);
     expect(xpAfterFirst, 20 + 20 + 50,
         reason: 'quiz XP + first_quiz + perfect_quiz bonuses');
 
     // ---- Retake the same exam: no duplicate XP, no re-unlocked
-
-    // achievements, history still grows ----
+    // achievements, history still grows (also autosaved) ----
     await tester.pump(const Duration(seconds: 8)); // let Van timers settle
     await tester.tap(find.text('Change topic'));
     await tester.pumpAndSettle();
@@ -158,13 +167,10 @@ void main() {
     await answerCorrectly(tester, 'correct two');
     await tester.pump();
 
-    await tester.tap(find.text('Save Progress (+20 XP)'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await settleAutosave(tester);
 
     expect(find.textContaining('no extra XP'), findsOneWidget,
         reason: 'repeat completion must be honest about XP');
-    await tester.pump(const Duration(seconds: 2));
     expect(find.textContaining('Achievement Unlocked'), findsNothing,
         reason: 'persisted unlocks must not be re-announced');
 

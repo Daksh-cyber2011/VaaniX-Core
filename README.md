@@ -85,7 +85,9 @@ UI consumes → AsyncValue / fold()
 
 ### Prerequisites
 
-- Flutter SDK ≥ 3.3.0
+- Flutter SDK ≥ 3.32 (Dart ≥ 3.6). Verified on 3.47.2 stable —
+  the app uses `Color.withValues()` and the current `CardThemeData`/
+  `DialogThemeData` theme APIs, which older toolchains reject.
 - Dart ≥ 3.3.0
 - A Supabase project (optional — app runs without backend)
 

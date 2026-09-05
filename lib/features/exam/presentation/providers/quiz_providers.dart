@@ -99,8 +99,16 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
   int get total => _questions.length;
 
-  QuizQuestion get current =>
-      _questions[state.currentIndex.clamp(0, total - 1)];
+  /// The question at the current index. The exam screen never renders the
+  /// quiz body when [total] is 0, but this getter must fail with a clear
+  /// error instead of the confusing ArgumentError a raw clamp() throws
+  /// when the lower bound exceeds the upper one (empty bank).
+  QuizQuestion get current {
+    if (_questions.isEmpty) {
+      throw StateError('QuizNotifier has no questions for this config.');
+    }
+    return _questions[state.currentIndex.clamp(0, _questions.length - 1)];
+  }
 
   void select(int optionIndex) {
     if (state.answered) return;

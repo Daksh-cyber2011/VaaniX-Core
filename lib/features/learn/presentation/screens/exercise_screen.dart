@@ -87,48 +87,63 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     if (_isCompleting || _completionDone) return;
     setState(() => _isCompleting = true);
 
-    final notifier = ref.read(completedLessonIdsProvider.notifier);
-    await notifier.markComplete(widget.lesson);
-    ref.invalidate(xpTotalProvider);
-    ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
-          VanEventType.lessonCompleted,
-          message: 'Nice work - you completed ${widget.lesson.title}!',
-          payload: {'lessonId': widget.lesson.id},
-        ));
-
-    final checker = ref.read(achievementCheckerProvider);
-    final newlyUnlocked = await checker.checkAchievements();
-
-    if (!mounted) return;
-    setState(() {
-      _isCompleting = false;
-      _completionDone = true;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content:
-            Text('Practice complete! +${widget.lesson.xpReward} XP earned!'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-
-    for (final ach in newlyUnlocked) {
+    try {
+      final notifier = ref.read(completedLessonIdsProvider.notifier);
+      await notifier.markComplete(widget.lesson);
+      ref.invalidate(xpTotalProvider);
       ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
-            VanEventType.achievementUnlocked,
-            message: 'I\'ll remember this: ${ach.title}!',
-            payload: {'achievementId': ach.id},
+            VanEventType.lessonCompleted,
+            message: 'Nice work - you completed ${widget.lesson.title}!',
+            payload: {'lessonId': widget.lesson.id},
           ));
+
+      final checker = ref.read(achievementCheckerProvider);
+      final newlyUnlocked = await checker.checkAchievements();
+
+      if (!mounted) return;
+      setState(() => _completionDone = true);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Achievement Unlocked: ${ach.title}!'
-            '${ach.xpReward > 0 ? '(+${ach.xpReward} XP)' : ''}',
-          ),
+          content:
+              Text('Practice complete! +${widget.lesson.xpReward} XP earned!'),
           behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 4),
         ),
       );
+
+      for (final ach in newlyUnlocked) {
+        ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+              VanEventType.achievementUnlocked,
+              message: 'I\'ll remember this: ${ach.title}!',
+              payload: {'achievementId': ach.id},
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Achievement Unlocked: ${ach.title}!'
+              '${ach.xpReward > 0 ? '(+${ach.xpReward} XP)' : ''}',
+            ),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (_) {
+      // Persistence failed: surface it and re-enable the button so the
+      // learner can retry. Previously a failure here left _isCompleting
+      // stuck at true, permanently disabling completion with no feedback.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save progress. Please try again.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isCompleting = false);
+      }
     }
   }
 

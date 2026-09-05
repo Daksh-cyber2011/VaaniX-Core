@@ -18,13 +18,39 @@ import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
 
 class LocalProgressRepository implements ProgressRepository {
-  LocalProgressRepository(this._storage);
+  LocalProgressRepository(this._storage) {
+    // Phase 1 repair: older builds awarded achievement bonus XP through
+    // completeLesson() with synthetic `ach_*` lesson ids, polluting the
+    // completed-lesson list (inflating journey %, lesson stats and the
+    // adaptive subtitle). Strip any such ids once at construction.
+    _sanitizeLegacyAchievementLessonIds();
+  }
 
   final ILocalStorageService _storage;
 
+  /// Prefix used by the legacy synthetic-achievement lesson ids.
+  static const String _achievementLessonPrefix = 'ach_';
+
+  /// Storage key of the bonus-XP ledger (JSON list of awarded source ids).
+  static const String _bonusXpKey = 'bonus_xp_awarded';
+
+  void _sanitizeLegacyAchievementLessonIds() {
+    final ids = _storage.completedLessonIds;
+    final polluted = ids.any((id) => id.startsWith(_achievementLessonPrefix));
+    if (!polluted) return;
+    _storage.setCompletedLessonIds(
+      ids.where((id) => !id.startsWith(_achievementLessonPrefix)).toList(),
+    );
+  }
+
   @override
-  Result<List<String>> getCompletedLessonIds() =>
-      ok(_storage.completedLessonIds);
+  Result<List<String>> getCompletedLessonIds() => ok(
+        // Defensive filter: reads stay clean even if the constructor's
+        // write-through sanitize is still in flight.
+        _storage.completedLessonIds
+            .where((id) => !id.startsWith(_achievementLessonPrefix))
+            .toList(),
+      );
 
   @override
   Result<List<String>> getCompletedQuizIds() => ok(_storage.completedQuizIds);
@@ -100,6 +126,41 @@ class LocalProgressRepository implements ProgressRepository {
   @override
   Result<int> getXp() => ok(_storage.xpTotal);
 
+  @override
+  Future<Result<int>> awardBonusXp({
+    required String sourceId,
+    required int amount,
+  }) {
+    return guardAsync(() async {
+      // Zero-value grants need no ledger entry and no XP write.
+      if (amount <= 0) return _storage.xpTotal;
+
+      final awarded = _bonusXpSources();
+      // Idempotency guard: a source (achievement, milestone, ...) can only
+      // ever contribute its bonus once.
+      if (awarded.contains(sourceId)) return _storage.xpTotal;
+
+      awarded.add(sourceId);
+      await Future.wait([
+        _storage.setString(_bonusXpKey, jsonEncode(awarded)),
+        _setXp(_storage.xpTotal + amount),
+      ]);
+      return _storage.xpTotal;
+    });
+  }
+
+  /// Reads the persisted bonus-XP ledger. Corrupt JSON is treated as an
+  /// empty ledger rather than crashing (same policy as attempt history).
+  List<String> _bonusXpSources() {
+    final raw = _storage.getString(_bonusXpKey);
+    if (raw == null || raw.isEmpty) return <String>[];
+    try {
+      return (jsonDecode(raw) as List<dynamic>).whereType<String>().toList();
+    } catch (_) {
+      return <String>[];
+    }
+  }
+
   static const String _masteredPrefix = 'mastered_exercises_';
 
   @override
@@ -145,6 +206,9 @@ class LocalProgressRepository implements ProgressRepository {
         _storage.setCompletedLessonIds(const []),
         _storage.setCompletedQuizIds(const []),
         _storage.setXpTotal(0),
+        // Bonus-XP ledger must reset with everything else so achievements
+        // cleared in the same reset can re-award their XP when re-earned.
+        _storage.setString(_bonusXpKey, jsonEncode(<String>[])),
         // Attempt history under ANY quiz id.
         for (final key in _storage.keys)
           if (key.startsWith(_attemptsPrefix)) _storage.remove(key),

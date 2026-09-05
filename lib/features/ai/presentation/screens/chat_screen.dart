@@ -1,4 +1,4 @@
-/// VaaniX AI € Chat Screen
+/// VaaniX AI â€” Chat Screen
 ///
 /// The conversational surface where the learner talks to Van. Shows a
 /// scrolling list of message bubbles, a typing indicator while Van is
@@ -78,7 +78,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         centerTitle: true,
         actions: [
-          // €€€ AI Usage Indicator €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // â€”â€”â€” AI Usage Indicator â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
           // Shows remaining daily requests as a small chip. Tapping
           // it shows detailed usage in a dialog.
           FutureBuilder(
@@ -133,7 +133,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
-          // €€€ Message List €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // â€”â€”â€” Message List â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
           // Honest connectivity awareness: lessons keep working offline;
           // only Van's AI chat needs a connection.
           const OfflineBanner(margin: EdgeInsets.fromLTRB(16, 8, 16, 0)),
@@ -159,7 +159,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
           ),
 
-          // €€€ Error Banner (if any) €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // â€”â€”â€” Error Banner (if any) â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
           if (chatState.error != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -185,7 +185,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
 
-          // €€€ Input €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // â€”â€”â€” Input â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
           ChatInput(
             onSend: (text) {
               ref.read(chatControllerProvider.notifier).sendMessage(text);

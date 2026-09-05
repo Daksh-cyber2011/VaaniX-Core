@@ -1,4 +1,4 @@
-/// Onboarding Page 5 € Account Creation
+/// Onboarding Page 5 — Account Creation
 ///
 /// UI shell for auth (Phone OTP / Google Sign-In).
 /// When Supabase is configured, pressing Google/Phone triggers the real
@@ -43,7 +43,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
   }
 
   /// Type-safe auth runner. Accepts a typed `Future<Result<T>>` action
-  /// instead of `Future<dynamic>` € no more dynamic dispatch on result.
+  /// instead of `Future<dynamic>` — no more dynamic dispatch on result.
   Future<void> _runAuth<T>(Future<Result<T>> Function() action) async {
     setState(() {
       _isBusy = true;
@@ -145,7 +145,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
             const SizedBox(height: 20),
           ],
           PrimaryButton.text(
-            label: _canAuth ? 'Skip for now' : 'Skip € continue offline',
+            label: _canAuth ? 'Skip for now' : 'Skip — continue offline',
             onPressed: _isBusy ? null : notifier.skipAuth,
           ),
           const SizedBox(height: 16),

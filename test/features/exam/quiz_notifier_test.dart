@@ -82,5 +82,14 @@ void main() {
       expect(n.state.answered, isFalse);
       expect(n.state.finished, isFalse);
     });
+
+    test('accessing current on an empty bank fails with a clear error', () {
+      // Phase 1: an empty bank used to hit clamp(0, -1) and throw a
+      // confusing ArgumentError. The UI guards this case, but the getter
+      // must fail with a descriptive StateError if misused.
+      final n = QuizNotifier(const []);
+      expect(n.total, 0);
+      expect(() => n.current, throwsStateError);
+    });
   });
 }

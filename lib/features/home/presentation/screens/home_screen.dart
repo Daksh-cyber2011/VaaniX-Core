@@ -21,6 +21,7 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_shadows.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
+import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
@@ -53,7 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // Record today's activity so the streak stays current whenever the Nest
     // is opened. Fire-and-forget; the provider handles persistence.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userProfileProvider.notifier).recordDailyActivity();
+      _recordStreakAndCelebrate();
       ref.read(vanControllerProvider.notifier).dispatch(
             const VanEvent(
               VanEventType.appOpened,
@@ -61,6 +62,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           );
     });
+  }
+
+  /// Records today's activity and then runs the achievement checker so
+  /// streak-based achievements (3-day / 7-day) can unlock from streak
+  /// activity alone. Previously a streak milestone only unlocked the next
+  /// time the learner happened to finish a lesson, quiz or chat.
+  Future<void> _recordStreakAndCelebrate() async {
+    await ref.read(userProfileProvider.notifier).recordDailyActivity();
+    if (!mounted) return;
+    try {
+      final newlyUnlocked =
+          await ref.read(achievementCheckerProvider).checkAchievements();
+      if (!mounted || newlyUnlocked.isEmpty) return;
+      // One consolidated celebration for the batch (same pattern as the
+      // lesson/practice/exam screens — no snackbar stacking).
+      final first = newlyUnlocked.first;
+      final extra = newlyUnlocked.length > 1
+          ? ' (+${newlyUnlocked.length - 1} more)'
+          : '';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Achievement Unlocked: ${first.title}!'
+            '${first.xpReward > 0 ? ' (+${first.xpReward} XP)' : ''}$extra',
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (_) {
+      // The achievement check must never break Home.
+    }
   }
 
   void _openAction(NextAction action) {

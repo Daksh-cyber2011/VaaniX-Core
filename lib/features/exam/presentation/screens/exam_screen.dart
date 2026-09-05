@@ -1,9 +1,11 @@
-/// Exam Screen € Chapter + Difficulty Exam Flow
+/// Exam Screen — Chapter + Difficulty Exam Flow
 ///
 /// Exam V1: the student first picks a chapter and a difficulty band, then
 /// answers a deterministic, chapter/difficulty-scoped question set. Answers
-/// give immediate feedback + explanation; finishing awards XP and records an
-/// attempt via [progressRepositoryProvider] keyed by the exam configuration.
+/// give immediate feedback + explanation; finishing AUTOMATICALLY records
+/// the attempt via [progressRepositoryProvider] keyed by the exam
+/// configuration (Phase 1 autosave — the manual Save button remains as a
+/// visible confirmation and retry path, never as the only write path).
 library;
 
 import 'package:flutter/material.dart';
@@ -40,12 +42,15 @@ class ExamScreen extends ConsumerStatefulWidget {
   ConsumerState<ExamScreen> createState() => _ExamScreenState();
 }
 
+/// Lifecycle of the result persistence for the current attempt.
+enum _SaveState { unsaved, saving, saved, failed }
+
 class _ExamScreenState extends ConsumerState<ExamScreen> {
   String? _chapterId;
   Difficulty _difficulty = Difficulty.beginner;
   bool _confirming = false;
   bool _started = false;
-  bool _submitted = false;
+  _SaveState _saveState = _SaveState.unsaved;
 
   ExamConfig get _config =>
       ExamConfig(chapterId: _chapterId, difficulty: _difficulty);
@@ -71,7 +76,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     setState(() {
       _confirming = false;
       _started = true;
-      _submitted = false;
+      _saveState = _SaveState.unsaved;
     });
   }
 
@@ -79,8 +84,103 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     setState(() {
       _confirming = false;
       _started = false;
-      _submitted = false;
+      _saveState = _SaveState.unsaved;
     });
+  }
+
+  /// Persists the finished attempt (XP award is idempotent inside the
+  /// repository; the attempt is always appended to history).
+  ///
+  /// Phase 1: called automatically the moment the quiz finishes, so an app
+  /// kill on the result screen can no longer lose the attempt, XP or the
+  /// achievement check. The manual Save button shares this method as the
+  /// visible confirmation + retry path after a failure.
+  Future<void> _persistResult() async {
+    if (_saveState == _SaveState.saving || _saveState == _SaveState.saved) {
+      return;
+    }
+    final config = _config;
+    final quizState = ref.read(examQuizProvider(config));
+    if (!quizState.finished) return;
+    final notifier = ref.read(examQuizProvider(config).notifier);
+
+    setState(() => _saveState = _SaveState.saving);
+    final result = await ref.read(progressRepositoryProvider).completeQuiz(
+          quizId: config.quizId,
+          score: quizState.score,
+          total: notifier.total,
+        );
+    if (!mounted) return;
+
+    // Invalidate all progress-related providers so the Progress
+    // screen's "Quizzes Done" card updates reactively.
+    ref.invalidate(xpTotalProvider);
+    ref.invalidate(completedQuizIdsProvider);
+    ref.invalidate(quizAttemptsIndexProvider);
+    ref.invalidate(adaptiveNextActionProvider);
+    // Analytics: exam outcome with real score.
+    ref.log(AnalyticsEvent(
+      AnalyticsEventName.examCompleted,
+      {
+        'quizId': config.quizId,
+        'score': quizState.score,
+        'total': notifier.total,
+      },
+    ));
+
+    await result.fold(
+      (_) async {
+        if (!mounted) return;
+        setState(() => _saveState = _SaveState.failed);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not save your result. Tap Save to retry.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      },
+      (saved) async {
+        if (!mounted) return;
+        setState(() => _saveState = _SaveState.saved);
+        // Surface the actual XP earned (0 on repeat completions due to
+        // the idempotency guard added in Segment 1).
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: saved.xpEarned > 0
+                ? Text('+${saved.xpEarned} XP earned!')
+                : const Text('Quiz already completed — no extra XP'),
+          ),
+        );
+      },
+    );
+    if (!mounted) return;
+
+    // Exam completions must also drive the achievement checker
+    // (quiz category + perfect-score achievements live on this path).
+    final checker = ref.read(achievementCheckerProvider);
+    final newlyUnlocked = await checker.checkAchievements(
+      quizScorePercentage: notifier.total == 0
+          ? 0
+          : ((quizState.score / notifier.total) * 100).round(),
+    );
+    if (!mounted) return;
+    for (final ach in newlyUnlocked) {
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.achievementUnlocked,
+            message: 'I\'ll remember this: ${ach.title}!',
+            payload: {'achievementId': ach.id},
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Achievement Unlocked: ${ach.title}!'
+            '${ach.xpReward > 0 ? '(+${ach.xpReward} XP)' : ''}',
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 
   int _chapterTotal(
@@ -320,81 +420,22 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
       for (final a in attempts) {
         if (a.score > bestScore) bestScore = a.score;
       }
+      // Honest Save button: on a repeat completion the repository's
+      // idempotency guard awards 0 XP, so the label must not promise any.
+      final alreadyCompleted =
+          ref.watch(completedQuizIdsProvider).contains(config.quizId);
       return _ResultView(
         score: state.score,
         total: notifier.total,
         bestScore: bestScore,
         attemptsCount: attempts.length,
-        saved: _submitted,
+        saveState: _saveState,
+        alreadyCompleted: alreadyCompleted,
         onRetry: () {
           ref.read(examQuizProvider(config).notifier).restart();
-          setState(() => _submitted = false);
+          setState(() => _saveState = _SaveState.unsaved);
         },
-        onPersist: () async {
-          if (_submitted) return;
-          setState(() => _submitted = true);
-          final result =
-              await ref.read(progressRepositoryProvider).completeQuiz(
-                    quizId: config.quizId,
-                    score: state.score,
-                    total: notifier.total,
-                  );
-          if (!mounted) return;
-          // Invalidate all progress-related providers so the Progress
-          // screen's "Quizzes Done" card updates reactively.
-          ref.invalidate(xpTotalProvider);
-          ref.invalidate(completedQuizIdsProvider);
-          ref.invalidate(quizAttemptsIndexProvider);
-          ref.invalidate(adaptiveNextActionProvider);
-          // Analytics: exam outcome with real score.
-          ref.log(AnalyticsEvent(
-            AnalyticsEventName.examCompleted,
-            {
-              'quizId': config.quizId,
-              'score': state.score,
-              'total': notifier.total,
-            },
-          ));
-          // Surface the actual XP earned (0 on repeat completions due to
-          // the idempotency guard added in Segment 1).
-          final xpEarned = result.fold(
-            (_) => 0,
-            (r) => r.xpEarned,
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: xpEarned > 0
-                  ? Text('+$xpEarned XP earned!')
-                  : const Text('Quiz already completed € no extra XP'),
-            ),
-          );
-          // Exam completions must also drive the achievement checker
-          // (quiz category + perfect-score achievements live on this path).
-          final checker = ref.read(achievementCheckerProvider);
-          final newlyUnlocked = await checker.checkAchievements(
-            quizScorePercentage: notifier.total == 0
-                ? 0
-                : ((state.score / notifier.total) * 100).round(),
-          );
-          if (!mounted) return;
-          for (final ach in newlyUnlocked) {
-            ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
-                  VanEventType.achievementUnlocked,
-                  message: 'I\'ll remember this: ${ach.title}!',
-                  payload: {'achievementId': ach.id},
-                ));
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Achievement Unlocked: ${ach.title}!'
-                  '${ach.xpReward > 0 ? '(+${ach.xpReward} XP)' : ''}',
-                ),
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 4),
-              ),
-            );
-          }
-        },
+        onPersist: _persistResult,
         onBack: _backToSetup,
       );
     }
@@ -576,10 +617,16 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                             ? VanEventType.perfectScore
                                             : VanEventType.quizCompleted,
                                         message: isPerfect
-                                            ? 'A perfect score € wonderful work!'
+                                            ? 'A perfect score — wonderful work!'
                                             : 'You finished the quiz. Nice effort!',
                                       ),
                                     );
+                                // Advance to the result view first, then
+                                // autosave: the attempt, XP and achievement
+                                // check are recorded without any extra tap.
+                                notifier.next();
+                                _persistResult();
+                                return;
                               }
                               notifier.next();
                             } else {
@@ -752,7 +799,8 @@ class _ResultView extends StatelessWidget {
     required this.total,
     required this.bestScore,
     required this.attemptsCount,
-    required this.saved,
+    required this.saveState,
+    required this.alreadyCompleted,
     required this.onRetry,
     required this.onPersist,
     required this.onBack,
@@ -762,7 +810,11 @@ class _ResultView extends StatelessWidget {
   final int total;
   final int bestScore;
   final int attemptsCount;
-  final bool saved;
+  final _SaveState saveState;
+
+  /// True when this quizId was completed before this attempt. The save
+  /// button must not promise XP the idempotency guard will not award.
+  final bool alreadyCompleted;
   final VoidCallback onRetry;
   final Future<void> Function() onPersist;
   final VoidCallback onBack;
@@ -840,12 +892,26 @@ class _ResultView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
+              // Autosave (Phase 1): the attempt is persisted the moment the
+              // quiz finishes. The button reflects the save lifecycle and
+              // doubles as the manual retry path after a failure.
               PrimaryButton(
-                label: saved
-                    ? 'Progress saved \u2713'
-                    : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
+                label: switch (saveState) {
+                  _SaveState.saved => 'Progress saved \u2713',
+                  _SaveState.saving => 'Saving\u2026',
+                  // Unsaved / failed: retryable. XP is only promised on a
+                  // first completion — repeats earn 0 by design.
+                  _SaveState.unsaved ||
+                  _SaveState.failed =>
+                    alreadyCompleted
+                        ? 'Save Progress'
+                        : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
+                },
                 icon: const Icon(Icons.save_outlined, color: Colors.white),
-                onPressed: saved ? null : onPersist,
+                onPressed: saveState == _SaveState.saved ||
+                        saveState == _SaveState.saving
+                    ? null
+                    : () => onPersist(),
               ),
               const SizedBox(height: 12),
               PrimaryButton.secondary(

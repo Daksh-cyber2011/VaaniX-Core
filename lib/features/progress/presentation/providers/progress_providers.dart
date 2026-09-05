@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/analytics/analytics_client.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
+import 'package:vaanix_app/core/errors/failures.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/progress/data/local_progress_repository.dart';
@@ -49,10 +50,20 @@ class _CompletedLessonsNotifier extends StateNotifier<List<String>> {
 
   Future<void> markComplete(Lesson lesson) async {
     if (state.contains(lesson.id)) return;
+    // Persist FIRST, then update state: the previous optimistic update
+    // left the in-session list polluted when the repository write failed
+    // (lesson looked completed until the next restart, with the XP
+    // missing). On failure the error is rethrown so screens can surface
+    // their "could not save" feedback and state stays truthful.
+    final result = await _repo.completeLesson(lesson);
+    Failure? failure;
+    result.fold((f) => failure = f, (_) {});
+    if (failure != null) {
+      throw Exception('completeLesson failed: ${failure!.message}');
+    }
     state = [...state, lesson.id];
     _analytics.log(AnalyticsEvent(AnalyticsEventName.lessonCompleted,
         {'lessonId': lesson.id, 'xp': lesson.xpReward}));
-    await _repo.completeLesson(lesson);
   }
 }
 

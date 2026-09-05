@@ -1,4 +1,4 @@
-/// Onboarding Page 4 € Daily Goal
+/// Onboarding Page 4 — Daily Goal
 ///
 /// User selects their daily learning goal: 5/10/15/20 minutes.
 /// Van reacts to each choice. Per PRD Section 8.1 Screen 5.
@@ -91,7 +91,7 @@ class ObGoalPage extends ConsumerWidget {
       case 10:
         return "10 minutes! That's my favourite streak size! ";
       case 15:
-        return "15 minutes € you mean business! Let's go! ";
+        return "15 minutes — you mean business! Let's go! ";
       case 20:
         return "20 MINUTES?! $name, you're a legend! ";
       default:

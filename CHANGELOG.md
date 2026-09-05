@@ -2,6 +2,53 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 1] - 2026-09-05
+
+Core student product loop repairs. Full audit basis: `docs/Audits/V1-Audit-Phase0.md`.
+
+### Fixed
+- **Build blockers**: `chat_screen.dart` re-encoded as valid UTF-8 (raw CP1252
+  bytes made Dart treat the file as binary, breaking the router import);
+  `CardTheme`/`DialogTheme` replaced with `CardThemeData`/`DialogThemeData`
+  in `app_theme.dart` (4 sites) — `flutter analyze` is now clean on modern
+  stable toolchains.
+- **Exam autosave**: finishing a quiz now persists the attempt, XP and the
+  achievement check automatically. The previous manual-only Save button
+  meant an app kill on the result screen silently lost the result. The Save
+  button remains as visible confirmation + retry path, with an honest label
+  (no XP promised on repeat completions).
+- **Achievement bonus XP ledger**: bonus XP no longer flows through
+  `completeLesson()` with synthetic `ach_*` lesson ids, which inflated
+  lesson counts, journey % and the adaptive subtitle. New idempotent
+  `awardBonusXp` repository API backed by a dedicated ledger; legacy
+  polluted lesson-id lists are sanitized on startup.
+- **Streak achievements**: Home now runs the achievement checker after
+  recording daily activity, so 3-day / 7-day streaks unlock from streak
+  activity alone. A failed streak write no longer stamps a false
+  `lastActiveDate`.
+- **Practice completion**: a persistence failure no longer leaves the
+  complete button permanently disabled with no feedback (try/catch/finally
+  + error snackbar, mirroring the lesson-content pattern).
+- **Lesson completion ordering**: the reactive completed-lesson list now
+  commits only after a successful repository write (previously optimistic,
+  leaving stale in-session state on failure).
+- **QuizNotifier**: an empty question bank now fails with a clear
+  `StateError` instead of a confusing `clamp()` ArgumentError.
+- **Mojibake**: corrupted em-dash characters fixed in user-visible strings
+  (exam feedback, onboarding copy) and section-banner comments.
+
+### Changed
+- Analyzer now excludes `Archive/**` (historical snapshots) so `flutter
+  analyze` reflects the real project.
+- Pubspec SDK floor raised to Dart >= 3.6.0; README documents the verified
+  toolchain (Flutter >= 3.32, tested on 3.47.2).
+- Transitive dependency refresh from `flutter pub get`.
+
+### Tests
+- 293 tests passing (282 existing + 11 new): exam autosave E2E, bonus-XP
+  ledger, legacy sanitize, streak achievement trigger, streak-write failure
+  isolation, lesson-completion rollback, empty-bank guard.
+
 ## [5.0.0] - 2026-07-30
 
 ### Added

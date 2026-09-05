@@ -30,7 +30,7 @@ class AchievementsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          // â”€â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // --- Summary-------------------------------------------------------------------------------------------------------------------------------------------------
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -78,7 +78,7 @@ class AchievementsScreen extends ConsumerWidget {
 
           const SizedBox(height: 20),
 
-          // â”€â”€â”€ Achievement Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // --- Achievement Grid----------------------------------------------------------------------------------------------------------------------
           ..._sorted(achievements)
               .map((progress) => _AchievementCard(progress: progress)),
         ],

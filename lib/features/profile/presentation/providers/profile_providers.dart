@@ -83,16 +83,26 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
   /// Record today's activity and return the new streak.
   Future<int> recordDailyActivity() async {
     final result = await _repo.recordDailyActivity();
-    final next = result.fold((_) => state.currentStreak, (v) => v);
-    final extended = next > state.currentStreak;
+    // Only mutate state on a persisted success: the previous version
+    // stamped lastActiveDate = today even when the repository write
+    // failed, desyncing the in-memory streak window from storage.
+    var nextStreak = state.currentStreak;
+    var succeeded = false;
+    result.fold((_) {}, (v) {
+      nextStreak = v;
+      succeeded = true;
+    });
+    if (!succeeded) return nextStreak;
+
+    final extended = nextStreak > state.currentStreak;
     state = state.copyWith(
-      currentStreak: next,
+      currentStreak: nextStreak,
       lastActiveDate: _todayIso(),
     );
     if (extended) {
       _analytics.log(const AnalyticsEvent(AnalyticsEventName.streakExtended));
     }
-    return next;
+    return nextStreak;
   }
 
   String _todayIso() {

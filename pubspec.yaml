@@ -5,7 +5,10 @@ description: >
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.3.0 <4.0.0"
+  # Color.withValues() requires Dart 3.6+; the Material 3 theme APIs
+  # (CardThemeData / DialogThemeData) require a matching recent Flutter.
+  # See README → Prerequisites for the verified toolchain.
+  sdk: ">=3.6.0 <4.0.0"
 
 dependencies:
   flutter:

@@ -5,7 +5,9 @@
 ///
 /// On unlock:
 ///   1. Calls [AchievementRepository.unlock] to persist the unlock.
-///   2. Awards bonus XP via a synthetic lesson (idempotent).
+///   2. Awards bonus XP through the progress repository's bonus-XP ledger
+///      (idempotent per achievement, and never pollutes the completed
+///      lesson records).
 ///   3. Returns the list of newly-unlocked [Achievement]s so the UI can
 ///      show a celebration overlay.
 ///
@@ -23,7 +25,6 @@ import 'package:vaanix_app/features/achievements/data/achievement_repository.dar
 import 'package:vaanix_app/features/achievements/domain/achievement.dart';
 
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_providers.dart';
-import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 
 class AchievementChecker {
@@ -81,30 +82,36 @@ class AchievementChecker {
 
       if (shouldUnlock) {
         final result = await repo.unlock(ach.id);
+        var unlockedNow = false;
         result.fold(
-          (_) {}, // ignore errors
-          (_) {
-            newlyUnlocked.add(ach);
-            _ref.log(AnalyticsEvent(
-              AnalyticsEventName.achievementUnlocked,
-              {'achievementId': ach.id},
-            ));
-
-            // Award bonus XP if the achievement has a reward.
-            if (ach.xpReward > 0) {
-              _ref.read(progressRepositoryProvider).completeLesson(
-                    Lesson(
-                      id: 'ach_${ach.id}',
-                      chapterId: 'achievements',
-                      title: ach.title,
-                      subtitle: 'Achievement bonus XP',
-                      xpReward: ach.xpReward,
-                    ),
-                  );
-              _ref.invalidate(xpTotalProvider);
-            }
-          },
+          (_) {}, // persistence failure: skip XP + celebration for safety
+          (_) => unlockedNow = true,
         );
+        if (!unlockedNow) continue;
+
+        newlyUnlocked.add(ach);
+        _ref.log(AnalyticsEvent(
+          AnalyticsEventName.achievementUnlocked,
+          {'achievementId': ach.id},
+        ));
+
+        // Award bonus XP through the dedicated ledger (Phase 1 repair).
+        // The old path routed this through completeLesson() with a
+        // synthetic `ach_*` lesson id, which corrupted lesson counts and
+        // journey progress everywhere. The ledger is idempotent per
+        // achievement and never touches completed-lesson records.
+        if (ach.xpReward > 0) {
+          final xpResult = await _ref
+              .read(progressRepositoryProvider)
+              .awardBonusXp(
+                sourceId: 'ach_${ach.id}',
+                amount: ach.xpReward,
+              );
+          xpResult.fold(
+            (_) {},
+            (_) => _ref.invalidate(xpTotalProvider),
+          );
+        }
       }
     }
 

@@ -61,7 +61,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
           ),
           const SizedBox(height: 24),
 
-          // €€€ Chat with Van CTA €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
+          // --- Chat with Van CTA ------------------------------------
           PrimaryButton(
             onPressed: () => context.go(RouteNames.chat),
             icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
