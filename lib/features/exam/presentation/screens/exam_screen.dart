@@ -19,6 +19,7 @@ import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
@@ -65,12 +66,12 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     ref
         .read(vanControllerProvider.notifier)
         .dispatch(const VanEvent(VanEventType.quizStarted));
-    // The family provider for this config may still hold a FINISHED attempt
+    // The family session for this config may still hold a FINISHED attempt
     // from a previous run (stale-provider hazard when retaking the same
     // topic + level after "Change topic"). Restart it so the learner always
     // gets a fresh question set, never the cached result screen.
-    final current = ref.read(examQuizProvider(_config));
-    if (current.finished) {
+    final current = ref.read(examQuizProvider(_config)).valueOrNull;
+    if (current != null && current.finished) {
       ref.read(examQuizProvider(_config).notifier).restart();
     }
     setState(() {
@@ -100,8 +101,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
       return;
     }
     final config = _config;
-    final quizState = ref.read(examQuizProvider(config));
-    if (!quizState.finished) return;
+    final quizState = ref.read(examQuizProvider(config)).valueOrNull;
+    if (quizState == null || !quizState.finished) return;
     final notifier = ref.read(examQuizProvider(config).notifier);
 
     setState(() => _saveState = _SaveState.saving);
@@ -201,8 +202,20 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   // Setup: choose chapter + difficulty
   // ---------------------------------------------------------------------
   Widget _buildSetup() {
-    final all = ref.watch(quizQuestionsProvider);
-    final chapters = sanskritCurriculum
+    // Phase 2 single source: the question bank and the chapter list both
+    // come from the JSON curriculum (the Dart constants remain only as a
+    // malformed-asset fallback). While the bank settles, show progress —
+    // an empty, unselectable setup must never flash during the load.
+    final all = ref.watch(quizBankProvider).valueOrNull ?? const [];
+    if (all.isEmpty) {
+      return const VaaniXScaffold(
+        title: 'Exam',
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final curriculumList =
+        ref.watch(curriculumProvider).valueOrNull ?? sanskritCurriculum;
+    final chapters = curriculumList
         .where((c) => all.any((q) => q.chapterId == c.id))
         .toList();
 
@@ -279,14 +292,16 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   // Instructions: confirm the selected exam before starting
   // ---------------------------------------------------------------------
   Widget _buildInstructions() {
-    final all = ref.watch(quizQuestionsProvider);
+    final all = ref.watch(quizBankProvider).valueOrNull ?? const [];
+    final curriculumList =
+        ref.watch(curriculumProvider).valueOrNull ?? sanskritCurriculum;
     final count = all
         .where((q) =>
             (_chapterId == null || q.chapterId == _chapterId) &&
             q.difficulty == _difficulty)
         .length;
     Chapter? chapter;
-    for (final c in sanskritCurriculum) {
+    for (final c in curriculumList) {
       if (c.id == _chapterId) chapter = c;
     }
     const xpPer = AppConstants.xpPerCorrectAnswer;
@@ -383,9 +398,44 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   // ---------------------------------------------------------------------
   Widget _buildQuiz() {
     final config = _config;
-    final quiz = ref.watch(examQuizProvider(config));
+    final quizAsync = ref.watch(examQuizProvider(config));
+
+    return quizAsync.when(
+      loading: () => VaaniXScaffold(
+        title: 'Exam',
+        actions: [
+          TextButton(onPressed: _backToSetup, child: const Text('Change')),
+        ],
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => VaaniXScaffold(
+        title: 'Exam',
+        actions: [
+          TextButton(onPressed: _backToSetup, child: const Text('Change')),
+        ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const VanWidget(
+                state: VanState.thinking,
+                size: 140,
+                showSpeechBubble: true,
+                dialogueText: 'Something went wrong loading this exam.',
+              ),
+              const SizedBox(height: 16),
+              PrimaryButton(
+                  label: 'Back to setup', onPressed: _backToSetup),
+            ],
+          ),
+        ),
+      ),
+      data: (state) => _buildQuizBody(config, state),
+    );
+  }
+
+  Widget _buildQuizBody(ExamConfig config, QuizState state) {
     final notifier = ref.read(examQuizProvider(config).notifier);
-    final state = quiz;
 
     if (notifier.total == 0) {
       return VaaniXScaffold(
@@ -882,9 +932,11 @@ class _ResultView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _stat('Score', '$score/$total', subtext),
+                    // Honest Best: show the real best (even 0/total) once
+                    // any attempt exists — "-" means never attempted.
                     _stat(
                       'Best',
-                      bestScore > 0 ? '$bestScore/$total' : '-',
+                      attemptsCount > 0 ? '$bestScore/$total' : '-',
                       subtext,
                     ),
                     _stat('Attempts', '$attemptsCount', subtext),

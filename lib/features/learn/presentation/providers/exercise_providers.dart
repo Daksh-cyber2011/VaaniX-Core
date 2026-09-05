@@ -312,6 +312,41 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
     _scored.clear();
     state = const ExerciseState();
   }
+
+  /// Restores a previously persisted in-progress session (Phase 2 resume).
+  ///
+  /// Applies ONLY to a fresh notifier (a restart would silently drop real
+  /// progress otherwise). Mastered exercise ids are mapped back to their
+  /// indices — unknown ids (curriculum drift) are ignored — and the score
+  /// is re-derived from the mastered set so it always stays truthful.
+  /// [currentIndex] is clamped into range. Returns true when applied.
+  bool restoreSession({
+    required int currentIndex,
+    required int score,
+    List<String> masteredIds = const [],
+  }) {
+    if (total == 0) return false;
+    final fresh = state.currentIndex == 0 &&
+        state.score == 0 &&
+        !state.finished &&
+        _scored.isEmpty;
+    if (!fresh) return false;
+    if (currentIndex <= 0 && score <= 0 && masteredIds.isEmpty) {
+      return false; // nothing meaningful to resume
+    }
+
+    for (final id in masteredIds) {
+      final index = _exercises.indexWhere((e) => e.id == id);
+      if (index >= 0) _scored.add(index);
+    }
+    final restoredScore = _scored.length.clamp(0, total);
+    final restoredIndex = currentIndex.clamp(0, total - 1);
+    state = ExerciseState(
+      currentIndex: restoredIndex,
+      score: restoredScore,
+    );
+    return true;
+  }
 }
 
 /// A practice session for a lesson (empty notifier when no exercises yet).

@@ -1,25 +1,29 @@
 /// Quiz Providers — Riverpod wiring
 ///
-/// Builds a flat bank of quiz questions from the curriculum chapters and
-/// exposes the reactive [QuizNotifier] that drives the exam flow.
+/// Phase 2 single source of truth: the question bank is loaded from the
+/// JSON curriculum asset ([quizBankProvider] → `loadAllQuizQuestions`), with
+/// the compiled-in Dart bank kept only as a malformed-asset fallback. The
+/// exam session itself is an async family ([examQuizProvider]) so the bank
+/// load settles before the first question is served.
 ///
-/// Exam V1: questions now carry chapter + difficulty metadata.
 /// [selectExamQuestions] deterministically filters the bank by
-/// chapter/difficulty, and [examQuizProvider] exposes a fresh [QuizNotifier]
-/// per [ExamConfig] (chapter + difficulty) so attempt state resets cleanly
-/// when the user picks a different exam set.
+/// chapter/difficulty, and [examQuizProvider] exposes one [QuizNotifier]
+/// engine per [ExamConfig] (chapter + difficulty) so attempt state resets
+/// cleanly when the student picks a different exam set.
 library;
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
-/// All quiz questions across the curriculum, flattened into one bank.
-final quizQuestionsProvider = Provider<List<QuizQuestion>>((ref) {
-  final bank = chapterQuizzes;
-  return bank.values.expand((q) => q).toList();
+/// The full question bank, loaded once from the JSON curriculum.
+///
+/// The loader never fails (Dart fallback inside), so consumers can treat
+/// an empty list as "config with no questions" rather than an error state.
+final quizBankProvider = FutureProvider<List<QuizQuestion>>((ref) async {
+  return loadAllQuizQuestions();
 });
 
 /// An exam configuration: an optional chapter and a difficulty band.
@@ -92,6 +96,10 @@ class QuizState {
   }
 }
 
+/// Pure quiz engine: selection, first-try scoring and question flow for one
+/// deterministic question set. Deliberately Riverpod-free so it stays unit
+/// testable (see quiz_notifier_test.dart) and reusable — the Riverpod
+/// surface ([ExamQuizController]) only mirrors this engine's state.
 class QuizNotifier extends StateNotifier<QuizState> {
   QuizNotifier(this._questions) : super(const QuizState());
 
@@ -141,13 +149,66 @@ class QuizNotifier extends StateNotifier<QuizState> {
   }
 }
 
+/// Riverpod session for one [ExamConfig]. Loads the bank asynchronously,
+/// builds the pure [QuizNotifier] engine for this config, and mirrors every
+/// engine mutation into an [AsyncValue<QuizState>] so the exam screen can
+/// render a loading state while the (single-source) JSON bank settles.
+class ExamQuizController extends FamilyAsyncNotifier<QuizState, ExamConfig> {
+  QuizNotifier? _engine;
+
+  /// The deterministic question set for this config (empty while loading).
+  int get total => _engine?.total ?? 0;
+
+  /// The question at the engine's current index. Only valid once the
+  /// session state is [AsyncData] — the exam screen guarantees that.
+  QuizQuestion get current {
+    final engine = _engine;
+    if (engine == null) {
+      throw StateError('Exam session is still loading its question bank.');
+    }
+    return engine.current;
+  }
+
+  @override
+  Future<QuizState> build(ExamConfig arg) async {
+    final bank = await ref.watch(quizBankProvider.future);
+    final engine = QuizNotifier(selectExamQuestions(
+      bank,
+      chapterId: arg.chapterId,
+      difficulty: arg.difficulty,
+    ));
+    _engine = engine;
+
+    // Mirror every engine mutation into this notifier's AsyncValue. The
+    // disposed guard stops mirrors landing after the family entry dies.
+    var disposed = false;
+    void mirror(QuizState engineState) {
+      if (!disposed) state = AsyncData(engineState);
+    }
+
+    final removeMirror = engine.addListener(mirror);
+    ref.onDispose(() {
+      disposed = true;
+      removeMirror();
+    });
+    // A brand-new engine always starts from the identical fresh state.
+    return const QuizState();
+  }
+
+  void select(int optionIndex) => _engine?.select(optionIndex);
+
+  void submit() => _engine?.submit();
+
+  void next() => _engine?.next();
+
+  /// Fresh attempt for the SAME config. Used when retaking a topic + level
+  /// whose family entry still holds a finished attempt.
+  void restart() => _engine?.restart();
+}
+
 /// A quiz session keyed by [ExamConfig]. Changing the config yields a fresh
-/// [QuizNotifier] with the matching, deterministically-ordered question set.
+/// session with the matching, deterministically-ordered question set.
 final examQuizProvider =
-    StateNotifierProvider.family<QuizNotifier, QuizState, ExamConfig>(
-  (ref, config) {
-    final all = ref.watch(quizQuestionsProvider);
-    return QuizNotifier(selectExamQuestions(all,
-        chapterId: config.chapterId, difficulty: config.difficulty));
-  },
+    AsyncNotifierProvider.family<ExamQuizController, QuizState, ExamConfig>(
+  ExamQuizController.new,
 );

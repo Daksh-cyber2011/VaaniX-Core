@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
@@ -57,7 +58,10 @@ Future<ProviderContainer> _makeContainer(Map<String, Object> seed) async {
     overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
   );
   // Let the REAL curriculum load settle (plain test zone = real async).
+  // The quiz-id catalog derives from the same JSON asset — the single
+  // Phase 2 source — so it must be settled too before any read.
   await container.read(curriculumProvider.future);
+  await container.read(quizBankProvider.future);
   return container;
 }
 

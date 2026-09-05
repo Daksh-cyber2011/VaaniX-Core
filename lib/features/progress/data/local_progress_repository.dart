@@ -11,6 +11,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/utils/result.dart';
@@ -196,6 +197,11 @@ class LocalProgressRepository implements ProgressRepository {
   /// LocalStorageService.get/setQuizAttempts).
   static const String _attemptsPrefix = 'quiz_attempts_';
 
+  /// Storage-key prefix of in-progress practice-session snapshots (kept in
+  /// sync with ExerciseScreen). Ephemeral session state — must not survive
+  /// a full progress reset.
+  static const String _sessionPrefix = 'exercise_session_';
+
   @override
   Future<Result<void>> reset() {
     return guardAsync(() async {
@@ -215,6 +221,9 @@ class LocalProgressRepository implements ProgressRepository {
         // Exercise mastery is per-lesson; purge every mastered_* key.
         for (final key in _storage.keys)
           if (key.startsWith(_masteredPrefix)) _storage.remove(key),
+        // In-progress practice snapshots are progress state too.
+        for (final key in _storage.keys)
+          if (key.startsWith(_sessionPrefix)) _storage.remove(key),
       ]);
     });
   }
@@ -222,12 +231,36 @@ class LocalProgressRepository implements ProgressRepository {
   Future<void> _setXp(int value) => _storage.setXpTotal(value);
 
   /// Append [result] to the persisted attempt history for [quizId].
+  ///
+  /// Phase 2: the history is capped at [AppConstants.maxAttemptsPerQuiz]
+  /// entries so repeated retakes cannot grow storage without bound. The
+  /// all-time best attempt (by percentage) is ALWAYS retained — only older
+  /// strictly-worse attempts are dropped — so "Exam best" on the result and
+  /// progress surfaces stays correct for the lifetime of the install.
   Future<void> _appendAttempt(String quizId, QuizResult result) async {
     final current =
         getQuizAttempts(quizId).fold((_) => <QuizResult>[], (v) => v);
-    final next = [...current, result];
+    var next = [...current, result];
+    next = capAttempts(next);
     _storage.setQuizAttempts(
         quizId, jsonEncode(next.map((r) => r.toJson()).toList()));
+  }
+
+  /// Trims [attempts] to [AppConstants.maxAttemptsPerQuiz], newest kept,
+  /// preserving the all-time best attempt. Order is preserved.
+  @visibleForTesting
+  static List<QuizResult> capAttempts(List<QuizResult> attempts) {
+    if (attempts.length <= AppConstants.maxAttemptsPerQuiz) return attempts;
+    final kept = List<QuizResult>.of(attempts);
+    while (kept.length > AppConstants.maxAttemptsPerQuiz) {
+      final bestPct = kept.map((r) => r.percentage).reduce((a, b) => a > b ? a : b);
+      // Drop the OLDEST attempt strictly below the best; when every kept
+      // attempt ties the best, drop the oldest (the best VALUE survives
+      // regardless, which is what the best-score displays read).
+      final idx = kept.indexWhere((r) => r.percentage < bestPct);
+      kept.removeAt(idx >= 0 ? idx : 0);
+    }
+    return kept;
   }
 
   /// Award [AppConstants.xpPerCorrectAnswer] XP per correct answer.

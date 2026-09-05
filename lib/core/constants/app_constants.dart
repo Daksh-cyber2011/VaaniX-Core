@@ -81,6 +81,11 @@ abstract final class AppConstants {
   /// magic number `10` in three places — now a single source of truth.
   static const int xpPerCorrectAnswer = 10;
 
+  /// Maximum persisted attempts per quiz id. Older attempts are trimmed
+  /// (the all-time best attempt is always retained) so the attempt history
+  /// cannot grow without bound — see LocalProgressRepository._appendAttempt.
+  static const int maxAttemptsPerQuiz = 20;
+
   // ============================================================
   // VAN ANIMATION TIMING (milliseconds)
   // From PRD Section 6.4 — Animation System

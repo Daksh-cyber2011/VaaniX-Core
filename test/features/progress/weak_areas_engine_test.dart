@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
@@ -173,6 +174,9 @@ void main() {
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       );
       await container.read(curriculumProvider.future);
+      // Phase 2 single source: the quiz-id catalog derives from the JSON
+      // bank — settle it too before reading adaptive providers.
+      await container.read(quizBankProvider.future);
       return container;
     }
 

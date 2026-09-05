@@ -4,47 +4,77 @@
 /// [adaptiveNextActionProvider] that Home uses to render the real next
 /// learning action for the current learner state, plus the weak-lesson list
 /// and per-chapter exam performance that the Progress screen surfaces.
+///
+/// Phase 2 single source: every quiz id / per-chapter map here is derived
+/// from the JSON question bank ([quizBankProvider]) — the hardcoded Dart
+/// maps are no longer consulted, so the exam flow and the adaptive engine
+/// can never drift apart.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 
-/// All known quiz ids for the current curriculum, in the same
-/// `quiz_<chapter>_<difficulty>` space used by [ExamConfig].
-List<String> allQuizIds() {
-  final ids = <String>[];
-  for (final entry in chapterQuizzes.entries) {
-    for (final question in entry.value) {
-      ids.add('quiz_${entry.key}_${question.difficulty.name}');
-    }
+/// All quiz ids in the `quiz_<chapter>_<difficulty>` space used by
+/// [ExamConfig], derived from the loaded JSON bank. Empty until the bank
+/// finishes loading (then recomputed — consumers rebuild reactively).
+final quizIdCatalogProvider = Provider<Set<String>>((ref) {
+  final bank = ref.watch(quizBankProvider).valueOrNull;
+  if (bank == null) return const <String>{};
+  return {
+    for (final q in bank)
+      if (q.chapterId.isNotEmpty) 'quiz_${q.chapterId}_${q.difficulty.name}',
+  };
+});
+
+/// chapterId -> its quiz ids (same `quiz_<chapter>_<difficulty>` space),
+/// derived from the loaded JSON bank. Deterministic per bank order.
+final quizIdsByChapterProvider = Provider<Map<String, List<String>>>((ref) {
+  final bank = ref.watch(quizBankProvider).valueOrNull;
+  if (bank == null) return const <String, List<String>>{};
+  final map = <String, List<String>>{};
+  for (final q in bank) {
+    if (q.chapterId.isEmpty) continue;
+    map
+        .putIfAbsent(q.chapterId, () => [])
+        .add('quiz_${q.chapterId}_${q.difficulty.name}');
   }
-  return ids.toSet().toList();
-}
+  // De-duplicate while preserving the bank's deterministic order.
+  return {
+    for (final entry in map.entries) entry.key: entry.value.toSet().toList(),
+  };
+});
 
 /// quizId -> persisted attempt history (newest last). Loaded from the
 /// progress repository; invalidate to refresh after a completed exam.
 final quizAttemptsIndexProvider = StateNotifierProvider<
         QuizAttemptsIndexNotifier, Map<String, List<QuizResult>>>(
-    (ref) => QuizAttemptsIndexNotifier(ref.watch(progressRepositoryProvider)));
+    (ref) => QuizAttemptsIndexNotifier(
+          ref.watch(progressRepositoryProvider),
+          ref.watch(quizIdCatalogProvider),
+        ));
 
 class QuizAttemptsIndexNotifier
     extends StateNotifier<Map<String, List<QuizResult>>> {
-  QuizAttemptsIndexNotifier(this._repo) : super(const {}) {
+  QuizAttemptsIndexNotifier(this._repo, this._quizIds) : super(const {}) {
+    // Loads synchronously (storage reads are sync) so consumers reading
+    // this provider right after construction see the real index — no
+    // transient "no attempts" state.
     _load();
   }
 
   final ProgressRepository _repo;
+  final Set<String> _quizIds;
 
-  Future<void> _load() async {
+  void _load() {
     final index = <String, List<QuizResult>>{};
-    for (final quizId in allQuizIds()) {
+    for (final quizId in _quizIds) {
       _repo.getQuizAttempts(quizId).fold(
         (_) {},
         (List<QuizResult> attempts) {
@@ -84,13 +114,7 @@ AdaptiveInputs _adaptiveInputs(Ref ref) {
     }
   }
 
-  final quizIdsByChapter = <String, List<String>>{};
-  for (final chapter in curriculum) {
-    quizIdsByChapter[chapter.id] = chapterQuizzes[chapter.id]
-            ?.map((q) => 'quiz_${chapter.id}_${q.difficulty.name}')
-            .toList() ??
-        const [];
-  }
+  final quizIdsByChapter = ref.watch(quizIdsByChapterProvider);
 
   return (
     curriculum: curriculum,
@@ -128,18 +152,24 @@ final weakLessonsProvider = Provider<List<Lesson>>((ref) {
 });
 
 /// Best exam fraction (0.0..1.0) per chapter, from real attempt history.
-/// Chapters without attempts are absent, so UIs can show a clear "not
-/// attempted" state instead of a fabricated score.
+///
+/// Phase 2 best-score display fix: a chapter appears here whenever the
+/// learner has AT LEAST ONE attempt for any of its quizzes — even when the
+/// best fraction is 0.0. The previous `best > 0` filter conflated
+/// "attempted and scored 0%" with "never attempted", so the Progress screen
+/// showed "Exam not attempted" to a learner who had actually sat the exam.
+/// Chapters without any attempt are still absent, letting the UI show a
+/// clear "not attempted" state instead of a fabricated score.
 final chapterBestFractionProvider = Provider<Map<String, double>>((ref) {
   final i = _adaptiveInputs(ref);
   final result = <String, double>{};
   for (final chapter in i.curriculum) {
-    final best = bestExamFractionForChapter(
-      chapter.id,
-      i.quizIdsByChapter,
-      i.attemptsIndex,
-    );
-    if (best > 0) result[chapter.id] = best;
+    final ids = i.quizIdsByChapter[chapter.id] ?? const <String>[];
+    final attempted =
+        ids.any((id) => (i.attemptsIndex[id] ?? const []).isNotEmpty);
+    if (!attempted) continue;
+    result[chapter.id] =
+        bestExamFractionForChapter(chapter.id, i.quizIdsByChapter, i.attemptsIndex);
   }
   return result;
 });

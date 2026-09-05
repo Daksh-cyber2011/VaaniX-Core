@@ -58,7 +58,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        quizQuestionsProvider.overrideWithValue(questions),
+        quizBankProvider.overrideWith((ref) async => questions),
       ],
     );
     addTearDown(container.dispose);
@@ -95,6 +95,10 @@ void main() {
 
     final app = await makeContainer();
     await tester.pumpWidget(wrap(app));
+    // The single-source JSON bank resolves asynchronously; let the async
+    // family sessions (setup -> instructions -> quiz) settle for real.
+    await tester.pump();
+    await tester.pump();
 
     // ---- Setup: start button is inert until a topic + level exist ----
     expect(find.text('Choose your exam'), findsOneWidget);
@@ -113,6 +117,8 @@ void main() {
     // ---- Instructions ----
     expect(find.text('Ready for the exam?'), findsOneWidget);
     await tester.tap(find.text('Begin Exam'));
+    await tester.pump();
+    await tester.pump();
     await tester.pump();
 
     // ---- Quiz: two correct answers ----
@@ -159,6 +165,8 @@ void main() {
     await tester.tap(find.text('Start Exam (2 questions)'));
     await tester.pump();
     await tester.tap(find.text('Begin Exam'));
+    await tester.pump();
+    await tester.pump();
     await tester.pump();
     expect(find.text('Q 1 / 2'), findsOneWidget,
         reason: 'retaking the same exam must start a fresh attempt');

@@ -593,5 +593,6 @@ final Map<String, List<QuizQuestion>> chapterQuizzes = {
   ],
 };
 
-/// chapterQuizzesProvider has moved to [CurriculumLoader] (Segment 8).
-/// Import from curriculum_loader.dart for the async chapterQuizProvider.
+/// Phase 2 single source: the runtime exam bank loads from the JSON
+/// curriculum via [loadAllQuizQuestions] in curriculum_loader.dart —
+/// this compiled-in map is only the malformed-asset fallback.

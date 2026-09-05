@@ -2,6 +2,56 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 2] - 2026-09-05
+
+Learning / practice / exam / adaptive completion. Full audit basis:
+`docs/Audits/V1-Audit-Phase0.md` (§5 Phase 2 backlog).
+
+### Added
+- **Single source of truth for the exam bank**: the question bank now loads
+  from the JSON curriculum asset (`assets/curriculum/v1.json`) via the new
+  `loadAllQuizQuestions()` loader. The compiled-in Dart bank
+  (`chapterQuizzes`) is demoted to a malformed-asset fallback — exam
+  content is byte-identical (pinned by a JSON↔Dart parity test). The exam
+  session (`examQuizProvider`) became an async family so the bank load
+  settles with a visible loading state instead of reading the hardcoded
+  map; the pure `QuizNotifier` engine is unchanged and reused by the new
+  controller (no logic drift).
+- **Adaptive maps from the same source**: `quizIdCatalogProvider` and
+  `quizIdsByChapterProvider` derive every quiz id from the JSON bank, so
+  the exam flow and the adaptive engine can never drift apart. The dead
+  `loadQuizForChapter`/`chapterQuizProvider` pair was removed.
+- **Practice-session resume**: an in-progress practice session is
+  snapshotted to storage after every state change (index, score, mastered
+  ids) and restored on screen entry with a visible "picked up where you
+  left off" cue. An app kill or accidental back-swipe no longer restarts
+  practice from question 1. Fresh or finished sessions expire the
+  snapshot; a full progress reset purges all `exercise_session_*` keys.
+- **Attempt-history cap**: per-quizId attempt history is now capped at
+  `AppConstants.maxAttemptsPerQuiz` (20) with the all-time best attempt
+  ALWAYS retained — repeated retakes can no longer grow storage without
+  bound, and best-score displays stay correct for the install lifetime.
+
+### Fixed
+- **Best-score display**: a chapter attempted with a 0% best was reported
+  as "Exam not attempted" on the Progress screen (the provider dropped
+  best == 0.0 entries, conflating "attempted with 0%" with "never
+  attempted"). Attempted chapters now always appear; the exam result view
+  likewise shows the real best (even 0/total) once any attempt exists.
+- **Controller mutated during build**: the practice screen synced its
+  translation `TextEditingController` and matching-chip state inside
+  `build()` — moved into post-build `ref.listen` callbacks.
+- The exam setup/instructions screens read the chapter list from the
+  async JSON curriculum (Dart fallback retained) instead of the compiled
+  constant.
+
+### Tests
+- 314 tests passing (293 existing + 21 new): JSON↔Dart bank parity,
+  adaptive catalog derivation, async exam session (selection / restart /
+  empty-config), attempt-cap trimmer + repository-level cap with
+  best-preservation, session-snapshot reset purge, 0%-attempted chapter
+  display, exercise resume engine + widget resume/persist/expire flows.
+
 ## [Phase 1] - 2026-09-05
 
 Core student product loop repairs. Full audit basis: `docs/Audits/V1-Audit-Phase0.md`.

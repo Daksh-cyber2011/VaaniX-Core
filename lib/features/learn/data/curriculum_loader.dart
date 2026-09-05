@@ -64,30 +64,36 @@ Future<List<Chapter>> loadCurriculum() async {
   }
 }
 
-/// Loads quiz questions for a specific chapter from the JSON.
-/// Falls back to the hardcoded chapterQuizzes map.
-Future<List<QuizQuestion>> loadQuizForChapter(String chapterId) async {
+/// Loads ALL quiz questions from the JSON curriculum as one flat bank.
+///
+/// Phase 2 single-source: the exam bank and the adaptive quiz-id maps read
+/// THIS loader — the hardcoded Dart bank (`chapterQuizzes`) is now only an
+/// offline fallback for a malformed/missing JSON asset, never the primary
+/// path. Each question's `chapterId` comes from its quiz group in the JSON.
+///
+/// The returned list is empty only if BOTH the JSON and the compiled-in
+/// Dart fallback are empty (practically unreachable).
+Future<List<QuizQuestion>> loadAllQuizQuestions() async {
   try {
     final raw = await rootBundle.loadString('assets/curriculum/v1.json');
     final json = jsonDecode(raw) as Map<String, dynamic>;
     final quizzesJson = json['quizzes'] as List<dynamic>? ?? [];
 
+    final bank = <QuizQuestion>[];
     for (final quiz in quizzesJson) {
       final quizMap = quiz as Map<String, dynamic>;
-      if ((quizMap['chapterId'] as String?) == chapterId) {
-        final questions = quizMap['questions'] as List<dynamic>? ?? [];
-        return questions
-            .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>)
-                .copyWith(chapterId: chapterId))
-            .toList();
-      }
+      final chapterId = quizMap['chapterId'] as String? ?? '';
+      final questions = quizMap['questions'] as List<dynamic>? ?? [];
+      bank.addAll(questions
+          .map((e) => QuizQuestion.fromJson(e as Map<String, dynamic>)
+              .copyWith(chapterId: chapterId))
+          .toList());
     }
-
-    // No quiz found for this chapter in JSON — fall back to hardcoded.
-    return chapterQuizzes[chapterId] ?? const [];
+    if (bank.isNotEmpty) return bank;
   } catch (e) {
-    return chapterQuizzes[chapterId] ?? const [];
+    // Fall through to the hardcoded Dart bank on any JSON problem.
   }
+  return chapterQuizzes.values.expand((q) => q).toList();
 }
 
 /// Maps lesson IDs to their content strings from the Dart constants.
@@ -126,9 +132,4 @@ class CurriculumNotifier extends AsyncNotifier<List<Chapter>> {
 final curriculumProvider =
     AsyncNotifierProvider<CurriculumNotifier, List<Chapter>>(
   CurriculumNotifier.new,
-);
-
-/// Quiz questions for a specific chapter (async family provider).
-final chapterQuizProvider = FutureProvider.family<List<QuizQuestion>, String>(
-  (ref, chapterId) => loadQuizForChapter(chapterId),
 );

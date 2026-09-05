@@ -11,9 +11,12 @@
 /// (two-column pairing).
 library;
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
@@ -52,6 +55,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   /// Left-column slot selected but not yet paired (matching exercises).
   int? _pendingLeftIndex;
 
+  /// Storage key of this lesson's in-progress session snapshot (Phase 2
+  /// resume; prefix kept in sync with LocalProgressRepository.reset()).
+  String get _sessionKey => 'exercise_session_${widget.lesson.id}';
+
   // Theme-aware surface / border / subtext tokens (fixes dark-mode washouts).
   Color get _surface => Theme.of(context).brightness == Brightness.dark
       ? AppColors.surfaceDark
@@ -73,14 +80,84 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
-              VanEventType.quizStarted,
-              message: 'Practice time! Let\'s master ${widget.lesson.title}.',
-              payload: {'lessonId': widget.lesson.id},
-            ));
-      }
+      if (!mounted) return;
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.quizStarted,
+            message: 'Practice time! Let\'s master ${widget.lesson.title}.',
+            payload: {'lessonId': widget.lesson.id},
+          ));
+      _tryRestoreSession();
     });
+  }
+
+  /// Phase 2 resume: reapplies a persisted in-progress session snapshot
+  /// (written by [_syncSessionSnapshot]) to the fresh notifier. No-op when
+  /// the snapshot is absent, corrupt, from a newer schema, or the session
+  /// has already advanced. A gentle snackbar makes the resume visible.
+  void _tryRestoreSession() {
+    final storage = ref.read(localStorageServiceProvider);
+    final raw = storage.getString(_sessionKey);
+    if (raw == null || raw.isEmpty) return;
+
+    final Map<String, dynamic> snap;
+    try {
+      snap = jsonDecode(raw) as Map<String, dynamic>;
+    } catch (_) {
+      // Corrupt snapshot — treat as no session rather than crashing.
+      storage.remove(_sessionKey);
+      return;
+    }
+    if (snap['v'] != 1) return;
+
+    final notifier =
+        ref.read(exerciseSessionProvider(widget.lesson.id).notifier);
+    final mastered = (snap['masteredIds'] as List<dynamic>? ?? const [])
+        .whereType<String>()
+        .toList();
+    final applied = notifier.restoreSession(
+      currentIndex: (snap['currentIndex'] as num?)?.toInt() ?? 0,
+      score: (snap['score'] as num?)?.toInt() ?? 0,
+      masteredIds: mastered,
+    );
+    if (!applied) {
+      // Stale snapshot (session already advanced / empty lesson): expire it.
+      storage.remove(_sessionKey);
+      return;
+    }
+    final restored =
+        ref.read(exerciseSessionProvider(widget.lesson.id));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Picked up where you left off — question '
+          '${restored.currentIndex + 1} of ${notifier.total}.',
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  /// Keeps the resume snapshot in step with the session: in-progress states
+  /// with real progress are persisted (index, score, mastered ids); fresh
+  /// or finished sessions EXPIRE the snapshot.
+  void _syncSessionSnapshot(ExerciseState next) {
+    final storage = ref.read(localStorageServiceProvider);
+    if (next.finished || (next.currentIndex == 0 && next.score == 0)) {
+      storage.remove(_sessionKey);
+      return;
+    }
+    final notifier =
+        ref.read(exerciseSessionProvider(widget.lesson.id).notifier);
+    storage.setString(
+      _sessionKey,
+      jsonEncode({
+        'v': 1,
+        'currentIndex': next.currentIndex,
+        'score': next.score,
+        'masteredIds': notifier.masteredExerciseIds,
+        'savedAt': DateTime.now().toIso8601String(),
+      }),
+    );
   }
 
   Future<void> _completeLesson() async {
@@ -155,16 +232,26 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     final completed = ref.watch(completedLessonIdsProvider);
     final isAlreadyDone = completed.contains(widget.lesson.id);
 
-    // Keep the translation input in sync with provider state (retry/next
-    // reset it to an empty string server-side).
-    if (_answerController.text != state.answerText) {
-      _answerController.text = state.answerText;
-    }
-    if (_pendingLeftIndex != null &&
-        (state.answered ||
-            state.selectedPairs.any((p) => p.left == _pendingLeftIndex))) {
-      _pendingLeftIndex = null;
-    }
+    // Phase 2: session-resume bookkeeping + derived-state sync. All of it
+    // runs in ref.listen callbacks, which fire AFTER the build phase — the
+    // previous build-phase mutation of the answer controller could corrupt
+    // an in-flight TextField frame ("controller mutated during build").
+    ref.listen<ExerciseState>(exerciseSessionProvider(widget.lesson.id),
+        (previous, next) {
+      // 1) Keep the translation input in sync with provider state (retry/
+      //    next reset it to an empty string engine-side).
+      if (_answerController.text != next.answerText) {
+        _answerController.text = next.answerText;
+      }
+      // 2) Drop a stale pending left chip as soon as it is consumed.
+      if (_pendingLeftIndex != null &&
+          (next.answered ||
+              next.selectedPairs.any((p) => p.left == _pendingLeftIndex))) {
+        setState(() => _pendingLeftIndex = null);
+      }
+      // 3) Persist / expire the resume snapshot.
+      _syncSessionSnapshot(next);
+    });
 
     // Persist mastery exactly once per finished session (idempotent union).
     if (state.finished && !_masteryRecorded) {
