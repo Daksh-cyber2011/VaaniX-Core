@@ -77,6 +77,25 @@ class UserProfileNotifier extends StateNotifier<UserProfile> {
     await _repo.updatePersonalityMode(mode);
   }
 
+  /// Clears Van's personality mode — the true "reset to default". The
+  /// state is rebuilt explicitly (copyWith cannot null a field out) so
+  /// the Van Profile screen returns to its generic greeting and Settings
+  /// shows "Not set".
+  Future<void> clearPersonalityMode() async {
+    state = UserProfile(
+      id: state.id,
+      displayName: state.displayName,
+      companionName: state.companionName,
+      personalityMode: null,
+      cbseClass: state.cbseClass,
+      dailyGoalMinutes: state.dailyGoalMinutes,
+      currentStreak: state.currentStreak,
+      lastActiveDate: state.lastActiveDate,
+      isAnonymous: state.isAnonymous,
+    );
+    await _repo.clearPersonalityMode();
+  }
+
   Future<void> updateCbseClass(CbseClass? cbseClass) async {
     state = state.copyWith(cbseClass: cbseClass);
     await _repo.updateCbseClass(cbseClass);

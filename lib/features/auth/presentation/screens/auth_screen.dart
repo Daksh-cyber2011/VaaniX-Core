@@ -137,6 +137,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -162,7 +164,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               const SizedBox(height: 8),
               Text(
                 'Save your progress and keep Van safe.',
-                style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+                style: AppTextStyles.bodyMedium(color: subtext),
                 textAlign: TextAlign.center,
               ),
 
@@ -258,8 +260,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text('or',
-                        style: AppTextStyles.bodySmall(
-                            color: AppColors.subtextLight)),
+                        style: AppTextStyles.bodySmall(color: subtext)),
                   ),
                   const Expanded(child: Divider()),
                 ],

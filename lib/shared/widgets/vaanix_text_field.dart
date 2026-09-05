@@ -97,6 +97,7 @@ class _VaaniXTextFieldState extends State<VaaniXTextField> {
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.isPassword
                 ? IconButton(
+                    tooltip: _obscureText ? 'Show password' : 'Hide password',
                     icon: Icon(
                       _obscureText
                           ? Icons.visibility_outlined

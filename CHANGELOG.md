@@ -2,6 +2,78 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 5] - 2026-09-05
+
+UI/UX + product polish. Full audit basis:
+`docs/Audits/V1-Audit-Phase0.md` (§5 Phase 5 backlog; rows A, J, L;
+defects #10, #17).
+
+### Fixed
+- **Route-guard gap (defect #17)**: `/chat` and `/achievements` are
+  pushed on top of the shell and were missing from the protected-route
+  set — with Supabase configured, a deep link straight to either screen
+  bypassed the auth gate every other screen honors. Both are protected
+  now, and the match is prefix-aware so nested sub-routes (e.g.
+  `/learn/lesson/:id/practice`) cannot slip through either. The redirect
+  decision was extracted into pure, `@visibleForTesting` functions
+  (`guardRedirect` / `isProtectedLocation`) so the full gate matrix
+  (onboarding × auth × every route family, offline vs backend) is pinned
+  by tests.
+- **Onboarding page-count drift (defect #17)**:
+  `AppConstants.onboardingScreenCount` claimed 7 (the PRD §8.1 screen
+  count including the splash) while the flow hosts 6 pages — and the
+  constant was never referenced, with `6` hardcoded in two places. The
+  constant now reads 6, carries a doc explaining the splash distinction,
+  and both the notifier clamp and the screen's dot indicators derive
+  from it (single source).
+- **Onboarding restart lost progress (row A)**: a mid-onboarding app
+  restart dropped the learner back to page 0. The last page index is now
+  persisted on every move, hydrated on restart (clamped against the
+  page count to defend against stale values), ignored once onboarding
+  completed, and cleared on completion so no stale index survives.
+- **"Reset to default" was mislabeled (row J)**: the Van Profile button
+  forced `PersonalityMode.cheerleader` — the first option in the picker,
+  not a default — and once a mode was chosen there was NO way back to
+  the un-personalised state (`copyWith` cannot null a field out). A real
+  clear path now exists: `UserProfileRepository.clearPersonalityMode()`
+  removes the storage key, and the notifier rebuilds the state with a
+  null mode (identity fields kept). Van returns to his default greeting,
+  Settings shows "Not set", and the choice stays re-selectable.
+- **Dark-mode contrast defects (row L, a11y/dark sweep)**: 20+
+  user-visible elements used light-theme-only `AppColors` tokens
+  unconditionally, washing out or disappearing in dark mode — chat
+  usage-dialog body text, typing-indicator dots, Van-bubble timestamps,
+  chat input hints, onboarding inactive page dots, onboarding name/auth
+  copy and "or" divider, subject/goal card borders and icon tints, exam
+  filter-chip borders, progress chevrons, locked-achievement icon tints,
+  auth screen copy, the exercise screen's `?? Colors.white` card
+  fallback, and the Van profile personality tiles. All now resolve the
+  themed token per brightness. The Settings screen's redundant nested
+  brightness ternary (dead inner branch) was collapsed.
+
+### Changed
+- **Mojibake sweep final pass (defect #10)**: the last corrupted byte
+  sequence (`â†'` for `→`) in `app_router.dart`'s NavigationService doc
+  comment is fixed. A full-codebase re-verification (grep signatures +
+  UTF-8 validation of every .dart file) confirmed the string-level
+  mojibake flagged in the audit was already cleaned in earlier phases —
+  the remaining flagged sites were legitimate em-dash typography.
+- **Accessibility sweep (row L)**: every icon-only `IconButton` now
+  carries a tooltip/semantic label (password visibility toggle, chat
+  error dismiss, send, onboarding back + name clear, lesson/practice
+  back, matching remove-match). The onboarding back button's tap target
+  is held at the 48px Material minimum (M3's default is 40px, its icon
+  is 20px).
+
+### Tests
+- 29 new tests: `test/app/router_guard_test.dart` (10 — full guard
+  matrix incl. the /chat//achievements regression), 
+  `test/features/onboarding/onboarding_page_persistence_test.dart`
+  (12 — persist/hydrate/clamp/clear/no-op-move/constant), and
+  `test/features/profile/personality_reset_test.dart` (7 — repo clear,
+  notifier state rebuild, identity fields kept, storage key removed,
+  survives reload). Suite: 387 passed (was 358).
+
 ## [Phase 4] - 2026-09-05
 
 AI tutor + learning intelligence. Full audit basis:

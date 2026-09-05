@@ -137,6 +137,7 @@ class _ClassChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
@@ -145,7 +146,9 @@ class _ClassChip extends StatelessWidget {
             isSelected ? AppColors.primary : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.borderLight,
+          color: isSelected
+              ? AppColors.primary
+              : (isDark ? AppColors.borderDark : AppColors.borderLight),
           width: isSelected ? 2 : 1,
         ),
         boxShadow: isSelected

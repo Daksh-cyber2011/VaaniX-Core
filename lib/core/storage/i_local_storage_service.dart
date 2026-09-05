@@ -9,6 +9,11 @@ abstract class ILocalStorageService {
   bool get isOnboardingComplete;
   Future<void> setOnboardingComplete(bool value);
 
+  /// Last onboarding page the learner was on (0-indexed), or null when
+  /// never persisted. Backs mid-onboarding session resume.
+  int? get onboardingPage;
+  Future<void> setOnboardingPage(int page);
+
   // Companion / personality
   String get companionName;
   Future<void> setCompanionName(String name);

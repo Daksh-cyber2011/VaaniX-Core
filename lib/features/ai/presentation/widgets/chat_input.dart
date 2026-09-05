@@ -91,8 +91,10 @@ class _ChatInputState extends State<ChatInput> {
                 style: AppTextStyles.bodyMedium(),
                 decoration: InputDecoration(
                   hintText: 'Ask Van about Sanskrit...',
-                  hintStyle:
-                      AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+                  hintStyle: AppTextStyles.bodyMedium(
+                      color: isDark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight),
                   filled: true,
                   fillColor: isDark
                       ? AppColors.surfaceVariantDark
@@ -125,6 +127,7 @@ class _ChatInputState extends State<ChatInput> {
                 shape: BoxShape.circle,
               ),
               child: IconButton(
+                tooltip: 'Send message',
                 onPressed: (_hasText && !widget.isSending) ? _send : null,
                 icon: widget.isSending
                     ? const SizedBox(

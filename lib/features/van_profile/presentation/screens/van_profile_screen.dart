@@ -41,6 +41,8 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
     final profile = ref.watch(userProfileProvider);
     final companionName = profile.resolvedCompanionName;
     final mode = profile.personalityMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return VaaniXScaffold(
       title: companionName,
@@ -70,10 +72,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
 
           const SizedBox(height: 32),
           Text('PERSONALITY',
-              style: AppTextStyles.labelSmall(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight)),
+              style: AppTextStyles.labelSmall(color: subtext)),
           const SizedBox(height: 8),
           ...PersonalityMode.values.map((m) {
             final selected = mode == m;
@@ -96,7 +95,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                     border: Border.all(
                       color: selected
                           ? AppColors.primary
-                          : (Theme.of(context).brightness == Brightness.dark
+                          : (isDark
                               ? AppColors.borderDark
                               : AppColors.borderLight),
                       width: selected ? 2 : 1,
@@ -108,20 +107,13 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: (selected
-                                  ? AppColors.primary
-                                  : AppColors.subtextLight)
+                          color: (selected ? AppColors.primary : subtext)
                               .withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(_modeIcon(m),
                             size: 20,
-                            color: selected
-                                ? AppColors.primary
-                                : Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? AppColors.subtextDark
-                                    : AppColors.subtextLight),
+                            color: selected ? AppColors.primary : subtext),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -143,9 +135,14 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
             PrimaryButton.text(
               label: 'Reset to default',
               icon: const Icon(Icons.refresh_rounded, size: 18),
+              // Phase 5 (audit row J): this previously forced
+              // PersonalityMode.cheerleader under a "Reset to default"
+              // label — cheerleader is just the first option, not a
+              // default. It now genuinely clears the explicit mode, so
+              // Van returns to his default (un-personalised) behavior.
               onPressed: () => ref
                   .read(userProfileProvider.notifier)
-                  .updatePersonalityMode(PersonalityMode.cheerleader),
+                  .clearPersonalityMode(),
             ),
           ],
         ],

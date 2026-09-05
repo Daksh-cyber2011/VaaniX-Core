@@ -42,14 +42,60 @@ const _publicRoutes = <String>{
 
 /// Routes that additionally require authentication (only enforced when
 /// Supabase is configured — see [AppEnvironment.isSupabaseConfigured]).
-const _protectedRoutes = <String>{
+///
+/// Phase 5 (audit defect #17): `/chat` and `/achievements` are pushed on
+/// top of the shell and were missing from this set — with Supabase
+/// configured, a deep link straight to either screen bypassed the auth
+/// gate that every other screen honors. Both are protected now, and the
+/// match is prefix-aware so nested sub-routes (e.g. `/learn/lesson/:id`)
+/// cannot slip through either.
+@visibleForTesting
+const protectedRoutes = <String>{
   RouteNames.home,
   RouteNames.learn,
   RouteNames.exam,
   RouteNames.progress,
   RouteNames.vanProfile,
   RouteNames.settings,
+  RouteNames.chat,
+  RouteNames.achievements,
 };
+
+/// True when [location] is exactly a protected route or nested under one.
+@visibleForTesting
+bool isProtectedLocation(String location) {
+  if (protectedRoutes.contains(location)) return true;
+  return protectedRoutes
+      .any((route) => location.startsWith('$route/'));
+}
+
+/// The redirect decision, extracted as a pure function so the gate
+/// matrix (onboarding × auth × every route family) is unit-testable
+/// without building a [GoRouter] or touching the static environment.
+///
+/// 1. Onboarding gate — nothing outside [_publicRoutes] is reachable
+///    before onboarding completes.
+/// 2. Auth gate — protected locations additionally require a session,
+///    but only when a real backend is configured (the offline/noop auth
+///    repository never has a session, so gating on it would lock
+///    offline users out of the whole app).
+@visibleForTesting
+String? guardRedirect({
+  required String location,
+  required bool onboardingComplete,
+  required bool supabaseConfigured,
+  required bool isAuthenticated,
+}) {
+  if (!onboardingComplete && !_publicRoutes.contains(location)) {
+    return RouteNames.onboarding;
+  }
+  if (supabaseConfigured &&
+      isProtectedLocation(location) &&
+      !isAuthenticated) {
+    return RouteNames.auth;
+  }
+  return null;
+}
 
 /// Riverpod provider for [GoRouter].
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -60,24 +106,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final storage = ref.watch(localStorageServiceProvider);
 
   String? redirect(BuildContext context, GoRouterState state) {
-    final location = state.matchedLocation;
-
-    // 1. Onboarding gate.
-    final onboardingComplete = storage.isOnboardingComplete;
-    if (!onboardingComplete && !_publicRoutes.contains(location)) {
-      return RouteNames.onboarding;
-    }
-
-    // 2. Auth gate (only when a real backend is configured).
-    if (AppEnvironment.isSupabaseConfigured &&
-        _protectedRoutes.contains(location)) {
-      final isAuthenticated = ref.read(isAuthenticatedProvider);
-      if (!isAuthenticated) {
-        return RouteNames.auth;
-      }
-    }
-
-    return null;
+    return guardRedirect(
+      location: state.matchedLocation,
+      onboardingComplete: storage.isOnboardingComplete,
+      supabaseConfigured: AppEnvironment.isSupabaseConfigured,
+      isAuthenticated: ref.read(isAuthenticatedProvider),
+    );
   }
 
   final router = GoRouter(
@@ -97,7 +131,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ----------------------------------------------------------
-      // ONBOARDING (7 screens — PRD §8.1)
+      // ONBOARDING (6 pages — PRD §8.1 screens 2–7; the splash is
+      // screen 1 and lives at its own route)
       // ----------------------------------------------------------
       GoRoute(
         path: RouteNames.onboarding,
@@ -229,7 +264,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 /// Riverpod provider for [NavigationService].
 ///
 /// Defined here (in app/) because it wires GoRouter (from this file) into
-/// NavigationService (from core/), which would otherwise create a core â†’ app
+/// NavigationService (from core/), which would otherwise create a core → app
 /// circular dependency.
 final navigationServiceProvider = Provider<NavigationService>((ref) {
   final router = ref.watch(appRouterProvider);

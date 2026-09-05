@@ -133,12 +133,19 @@ class _AchievementCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isUnlocked
                   ? AppColors.success.withValues(alpha: 0.15)
-                  : AppColors.subtextLight.withValues(alpha: 0.1),
+                  : (isDark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight)
+                      .withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               _iconForName(ach.iconName),
-              color: isUnlocked ? AppColors.success : AppColors.subtextLight,
+              color: isUnlocked
+                  ? AppColors.success
+                  : (isDark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight),
               size: 24,
             ),
           ),

@@ -183,6 +183,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),

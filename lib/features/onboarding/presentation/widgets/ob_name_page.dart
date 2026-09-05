@@ -68,6 +68,8 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
   @override
   Widget build(BuildContext context) {
     final companionName = ref.watch(onboardingProvider).resolvedName;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -95,7 +97,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
           const SizedBox(height: 8),
           Text(
             'You can always rename later.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: subtext),
           ),
           const SizedBox(height: 32),
           TextField(
@@ -107,6 +109,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
               counterText: '',
               suffixIcon: _controller.text.isNotEmpty
                   ? IconButton(
+                      tooltip: 'Clear name',
                       icon: const Icon(Icons.clear_rounded, size: 18),
                       onPressed: () => setState(() => _controller.clear()),
                     )

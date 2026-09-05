@@ -3,6 +3,7 @@
 /// Persists user onboarding choices via [ILocalStorageService].
 library;
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/features/onboarding/domain/onboarding_state.dart';
 
@@ -27,9 +28,24 @@ class OnboardingRepository {
 
   Future<void> markOnboardingComplete() => _storage.setOnboardingComplete(true);
 
+  /// Persists the page the learner is on so a mid-onboarding app restart
+  /// resumes instead of restarting from page 0 (Phase 5).
+  Future<void> saveCurrentPage(int page) =>
+      _storage.setOnboardingPage(page);
+
+  /// Removes the stored page index. Called when onboarding completes so
+  /// no stale index survives for a future (re-)run of the flow.
+  Future<void> clearCurrentPage() =>
+      _storage.remove(AppConstants.keyOnboardingPage);
+
   // ─── READ ──────────────────────────────────────────────────────────────────
 
   bool isOnboardingComplete() => _storage.isOnboardingComplete;
+
+  /// Last persisted page index, or null when none was saved. Values are
+  /// returned raw — clamping against the page count is the notifier's
+  /// job (it owns the page-count constant).
+  int? getCurrentPage() => _storage.onboardingPage;
 
   String getCompanionName() => _storage.companionName;
 

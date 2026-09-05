@@ -72,6 +72,10 @@ class LocalUserProfileRepository implements UserProfileRepository {
       guardAsync(() => _storage.setPersonalityMode(mode.name));
 
   @override
+  Future<Result<void>> clearPersonalityMode() =>
+      guardAsync(() => _storage.remove(AppConstants.keyPersonalityMode));
+
+  @override
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass) async {
     if (cbseClass == null) {
       return guardAsync(

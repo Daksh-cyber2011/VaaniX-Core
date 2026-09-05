@@ -241,8 +241,12 @@ class ProgressScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        const Icon(Icons.chevron_right_rounded,
-                            color: AppColors.subtextLight, size: 20),
+                        Icon(Icons.chevron_right_rounded,
+                            color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? AppColors.subtextDark
+                                : AppColors.subtextLight,
+                            size: 20),
                       ],
                     ),
                   ],
@@ -276,8 +280,10 @@ class ProgressScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.subtextLight),
+                Icon(Icons.chevron_right_rounded,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ],
             ),
           ),
@@ -510,8 +516,7 @@ class _FocusCard extends StatelessWidget {
             ),
           ),
           if (onTap != null)
-            const Icon(Icons.chevron_right_rounded,
-                color: AppColors.subtextLight),
+            Icon(Icons.chevron_right_rounded, color: subtext),
         ],
       ),
     );
@@ -600,8 +605,7 @@ class _WeakLessonTile extends StatelessWidget {
           '$mastered of $total exercises mastered',
           style: AppTextStyles.bodySmall(color: subtext),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded,
-            color: AppColors.subtextLight),
+        trailing: Icon(Icons.chevron_right_rounded, color: subtext),
         onTap: () => context
             .go(RouteNames.lessonPractice.replaceFirst(':lessonId', lesson.id)),
       ),

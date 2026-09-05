@@ -71,6 +71,8 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
   Widget build(BuildContext context) {
     final notifier = ref.read(onboardingProvider.notifier);
     final companionName = ref.watch(onboardingProvider).resolvedName;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -94,7 +96,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
           const SizedBox(height: 8),
           Text(
             'Your streak and progress are stored safely.',
-            style: AppTextStyles.bodyMedium(color: AppColors.subtextLight),
+            style: AppTextStyles.bodyMedium(color: subtext),
             textAlign: TextAlign.center,
           ),
           if (_errorMessage != null) ...[
@@ -136,8 +138,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Text('or',
-                      style: AppTextStyles.bodySmall(
-                          color: AppColors.subtextLight)),
+                      style: AppTextStyles.bodySmall(color: subtext)),
                 ),
                 const Expanded(child: Divider()),
               ],
@@ -151,7 +152,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
           const SizedBox(height: 16),
           Text(
             'By continuing, you agree to our Terms of Service\nand Privacy Policy.',
-            style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+            style: AppTextStyles.bodySmall(color: subtext),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),

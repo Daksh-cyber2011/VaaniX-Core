@@ -27,6 +27,13 @@ abstract class UserProfileRepository {
   Future<Result<void>> updateDisplayName(String name);
   Future<Result<void>> updateCompanionName(String name);
   Future<Result<void>> updatePersonalityMode(PersonalityMode mode);
+
+  /// Clears Van's personality mode, returning him to the default
+  /// un-personalised behavior (no mode selected). Backs the Van Profile
+  /// screen's "Reset to default" action — which previously forced
+  /// `PersonalityMode.cheerleader` under that label, though cheerleader
+  /// is only the first option in the picker, not a default.
+  Future<Result<void>> clearPersonalityMode();
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass);
   Future<Result<void>> updateDailyGoal(int minutes);
 

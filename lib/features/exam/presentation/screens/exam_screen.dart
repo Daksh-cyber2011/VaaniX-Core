@@ -813,15 +813,12 @@ class _DifficultyChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final foreground = selected
         ? AppColors.primary
         : (enabled
-            ? (Theme.of(context).brightness == Brightness.dark
-                ? AppColors.subtextDark
-                : AppColors.subtextLight)
-            : (Theme.of(context).brightness == Brightness.dark
-                ? AppColors.subtextDark
-                : AppColors.subtextLight));
+            ? (isDark ? AppColors.subtextDark : AppColors.subtextLight)
+            : (isDark ? AppColors.subtextDark : AppColors.subtextLight));
     return InkWell(
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(12),
@@ -842,8 +839,12 @@ class _DifficultyChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: enabled
-                ? (selected ? AppColors.primary : AppColors.borderLight)
-                : AppColors.borderLight,
+                ? (selected
+                    ? AppColors.primary
+                    : (isDark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight))
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
           ),
         ),
         child: Text(

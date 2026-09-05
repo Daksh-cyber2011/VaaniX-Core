@@ -20,6 +20,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -49,7 +50,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ObNestRevealPage(),
   ];
 
-  static const _totalPages = 6;
+  static const _totalPages = AppConstants.onboardingScreenCount;
 
   @override
   void initState() {
@@ -90,11 +91,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
                 children: [
-                  // Back button (hidden on first page)
+                  // Back button (hidden on first page). The icon is 20px
+                  // but the tap target is held at the 48px Material
+                  // minimum (M3's default IconButton is 40px).
                   AnimatedOpacity(
                     opacity: currentPage > 0 ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 200),
                     child: IconButton(
+                      tooltip: 'Previous page',
                       icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       onPressed: currentPage > 0
                           ? () => ref
@@ -102,6 +106,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               .previousPage()
                           : null,
                       iconSize: 20,
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                     ),
                   ),
 
@@ -152,6 +160,7 @@ class _PageDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.easeOut,
@@ -163,7 +172,7 @@ class _PageDot extends StatelessWidget {
             ? AppColors.primary
             : isPassed
                 ? AppColors.primary.withValues(alpha: 0.35)
-                : AppColors.borderLight,
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
         borderRadius: BorderRadius.circular(4),
       ),
     );

@@ -288,6 +288,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
         centerTitle: true,
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -728,6 +729,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     trailing: state.answered
                         ? null
                         : IconButton(
+                            tooltip: 'Remove match',
                             icon: const Icon(Icons.close_rounded,
                                 size: 18, color: AppColors.error),
                             onPressed: () => notifier.removeMatch(i),
@@ -828,7 +830,10 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 ? AppColors.primary.withValues(alpha: 0.12)
                 : (done
                     ? _subtext.withValues(alpha: 0.08)
-                    : (Theme.of(context).cardTheme.color ?? Colors.white)),
+                    : (Theme.of(context).cardTheme.color ??
+                        (Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.surfaceDark
+                            : AppColors.surfaceLight))),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected

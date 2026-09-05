@@ -4,19 +4,21 @@
 /// [onboardingProvider]: the main StateNotifier for onboarding flow.
 library;
 
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/analytics/analytics_client.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
-
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/onboarding/data/onboarding_repository.dart';
 import 'package:vaanix_app/features/onboarding/domain/onboarding_state.dart';
 
 /// Total number of onboarding pages (indices 0..5).
 /// [nextPage] will not advance past this.
-const int _kOnboardingPageCount = 6;
+const int _kOnboardingPageCount = AppConstants.onboardingScreenCount;
 
 /// Provides [OnboardingRepository] backed by [LocalStorageService].
 final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
@@ -33,8 +35,19 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   final AnalyticsClient _analytics;
 
   static OnboardingState _hydrate(OnboardingRepository repo) {
+    final complete = repo.isOnboardingComplete();
+    // Phase 5: resume where the learner left off. A mid-onboarding app
+    // restart used to drop them back to page 0. The stored index is
+    // clamped against the page count (defends against a stale value from
+    // an older build with a different flow length) and ignored entirely
+    // once onboarding is complete — the router redirects away anyway.
+    final savedPage = repo.getCurrentPage();
+    final restoredPage = complete
+        ? 0
+        : (savedPage ?? 0).clamp(0, _kOnboardingPageCount - 1);
     return OnboardingState(
-      isComplete: repo.isOnboardingComplete(),
+      isComplete: complete,
+      currentPage: restoredPage,
       // Hydrate companionName so a mid-onboarding app restart restores
       // the saved name. Previously this was omitted, causing the name to
       // silently revert to the default "Van" on re-entry.
@@ -45,19 +58,30 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     );
   }
 
-  void goToPage(int page) {
+  /// Single funnel for page moves: clamps, de-duplicates no-op moves and
+  /// persists the index so the flow can be resumed after a restart.
+  void _moveToPage(int page) {
     final clamped = page.clamp(0, _kOnboardingPageCount - 1);
+    if (clamped == state.currentPage) return;
     state = state.copyWith(currentPage: clamped);
+    // Fire-and-forget: the write is a single SharedPreferences int and the
+    // UI must not wait on it. A failure leaves the resume index stale —
+    // annoying, never harmful (the learner re-takes at most one page).
+    unawaited(_repo.saveCurrentPage(clamped));
+  }
+
+  void goToPage(int page) {
+    _moveToPage(page);
   }
 
   void nextPage() {
     if (state.currentPage >= _kOnboardingPageCount - 1) return;
-    state = state.copyWith(currentPage: state.currentPage + 1);
+    _moveToPage(state.currentPage + 1);
   }
 
   void previousPage() {
     if (state.currentPage > 0) {
-      state = state.copyWith(currentPage: state.currentPage - 1);
+      _moveToPage(state.currentPage - 1);
     }
   }
 
@@ -105,6 +129,9 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   Future<void> completeOnboarding() async {
     await _repo.markOnboardingComplete();
+    // The flow is done — drop the resume index so no stale page number
+    // survives for a future (re-)run of the flow.
+    await _repo.clearCurrentPage();
     _analytics.log(const AnalyticsEvent(AnalyticsEventName.onboardingCompleted));
     state = state.copyWith(isComplete: true);
   }

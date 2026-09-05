@@ -47,6 +47,10 @@ class _FailingProfileRepository implements UserProfileRepository {
       err(const ServerFailure());
 
   @override
+  Future<Result<void>> clearPersonalityMode() async =>
+      err(const ServerFailure());
+
+  @override
   Future<Result<void>> updateCbseClass(CbseClass? cbseClass) async =>
       err(const ServerFailure());
 

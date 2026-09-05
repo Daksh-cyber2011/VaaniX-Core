@@ -40,6 +40,11 @@ abstract final class AppConstants {
   // ============================================================
 
   static const String keyOnboardingComplete = 'onboarding_complete';
+
+  /// Last onboarding page the learner was on (int). Lets a mid-onboarding
+  /// app restart resume where they left off instead of restarting from
+  /// page 0. Cleared when onboarding completes.
+  static const String keyOnboardingPage = 'onboarding_page';
   static const String keyUserCompanionName = 'companion_name';
   static const String keyPersonalityMode = 'personality_mode';
   static const String keyDailyGoalMinutes = 'daily_goal_minutes';
@@ -66,8 +71,13 @@ abstract final class AppConstants {
   // ONBOARDING
   // ============================================================
 
-  /// Number of onboarding screens (from PRD Section 8.1)
-  static const int onboardingScreenCount = 7;
+  /// Number of onboarding PAGES inside the onboarding flow (indices 0–5).
+  /// The PRD §8.1 screen list counts 7 screens including the splash, but
+  /// the splash lives at its own route — the flow itself is 6 pages
+  /// (audit defect #17: this constant claimed 7 and was never referenced,
+  /// while the UI hardcoded 6 in two places). Single source now: both the
+  /// notifier's clamp and the screen's dot indicators derive from here.
+  static const int onboardingScreenCount = 6;
 
   // ============================================================
   // DAILY GOAL OPTIONS (minutes, from PRD Section 8.1)

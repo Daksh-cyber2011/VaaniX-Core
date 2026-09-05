@@ -22,6 +22,13 @@ class LocalStorageService implements ILocalStorageService {
   Future<void> setOnboardingComplete(bool value) =>
       _prefs.setBool(AppConstants.keyOnboardingComplete, value);
 
+  @override
+  int? get onboardingPage => _prefs.getInt(AppConstants.keyOnboardingPage);
+
+  @override
+  Future<void> setOnboardingPage(int page) =>
+      _prefs.setInt(AppConstants.keyOnboardingPage, page);
+
   // ─── Companion / Personality ───────────────────────────────────────────────
 
   @override

@@ -81,10 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                                 color: Theme.of(context).brightness ==
                                         Brightness.dark
                                     ? AppColors.subtextDark
-                                    : (Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? AppColors.subtextDark
-                                        : AppColors.subtextLight)),
+                                    : AppColors.subtextLight),
                           ),
                         ],
                       ),

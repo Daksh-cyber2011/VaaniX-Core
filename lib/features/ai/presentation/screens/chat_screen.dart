@@ -141,6 +141,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'Dismiss error',
                     icon: const Icon(Icons.close_rounded, size: 16),
                     onPressed: () {
                       ref.read(chatControllerProvider.notifier).clearError();
@@ -238,9 +239,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Cached responses don\'t count against your quota.'
+              'Cached responses don\'t count against your quota. '
               'Van remembers repeated questions to save your limits!',
-              style: AppTextStyles.bodySmall(color: AppColors.subtextLight),
+              style: AppTextStyles.bodySmall(
+                  color: Theme.of(ctx).brightness == Brightness.dark
+                      ? AppColors.subtextDark
+                      : AppColors.subtextLight),
             ),
           ],
         ),
@@ -336,8 +340,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 2),
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: AppColors.subtextLight,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight,
                     shape: BoxShape.circle,
                   ),
                 );
