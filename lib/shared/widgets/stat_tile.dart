@@ -45,7 +45,7 @@ class StatTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: tint.withOpacity(0.12),
+              color: tint.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, size: 20, color: tint),
@@ -67,7 +67,7 @@ class StatTile extends StatelessWidget {
                 Text(
                   label,
                   style: AppTextStyles.bodySmall(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

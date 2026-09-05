@@ -425,7 +425,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: AppColors.primary.withOpacity(0.1),
+                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                       color: AppColors.primary,
                     ),
                   ),
@@ -447,10 +447,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.06),
+                      color: AppColors.primary.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: AppColors.primary.withOpacity(0.15)),
+                          color: AppColors.primary.withValues(alpha: 0.15)),
                     ),
                     child: Text(
                       question.prompt,
@@ -475,13 +475,13 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                 : AppColors.surfaceLight);
                         Color borderColor = AppColors.borderLight;
                         if (showCorrect) {
-                          tileColor = AppColors.success.withOpacity(0.1);
+                          tileColor = AppColors.success.withValues(alpha: 0.1);
                           borderColor = AppColors.success;
                         } else if (showWrong) {
-                          tileColor = AppColors.error.withOpacity(0.1);
+                          tileColor = AppColors.error.withValues(alpha: 0.1);
                           borderColor = AppColors.error;
                         } else if (isSelected) {
-                          tileColor = AppColors.primary.withOpacity(0.08);
+                          tileColor = AppColors.primary.withValues(alpha: 0.08);
                           borderColor = AppColors.primary;
                         }
 
@@ -549,7 +549,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.vanYellow.withOpacity(0.1),
+                        color: AppColors.vanYellow.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -635,7 +635,7 @@ class _ChapterTile extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withOpacity(0.08)
+              ? AppColors.primary.withValues(alpha: 0.08)
               : (Theme.of(context).brightness == Brightness.dark
                   ? AppColors.surfaceDark
                   : AppColors.surfaceLight),
@@ -714,7 +714,7 @@ class _DifficultyChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.primary.withOpacity(0.08)
+              ? AppColors.primary.withValues(alpha: 0.08)
               : (enabled
                   ? ((Theme.of(context).brightness == Brightness.dark
                       ? AppColors.surfaceDark
@@ -722,7 +722,7 @@ class _DifficultyChip extends StatelessWidget {
                   : Theme.of(context)
                       .colorScheme
                       .onSurface
-                      .withOpacity(0.06)),
+                      .withValues(alpha: 0.06)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: enabled
@@ -738,7 +738,7 @@ class _DifficultyChip extends StatelessWidget {
                 : (Theme.of(context).brightness == Brightness.dark
                         ? AppColors.subtextDark
                         : AppColors.subtextLight)
-                    .withOpacity(0.5),
+                    .withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -821,10 +821,10 @@ class _ResultView extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.06),
+                  color: AppColors.primary.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: AppColors.primary.withOpacity(0.15)),
+                      color: AppColors.primary.withValues(alpha: 0.15)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

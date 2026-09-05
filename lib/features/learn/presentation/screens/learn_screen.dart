@@ -217,7 +217,7 @@ class _ChapterCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 6,
-                backgroundColor: AppColors.primary.withOpacity(0.1),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                 color: AppColors.primary,
               ),
             ),
@@ -231,7 +231,7 @@ class _ChapterCard extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: (isDone ? AppColors.success : AppColors.primary)
-                      .withOpacity(0.12),
+                      .withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

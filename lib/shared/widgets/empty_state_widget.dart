@@ -28,7 +28,7 @@ class EmptyStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accent = iconColor ?? theme.colorScheme.primary;
-    final subtext = theme.textTheme.bodyMedium?.color?.withOpacity(0.72);
+    final subtext = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
 
     return Center(
       child: Padding(
@@ -39,7 +39,7 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: accent.withOpacity(0.1),
+                color: accent.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 44, color: accent),

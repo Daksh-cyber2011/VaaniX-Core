@@ -110,7 +110,7 @@ class _ChatInputState extends State<ChatInput> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide(
-                        color: AppColors.primary.withOpacity(0.4),
+                        color: AppColors.primary.withValues(alpha: 0.4),
                         width: 1.5),
                   ),
                 ),
@@ -121,7 +121,7 @@ class _ChatInputState extends State<ChatInput> {
               decoration: BoxDecoration(
                 color: (_hasText && !widget.isSending)
                     ? AppColors.primary
-                    : AppColors.primary.withOpacity(0.3),
+                    : AppColors.primary.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: IconButton(

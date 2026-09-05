@@ -56,7 +56,7 @@ class VaaniXDialog extends StatelessWidget {
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color:
-                    theme.textTheme.bodyMedium?.color?.withOpacity(0.72),
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72),
               ),
               textAlign: TextAlign.center,
             ),

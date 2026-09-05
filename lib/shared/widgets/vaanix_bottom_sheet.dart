@@ -40,7 +40,7 @@ class VaaniXBottomSheet extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withOpacity(0.24),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.24),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

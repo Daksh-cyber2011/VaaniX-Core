@@ -164,7 +164,7 @@ class _ModeCard extends StatelessWidget {
       curve: Curves.easeOut,
       decoration: BoxDecoration(
         color: isSelected
-            ? option.color.withOpacity(0.08)
+            ? option.color.withValues(alpha: 0.08)
             : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -176,7 +176,7 @@ class _ModeCard extends StatelessWidget {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: option.color.withOpacity(0.15),
+                  color: option.color.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -194,7 +194,7 @@ class _ModeCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: option.color.withOpacity(0.12),
+                  color: option.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(

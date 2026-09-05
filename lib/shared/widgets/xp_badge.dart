@@ -32,9 +32,9 @@ class XpBadge extends StatelessWidget {
           vertical: compact ? 4 : 6,
         ),
         decoration: BoxDecoration(
-          color: accent.withOpacity(0.12),
+          color: accent.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: accent.withOpacity(0.35)),
+          border: Border.all(color: accent.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -79,10 +79,10 @@ class ObSubjectPage extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.06),
+                color: AppColors.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                    color: AppColors.primary.withOpacity(0.15)),
+                    color: AppColors.primary.withValues(alpha: 0.15)),
               ),
               child: Row(
                 children: [
@@ -151,7 +151,7 @@ class _ClassChip extends StatelessWidget {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.25),
+                  color: AppColors.primary.withValues(alpha: 0.25),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 )

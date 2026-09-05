@@ -31,26 +31,26 @@ abstract final class AppTheme {
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
               ? primary
-              : primary.withOpacity(0.18),
+              : primary.withValues(alpha: 0.18),
         ),
         trackOutlineColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
               ? Colors.transparent
-              : primary.withOpacity(0.32),
+              : primary.withValues(alpha: 0.32),
         ),
       );
 
   static ProgressIndicatorThemeData _progress(Color primary) =>
       ProgressIndicatorThemeData(
         color: primary,
-        linearTrackColor: primary.withOpacity(0.12),
-        circularTrackColor: primary.withOpacity(0.15),
-        refreshBackgroundColor: primary.withOpacity(0.15),
+        linearTrackColor: primary.withValues(alpha: 0.12),
+        circularTrackColor: primary.withValues(alpha: 0.15),
+        refreshBackgroundColor: primary.withValues(alpha: 0.15),
       );
 
   static TooltipThemeData _tooltip(Color onBackground) => TooltipThemeData(
         decoration: BoxDecoration(
-          color: onBackground.withOpacity(0.92),
+          color: onBackground.withValues(alpha: 0.92),
           borderRadius: BorderRadius.circular(AppDimens.radiusSm),
         ),
         textStyle: AppTextStyles.labelSmall(color: Colors.white),
@@ -84,7 +84,7 @@ abstract final class AppTheme {
         splashFactory: InkRipple.splashFactory,
         visualDensity: VisualDensity.standard,
         focusColor: AppColors.focusRingLight,
-        highlightColor: AppColors.primary.withOpacity(0.06),
+        highlightColor: AppColors.primary.withValues(alpha: 0.06),
 
         // Seed color drives Material 3 color scheme generation
         colorScheme: ColorScheme.fromSeed(
@@ -134,8 +134,8 @@ abstract final class AppTheme {
             // Pressed state: subtle scale of the fill, no elevation jump.
             overlayColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.pressed)
-                  ? Colors.white.withOpacity(0.14)
-                  : Colors.white.withOpacity(0.08),
+                  ? Colors.white.withValues(alpha: 0.14)
+                  : Colors.white.withValues(alpha: 0.08),
             ),
           ),
         ),
@@ -261,7 +261,7 @@ abstract final class AppTheme {
         // --- Navigation Bar (Material 3) ---
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surfaceLight,
-          indicatorColor: AppColors.primary.withOpacity(0.12),
+          indicatorColor: AppColors.primary.withValues(alpha: 0.12),
           height: 68,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -280,7 +280,7 @@ abstract final class AppTheme {
         // --- Chip ---
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surfaceVariantLight,
-          selectedColor: AppColors.primary.withOpacity(0.15),
+          selectedColor: AppColors.primary.withValues(alpha: 0.15),
           labelStyle: AppTextStyles.labelMedium(),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -315,7 +315,7 @@ abstract final class AppTheme {
         splashFactory: InkRipple.splashFactory,
         visualDensity: VisualDensity.standard,
         focusColor: AppColors.focusRingDark,
-        highlightColor: AppColors.primaryLight.withOpacity(0.08),
+        highlightColor: AppColors.primaryLight.withValues(alpha: 0.08),
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
           brightness: Brightness.dark,
@@ -357,8 +357,8 @@ abstract final class AppTheme {
           ).copyWith(
             overlayColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.pressed)
-                  ? Colors.white.withOpacity(0.14)
-                  : Colors.white.withOpacity(0.08),
+                  ? Colors.white.withValues(alpha: 0.14)
+                  : Colors.white.withValues(alpha: 0.08),
             ),
           ),
         ),
@@ -462,7 +462,7 @@ abstract final class AppTheme {
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surfaceDark,
-          indicatorColor: AppColors.primaryLight.withOpacity(0.15),
+          indicatorColor: AppColors.primaryLight.withValues(alpha: 0.15),
           height: 68,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
@@ -479,7 +479,7 @@ abstract final class AppTheme {
         ),
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surfaceVariantDark,
-          selectedColor: AppColors.primaryLight.withOpacity(0.2),
+          selectedColor: AppColors.primaryLight.withValues(alpha: 0.2),
           labelStyle: AppTextStyles.labelMedium(),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

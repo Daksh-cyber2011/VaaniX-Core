@@ -135,7 +135,7 @@ class _GoalTile extends StatelessWidget {
       curve: Curves.easeOut,
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.primary.withOpacity(0.08)
+            ? AppColors.primary.withValues(alpha: 0.08)
             : Theme.of(context).cardTheme.color,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
@@ -145,7 +145,7 @@ class _GoalTile extends StatelessWidget {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.15),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -164,7 +164,7 @@ class _GoalTile extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.primary.withOpacity(0.12)
+                      ? AppColors.primary.withValues(alpha: 0.12)
                       : AppColors.surfaceVariantLight,
                   shape: BoxShape.circle,
                 ),

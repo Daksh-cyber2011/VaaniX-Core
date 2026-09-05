@@ -263,7 +263,7 @@ class _Blockquote extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide(
-            color: AppColors.primary.withOpacity(0.6),
+            color: AppColors.primary.withValues(alpha: 0.6),
             width: 3,
           ),
         ),
@@ -316,11 +316,11 @@ class _ContentTable extends StatelessWidget {
         },
         border: TableBorder(
           horizontalInside: BorderSide(
-            color: borderColor.withOpacity(0.5),
+            color: borderColor.withValues(alpha: 0.5),
             width: 1,
           ),
           verticalInside: BorderSide(
-            color: borderColor.withOpacity(0.3),
+            color: borderColor.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -328,7 +328,7 @@ class _ContentTable extends StatelessWidget {
           // Header row
           TableRow(
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
             ),
             children: [
               for (final cell in headerRow)

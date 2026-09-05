@@ -135,7 +135,7 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                     end: Alignment.bottomRight,
                     colors: [
                       isDark ? AppColors.nestWarmDark : AppColors.nestWarmLight,
-                      AppColors.vanYellow.withOpacity(0.08),
+                      AppColors.vanYellow.withValues(alpha: 0.08),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(28),
@@ -289,7 +289,7 @@ class _NestDecorState extends State<_NestDecor>
           width: widget.size * 1.8,
           height: widget.size * 1.8,
           decoration: BoxDecoration(
-            color: widget.color.withOpacity(0.14),
+            color: widget.color.withValues(alpha: 0.14),
             shape: BoxShape.circle,
           ),
           child: Icon(widget.icon, size: widget.size, color: widget.color),

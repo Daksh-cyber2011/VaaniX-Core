@@ -198,7 +198,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                 '+${widget.lesson.xpReward} XP',
                 style: AppTextStyles.labelSmall(color: AppColors.primary),
               ),
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               side: BorderSide.none,
               padding: EdgeInsets.zero,
               visualDensity: VisualDensity.compact,
@@ -349,7 +349,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: _hasScrolledToBottom
                     ? AppColors.primary
-                    : AppColors.primary.withOpacity(0.12),
+                    : AppColors.primary.withValues(alpha: 0.12),
                 minimumSize: const Size(140, 48),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

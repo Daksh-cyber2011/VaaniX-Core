@@ -162,7 +162,7 @@ class _PageDot extends StatelessWidget {
         color: isActive
             ? AppColors.primary
             : isPassed
-                ? AppColors.primary.withOpacity(0.35)
+                ? AppColors.primary.withValues(alpha: 0.35)
                 : AppColors.borderLight,
         borderRadius: BorderRadius.circular(4),
       ),

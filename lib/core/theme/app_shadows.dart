@@ -90,5 +90,5 @@ abstract final class AppShadows {
   static Color overlayScrim(Brightness brightness) =>
       brightness == Brightness.dark
           ? AppColors.overlay
-          : AppColors.onBackgroundLight.withOpacity(0.45);
+          : AppColors.onBackgroundLight.withValues(alpha: 0.45);
 }

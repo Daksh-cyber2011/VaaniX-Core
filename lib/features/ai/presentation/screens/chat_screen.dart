@@ -1,4 +1,4 @@
-ï»¿/// VaaniX AI â‚¬ Chat Screen
+/// VaaniX AI € Chat Screen
 ///
 /// The conversational surface where the learner talks to Van. Shows a
 /// scrolling list of message bubbles, a typing indicator while Van is
@@ -78,7 +78,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         ),
         centerTitle: true,
         actions: [
-          // â‚¬â‚¬â‚¬ AI Usage Indicator â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬
+          // €€€ AI Usage Indicator €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           // Shows remaining daily requests as a small chip. Tapping
           // it shows detailed usage in a dialog.
           FutureBuilder(
@@ -99,7 +99,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -133,7 +133,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       body: Column(
         children: [
-          // â‚¬â‚¬â‚¬ Message List â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬
+          // €€€ Message List €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           // Honest connectivity awareness: lessons keep working offline;
           // only Van's AI chat needs a connection.
           const OfflineBanner(margin: EdgeInsets.fromLTRB(16, 8, 16, 0)),
@@ -159,11 +159,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
           ),
 
-          // â‚¬â‚¬â‚¬ Error Banner (if any) â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬
+          // €€€ Error Banner (if any) €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           if (chatState.error != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: AppColors.error.withOpacity(0.08),
+              color: AppColors.error.withValues(alpha: 0.08),
               child: Row(
                 children: [
                   const Icon(Icons.error_outline_rounded,
@@ -185,7 +185,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
 
-          // â‚¬â‚¬â‚¬ Input â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬â‚¬
+          // €€€ Input €€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€
           ChatInput(
             onSend: (text) {
               ref.read(chatControllerProvider.notifier).sendMessage(text);
@@ -225,7 +225,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               child: LinearProgressIndicator(
                 value: usage.requestUsageFraction.clamp(0.0, 1.0),
                 minHeight: 8,
-                backgroundColor: AppColors.primary.withOpacity(0.1),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                 color: usage.requestUsageFraction < 0.7
                     ? AppColors.success
                     : AppColors.error,

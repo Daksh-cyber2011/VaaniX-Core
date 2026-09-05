@@ -172,10 +172,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.error.withOpacity(0.08),
+                    color: AppColors.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: AppColors.error.withOpacity(0.3)),
+                        color: AppColors.error.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [

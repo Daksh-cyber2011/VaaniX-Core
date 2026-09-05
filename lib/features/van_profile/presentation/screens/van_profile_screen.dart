@@ -90,7 +90,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: selected
-                        ? AppColors.primary.withOpacity(0.08)
+                        ? AppColors.primary.withValues(alpha: 0.08)
                         : Theme.of(context).cardTheme.color,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
@@ -111,7 +111,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                           color: (selected
                                   ? AppColors.primary
                                   : AppColors.subtextLight)
-                              .withOpacity(0.12),
+                              .withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(_modeIcon(m),

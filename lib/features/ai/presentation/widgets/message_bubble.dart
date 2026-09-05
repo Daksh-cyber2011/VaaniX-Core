@@ -110,7 +110,7 @@ class MessageBubble extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           color: _isUser
-                              ? Colors.white.withOpacity(0.6)
+                              ? Colors.white.withValues(alpha: 0.6)
                               : AppColors.subtextLight,
                         ),
                       ),
