@@ -55,17 +55,17 @@ class MessageBubble extends StatelessWidget {
             const SizedBox(width: 8),
           ],
           Flexible(
-            child: GestureDetector(
-              onLongPress: () {
-                Clipboard.setData(ClipboardData(text: message.content));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Message copied to clipboard'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              child: Container(
+            // The copy action is only reachable via long-press; expose it
+            // on the same semantics node as the message text (plus a
+            // hint) so screen-reader users can copy messages too.
+            child: Semantics(
+              label: message.content,
+              onLongPress: () => _copyMessage(context),
+              hint: 'Long-press to copy message',
+              child: ExcludeSemantics(
+                child: GestureDetector(
+                  onLongPress: () => _copyMessage(context),
+                  child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
@@ -122,8 +122,20 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
+          ),
+          ),
           if (_isUser) const SizedBox(width: 8),
         ],
+      ),
+    );
+  }
+
+  void _copyMessage(BuildContext context) {
+    Clipboard.setData(ClipboardData(text: message.content));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Message copied to clipboard'),
+        duration: Duration(seconds: 1),
       ),
     );
   }

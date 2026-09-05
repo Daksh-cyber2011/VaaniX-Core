@@ -138,55 +138,67 @@ class _ClassChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color:
-            isSelected ? AppColors.primary : Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
+    // Selection is otherwise conveyed by fill color only. The chip is
+    // announced as a proper class name ("Class 7", not "7 th") with the
+    // selected/button flags and tap action on a single semantics node.
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      onTap: onTap,
+      label: 'Class ${cbseClass.value}',
+      child: ExcludeSemantics(
+        child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
-              : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          width: isSelected ? 2 : 1,
+              : Theme.of(context).cardTheme.color,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  )
+                ]
+              : null,
         ),
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.25),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                )
-              ]
-            : null,
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${cbseClass.value}',
-                style: AppTextStyles.titleLarge(
-                  color: isSelected ? Colors.white : null,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${cbseClass.value}',
+                  style: AppTextStyles.titleLarge(
+                    color: isSelected ? Colors.white : null,
+                  ),
                 ),
-              ),
-              Text(
-                'th',
-                style: AppTextStyles.labelSmall(
-                  color: isSelected
-                      ? Colors.white70
-                      : (Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.subtextDark
-                          : AppColors.subtextLight),
+                Text(
+                  'th',
+                  style: AppTextStyles.labelSmall(
+                    color: isSelected
+                        ? Colors.white70
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.subtextDark
+                            : AppColors.subtextLight),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+      ),
       ),
     );
   }

@@ -159,7 +159,16 @@ class _ModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
-    return AnimatedContainer(
+    // Selection is otherwise conveyed by border/fill color and shadow
+    // only; one semantics node carries the spoken label plus the
+    // selected/button flags and tap action.
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      onTap: onTap,
+      label: '${option.title}, ${option.subtitle}',
+      child: ExcludeSemantics(
+        child: AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
       decoration: BoxDecoration(
@@ -227,6 +236,8 @@ class _ModeCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      ),
       ),
     );
   }

@@ -2,6 +2,79 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Accessibility Pass] - 2026-09-05
+
+Screen-reader parity for every selectable control that communicated
+state through COLOR ONLY. Visual design unchanged everywhere; only the
+semantics tree gained the state a sighted user gets from fills, borders
+and dimming.
+
+### Changed
+- **Practice option tiles (MCQ / fill blank)**
+  (`exercise_screen.dart`): wrapped in `Semantics(button, selected,
+  enabled, onTap)`; the option text carries the post-answer state
+  ("correct answer" / "incorrect") that the green/red tile colors
+  encode; the decorative letter badge is `ExcludeSemantics`.
+- **Exam question options** (`exam_screen.dart`): same treatment —
+  selected flag while choosing, disabled after answering, spoken
+  correct/incorrect wording, tap action exposed.
+- **Matching chips** (`exercise_screen.dart`): pending selection uses
+  the standard selected flag; paired chips speak "already matched"
+  (no semantics flag exists for that state) and disable; the opposite
+  column announces a pairing hint ("Double-tap to match with …") while
+  a left item is pending.
+- **Ordering chips** (`exercise_screen.dart`): chosen items speak their
+  sequence position ("Position 2 of 3: …") instead of relying on
+  traversal order.
+- **Exam setup** (`exam_screen.dart`): chapter tiles expose the
+  selected flag; difficulty chips expose selected + enabled flags
+  (empty bands announce "disabled" instead of only dimming); the bare
+  question count reads as "N questions".
+- **Onboarding selection cards** (`ob_goal_page.dart`,
+  `ob_personality_page.dart`, `ob_subject_page.dart`): daily-goal,
+  personality and class tiles expose `selected` + `button` + tap
+  action; the class chip reads as "Class 7" instead of the broken
+  "7 th"; decorative numerals excluded from the semantics tree.
+- **Chat message copy** (`message_bubble.dart`): the long-press-to-copy
+  gesture is now a semantics long-press action with a hint — screen-
+  reader users can copy messages at all.
+- **Test seam**: `exerciseSessionProvider` now reads its exercise bank
+  through the existing `exercisesForLessonProvider` (same data source,
+  behavioral no-op) so tests can drive matching/ordering exercises
+  through the real screen.
+
+### Added
+- **Accessibility regression tests** (`test/accessibility/`):
+  `onboarding_selection_semantics_test.dart` (selected flags + class
+  naming), `exercise_option_semantics_test.dart` (MCQ
+  selected/correct/wrong/enabled, matching pending/matched/hint,
+  ordering position announcements),
+  `exam_option_semantics_test.dart` (setup flags + question option
+  state after submit). All assert real `SemanticsNode` flags, labels,
+  hints and actions via `tester.getSemantics`.
+
+### Verified untouched (already correct)
+- Existing `Semantics` in shared widgets (Van widget, speech strip,
+  streak/XP badges, progress meter) — preserved as-is.
+- Analytics seam (`core/analytics`): typed, bounded, Noop in
+  production, DebugPrint in debug — no change, no duplication.
+- LearningContext chain: `learningContextProvider` → ChatController →
+  `ConversationContext.learningContextFragment` →
+  `DefaultPromptPipeline` → model adapters — wired and tested, no
+  change.
+- VAN state machine, event priorities, arbitration and fallback
+  renderer — no change, no fabricated assets or events.
+- Curriculum JSON, lessons, questions, answers, translations and
+  chapter structure — byte-identical (diff-checked before commit).
+
+### Verification
+- `flutter analyze`: 0 issues (Flutter 3.47.2 / Dart 3.13.2).
+- `flutter test`: 423 tests, 0 failures (409 existing + 14 new
+  accessibility assertions across 8 test cases).
+- `flutter build web --release`: success (compile verification; no
+  Android SDK in the build environment, so APK/emulator runs were not
+  possible — no verification was fabricated).
+
 ## [Phase 6] - 2026-09-05
 
 Final production readiness. Full audit basis:

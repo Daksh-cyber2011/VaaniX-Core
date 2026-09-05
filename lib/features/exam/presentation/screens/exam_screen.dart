@@ -595,58 +595,85 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                           borderColor = AppColors.primary;
                         }
 
+                        final optionSemanticsLabel = state.answered
+                            ? 'Option ${String.fromCharCode(65 + i)}: '
+                                '${question.options[i]}, '
+                                '${isCorrect ? 'correct answer' : 'incorrect'}'
+                            : 'Option ${String.fromCharCode(65 + i)}: '
+                                '${question.options[i]}';
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: InkWell(
+                          // Screen-reader parity: exactly ONE semantics
+                          // node per option — spoken correct/incorrect
+                          // state (matching the green/red tile colors),
+                          // selected/enabled/button flags, tap action;
+                          // the letter badge is decorative and excluded.
+                          child: Semantics(
+                            button: true,
+                            selected: isSelected,
+                            enabled: !state.answered,
                             onTap: state.answered
                                 ? null
                                 : () => notifier.select(i),
-                            borderRadius: BorderRadius.circular(14),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
-                              decoration: BoxDecoration(
-                                color: tileColor,
+                            label: optionSemanticsLabel,
+                            child: ExcludeSemantics(
+                              child: InkWell(
+                                onTap: state.answered
+                                    ? null
+                                    : () => notifier.select(i),
                                 borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                    color: borderColor,
-                                    width: isSelected || showCorrect ? 2 : 1),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 28,
-                                    height: 28,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: borderColor, width: 2),
-                                    ),
-                                    child: showCorrect
-                                        ? const Icon(Icons.check,
-                                            color: AppColors.success, size: 18)
-                                        : showWrong
-                                            ? const Icon(Icons.close,
-                                                color: AppColors.error,
+                                child: AnimatedContainer(
+                                  duration:
+                                      const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: tileColor,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                        color: borderColor,
+                                        width: isSelected || showCorrect
+                                            ? 2
+                                            : 1),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: borderColor, width: 2),
+                                        ),
+                                        child: showCorrect
+                                            ? const Icon(Icons.check,
+                                                color: AppColors.success,
                                                 size: 18)
-                                            : Center(
-                                                child: Text(
-                                                  String.fromCharCode(
-                                                      65 + i), // A, B, C...
-                                                  style: AppTextStyles
-                                                      .labelMedium(),
-                                                ),
-                                              ),
+                                            : showWrong
+                                                ? const Icon(Icons.close,
+                                                    color: AppColors.error,
+                                                    size: 18)
+                                                : Center(
+                                                    child: Text(
+                                                      String.fromCharCode(
+                                                          65 + i), // A, B, C...
+                                                      style: AppTextStyles
+                                                          .labelMedium(),
+                                                    ),
+                                                  ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          question.options[i],
+                                          style: AppTextStyles.bodyLarge(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      question.options[i],
-                                      style: AppTextStyles.bodyLarge(),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           ),
@@ -743,53 +770,70 @@ class _ChapterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    // Selection state is otherwise conveyed by border/fill color only.
+    // One semantics node per tile: spoken title/subtitle/count plus the
+    // selected/button flags and tap action.
+    final spokenLabel = [
+      title,
+      if (subtitle.trim().isNotEmpty) subtitle,
+      '$totalQuestions questions',
+    ].join(', ');
+    return Semantics(
+      button: true,
+      selected: selected,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primary.withValues(alpha: 0.08)
-              : (Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.surfaceDark
-                  : AppColors.surfaceLight),
+      label: spokenLabel,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected ? AppColors.primary : AppColors.borderLight,
-            width: selected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppTextStyles.titleMedium()),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: AppTextStyles.bodySmall(
-                        color: (Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.subtextDark
-                            : AppColors.subtextLight)),
-                  ),
-                ],
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: selected
+                  ? AppColors.primary.withValues(alpha: 0.08)
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.surfaceDark
+                      : AppColors.surfaceLight),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: selected ? AppColors.primary : AppColors.borderLight,
+                width: selected ? 2 : 1,
               ),
             ),
-            const SizedBox(width: 12),
-            Text(
-              '$totalQuestions',
-              style: AppTextStyles.labelLarge(color: AppColors.primary),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: AppTextStyles.titleMedium()),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: AppTextStyles.bodySmall(
+                            color: (Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? AppColors.subtextDark
+                                : AppColors.subtextLight)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  '$totalQuestions',
+                  style: AppTextStyles.labelLarge(color: AppColors.primary),
+                ),
+                const SizedBox(width: 4),
+                Icon(Icons.chevron_right,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
+              ],
             ),
-            const SizedBox(width: 4),
-            Icon(Icons.chevron_right,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppColors.subtextDark
-                    : AppColors.subtextLight),
-          ],
+          ),
         ),
       ),
     );
@@ -819,43 +863,57 @@ class _DifficultyChip extends StatelessWidget {
         : (enabled
             ? (isDark ? AppColors.subtextDark : AppColors.subtextLight)
             : (isDark ? AppColors.subtextDark : AppColors.subtextLight));
-    return InkWell(
+    // Selected + disabled states are otherwise conveyed by fill color and
+    // dimming only; one semantics node carries the spoken label plus the
+    // selected/enabled/button flags and tap action.
+    return Semantics(
+      button: true,
+      selected: selected,
+      enabled: enabled,
       onTap: enabled ? onTap : null,
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primary.withValues(alpha: 0.08)
-              : (enabled
-                  ? ((Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.surfaceDark
-                      : AppColors.surfaceLight))
-                  : Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.06)),
+      label: count > 0 ? '$label, $count questions' : label,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: enabled
-                ? (selected
-                    ? AppColors.primary
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: selected
+                  ? AppColors.primary.withValues(alpha: 0.08)
+                  : (enabled
+                      ? ((Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.surfaceDark
+                          : AppColors.surfaceLight))
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.06)),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: enabled
+                    ? (selected
+                        ? AppColors.primary
+                        : (isDark
+                            ? AppColors.borderDark
+                            : AppColors.borderLight))
                     : (isDark
                         ? AppColors.borderDark
-                        : AppColors.borderLight))
-                : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          ),
-        ),
-        child: Text(
-          count > 0 ? '$label ($count)' : label,
-          style: AppTextStyles.labelLarge(
-            color: enabled
-                ? foreground
-                : (Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.subtextDark
-                        : AppColors.subtextLight)
-                    .withValues(alpha: 0.5),
+                        : AppColors.borderLight),
+              ),
+            ),
+            child: Text(
+              count > 0 ? '$label ($count)' : label,
+              style: AppTextStyles.labelLarge(
+                color: enabled
+                    ? foreground
+                    : (Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.subtextDark
+                            : AppColors.subtextLight)
+                        .withValues(alpha: 0.5),
+              ),
+            ),
           ),
         ),
       ),

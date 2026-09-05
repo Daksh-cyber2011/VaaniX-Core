@@ -131,84 +131,101 @@ class _GoalTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColors.primary.withValues(alpha: 0.08)
-            : Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
+    // Selection is otherwise conveyed by border/fill color and shadow
+    // only; one semantics node carries the spoken label plus the
+    // selected/button flags and tap action.
+    final spokenLabel = _badge.isEmpty ? _label : '$_label, $_badge';
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      onTap: onTap,
+      label: spokenLabel,
+      child: ExcludeSemantics(
+        child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary
-              : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          width: isSelected ? 2 : 1,
+              ? AppColors.primary.withValues(alpha: 0.08)
+              : Theme.of(context).cardTheme.color,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.15),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary.withValues(alpha: 0.12)
-                      : (isDark
-                          ? AppColors.surfaceVariantDark
-                          : AppColors.surfaceVariantLight),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    '$minutes',
-                    style: AppTextStyles.titleLarge(
-                      color: isSelected ? AppColors.primary : null,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(_label, style: AppTextStyles.titleMedium()),
-                  Text(
-                    _badge,
-                    style: AppTextStyles.labelSmall(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                // Decorative large numeral; the label below carries the
+                // same information in words.
+                ExcludeSemantics(
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.primary
-                          : (Theme.of(context).brightness == Brightness.dark
-                              ? AppColors.subtextDark
-                              : AppColors.subtextLight),
+                          ? AppColors.primary.withValues(alpha: 0.12)
+                          : (isDark
+                              ? AppColors.surfaceVariantDark
+                              : AppColors.surfaceVariantLight),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$minutes',
+                        style: AppTextStyles.titleLarge(
+                          color: isSelected ? AppColors.primary : null,
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
-              const Spacer(),
-              AnimatedScale(
-                scale: isSelected ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 200),
-                child: const Icon(Icons.check_circle_rounded,
-                    color: AppColors.primary, size: 22),
-              ),
-            ],
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_label, style: AppTextStyles.titleMedium()),
+                    Text(
+                      _badge,
+                      style: AppTextStyles.labelSmall(
+                        color: isSelected
+                            ? AppColors.primary
+                            : (Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? AppColors.subtextDark
+                                : AppColors.subtextLight),
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                AnimatedScale(
+                  scale: isSelected ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: const Icon(Icons.check_circle_rounded,
+                      color: AppColors.primary, size: 22),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
       ),
     );
   }

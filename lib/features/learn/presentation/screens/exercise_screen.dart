@@ -524,44 +524,66 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       borderColor = AppColors.primary;
     }
 
-    return InkWell(
+    // Screen-reader parity: exactly ONE semantics node per option tile —
+    // the label carries the option text plus the post-answer correct/
+    // incorrect state that a sighted user gets from the tile colors, and
+    // the flags carry selected/enabled/button. ExcludeSemantics removes
+    // the InkWell's own boundary node (the letter badge is decorative and
+    // its info is spoken as "Option B").
+    final optionLetter = String.fromCharCode(65 + index);
+    final semanticsText = state.answered
+        ? 'Option $optionLetter: $label, '
+            '${isCorrect ? 'correct answer' : 'incorrect'}'
+        : 'Option $optionLetter: $label';
+
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      enabled: !state.answered,
       onTap: state.answered ? null : () => notifier.select(index),
-      borderRadius: BorderRadius.circular(14),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: tileColor,
+      label: semanticsText,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: state.answered ? null : () => notifier.select(index),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-              color: borderColor, width: isSelected || isCorrect ? 2 : 1),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: borderColor, width: 2),
-              ),
-              child: isCorrect
-                  ? const Icon(Icons.check, color: AppColors.success, size: 18)
-                  : isWrong
-                      ? const Icon(Icons.close,
-                          color: AppColors.error, size: 18)
-                      : Center(
-                          child: Text(
-                            String.fromCharCode(65 + index),
-                            style: AppTextStyles.labelMedium(),
-                          ),
-                        ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: tileColor,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                  color: borderColor, width: isSelected || isCorrect ? 2 : 1),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(label, style: AppTextStyles.bodyLarge()),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: borderColor, width: 2),
+                  ),
+                  child: isCorrect
+                      ? const Icon(Icons.check,
+                          color: AppColors.success, size: 18)
+                      : isWrong
+                          ? const Icon(Icons.close,
+                              color: AppColors.error, size: 18)
+                          : Center(
+                              child: Text(
+                                optionLetter,
+                                style: AppTextStyles.labelMedium(),
+                              ),
+                            ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(label, style: AppTextStyles.bodyLarge()),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -606,8 +628,16 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   children: [
                     for (var i = 0; i < state.chosenItems.length; i++)
                       InputChip(
-                        label: Text(state.chosenItems[i],
-                            style: AppTextStyles.labelMedium()),
+                        label: Text(
+                          state.chosenItems[i],
+                          // Sequence position is only conveyed visually by
+                          // chip order; speak it explicitly so screen-reader
+                          // users hear where in the sentence they placed it.
+                          semanticsLabel: 'Position ${i + 1} of '
+                              '${exercise.items.length}: '
+                              '${state.chosenItems[i]}',
+                          style: AppTextStyles.labelMedium(),
+                        ),
                         onDeleted: state.answered
                             ? null
                             : () => notifier.removeChosenItem(i),
@@ -696,6 +726,12 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
   ) {
     final rightOptions = notifier.currentOptions;
     final pairedLeft = state.selectedPairs.map((p) => p.left).toSet();
+    // When a left item is pending, right-column chips announce what they
+    // would pair with (sighted users see the pending highlight color).
+    final pendingLeftIndex = _pendingLeftIndex;
+    final pendingLeftLabel = pendingLeftIndex == null
+        ? null
+        : exercise.pairs[pendingLeftIndex].left;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -772,6 +808,9 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                       selected: false,
                       done: state.selectedPairs.any((p) => p.right == d) ||
                           state.answered,
+                      actionHint: pendingLeftLabel == null
+                          ? null
+                          : 'Double-tap to match with $pendingLeftLabel',
                       onTap: () {
                         final pending = _pendingLeftIndex;
                         if (pending == null) return;
@@ -815,37 +854,54 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     required bool selected,
     required bool done,
     required VoidCallback onTap,
+    String? actionHint,
   }) {
+    // Screen-reader parity: selected/done states are otherwise conveyed
+    // by highlight color and dimming only. "Already matched" is spoken as
+    // part of the label (no semantics flag exists for it); the pending
+    // selection uses the standard selected flag; and [actionHint] tells
+    // the user which pending left item this chip would pair with.
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        enabled: !done,
         onTap: done ? null : onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: selected
-                ? AppColors.primary.withValues(alpha: 0.12)
-                : (done
-                    ? _subtext.withValues(alpha: 0.08)
-                    : (Theme.of(context).cardTheme.color ??
-                        (Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight))),
+        hint: actionHint,
+        label: done ? '$label, already matched' : label,
+        child: ExcludeSemantics(
+          child: InkWell(
+            onTap: done ? null : onTap,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected
-                  ? AppColors.primary
-                  : (done ? _borderColor : _borderColor),
-              width: selected ? 2 : 1,
-            ),
-          ),
-          child: Text(
-            label,
-            style: AppTextStyles.bodyMedium(
-              color: done ? _subtext : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 120),
+              width: double.infinity,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: selected
+                    ? AppColors.primary.withValues(alpha: 0.12)
+                    : (done
+                        ? _subtext.withValues(alpha: 0.08)
+                        : (Theme.of(context).cardTheme.color ??
+                            (Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.surfaceDark
+                                : AppColors.surfaceLight))),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: selected
+                      ? AppColors.primary
+                      : (done ? _borderColor : _borderColor),
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium(
+                  color: done ? _subtext : null,
+                ),
+              ),
             ),
           ),
         ),

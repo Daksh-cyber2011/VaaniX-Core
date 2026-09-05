@@ -350,11 +350,15 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
 }
 
 /// A practice session for a lesson (empty notifier when no exercises yet).
+///
+/// Reads the content bank through [exercisesForLessonProvider] (same data
+/// source as before — the static bank map) so tests can override the bank
+/// for a lesson id and drive exotic exercise types through the real UI.
 final exerciseSessionProvider =
     StateNotifierProvider.family<ExerciseNotifier, ExerciseState, String>(
         (ref, lessonId) {
   return ExerciseNotifier(
-    exercisesByLesson[lessonId] ?? const [],
+    ref.watch(exercisesForLessonProvider(lessonId)),
     ref.watch(analyticsClientProvider),
   );
 });
