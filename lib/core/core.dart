@@ -27,11 +27,10 @@ export 'errors/failures.dart';
 export 'utils/result.dart';
 
 // ─── Network & connectivity ─────────────────────────────────────────────────
+// The HTTP transport lives inside the AI adapter layer (google_generative_ai)
+// and Supabase's own client; the former standalone Dio stack was removed in
+// Phase 6 as dead infrastructure. Connectivity awareness remains here.
 export 'network/connectivity_service.dart';
-export 'network/dio_client.dart';
-export 'network/interceptors/auth_interceptor.dart';
-export 'network/interceptors/logging_interceptor.dart';
-export 'network/interceptors/retry_interceptor.dart';
 
 // ─── Storage & Supabase infrastructure ──────────────────────────────────────
 export 'storage/i_local_storage_service.dart';
@@ -44,7 +43,8 @@ export 'lifecycle/app_lifecycle_observer.dart';
 
 // ─── Navigation ─────────────────────────────────────────────────────────────
 export 'navigation/navigator_keys.dart';
-export 'navigation/navigation_service.dart';
+// NavigationService was removed in Phase 6: nothing ever watched its
+// provider. navigator_keys.dart remains — the router owns rootNavigatorKey.
 
 // ─── Theme ──────────────────────────────────────────────────────────────────
 export 'theme/app_colors.dart';
@@ -54,5 +54,6 @@ export 'theme/theme_notifier.dart';
 
 // ─── Core providers (state management wiring) ───────────────────────────────
 export 'providers/app_providers.dart';
-export 'providers/app_state.dart';
+// providers/app_state.dart (globalLoading / appInitStatus / FeatureFlags —
+// never consumed anywhere) was removed in Phase 6.
 export 'providers/session_manager.dart';

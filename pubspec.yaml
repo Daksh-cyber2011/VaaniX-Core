@@ -26,29 +26,23 @@ dependencies:
   # Environment variables
   flutter_dotenv: ^5.1.0
 
-  # Networking
-  dio: ^5.4.3
-
   # Network connectivity awareness (offline detection)
+  # HTTP transport note: AI requests go through google_generative_ai's own
+  # client and Supabase uses its own network stack — no standalone HTTP
+  # client dependency is needed (the former Dio stack was removed in Phase 6).
   connectivity_plus: ^6.0.3
 
   # Animation (Lottie files for Van animations)
   lottie: ^3.1.0
 
-  # Image caching
-  cached_network_image: ^3.3.1
+  # Local storage (preferences)
+  shared_preferences: ^2.3.1
 
   # Functional programming (Either / Result types)
   dartz: ^0.10.1
 
   # Value equality
   equatable: ^2.0.5
-
-  # Local storage (preferences)
-  shared_preferences: ^2.3.1
-
-  # Icons
-  flutter_svg: ^2.0.10+1
 
   # Crash reporting (production error visibility)
   sentry_flutter: ^9.0.0

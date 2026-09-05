@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand color resources shared by platform surfaces. -->
+<resources>
+    <!-- Adaptive launcher icon background — matches AppColors.backgroundLight
+         (#FAF8F4) from lib/core/theme/app_colors.dart. -->
+    <color name="ic_launcher_background">#FAF8F4</color>
+</resources>

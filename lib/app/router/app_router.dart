@@ -13,7 +13,6 @@ import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/navigation/navigator_keys.dart';
-import 'package:vaanix_app/core/navigation/navigation_service.dart';
 import 'package:vaanix_app/app/router/go_router_refresh_notifier.dart';
 import 'package:vaanix_app/app/router/splash_screen.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
@@ -259,16 +258,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   ref.onDispose(refreshNotifier.dispose);
 
   return router;
-});
-
-/// Riverpod provider for [NavigationService].
-///
-/// Defined here (in app/) because it wires GoRouter (from this file) into
-/// NavigationService (from core/), which would otherwise create a core → app
-/// circular dependency.
-final navigationServiceProvider = Provider<NavigationService>((ref) {
-  final router = ref.watch(appRouterProvider);
-  return NavigationService(router);
 });
 
 /// App shell with bottom navigation bar.

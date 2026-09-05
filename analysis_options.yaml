@@ -9,9 +9,6 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "build/**"
-    # Historical project snapshots — preserved for reference, not part of
-    # the build. Analyzing them pollutes results with duplicate sources.
-    - "Archive/**"
     - android/**
     - ios/**
     - web/**

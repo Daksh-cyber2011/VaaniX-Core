@@ -2,6 +2,12 @@
 
 Date: 2026-08-25 | Branch: `main` (canonical) | Commits ahead of origin: 6 (NOT pushed)
 
+> **Phase 6 refresh (2026-09-05).** The body below is the original
+> point-in-time report and is kept for history. The counts it cites
+> (129/144 tests, commit `dedbf1c`, `com.example.vaanix_app`) were true on
+> 2026-08-25 only. Current state after the six-phase hardening: see
+> **§19 Phase 0–6 addendum** at the end of this file.
+
 ## 1. Executive summary
 
 VaaniX V1 was built end-to-end as a cohesive offline-first Sanskrit
@@ -150,8 +156,10 @@ externally (needs Supabase project + credentials + schema deploy).
 
 ## 14. Exact remaining blockers (external decisions required)
 
-1. **applicationId** - still `com.example.vaanix_app` (template default).
-   Product identity needed; cannot be invented silently.
+1. **applicationId** - ~~still `com.example.vaanix_app` (template default).
+   Product identity needed; cannot be invented silently.~~ RESOLVED: the
+   product identity is `com.vaanix.app` (namespace, applicationId, and the
+   duplicate template `MainActivity` were reconciled in Phase 6).
 2. **Release signing** - release buildType signs with the debug key.
    Needs a real keystore + credentials from the user.
 3. **Supabase project** - URL + anon key + schema deployment (SQL
@@ -256,3 +264,44 @@ pushed the branch to origin/main (including this repo's commits). The
 local-only rule was enforced for all assistant-originated git commands;
 the push was performed by that external actor. Local work was verified
 present before continuing.
+
+## 19. Phase 0–6 hardening addendum (2026-09-05)
+
+Six audit-driven hardening phases ran after this report was written. Each
+phase ended with a clean tree, `flutter analyze` 0 issues, a full green
+test run, a local commit (never pushed) and a packaged snapshot.
+
+| Phase | Focus | Commit | Tests at exit |
+| --- | --- | --- | --- |
+| 0 | Full V1 audit (completion matrix, defect register, phased backlog) | `0874603` | 293 baseline |
+| 1 | Core student product loop repairs | `8012153` | 293/293 |
+| 2 | Learning/practice/exam/adaptive completion (single curriculum source, exercise resume, attempt caps, best-score fix) | `89d9a17` | 314/314 |
+| 3 | VAN experience completion (dead events wired, cooldowns, catalog parity, ticker discipline, SpeechStrip) | `a8ceac6` | 334/334 |
+| 4 | AI tutor + learning intelligence (streaming, transcript/conversation caps, request shaping, personalization, usage chip, reset coverage) | `833e3b9` | 358/358 |
+| 5 | UI/UX + product polish (route guards, onboarding persistence, personality reset, a11y, dark mode, mojibake) | `7d02c7c` | 387/387 |
+| 6 | Final production readiness (Android signing scaffold + pinned SDKs + adaptive icons, iOS Podfile, web icon refs, Archive removal, docs hygiene, dead infra removal) | this commit | see below |
+
+### Current verified state (Phase 6 exit)
+
+- `flutter analyze`: 0 issues.
+- `flutter test`: **415/415 passing** (387 at Phase 5 exit + 28 new Phase 6
+  regression tests: full ExceptionMapper matrix after the Dio stack removal,
+  cross-platform resource-integrity checks for web/Android/iOS assets,
+  dependency-hygiene guard).
+- Curriculum content: untouched since Phase 0 (`assets/curriculum/v1.json`
+  byte-identical; translation/matching content still BLOCKED by freeze).
+- Dead infrastructure removed: Dio client + 4 interceptors,
+  `NavigationService`, `app_state.dart` providers, dependencies `dio`,
+  `cached_network_image`, `flutter_svg`.
+- Platform surfaces: release signing now driven by `android/key.properties`
+  (graceful debug fallback), SDK levels pinned (min 24 / target 36 /
+  compile 36), adaptive launcher icon live, iOS `Podfile` regenerated
+  (platform 13.0), web manifest/icon refs fixed and branded.
+- `Archive/` (4 historical project copies) removed from the working tree;
+  content preserved in git history.
+
+### Still external (unchanged)
+
+Release keystore, Supabase project, Gemini API key, VAN final art,
+translation/matching content authorization, APK build verification on an
+Android-equipped machine.

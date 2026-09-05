@@ -2,6 +2,85 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 6] - 2026-09-05
+
+Final production readiness. Full audit basis:
+`docs/Audits/V1-Audit-Phase0.md` (§5 Phase 6 backlog; legacy snapshot
+pollution note).
+
+### Added
+- **Android adaptive launcher icon** (API 26+): `mipmap-anydpi-v26`
+  descriptor with the existing launcher art inset into the adaptive safe
+  zone (foreground layers generated per density) over the app's light
+  surface color (`@color/ic_launcher_background` = `#FAF8F4`, matching
+  `AppColors.backgroundLight`). Legacy raster icons below API 26 unchanged.
+- **Android release signing scaffold**: `build.gradle.kts` reads
+  `android/key.properties` (gitignored) and signs release builds with the
+  real keystore when present, falling back to the debug key otherwise so
+  `flutter run --release` keeps working. Generation instructions live in
+  the file header. The keystore itself remains an external owner item.
+- **iOS `Podfile`** regenerated (platform 13.0, matching
+  `IPHONEOS_DEPLOYMENT_TARGET` in `Runner.xcodeproj`): standard Flutter
+  podhelper setup with the `RunnerTests` search-paths inheritance.
+- **Resource-integrity regression tests**
+  (`test/platform/platform_asset_refs_test.dart`): web manifest icons must
+  exist with declared pixel sizes, `index.html` references must resolve,
+  adaptive-icon layers must exist at all densities, `com/example` must
+  stay deleted, the Podfile must pin platform 13.0, and the removed dead
+  dependencies must stay out of `pubspec.yaml`.
+- **`ExceptionMapper` matrix tests** (`test/core/exception_mapper_test.dart`):
+  full retained mapping surface (Supabase auth branches, domain
+  exceptions, timeouts, unknown fallback, Failure passthrough) pinned
+  after the Dio branch removal.
+
+### Changed
+- **Android SDK levels pinned** in `app/build.gradle.kts`
+  (minSdk 24 / targetSdk 36 / compileSdk 36 — Flutter 3.47 toolchain
+  defaults made explicit) so toolchain upgrades cannot silently move the
+  platform contract; stale `applicationId` TODO removed (identity is
+  `com.vaanix.app`).
+- **Web presence fixed and branded**: `manifest.json` now references the
+  icons that actually ship (`Icon-maskable-192/512.png` — the template
+  referenced `Icon-192/512.png` which were never committed), and
+  name/description/theme colors use VaaniX branding instead of Flutter
+  template defaults; `index.html` apple-touch-icon, title and meta
+  description aligned.
+- **`docs/Product/AI-Architecture.md` rewritten** — it contained a leaked,
+  voice-transcribed developer prompt; it is now a real architecture
+  document describing the implemented pipeline (safety → prompt → rate
+  limit → cache → adapter), streaming semantics, bounds, personalization,
+  grounding rules and the testing map.
+- **`docs/VAN/Master-Van-Bible.md` filled** (was empty): master reference
+  indexing the eight design chapters, the implemented event/state/cooldown
+  system, the pending-art status and the no-fake-events rule.
+- **`docs/Constitution/Constitution.md` de-duplicated** — every article was
+  repeated 6–7 times (183 → ~60 lines, each article once); README status
+  updated.
+- **`docs/EngineeringCompletionReport.md` refreshed**: point-in-time body
+  annotated, resolved `applicationId` blocker marked, and a Phase 0–6
+  addendum added with the current phase/commit/test ledger.
+
+### Removed
+- **`Archive/`** (four historical project copies, 267 tracked files,
+  2.3 MB) — deleted from the working tree; content preserved in git
+  history. Analyzer exclusion entry retired with it.
+- **Dead infrastructure**: the standalone Dio stack
+  (`dio_client.dart` + auth/refresh-token/logging/retry interceptors —
+  nothing ever constructed a `DioClient`; HTTP transport lives in the
+  Gemini adapter and Supabase clients), `NavigationService` (its provider
+  was never watched; `navigator_keys.dart` stays — the router owns
+  `rootNavigatorKey`), and `core/providers/app_state.dart`
+  (`globalLoading`/`appInitStatus`/`FeatureFlags` — never consumed). The
+  `ExceptionMapper` Dio branch, the core barrel exports and the stale
+  logger example were updated accordingly.
+- **Dependencies** `dio`, `cached_network_image`, `flutter_svg` (zero
+  imports across lib/ and test/).
+
+### Verification
+- `flutter analyze`: 0 issues.
+- `flutter test`: 415/415 (387 + 28 new).
+- `assets/curriculum/v1.json` untouched (content freeze respected).
+
 ## [Phase 5] - 2026-09-05
 
 UI/UX + product polish. Full audit basis:

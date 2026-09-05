@@ -13,7 +13,7 @@
 /// Usage:
 /// ```dart
 /// AppLogger.info('User signed in', tag: 'AuthRepository');
-/// AppLogger.warn('Retrying after timeout', tag: 'DioClient');
+/// AppLogger.warn('Retrying after timeout', tag: 'AiAdapter');
 /// AppLogger.error('Unexpected failure', error: e, stackTrace: st);
 /// ```
 library;

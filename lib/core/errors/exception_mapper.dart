@@ -4,7 +4,6 @@
 /// [Failure] types.
 library;
 
-import 'package:dio/dio.dart';
 import 'dart:async' as async;
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:vaanix_app/core/errors/exceptions.dart';
@@ -16,8 +15,6 @@ abstract final class ExceptionMapper {
     if (error is Failure) return error;
 
     if (error is async.TimeoutException) return const TimeoutFailure();
-
-    if (error is DioException) return _mapDio(error);
 
     // Supabase's AuthException — now visible because we removed `hide`
     // from supabase_auth_repository.dart. Map it explicitly instead of
@@ -84,91 +81,6 @@ abstract final class ExceptionMapper {
     // Fallback: no more runtimeType-name matching (the previous
     // `.contains('Auth')` heuristic was too fragile).
     return UnknownFailure(_extractMessage(error));
-  }
-
-  static Failure _mapDio(DioException err) {
-    switch (err.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return const TimeoutFailure();
-      case DioExceptionType.transformTimeout:
-      case DioExceptionType.connectionError:
-        return const NetworkFailure();
-      case DioExceptionType.badResponse:
-        final status = err.response?.statusCode;
-        final serverMsg = _safeMessage(err.response?.data);
-        switch (status) {
-          case 400:
-            return ValidationFailure(message: serverMsg ?? 'Invalid input.');
-          case 401:
-            return const UnauthenticatedFailure();
-          case 403:
-            // 403 = authenticated but forbidden, NOT unauthenticated.
-            // 401 = unauthenticated. Map them to distinct failures.
-            return const ForbiddenFailure();
-          case 404:
-            return const NotFoundFailure();
-          case 409:
-            return const ConflictFailure();
-          case 422:
-            return ValidationFailure(message: serverMsg ?? 'Invalid input.');
-          case 429:
-            return const RateLimitFailure();
-          case null:
-            return ServerFailure(message: serverMsg ?? 'Server error occurred');
-          case >= 500:
-            return ServerFailure(
-              message: serverMsg ?? 'Server error occurred',
-              statusCode: status,
-            );
-          default:
-            return ServerFailure(
-              message: serverMsg ?? 'Server error occurred',
-              statusCode: status,
-            );
-        }
-      case DioExceptionType.cancel:
-        return const UnknownFailure('Request was cancelled.');
-      case DioExceptionType.badCertificate:
-        return const NetworkFailure('Secure connection failed.');
-      case DioExceptionType.unknown:
-        return UnknownFailure(_extractMessage(err));
-    }
-  }
-
-  /// Extracts a human-readable message from a response body.
-  ///
-  /// Handles common API conventions:
-  /// - `{"message": "..."}` (Express, many REST APIs)
-  /// - `{"error": "..."}` (common alternative)
-  /// - `{"detail": "..."}` or `{"detail": [{"msg": "..."}]}` (FastAPI)
-  /// - `{"errors": {...}}` (some validation formats)
-  /// - Plain string body
-  static String? _safeMessage(dynamic data) {
-    try {
-      if (data is String && data.isNotEmpty) return data;
-      if (data is Map) {
-        // Most common: {"message": "..."}
-        if (data['message'] is String) return data['message'] as String;
-        // Alternative: {"error": "..."}
-        if (data['error'] is String) return data['error'] as String;
-        // FastAPI: {"detail": "string"} or {"detail": [{...}]}
-        final detail = data['detail'];
-        if (detail is String) return detail;
-        if (detail is List && detail.isNotEmpty) {
-          final first = detail.first;
-          if (first is Map && first['msg'] is String) {
-            return first['msg'] as String;
-          }
-        }
-        // Some APIs nest under "errors"
-        if (data['errors'] is String) return data['errors'] as String;
-      }
-    } catch (_) {
-      // ignore
-    }
-    return null;
   }
 
   static String _extractMessage(Object error) {
