@@ -69,8 +69,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// activity alone. Previously a streak milestone only unlocked the next
   /// time the learner happened to finish a lesson, quiz or chat.
   Future<void> _recordStreakAndCelebrate() async {
-    await ref.read(userProfileProvider.notifier).recordDailyActivity();
+    // Phase 3: the previous streak is captured so a genuine extension can
+    // drive Van's streakExtended reaction (previously declared but never
+    // dispatched — the reaction mapping was dead).
+    final previousStreak = ref.read(userProfileProvider).currentStreak;
+    final nextStreak =
+        await ref.read(userProfileProvider.notifier).recordDailyActivity();
     if (!mounted) return;
+    if (nextStreak > previousStreak) {
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.streakExtended,
+            message: '$nextStreak-day streak — wonderful consistency!',
+            payload: {'streak': nextStreak},
+          ));
+    }
     try {
       final newlyUnlocked =
           await ref.read(achievementCheckerProvider).checkAchievements();

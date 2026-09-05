@@ -12,6 +12,7 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
+import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/streak_badge.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -80,6 +81,14 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
     try {
       await ref.read(onboardingProvider.notifier).completeOnboarding();
       if (!mounted) return;
+      // Phase 3: dispatch the designed onboardingCompleted reaction at the
+      // nest reveal (previously declared but never dispatched). The
+      // controller-driven Van on Home picks it up during the transition.
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.onboardingCompleted,
+            message:
+                'Welcome home, ${ref.read(onboardingProvider).resolvedName}!',
+          ));
       context.goNamed(RouteNames.homeName);
     } catch (e) {
       // On failure, surface a snackbar so the user knows something went

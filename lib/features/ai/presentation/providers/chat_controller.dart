@@ -13,10 +13,14 @@
 /// Conversations persist across app restarts via [LocalConversationMemory].
 library;
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/domain/conversation_context.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
@@ -75,6 +79,12 @@ class ChatController extends StateNotifier<ChatState> {
 
   bool _disposed = false;
 
+  /// Completion signal for Van's speaking reaction (Phase 3): fires
+  /// [VanEventType.aiResponseFinished] once the reply's reading window has
+  /// elapsed, instead of the speaking state silently hard-cutting at its
+  /// default duration. Cancelled on every new turn, failure, reset.
+  Timer? _vanSpeakingTimer;
+
   /// Load any existing conversation from memory on startup.
   Future<void> _loadExistingConversation() async {
     final memory = _ref.read(conversationMemoryProvider);
@@ -101,6 +111,23 @@ class ChatController extends StateNotifier<ChatState> {
       personalityMode: profile.personalityMode?.name ?? '',
       topic: 'Sanskrit',
     );
+  }
+
+  /// Reading window for Van's speaking reaction after a reply: the state's
+  /// base cadence plus a small per-word extension (first word included in
+  /// the base), bounded so an essay-long reply can never pin Van in
+  /// speaking indefinitely. Short replies keep the exact pre-Phase-3
+  /// cadence.
+  @visibleForTesting
+  static Duration speakingWindowFor(String? reply) {
+    final words = reply == null || reply.trim().isEmpty
+        ? 0
+        : reply.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).length;
+    const maxExtra =
+        AppConstants.vanAiSpeakingMaxMs - AppConstants.vanAiSpeakingBaseMs;
+    final extra = ((words - 1) * AppConstants.vanAiSpeakingPerWordMs)
+        .clamp(0, maxExtra < 0 ? 0 : maxExtra);
+    return Duration(milliseconds: AppConstants.vanAiSpeakingBaseMs + extra);
   }
 
   /// Send a user message and receive Van's reply.
@@ -133,6 +160,7 @@ class ChatController extends StateNotifier<ChatState> {
       clearError: true,
     );
     final van = _ref.read(vanControllerProvider.notifier);
+    _vanSpeakingTimer?.cancel();
     van.dispatch(const VanEvent(VanEventType.userMessageReceived));
     van.dispatch(const VanEvent(VanEventType.aiThinking));
 
@@ -165,6 +193,7 @@ class ChatController extends StateNotifier<ChatState> {
     await result.fold(
       (failure) async {
         if (_disposed || !mounted) return;
+        _vanSpeakingTimer?.cancel();
         _ref.log(const AnalyticsEvent(AnalyticsEventName.aiRequestFailed));
         state = state.copyWith(
           isSending: false,
@@ -187,7 +216,21 @@ class ChatController extends StateNotifier<ChatState> {
         final reply = updatedContext.messages.isEmpty
             ? null
             : updatedContext.messages.last.content;
-        van.dispatch(VanEvent(VanEventType.aiResponseStarted, message: reply));
+        // Phase 3: the speaking reaction lasts exactly as long as the reply
+        // needs to be read (displayDuration), and its genuine completion is
+        // signalled with aiResponseFinished instead of relying on the
+        // state's fallback timer alone.
+        final window = speakingWindowFor(reply);
+        van.dispatch(VanEvent(
+          VanEventType.aiResponseStarted,
+          message: reply,
+          displayDuration: window,
+        ));
+        _vanSpeakingTimer?.cancel();
+        _vanSpeakingTimer = Timer(window, () {
+          if (_disposed || !mounted) return;
+          van.dispatch(const VanEvent(VanEventType.aiResponseFinished));
+        });
 
         // ── Achievement check ──────────────────────────────────────
         // After the first successful chat message, check for the
@@ -209,6 +252,7 @@ class ChatController extends StateNotifier<ChatState> {
     // Generate a new conversation ID.
     final newId = 'conv_${DateTime.now().millisecondsSinceEpoch}';
     state = ChatState(conversationId: newId);
+    _vanSpeakingTimer?.cancel();
     _ref.read(vanControllerProvider.notifier).settle();
   }
 
@@ -221,6 +265,7 @@ class ChatController extends StateNotifier<ChatState> {
   @override
   void dispose() {
     _disposed = true;
+    _vanSpeakingTimer?.cancel();
     super.dispose();
   }
 }

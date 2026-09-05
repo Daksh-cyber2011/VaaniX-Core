@@ -115,12 +115,14 @@ void main() {
       ]);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: VanWidget(
-              assetCatalog: unavailableCatalog,
-              showSpeechBubble: true,
-              dialogueText: 'Ready when you are.',
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: VanWidget(
+                assetCatalog: unavailableCatalog,
+                showSpeechBubble: true,
+                dialogueText: 'Ready when you are.',
+              ),
             ),
           ),
         ),
@@ -139,9 +141,11 @@ void main() {
   ) async {
     for (final state in VanState.values) {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(child: VanWidget(state: state, size: 120)),
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: Center(child: VanWidget(state: state, size: 120)),
+            ),
           ),
         ),
       );
@@ -160,16 +164,18 @@ void main() {
     (tester) async {
       var builderCalled = false;
       await tester.pumpWidget(
-        MaterialApp(
-          home: MediaQuery(
-            data: const MediaQueryData(disableAnimations: true),
-            child: Scaffold(
-              body: VanWidget(
-                state: VanState.achievement,
-                visualBuilder: (context, asset, fallback) {
-                  builderCalled = true;
-                  return const SizedBox(key: ValueKey('external-visual'));
-                },
+        ProviderScope(
+          child: MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(disableAnimations: true),
+              child: Scaffold(
+                body: VanWidget(
+                  state: VanState.achievement,
+                  visualBuilder: (context, asset, fallback) {
+                    builderCalled = true;
+                    return const SizedBox(key: ValueKey('external-visual'));
+                  },
+                ),
               ),
             ),
           ),
@@ -191,18 +197,20 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(260, 500));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
-      const MaterialApp(
-        home: MediaQuery(
-          data: MediaQueryData(
-            size: Size(260, 500),
-            textScaler: TextScaler.linear(1.5),
-          ),
-          child: Scaffold(
-            body: Center(
-              child: VanWidget(
-                size: 100,
-                showSpeechBubble: true,
-                dialogueText: 'Let us take this one step at a time together.',
+      const ProviderScope(
+        child: MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: Size(260, 500),
+              textScaler: TextScaler.linear(1.5),
+            ),
+            child: Scaffold(
+              body: Center(
+                child: VanWidget(
+                  size: 100,
+                  showSpeechBubble: true,
+                  dialogueText: 'Let us take this one step at a time together.',
+                ),
               ),
             ),
           ),
@@ -412,5 +420,141 @@ void main() {
     await tester.pump(const Duration(milliseconds: 2601));
     expect(controller.state.current, VanState.idle);
     expect(controller.state.message, isNull);
+  });
+
+  group('Phase 3: reaction cooldown (vanIdleCooldownMs)', () {
+    test('same ambient event inside the cooldown window is rejected', () {
+      var now = DateTime(2026, 9, 5, 9);
+      final controller = VanController(
+        reactionCooldown: const Duration(seconds: 30),
+        now: () => now,
+      );
+      addTearDown(controller.dispose);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.appOpened)),
+        isTrue,
+      );
+      now = now.add(const Duration(seconds: 5));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.appOpened)),
+        isFalse,
+        reason: 're-greeting within 30s must be suppressed',
+      );
+      now = now.add(const Duration(seconds: 31));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.appOpened)),
+        isTrue,
+        reason: 'after the cooldown the greeting is allowed again',
+      );
+    });
+
+    test('streakExtended re-fire within the cooldown is rejected', () {
+      var now = DateTime(2026, 9, 5, 9);
+      final controller = VanController(now: () => now);
+      addTearDown(controller.dispose);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.streakExtended)),
+        isTrue,
+      );
+      now = now.add(const Duration(seconds: 2));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.streakExtended)),
+        isFalse,
+      );
+    });
+
+    test('gating is per event type, not global', () {
+      var now = DateTime(2026, 9, 5, 9);
+      final controller = VanController(now: () => now);
+      addTearDown(controller.dispose);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.onboardingCompleted)),
+        isTrue,
+      );
+      // A different gated type is not blocked by onboardingCompleted's
+      // window (achievement priority replaces the happy greeting).
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.streakExtended)),
+        isTrue,
+      );
+      // Re-dispatching the first type inside its own cooldown is rejected
+      // even though arbitration alone would have allowed it (equal
+      // priority) — proving the cooldown is per-type, not global.
+      now = now.add(const Duration(seconds: 1));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.onboardingCompleted)),
+        isFalse,
+      );
+    });
+
+    test('task feedback and user-initiated play stay ungated', () {
+      var now = DateTime(2026, 9, 5, 9);
+      final controller = VanController(now: () => now);
+      addTearDown(controller.dispose);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect)),
+        isTrue,
+      );
+      now = now.add(const Duration(milliseconds: 100));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.quizAnswerCorrect)),
+        isTrue,
+        reason: 'per-answer feedback is designed to repeat',
+      );
+    });
+
+    test('companion taps stay ungated (designed playful repeat)', () {
+      var now = DateTime(2026, 9, 5, 9);
+      final controller = VanController(now: () => now);
+      addTearDown(controller.dispose);
+
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.companionTapped)),
+        isTrue,
+      );
+      now = now.add(const Duration(milliseconds: 50));
+      expect(
+        controller.dispatch(const VanEvent(VanEventType.companionTapped)),
+        isTrue,
+      );
+    });
+  });
+
+  group('Phase 3: displayDuration (chat reading window)', () {
+    testWidgets('a provided displayDuration stretches the fallback clock',
+        (tester) async {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(
+        VanEventType.aiResponseStarted,
+        displayDuration: Duration(seconds: 5),
+      ));
+      expect(controller.state.current, VanState.speaking);
+
+      // Past the speaking state default (2200ms): still inside the window.
+      await tester.pump(const Duration(milliseconds: 2201));
+      expect(
+        controller.state.current,
+        VanState.speaking,
+        reason: 'the reply window must not hard-cut at the state default',
+      );
+      await tester.pump(const Duration(milliseconds: 2800));
+      expect(controller.state.current, VanState.idle);
+    });
+
+    testWidgets('without a hint the state default applies unchanged',
+        (tester) async {
+      final controller = VanController();
+      addTearDown(controller.dispose);
+
+      controller.dispatch(const VanEvent(VanEventType.aiResponseStarted));
+      await tester.pump(const Duration(milliseconds: 2201));
+      expect(controller.state.current, VanState.idle);
+    });
   });
 }

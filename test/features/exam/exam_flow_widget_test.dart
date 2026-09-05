@@ -143,14 +143,13 @@ void main() {
     expect(find.textContaining('+20 XP earned'), findsOneWidget);
     await tester.pump(const Duration(seconds: 4));
     await tester.pump(const Duration(milliseconds: 400));
+    // Phase 3 consolidation: first_quiz + perfect_quiz unlock in one pass
+    // and celebrate as ONE snackbar (no stacking, no Van reaction burst).
     expect(find.textContaining('Quiz Novice'), findsOneWidget);
-    var perfectSeen = false;
-    for (var s = 0; s < 20 && !perfectSeen; s++) {
-      await tester.pump(const Duration(milliseconds: 500));
-      perfectSeen = find.textContaining('Perfect Score').evaluate().isNotEmpty;
-    }
-    expect(perfectSeen, isTrue,
-        reason: 'perfect score achievement snackbar must appear');
+    expect(find.textContaining('(+1 more)'), findsOneWidget,
+        reason: 'multiple unlocks consolidate into a single celebration');
+    expect(find.textContaining('Perfect Score'), findsNothing,
+        reason: 'the batch is announced once — no snackbar stacking');
     await tester.pump(const Duration(seconds: 5)); // let snackbars expire
 
     final xpAfterFirst = repo.getXp().fold((_) => -1, (v) => v);

@@ -6,7 +6,30 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/features/van/domain/van_domain.dart';
+
+/// Reaction types that are system-initiated "companion life" moments. A
+/// repeated dispatch of one of these within [VanController.reactionCooldown]
+/// is rejected instead of machine-gunning the learner: Home re-entry would
+/// otherwise re-greet over and over, and streak/onboarding celebrations
+/// could stack on the same frame.
+///
+/// Deliberately NOT gated (their reactions are designed to repeat):
+///   - task feedback (`quizAnswerCorrect`, `quizAnswerWrong`, `quizStarted`),
+///   - user-initiated play (`companionTapped`),
+///   - milestone celebrations (`achievementUnlocked`, `perfectScore`,
+///     `lessonCompleted`, `quizCompleted`) — rare and meaningful,
+///   - the whole AI/error lifecycle (operational, must always resolve).
+const Set<VanEventType> vanCooldownGatedEvents = <VanEventType>{
+  VanEventType.appOpened,
+  VanEventType.streakExtended,
+  VanEventType.onboardingCompleted,
+};
+
+/// Default cooldown between presentations of the same gated reaction type.
+const Duration defaultVanReactionCooldown =
+    Duration(milliseconds: AppConstants.vanIdleCooldownMs);
 
 @immutable
 class VanPresentationState {
@@ -41,10 +64,21 @@ class VanPresentationState {
 
 /// Owns arbitration, cancellation, and automatic fallbacks for VAN reactions.
 class VanController extends StateNotifier<VanPresentationState> {
-  VanController() : super(const VanPresentationState());
+  VanController({
+    this.reactionCooldown = defaultVanReactionCooldown,
+    DateTime Function()? now,
+  })  : _now = now ?? DateTime.now,
+        super(const VanPresentationState());
+
+  /// Minimum time between presentations of the same gated reaction type
+  /// (see [vanCooldownGatedEvents]). Injected so tests can shrink it.
+  final Duration reactionCooldown;
+
+  final DateTime Function() _now;
 
   Timer? _fallbackTimer;
   int _reactionSequence = 0;
+  final Map<VanEventType, DateTime> _lastPresentedAt = {};
 
   /// Sends [event] through the resolver. Returns false when a current,
   /// non-interruptible or higher-priority reaction must remain visible.
@@ -56,6 +90,7 @@ class VanController extends StateNotifier<VanPresentationState> {
     }
     final next = VanReactionResolver.resolve(event);
     if (!canPresent(next)) return false;
+    if (_isCoolingDown(event.type)) return false;
 
     _fallbackTimer?.cancel();
     final sequence = ++_reactionSequence;
@@ -74,7 +109,19 @@ class VanController extends StateNotifier<VanPresentationState> {
         _returnTo(next.fallbackState);
       });
     }
+    if (vanCooldownGatedEvents.contains(next.event)) {
+      _lastPresentedAt[next.event] = _now();
+    }
     return true;
+  }
+
+  /// Whether [type] presented recently enough to fall inside
+  /// [reactionCooldown]. Gated types only; everything else always passes.
+  bool _isCoolingDown(VanEventType type) {
+    if (!vanCooldownGatedEvents.contains(type)) return false;
+    final last = _lastPresentedAt[type];
+    if (last == null) return false;
+    return _now().difference(last) < reactionCooldown;
   }
 
   /// Whether [candidate] can replace the state currently on screen.

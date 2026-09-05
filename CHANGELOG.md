@@ -2,6 +2,67 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [Phase 3] - 2026-09-05
+
+VAN experience completion. Full audit basis:
+`docs/Audits/V1-Audit-Phase0.md` (§5 Phase 3 backlog).
+
+### Added
+- **The four dead VAN events are now dispatched** (previously declared with
+  mapped reactions but never sent):
+  - `streakExtended` — dispatched by the Nest after a genuine streak
+    extension (day N card: "N-day streak — wonderful consistency!").
+  - `onboardingCompleted` — dispatched at the nest reveal, so the
+    controller-driven Van on Home greets the freshly onboarded learner.
+  - `aiResponseFinished` — dispatched by the chat controller when a reply's
+    reading window elapses. The speaking reaction no longer hard-cuts at
+    its 2.2 s state default: the reply's window is passed via the new
+    `VanEvent.displayDuration` (base 2200 ms + 24 ms per extra word,
+    capped at 6 s), and the completion signal settles Van for real.
+  - `userIdle` — decision recorded: **intentionally NOT dispatched in V1**
+    (no genuine idle detector exists; a synthetic timer would fabricate
+    companion behavior). The enum value stays reserved with settle-only
+    semantics documented in `van_event.dart`.
+- **Reaction cooldown**: `VanController` now honors the previously unused
+  `AppConstants.vanIdleCooldownMs` (30 s) as a per-event-type cooldown for
+  system-initiated companion-life reactions (`appOpened`,
+  `streakExtended`, `onboardingCompleted`) — Home re-entry no longer
+  re-greets over and over, and same-frame celebrations cannot stack.
+  Deliberately ungated: per-answer task feedback, `companionTapped` play,
+  milestone celebrations, and the whole AI/error lifecycle. The cooldown
+  and clock are injectable for tests.
+- **van_assets.json is the single catalog source**: the VAN animation
+  catalog loads from `assets/van/metadata/van_assets.json` via the new
+  `loadVanAssetCatalog()` loader + `vanAssetCatalogProvider` (Dart
+  `VanAssetCatalog.v1` demoted to a malformed-asset fallback, same pattern
+  as the curriculum loader). A parity test pins JSON ↔ Dart equality and
+  one-visual-per-state coverage.
+- **VanSpeechStrip wired** at its designed "exam preparation" surface:
+  the exam instructions screen now opens with Van's encouragement strip
+  (the widget existed but was never used).
+
+### Fixed
+- **Multi-achievement bursts consolidated**: the practice and exam screens
+  dispatched one `achievementUnlocked` reaction AND one snackbar per
+  achievement — bursts of non-interruptible celebrations that arbitration
+  silently dropped, plus stacked snackbars. Both surfaces now emit a
+  single consolidated celebration (first achievement + "(+N more)") for a
+  batch, matching the lesson screen pattern.
+- **VAN ticker pauses when offscreen**: the breathing motion controller
+  used to tick forever. `VanWidget` now stops the ticker inside disabled
+  `TickerMode` subtrees (covered/offstage routes, hidden tab children) and
+  while the app is backgrounded (lifecycle paused/hidden), resuming from
+  the stopped phase. The widget state is public (`VanWidgetState`) with a
+  test-visible `motionController` getter.
+
+### Tests
+- 334 tests passing (314 existing + 20 new): JSON↔Dart catalog parity +
+  loader fallback, per-type cooldown semantics (gated/ungated matrices),
+  `displayDuration` fallback-clock behavior, ticker pause/resume under
+  `TickerMode` and app lifecycle, chat reading-window units + full
+  speaking→finished→idle lifecycle, consolidated exam achievements
+  (updated exam journey to the new one-snackbar contract).
+
 ## [Phase 2] - 2026-09-05
 
 Learning / practice / exam / adaptive completion. Full audit basis:

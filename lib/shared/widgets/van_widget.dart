@@ -15,6 +15,7 @@ import 'package:vaanix_app/features/van/domain/van_event.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
+import 'package:vaanix_app/features/van/presentation/van_asset_catalog_loader.dart';
 import 'package:vaanix_app/features/van/presentation/van_visual_renderer.dart';
 
 export 'package:vaanix_app/features/van/domain/van_state.dart';
@@ -50,16 +51,25 @@ class VanWidget extends StatefulWidget {
   final String? semanticLabel;
 
   @override
-  State<VanWidget> createState() => _VanWidgetState();
+  State<VanWidget> createState() => VanWidgetState();
 }
-
-class _VanWidgetState extends State<VanWidget>
-    with SingleTickerProviderStateMixin {
+/// Public so tests can assert ticker behavior directly.
+class VanWidgetState extends State<VanWidget>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _motionController;
+
+  /// True while the app is backgrounded (lifecycle paused/hidden).
+  bool _appInactive = false;
+
+  /// Exposed for tests: the ticker must pause when Van is not visibly
+  /// active (disabled [TickerMode] subtree or backgrounded app).
+  @visibleForTesting
+  AnimationController get motionController => _motionController;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _motionController = AnimationController(
       duration:
           const Duration(milliseconds: AppConstants.vanIdleCycleDurationMs),
@@ -68,34 +78,81 @@ class _VanWidgetState extends State<VanWidget>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncMotion();
+  }
+
+  /// Phase 3: Van's motion ticker pauses whenever the widget is not
+  /// visibly active — a disabled [TickerMode] subtree (covered/offstage
+  /// routes, hidden tab children) or a backgrounded app — instead of
+  /// ticking offscreen forever. Resuming restarts the breathing cycle from
+  /// the phase it stopped at.
+  void _syncMotion() {
+    final shouldAnimate = TickerMode.valuesOf(context).enabled && !_appInactive;
+    if (shouldAnimate) {
+      if (!_motionController.isAnimating) _motionController.repeat();
+    } else if (_motionController.isAnimating) {
+      _motionController.stop();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appInactive = state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden;
+    if (mounted) _syncMotion();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _motionController.dispose();
     super.dispose();
   }
 
+  /// Resolves the visual catalog. An explicitly injected catalog (tests,
+  /// custom art hosts) always wins; otherwise the JSON metadata file is the
+  /// single source of truth, with the Dart v1 contract standing in while
+  /// the load is pending.
+  VanAssetCatalog _resolveCatalog(WidgetRef ref) {
+    if (!identical(widget.assetCatalog, VanAssetCatalog.v1)) {
+      return widget.assetCatalog;
+    }
+    return ref.watch(vanAssetCatalogProvider).valueOrNull ??
+        VanAssetCatalog.v1;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!widget.useController) return _buildVan(context);
     return Consumer(
-      builder: (context, ref, _) => _buildVan(
-        context,
-        presentation: ref.watch(vanControllerProvider),
-        onDefaultTap: () => ref.read(vanControllerProvider.notifier).dispatch(
-              const VanEvent(VanEventType.companionTapped),
-            ),
-      ),
+      builder: (context, ref, _) {
+        final catalog = _resolveCatalog(ref);
+        if (!widget.useController) {
+          return _buildVan(context, catalog: catalog);
+        }
+        return _buildVan(
+          context,
+          catalog: catalog,
+          presentation: ref.watch(vanControllerProvider),
+          onDefaultTap: () => ref.read(vanControllerProvider.notifier).dispatch(
+                const VanEvent(VanEventType.companionTapped),
+              ),
+        );
+      },
     );
   }
 
   Widget _buildVan(
     BuildContext context, {
+    required VanAssetCatalog catalog,
     VanPresentationState? presentation,
     VoidCallback? onDefaultTap,
   }) {
     final state = presentation?.current ?? widget.state;
     final dialogue = presentation?.message ?? widget.dialogueText;
     final loading = presentation?.isLoading ?? widget.isLoading;
-    final asset = widget.assetCatalog.assetFor(state);
+    final asset = catalog.assetFor(state);
     final reducedMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final defaultTap =

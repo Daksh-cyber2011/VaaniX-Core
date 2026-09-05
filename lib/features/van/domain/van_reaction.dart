@@ -53,7 +53,10 @@ abstract final class VanReactionResolver {
       event: event.type,
       state: state,
       priority: definition.priority,
-      duration: definition.defaultDuration,
+      // A feature-provided display hint wins over the state default so the
+      // caller can stretch (never used to shorten below its own hint) a
+      // reaction for genuine content, e.g. reading-time for chat replies.
+      duration: event.displayDuration ?? definition.defaultDuration,
       fallbackState: definition.fallbackState,
       message: event.message,
     );

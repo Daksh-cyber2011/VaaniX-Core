@@ -101,6 +101,15 @@ abstract final class AppConstants {
   /// Cooldown between idle state changes (ms)
   static const int vanIdleCooldownMs = 30000; // 30 seconds
 
+  // Van speaking reaction for AI replies: base cadence plus a small extra
+  // per word so longer replies are not hard-cut at the base duration. The
+  // window is bounded by [vanAiSpeakingMaxMs]; ChatController computes it
+  // with ChatController.speakingWindowFor and passes it to the VanEvent as
+  // displayDuration, then dispatches aiResponseFinished when it elapses.
+  static const int vanAiSpeakingBaseMs = 2200;
+  static const int vanAiSpeakingPerWordMs = 24;
+  static const int vanAiSpeakingMaxMs = 6000;
+
   // ============================================================
   // API ENDPOINTS
   // ============================================================

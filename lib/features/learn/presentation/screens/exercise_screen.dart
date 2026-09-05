@@ -188,17 +188,29 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
       );
 
-      for (final ach in newlyUnlocked) {
+      // One consolidated celebration for the batch: a single Van reaction
+      // and a single snackbar, no matter how many achievements unlocked in
+      // this pass. The old per-achievement loop stacked snackbars and
+      // dispatched a burst of non-interruptible reactions that arbitration
+      // silently dropped anyway.
+      if (newlyUnlocked.isNotEmpty) {
+        final first = newlyUnlocked.first;
+        final extra = newlyUnlocked.length > 1
+            ? ' (+${newlyUnlocked.length - 1} more)'
+            : '';
         ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
               VanEventType.achievementUnlocked,
-              message: 'I\'ll remember this: ${ach.title}!',
-              payload: {'achievementId': ach.id},
+              message: 'I\'ll remember this: ${first.title}!',
+              payload: {
+                'achievementId': first.id,
+                'achievementCount': newlyUnlocked.length,
+              },
             ));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Achievement Unlocked: ${ach.title}!'
-              '${ach.xpReward > 0 ? '(+${ach.xpReward} XP)' : ''}',
+              'Achievement Unlocked: ${first.title}!'
+              '${first.xpReward > 0 ? '(+${first.xpReward} XP)' : ''}$extra',
             ),
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 4),
