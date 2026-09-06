@@ -2,6 +2,89 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [V1 Final Completion] - 2026-09-06
+
+The closing pass: the remaining accessibility gaps outside the earlier
+a11y milestone, one coherent Sentry configuration, a branded not-found
+route, a bounded AI retry layer, repository debt, and — most consequen-
+tially — the Android build pipeline, which had never produced a binary.
+
+### Accessibility (Phase 2 completion)
+- **PrimaryButton**: the loading spinner previously REPLACED the label,
+  so the button lost its accessible name and loading was silent. The
+  label now stays visible beside the spinner and the spinner announces
+  "Loading" (`primary_button.dart`).
+- **VaaniXLoadingIndicator**: spinner carries its message as a
+  semantics label.
+- **SectionHeader**: the trailing action button keeps a 48dp touch
+  target.
+- **VaaniXTextField**: `MergeSemantics` associates the visible label
+  with the field ("Email, edit box" instead of a bare edit box).
+- **Live regions**: offline banner, auth error banner, chat error
+  banner, exam explanation — dynamic failures are announced without a
+  manual rescan.
+- **Chat**: usage chip gained a tooltip, spoken severity ("plenty /
+  running low / almost out") and a 48dp target; the typing indicator is
+  a live region ("Van is typing…"); the usage-dialog bar is labeled.
+- **Exam**: loading spinner and question progress carry labels; the two
+  hardcoded `borderLight` defaults now branch on brightness (dark-mode
+  fix).
+- **Settings** dialogs and **Van personality** tiles expose the
+  selected flag; **Learn** lesson tiles announce completed / not
+  started and chapter progress bars are labeled; **Achievements** speak
+  unlocked state and progress.
+- **Home** tiles, `StatTile`, tappable `VaaniXCard`, `VanProfile`
+  tiles: raw InkWells now advertise the button trait.
+- **VanSpeechStrip**: inner Van semantics excluded (no duplicate
+  announcements).
+- New regression tests: `shared_widget_semantics_test.dart` (button
+  traits, loading labels, retry classifier) — 21 accessibility tests
+  total.
+
+### Sentry (Phase 13 resolution)
+- `SENTRY_DSN` now has ONE mechanism: a runtime dotenv variable
+  (assets/env/.env — exactly what .env.example documents) with a
+  `--dart-define` fallback for CI. `main()` loads the environment
+  before `SentryFlutter.init`; `bootstrap()` skips a second load. Docs
+  match code.
+
+### AI (Phase 10)
+- `GeminiModelAdapter` gained a bounded retry layer: transient failures
+  (timeouts, network drops, 5xx / overloaded) retry up to 2x with
+  500ms→1000ms backoff; invalid API keys, unsupported locations, 429 /
+  quota, safety blocks and malformed requests NEVER retry. Streaming
+  retries only before the first delta reaches the caller. Classifier
+  pinned by unit tests.
+
+### Navigation (Phase 15)
+- Unknown routes render a branded `_NotFoundScreen` with a recovery
+  route to Home (previously Flutter's default grey error page). The
+  onboarding gate still wins for invalid deep links. Covered by
+  `router_not_found_test.dart`.
+
+### Android build (Phase 20) — fixed, was never functional
+- `android/app/build.gradle.kts` did not compile (`java.util.Properties`
+  vs the `java {}` extension accessor): the import is explicit now.
+- Toolchain moved to Gradle 8.14 / AGP 8.11.1 / KGP 2.2.20 — Flutter
+  3.47's enforced support floor — after the previously pinned
+  Gradle 9.1 stack blew up Gradle's instrumentation transforms.
+- Kotlin `jvmTarget` pinned to 17 to match `compileOptions` (fixes
+  "Inconsistent JVM Target Compatibility").
+- `ndkVersion` pinned explicitly (28.2.13676358); AGP's default-NDK
+  fallback broke the Flutter plugin's synthetic native build (CXX1101).
+- Verified: `flutter build apk --release` and `--debug` both produce
+  installable APKs (arm64 target; com.vaanix.app, minSdk 24,
+  targetSdk 36).
+
+### Repository (Phases 1 / 22)
+- Removed dead barrel files `lib/core/core.dart` and
+  `lib/shared/shared.dart` (verified unreferenced).
+- iOS bundle identifier aligned to `com.vaanix.app` (6 sites in the
+  Xcode project) and display name unified to "VaaniX".
+- Bootstrap `debugPrint` is `kDebugMode`-guarded; the defensive
+  lesson-content fallback no longer says "Content coming soon!".
+
+
 ## [Accessibility Pass] - 2026-09-05
 
 Screen-reader parity for every selectable control that communicated
