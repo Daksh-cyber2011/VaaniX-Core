@@ -485,7 +485,10 @@ class SettingsScreen extends ConsumerWidget {
         children: PersonalityMode.values.map((mode) {
           return SimpleDialogOption(
             onPressed: () => Navigator.pop(ctx, mode),
-            child: Row(
+            // Selection state is otherwise conveyed by the check glyph only.
+            child: Semantics(
+              selected: current == mode,
+              child: Row(
               children: [
                 Icon(
                   switch (mode) {
@@ -503,6 +506,7 @@ class SettingsScreen extends ConsumerWidget {
                   const Icon(Icons.check, color: AppColors.primary),
                 ],
               ],
+              ),
             ),
           );
         }).toList(),
@@ -529,7 +533,10 @@ class SettingsScreen extends ConsumerWidget {
         children: AppConstants.dailyGoalOptions.map((minutes) {
           return SimpleDialogOption(
             onPressed: () => Navigator.pop(ctx, minutes),
-            child: Row(
+            // Selection state is otherwise conveyed by the check glyph only.
+            child: Semantics(
+              selected: minutes == current,
+              child: Row(
               children: [
                 Text('$minutes', style: AppTextStyles.titleLarge()),
                 const SizedBox(width: 6),
@@ -539,6 +546,7 @@ class SettingsScreen extends ConsumerWidget {
                   const Icon(Icons.check, color: AppColors.primary),
                 ],
               ],
+              ),
             ),
           );
         }).toList(),
@@ -562,7 +570,10 @@ class SettingsScreen extends ConsumerWidget {
         children: CbseClass.values.map((c) {
           return SimpleDialogOption(
             onPressed: () => Navigator.pop(ctx, c),
-            child: Row(
+            // Selection state is otherwise conveyed by the check glyph only.
+            child: Semantics(
+              selected: current == c,
+              child: Row(
               children: [
                 Text(c.label, style: AppTextStyles.titleMedium()),
                 if (current == c) ...[
@@ -570,6 +581,7 @@ class SettingsScreen extends ConsumerWidget {
                   const Icon(Icons.check, color: AppColors.primary),
                 ],
               ],
+              ),
             ),
           );
         }).toList(),

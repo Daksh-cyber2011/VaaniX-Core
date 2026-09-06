@@ -64,20 +64,25 @@ class _VaaniXTextFieldState extends State<VaaniXTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.label != null) ...[
-          Text(
-            widget.label!,
-            style: AppTextStyles.labelLarge(
-              color: Theme.of(context).colorScheme.onSurface,
+    // Accessibility: the visible label sits above the field, but without
+    // this merge a screen reader announces the bare edit box (its name
+    // would depend on the hint being present). Merging the label text into
+    // the field's node makes "Email, edit box" the announcement instead.
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.label != null) ...[
+            Text(
+              widget.label!,
+              style: AppTextStyles.labelLarge(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-        ],
-        TextFormField(
+            const SizedBox(height: 8),
+          ],
+          TextFormField(
           controller: widget.controller,
           obscureText: _obscureText,
           keyboardType: widget.keyboardType,
@@ -106,9 +111,10 @@ class _VaaniXTextFieldState extends State<VaaniXTextField> {
                     onPressed: _toggleObscure,
                   )
                 : widget.suffixIcon,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

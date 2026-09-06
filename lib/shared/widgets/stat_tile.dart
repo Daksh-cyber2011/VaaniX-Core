@@ -80,12 +80,18 @@ class StatTile extends StatelessWidget {
     );
 
     if (onTap == null) return content;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: content,
+    // Tappable tiles advertise themselves as buttons to screen readers
+    // (a raw InkWell only exposes the tap action, not the control type).
+    return Semantics(
+      button: true,
+      container: true,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: content,
+        ),
       ),
     );
   }

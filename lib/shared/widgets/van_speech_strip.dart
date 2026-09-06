@@ -41,11 +41,16 @@ class VanSpeechStrip extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            VanWidget(
-              size: 44,
-              state: state,
-              isLoading: isLoading,
-              onTap: onTap,
+            // ExcludeSemantics: the strip already announces "Van says: …"
+            // as ONE node; without this the inner VanWidget's own
+            // "Van is …" label would be announced a second time.
+            ExcludeSemantics(
+              child: VanWidget(
+                size: 44,
+                state: state,
+                isLoading: isLoading,
+                onTap: onTap,
+              ),
             ),
             const SizedBox(width: 8),
             Flexible(

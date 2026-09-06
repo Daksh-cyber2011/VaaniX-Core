@@ -78,12 +78,17 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
             final selected = mode == m;
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: InkWell(
-                onTap: () => ref
-                    .read(userProfileProvider.notifier)
-                    .updatePersonalityMode(m),
-                borderRadius: BorderRadius.circular(16),
-                child: AnimatedContainer(
+              // Screen-reader parity: selected state is otherwise conveyed
+              // by border/fill color + a check icon only.
+              child: Semantics(
+                button: true,
+                selected: selected,
+                child: InkWell(
+                  onTap: () => ref
+                      .read(userProfileProvider.notifier)
+                      .updatePersonalityMode(m),
+                  borderRadius: BorderRadius.circular(16),
+                  child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -124,6 +129,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                         const Icon(Icons.check_circle_rounded,
                             color: AppColors.primary, size: 22),
                     ],
+                  ),
                   ),
                 ),
               ),

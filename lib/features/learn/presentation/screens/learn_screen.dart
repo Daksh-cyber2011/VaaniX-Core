@@ -219,6 +219,10 @@ class _ChapterCard extends StatelessWidget {
                 minHeight: 6,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                 color: AppColors.primary,
+                // The bar mirrors the 'x/y' counter; give it its own spoken
+                // label so the indicator is not an unlabeled node.
+                semanticsLabel:
+                    '$completedCount of ${chapter.lessons.length} lessons completed',
               ),
             ),
           ),
@@ -238,6 +242,9 @@ class _ChapterCard extends StatelessWidget {
                   isDone ? Icons.check_rounded : Icons.play_arrow_rounded,
                   color: isDone ? AppColors.success : AppColors.primary,
                   size: 20,
+                  // Done/not-done is otherwise conveyed by the icon's
+                  // color only; the label merges into the ListTile node.
+                  semanticLabel: isDone ? 'Completed' : 'Not started yet',
                 ),
               ),
               title: Text(lesson.title, style: AppTextStyles.titleSmall()),

@@ -33,6 +33,8 @@ class VaaniXLoadingIndicator extends StatelessWidget {
             valueColor:
                 AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
             backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.15),
+            // Announced by screen readers; the visual spinner alone is silent.
+            semanticsLabel: message ?? 'Loading',
           ),
         ),
         if (message != null) ...[

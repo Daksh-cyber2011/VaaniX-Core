@@ -66,13 +66,26 @@ class PrimaryButton extends StatelessWidget {
 
     final labelWidget = Text(label, style: AppTextStyles.labelLarge());
 
+    // Accessibility: while loading, the spinner previously REPLACED the
+    // label, so the button lost its accessible name and the loading state
+    // was never announced. The label now stays visible beside the spinner,
+    // and the spinner carries a semantics label of its own.
     final child = isLoading
-        ? SizedBox.square(
-            dimension: 22,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(spinnerColor),
-            ),
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox.square(
+                dimension: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(spinnerColor),
+                  semanticsLabel: 'Loading',
+                ),
+              ),
+              const SizedBox(width: 10),
+              labelWidget,
+            ],
           )
         : icon != null
             ? Row(

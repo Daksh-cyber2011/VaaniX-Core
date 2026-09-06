@@ -363,6 +363,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
+                        semanticsLabel: 'Saving progress',
                       ),
                     )
                   : Text(
