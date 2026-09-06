@@ -17,6 +17,13 @@
 ///     (40-60% API call reduction for a learning app).
 ///   - [TokenUsageTracker] records daily token usage for visibility.
 ///
+/// Retry policy (Phase 10): transient online failures (timeouts, network
+/// drops, 5xx server errors) are retried up to [_maxSendRetries] times with
+/// bounded exponential backoff. PERMANENT failures are never retried:
+/// invalid API keys, unsupported locations, rate-limit/quota responses (the
+/// rate limiter owns those; retrying would amplify the storm), content
+/// blocks, and malformed requests.
+///
 /// Error mapping: Gemini SDK exceptions are caught by [guardAsync] and
 /// mapped to AI-specific Failure types via [ExceptionMapper]:
 /// - Rate limit  [AiRateLimitFailure]
@@ -27,6 +34,7 @@
 library;
 
 import 'dart:async';
+import 'dart:io' show SocketException;
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -55,6 +63,14 @@ class GeminiModelAdapter implements ModelAdapter {
 
   /// Hard ceiling for a single non-streaming completion request.
   static const Duration _requestTimeout = Duration(seconds: 30);
+
+  /// Retry budget for transient failures per request. Two retries with the
+  /// backoff below keep the worst-case added latency under ~1.5s of sleep,
+  /// so the chat never hangs on a dead backend.
+  static const int _maxSendRetries = 2;
+
+  /// Base delay for the exponential backoff (500ms, 1000ms).
+  static const Duration _retryBaseDelay = Duration(milliseconds: 500);
 
   final SafetyFilter _safetyFilter;
   final AiRateLimiter _rateLimiter;
@@ -228,12 +244,25 @@ class GeminiModelAdapter implements ModelAdapter {
         sanitizedUserText: sanitizedInput,
         learningContextMessage: context.learningContextMessage,
       );
-      final response = await chat.sendMessage(Content.text(outgoing)).timeout(
+      // Bounded retry for transient failures. A failed attempt never
+      // mutates the client-side chat history, so re-sending on the same
+      // session is safe. Each attempt re-awaits a rate-limiter slot so a
+      // retry chain can never bypass the pacing contract.
+      GenerateContentResponse? response;
+      for (var attempt = 0; response == null; attempt++) {
+        await _rateLimiter.awaitSlot();
+        try {
+          response = await chat.sendMessage(Content.text(outgoing)).timeout(
                 _requestTimeout,
                 onTimeout: () => throw TimeoutException(
                   'Gemini completion timed out',
                 ),
               );
+        } catch (e) {
+          if (attempt >= _maxSendRetries || !isTransientAiError(e)) rethrow;
+          await Future<void>.delayed(_backoffFor(attempt + 1));
+        }
+      }
 
       final responseText = response.text;
       if (responseText == null || responseText.isEmpty) {
@@ -293,7 +322,7 @@ class GeminiModelAdapter implements ModelAdapter {
       return;
     }
     try {
-      // Rate limiting before streaming.
+      // Rate limiting before the first (and any retry) attempt.
       await _rateLimiter.awaitSlot();
 
       final model = _getModel(config, context);
@@ -305,25 +334,43 @@ class GeminiModelAdapter implements ModelAdapter {
         sanitize: _safetyFilter.sanitizeInput,
       );
 
-      final chat = model.startChat(history: history);
-
       final outgoing = composeOutgoingMessage(
         sanitizedUserText: _safetyFilter.sanitizeInput(lastUserMsg.content),
         learningContextMessage: context.learningContextMessage,
       );
-      final responseStream = chat
-          .sendMessageStream(Content.text(outgoing))
-          .timeout(_requestTimeout);
 
-      await for (final response in responseStream) {
-        final text = response.text;
-        if (text != null && text.isNotEmpty) {
-          // Moderate each chunk.
-          if (!_safetyFilter.isOutputSafe(text)) {
-            yield err(const AiContentFilterFailure());
-            return;
+      // Bounded retry ONLY before the first delta reaches the caller:
+      // once the learner has seen content, failing mid-stream surfaces an
+      // error (the partial bubble is withdrawn by the chat controller).
+      var yieldedAny = false;
+      var attempt = 0;
+      while (true) {
+        final chat = model.startChat(history: history);
+        final responseStream = chat
+            .sendMessageStream(Content.text(outgoing))
+            .timeout(_requestTimeout);
+        try {
+          await for (final response in responseStream) {
+            final text = response.text;
+            if (text != null && text.isNotEmpty) {
+              // Moderate each chunk.
+              if (!_safetyFilter.isOutputSafe(text)) {
+                yield err(const AiContentFilterFailure());
+                return;
+              }
+              yieldedAny = true;
+              yield ok(AiStreamDelta(content: text));
+            }
           }
-          yield ok(AiStreamDelta(content: text));
+          break; // stream completed normally
+        } catch (e) {
+          if (yieldedAny || attempt >= _maxSendRetries ||
+              !isTransientAiError(e)) {
+            rethrow;
+          }
+          attempt++;
+          await Future<void>.delayed(_backoffFor(attempt));
+          await _rateLimiter.awaitSlot();
         }
       }
 
@@ -338,6 +385,61 @@ class GeminiModelAdapter implements ModelAdapter {
   void dispose() {
     _model = null;
   }
+
+  /// True when [error] is a TRANSIENT failure worth retrying: timeouts,
+  /// network drops, and 5xx server-side errors (the SDK surfaces those as
+  /// [ServerException] with a message).
+  ///
+  /// Permanent failures MUST NOT be retried:
+  ///   - [InvalidApiKey] / [UnsupportedUserLocation] (configuration),
+  ///   - rate-limit / quota responses (retrying amplifies the storm — the
+  ///     AiRateLimiter already paces requests),
+  ///   - safety blocks and malformed requests.
+  @visibleForTesting
+  static bool isTransientAiError(Object error) {
+    if (error is TimeoutException || error is SocketException) return true;
+    if (error is InvalidApiKey) return false;
+    if (error is UnsupportedUserLocation) return false;
+
+    final msg = error.toString().toLowerCase();
+
+    // Configuration / auth problems: permanent.
+    if (msg.contains('api key') ||
+        msg.contains('api_key') ||
+        msg.contains('permission') ||
+        msg.contains('unauthenticated')) {
+      return false;
+    }
+    // Quota: the limiter owns pacing; a retry would make it worse.
+    if (msg.contains('429') ||
+        msg.contains('rate limit') ||
+        msg.contains('quota') ||
+        msg.contains('resource_exhausted')) {
+      return false;
+    }
+    // Safety / content policy: deterministic rejection, not transient.
+    if (msg.contains('blocked') || msg.contains('content filter')) {
+      return false;
+    }
+    // Server-side trouble: transient.
+    if (msg.contains('500') ||
+        msg.contains('502') ||
+        msg.contains('503') ||
+        msg.contains('504') ||
+        msg.contains('internal error') ||
+        msg.contains('overloaded') ||
+        msg.contains('unavailable') ||
+        msg.contains('server error') ||
+        msg.contains('connection') ||
+        msg.contains('network') ||
+        msg.contains('failed host lookup')) {
+      return true;
+    }
+    return false;
+  }
+
+  Duration _backoffFor(int attempt) =>
+      _retryBaseDelay * (1 << (attempt - 1)).clamp(1, 4);
 
   /// Map Gemini SDK exceptions to AI-specific Failures.
   Failure _mapException(Object error) {

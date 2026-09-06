@@ -119,6 +119,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: kDebugMode,
     refreshListenable: refreshNotifier,
     redirect: redirect,
+    // Unknown / malformed locations render the branded not-found screen
+    // (with a recovery route Home) instead of Flutter's default grey
+    // error page. The onboarding/auth guards above still apply first, so
+    // an invalid deep link from a cold start lands on onboarding.
+    errorBuilder: (context, state) => _NotFoundScreen(
+      location: state.uri.toString(),
+    ),
     routes: [
       // ----------------------------------------------------------
       // SPLASH
@@ -259,6 +266,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return router;
 });
+
+/// Branded fallback for unknown routes. Every reachable location has a
+/// valid path; anything else lands here with a way back into the app.
+class _NotFoundScreen extends StatelessWidget {
+  const _NotFoundScreen({required this.location});
+
+  final String location;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Page not found')),
+      body: EmptyStateWidget(
+        icon: Icons.explore_off_rounded,
+        title: 'This page does not exist',
+        description:
+            'The path "$location" is not part of VaaniX. '
+            'Head back to the Nest to keep learning.',
+        actionLabel: 'Back to Home',
+        onActionPressed: () => context.go(RouteNames.home),
+      ),
+    );
+  }
+}
 
 /// App shell with bottom navigation bar.
 class _AppShell extends StatelessWidget {

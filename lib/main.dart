@@ -19,33 +19,32 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:vaanix_app/app/app.dart';
 import 'package:vaanix_app/app/bootstrap/app_bootstrap.dart';
+import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/errors/app_error_handler.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/providers/session_manager.dart';
 import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 
-/// Sentry DSN — read from the SENTRY_DSN env var. If empty or the
-/// placeholder, Sentry initializes in no-op mode (safe for local dev).
-const String _sentryDsn = String.fromEnvironment(
-  'SENTRY_DSN',
-  defaultValue: '',
-);
-
 Future<void> main() async {
+  // The environment must be available BEFORE Sentry init: the DSN itself is
+  // environment configuration (SENTRY_DSN in the bundled .env, with a
+  // --dart-define fallback — see [AppEnvironment.sentryDsn]). This also
+  // means bootstrap() must not load the environment a second time.
+  WidgetsFlutterBinding.ensureInitialized();
+  await loadEnvironment();
+
   await SentryFlutter.init(
     (options) {
-      options.dsn = _sentryDsn;
+      // No-op when unconfigured — empty/placeholder DSNs disable sending.
+      options.dsn = AppEnvironment.sentryDsn;
       // Send traces in debug too so devs can verify the pipeline.
       options.tracesSampleRate = 1.0;
       // Report all framework errors, not just uncaught ones.
       options.reportSilentFlutterErrors = true;
-      // Consider an app "healthy" if no errors for 5 seconds after launch.
     },
     appRunner: () async {
       await runZonedGuarded<Future<void>>(
         () async {
-          WidgetsFlutterBinding.ensureInitialized();
-
           // Route framework errors through the central handler.
           FlutterError.onError = handleFlutterError;
 

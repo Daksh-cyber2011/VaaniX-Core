@@ -30,7 +30,11 @@ class BootstrapResult {
 /// [SentryFlutter.init] in main.dart so it can wrap the zone guard.
 /// This method only configures Sentry scope post-init.
 Future<BootstrapResult> bootstrap() async {
-  await _loadEnvironment();
+  // main() already loads the environment BEFORE Sentry init (the Sentry DSN
+  // itself is environment config); only load it here when it is not done.
+  if (!dotenv.isInitialized) {
+    await loadEnvironment();
+  }
   _configureSentryScope();
   await _initializeSupabase();
 
@@ -38,18 +42,20 @@ Future<BootstrapResult> bootstrap() async {
   return BootstrapResult(sharedPreferences: prefs);
 }
 
-Future<void> _loadEnvironment() async {
+/// Loads the bundled .env asset (if present) and always leaves dotenv in a
+/// usable state.
+///
+/// The bundled app currently ships assets/env/ WITHOUT a .env file (only
+/// .gitkeep), so the catch path is the PRODUCTION norm, not an edge case.
+/// An EMPTY environment is initialized so every later dotenv.env[key]
+/// access is safe: flavor defaults to development, Supabase/Gemini report
+/// unconfigured, and the app boots fully offline instead of crashing with
+/// NotInitializedError before the first frame.
+Future<void> loadEnvironment() async {
   try {
     await dotenv.load(fileName: AppConstants.envFilePath);
   } catch (e, st) {
     reportError(e, st, context: 'dotenv.load');
-    // The bundled app currently ships assets/env/ WITHOUT a .env file
-    // (only .gitkeep), so this path is the PRODUCTION norm, not an
-    // edge case. Initialize an EMPTY environment so every later
-    // dotenv.env[key] access is safe: flavor defaults to development,
-    // Supabase/Gemini report unconfigured, and the app boots fully
-    // offline instead of crashing with NotInitializedError before the
-    // first frame.
     if (!dotenv.isInitialized) {
       dotenv.testLoad();
     }
@@ -70,7 +76,10 @@ void _configureSentryScope() {
 
 Future<void> _initializeSupabase() async {
   if (!AppEnvironment.isSupabaseConfigured) {
-    debugPrint('ℹ️ Supabase not configured — running without backend auth.');
+    // Guarded so release builds never emit the message.
+    if (kDebugMode) {
+      debugPrint('ℹ️ Supabase not configured — running without backend auth.');
+    }
     return;
   }
 

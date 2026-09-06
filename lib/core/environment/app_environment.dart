@@ -70,6 +70,20 @@ class AppEnvironment {
   static String get geminiApiKey =>
       dotenv.env[AppConstants.geminiApiKey]?.trim() ?? '';
 
+  /// Sentry crash-reporting DSN. Empty when unconfigured — Sentry then runs
+  /// in no-op mode and the app is unaffected.
+  ///
+  /// Single coherent mechanism (Phase 13 fix): the DSN is a RUNTIME dotenv
+  /// variable (assets/env/.env, the file .env.example documents), so docs
+  /// and code can no longer drift. A compile-time --dart-define
+  /// (String.fromEnvironment) remains supported as a FALLBACK for CI setups
+  /// that prefer not to ship the DSN in the bundled asset.
+  static String get sentryDsn {
+    final fromEnv = dotenv.env[AppConstants.sentryDsnKey]?.trim() ?? '';
+    if (fromEnv.isNotEmpty) return fromEnv;
+    return const String.fromEnvironment(AppConstants.sentryDsnKey);
+  }
+
   /// True when a Gemini API key is present and non-empty.
   /// True when a real Gemini API key is present. Template placeholders are
   /// rejected exactly like Supabase's, so a starter `.env` copy never enables
