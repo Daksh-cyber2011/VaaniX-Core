@@ -1,12 +1,22 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "characterId": "duck",
   "publicName": "Van",
   "defaultOutfit": "hoodie_default",
   "fallbackRenderer": "flutter",
   "assetFormat": "lottie",
   "dimensions": { "width": 512, "height": 512 },
-  "status": "visual_asset_blocker",
+  "status": "canonical_static_art_integrated",
+  "expressions": [
+    { "id": "van_expression_neutral", "expression": "neutral", "format": "png", "path": "assets/van/expressions/neutral.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Neutral VAN.png" },
+    { "id": "van_expression_thinking", "expression": "thinking", "format": "png", "path": "assets/van/expressions/thinking.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Thinking VAN.png" },
+    { "id": "van_expression_happy", "expression": "happy", "format": "png", "path": "assets/van/expressions/happy.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Happy VAN.png" },
+    { "id": "van_expression_excited", "expression": "excited", "format": "png", "path": "assets/van/expressions/excited.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Excited VAN.png" },
+    { "id": "van_expression_motivating", "expression": "motivating", "format": "png", "path": "assets/van/expressions/motivating.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Motivating VAN.png" },
+    { "id": "van_expression_confused", "expression": "confused", "format": "png", "path": "assets/van/expressions/confused.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "Confused VAN.png" },
+    { "id": "van_expression_sleepy", "expression": "sleepy", "format": "png", "path": "assets/van/expressions/sleepy.png", "width": 1199, "height": 1312, "available": true, "canonicalSource": "Tired or Sad VAN.png" },
+    { "id": "van_expression_achievement", "expression": "achievement", "format": "png", "path": "assets/van/expressions/achievement.png", "width": 1024, "height": 1536, "available": true, "canonicalSource": "SUPER HAPPY OR CHEERFUL VAN.png" }
+  ],
   "assets": [
     { "id": "duck_idle_loop", "state": "idle", "animation": "breathing_blink_look", "format": "lottie", "path": "assets/van/animations/duck_idle_loop.json", "durationMs": 3500, "loop": true, "fallback": "flutter_idle", "requiredV1": true, "status": "pending_art", "available": false },
     { "id": "duck_happy_short", "state": "happy", "animation": "soft_smile_wing_lift", "format": "lottie", "path": "assets/van/animations/duck_happy_short.json", "durationMs": 1400, "loop": false, "fallback": "flutter_happy", "requiredV1": true, "status": "pending_art", "available": false },

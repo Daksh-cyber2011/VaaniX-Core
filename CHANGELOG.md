@@ -2,6 +2,43 @@
 
 All notable changes to the VaaniX Flutter application.
 
+## [VAN Canonical Art Integration] - 2026-09-07
+
+The externally supplied canonical VAN expression set is now the production
+static visual for VAN. No VAN redesign: the artwork is displayed exactly as
+supplied; only file names were normalised to semantic names (provenance in
+`van_assets.json`).
+
+### Added
+- **Canonical expression layer** (`van_expression.dart`): `VanExpression`
+  enum (neutral, thinking, happy, excited, motivating, confused, sleepy,
+  achievement) and the deterministic `VanState` → expression mapping.
+  No new states; priority/interruptibility untouched.
+- **Expression catalog access** (`van_asset_catalog.dart`): `expressionFor`,
+  `expressionForState`, `staticArtForState` with animation-first precedence —
+  future Lottie assets will supersede static art without another migration.
+- **Renderer support** (`van_visual_renderer.dart`): contain-fit canonical
+  PNG rendering (proportions preserved, transparency kept, no crop), safe
+  errorBuilder fallback to the Flutter painter.
+- **Widget wiring** (`van_widget.dart`): canonical art renders without motion
+  transforms (breathing/rotation/scale never reshape canonical art); static
+  art is inherently reduced-motion safe; fallback painter + motion system
+  unchanged for art-free catalogs.
+- **Tests** (`van_expression_art_test.dart`): expression resolution, full
+  state mapping, event → state → art for every wired production event,
+  missing-asset fallback safety, reduced-motion behavior, semantics labels.
+
+### Changed
+- **pubspec.yaml**: declared `assets/van/expressions/` (master reference art
+  intentionally not bundled).
+- **van_assets.json**: schemaVersion 3, `expressions` section with per-file
+  provenance, status `canonical_static_art_integrated`; animation entries
+  unchanged and still pending art.
+- **Accessibility**: VAN's semantics label now names the visible canonical
+  expression ("Van — thinking", "Van — excited", …), replacing the verbose
+  meaning-based label; no live region, no per-frame announcements.
+- **Docs**: `docs/VAN/Implementation.md` documents the integrated layer.
+
 ## [Accessibility Pass] - 2026-09-05
 
 Screen-reader parity for every selectable control that communicated

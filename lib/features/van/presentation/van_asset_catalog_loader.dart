@@ -15,6 +15,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
+import 'package:vaanix_app/features/van/presentation/van_expression.dart';
 
 /// Bundle path of the catalog metadata (declared in pubspec assets).
 const String kVanAssetsMetadataPath = 'assets/van/metadata/van_assets.json';
@@ -46,7 +47,27 @@ VanAssetCatalog parseVanAssetCatalogJson(String raw) {
         );
       })
       .toList(growable: false);
-  return VanAssetCatalog(assets);
+  return VanAssetCatalog(assets, expressions: _parseExpressions(map));
+}
+
+/// Parses the canonical expression artwork section (schemaVersion 3+).
+/// Older catalogs without an `expressions` array yield an empty list —
+/// callers then render the Flutter fallback exactly as before.
+List<VanExpressionArt> _parseExpressions(Map<String, dynamic> map) {
+  final entries = map['expressions'] as List<dynamic>? ?? const [];
+  return entries
+      .map((e) {
+        final m = e as Map<String, dynamic>;
+        return VanExpressionArt(
+          id: m['id'] as String,
+          expression: VanExpression.values.byName(m['expression'] as String),
+          path: m['path'] as String,
+          width: (m['width'] as num?)?.toInt() ?? 0,
+          height: (m['height'] as num?)?.toInt() ?? 0,
+          available: (m['available'] as bool?) ?? false,
+        );
+      })
+      .toList(growable: false);
 }
 
 /// Loads the catalog from the bundled JSON metadata.
@@ -82,4 +103,14 @@ bool vanVisualAssetsMatch(VanVisualAsset a, VanVisualAsset b) {
       a.loop == b.loop &&
       a.width == b.width &&
       a.height == b.height;
+}
+
+@visibleForTesting
+bool vanExpressionArtMatch(VanExpressionArt a, VanExpressionArt b) {
+  return a.id == b.id &&
+      a.expression == b.expression &&
+      a.path == b.path &&
+      a.width == b.width &&
+      a.height == b.height &&
+      a.available == b.available;
 }

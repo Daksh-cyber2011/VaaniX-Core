@@ -4,6 +4,7 @@ library;
 import 'package:flutter/widgets.dart';
 
 import 'package:vaanix_app/features/van/domain/van_state.dart';
+import 'package:vaanix_app/features/van/presentation/van_expression.dart';
 
 enum VanAssetFormat { flutter, lottie }
 
@@ -44,9 +45,17 @@ class VanVisualAsset {
 /// An injected catalog lets final art arrive without changing [VanWidget].
 @immutable
 class VanAssetCatalog {
-  const VanAssetCatalog(this.assets);
+  const VanAssetCatalog(
+    this.assets, {
+    this.expressions = const <VanExpressionArt>[],
+  });
 
   final List<VanVisualAsset> assets;
+
+  /// Canonical static expression artwork (the supplied VAN art set). Empty
+  /// only in the art-free [placeholder] catalog used by tests and custom
+  /// hosts that want the pure Flutter fallback.
+  final List<VanExpressionArt> expressions;
 
   VanVisualAsset assetFor(VanState state) {
     return assets.firstWhere(
@@ -59,12 +68,48 @@ class VanAssetCatalog {
     );
   }
 
-  /// V1 ships no artwork yet. Flutter motion is therefore the intentional,
-  /// accessible fallback rather than a missing-asset error.
+  /// Stable semantic access to one canonical expression artwork. Returns an
+  /// unavailable placeholder when the expression is not in the catalog, so
+  /// callers never deal with nulls or raw paths.
+  VanExpressionArt expressionFor(VanExpression expression) {
+    return expressions.firstWhere(
+      (art) => art.expression == expression,
+      orElse: () => VanExpressionArt(
+        id: 'van_expression_${expression.name}_unavailable',
+        expression: expression,
+        path: 'assets/van/expressions/${expression.name}.png',
+        width: 0,
+        height: 0,
+      ),
+    );
+  }
+
+  /// Canonical artwork for the expression closest to [state].
+  VanExpressionArt expressionForState(VanState state) =>
+      expressionFor(state.canonicalExpression);
+
+  /// Canonical STATIC art for [state], or null when a final animation asset
+  /// already supersedes it (animation-first precedence — when genuine
+  /// Lottie/Rive animation assets land later they win over the static art;
+  /// until then the canonical expressions are the production visual).
+  VanExpressionArt? staticArtForState(VanState state) {
+    final animation = assetFor(state);
+    if (animation.format == VanAssetFormat.lottie && animation.isAvailable) {
+      return null;
+    }
+    final art = expressionForState(state);
+    return art.isAvailable ? art : null;
+  }
+
+  /// No artwork at all: every visual resolves to the Flutter fallback
+  /// painter. Used by tests and by hosts that explicitly want the vector
+  /// character regardless of the bundled art.
   static const placeholder = VanAssetCatalog(<VanVisualAsset>[]);
 
-  /// V1's reserved asset set. Entries remain unavailable until approved art
-  /// is dropped at the declared path and explicitly marked available.
+  /// V1's reserved asset set. The Lottie animation entries remain
+  /// unavailable until approved animation art is dropped at the declared
+  /// path and explicitly marked available; the canonical STATIC expression
+  /// artwork is integrated and available now.
   static const v1 = VanAssetCatalog(<VanVisualAsset>[
     VanVisualAsset(
         id: 'duck_idle_loop',
@@ -125,5 +170,5 @@ class VanAssetCatalog {
         state: VanState.error,
         format: VanAssetFormat.lottie,
         path: 'assets/van/animations/duck_error_soft.json'),
-  ]);
+  ], expressions: kVanCanonicalExpressionArt);
 }

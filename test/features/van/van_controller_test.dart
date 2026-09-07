@@ -144,7 +144,16 @@ void main() {
         ProviderScope(
           child: MaterialApp(
             home: Scaffold(
-              body: Center(child: VanWidget(state: state, size: 120)),
+              body: Center(
+                child: VanWidget(
+                  state: state,
+                  size: 120,
+                  // Art-free catalog: this test pins the FALLBACK contract
+                  // (legibility without any art). The canonical art layer
+                  // is covered separately in van_expression_art_test.dart.
+                  assetCatalog: VanAssetCatalog.placeholder,
+                ),
+              ),
             ),
           ),
         ),
@@ -171,6 +180,10 @@ void main() {
               child: Scaffold(
                 body: VanWidget(
                   state: VanState.achievement,
+                  // Art-free catalog: isolates the reduced-motion bypass of
+                  // the builder seam from the canonical art layer (which is
+                  // covered by van_expression_art_test.dart).
+                  assetCatalog: VanAssetCatalog.placeholder,
                   visualBuilder: (context, asset, fallback) {
                     builderCalled = true;
                     return const SizedBox(key: ValueKey('external-visual'));
@@ -392,6 +405,11 @@ void main() {
               useController: true,
               size: 120,
               showSpeechBubble: true,
+              // Art-free catalog: the assertions below target the fallback
+              // painter key as a stable tap target. Canonical art rendering
+              // through the controller state is covered in
+              // van_expression_art_test.dart.
+              assetCatalog: VanAssetCatalog.placeholder,
             ),
           ),
         ),

@@ -67,10 +67,59 @@ as non-interruptible and lets only critical errors supersede them. Product
 owners should confirm whether an explicit user tap should ever cancel a major
 celebration.
 
-## Animation and assets
+## Canonical static expression artwork (integrated 2026-09)
 
-There are currently no shipped VAN art assets. V1 therefore uses a lightweight
-Flutter `CustomPainter` renderer with a soft-vector duck silhouette, warm yellow
+The canonical VAN expression set supplied by the artist is now the production
+static visual. Eight expression PNGs live under `assets/van/expressions/`
+(transparent background preserved, displayed exactly as supplied — only the
+original file names were normalised to semantic names; provenance is recorded
+in `van_assets.json`):
+
+| Canonical expression | File | Reached from states |
+| --- | --- | --- |
+| neutral | `neutral.png` | idle |
+| thinking | `thinking.png` | thinking, focus |
+| happy | `happy.png` | happy, funny |
+| excited | `excited.png` | surprised |
+| motivating | `motivating.png` | caring, speaking |
+| confused | `confused.png` | error |
+| sleepy | `sleepy.png` | sad (supplied art covers tired-or-sad) |
+| achievement | `achievement.png` | achievement |
+
+No new `VanState` was created: the state vocabulary, priorities, and
+interruptibility are untouched. `VanStateExpressionX.canonicalExpression`
+(`van_expression.dart`) is the deterministic state → expression mapping.
+`VanAssetCatalog.expressionFor` / `expressionForState` / `staticArtForState`
+provide stable semantic access; UI code never hardcodes asset paths.
+
+Rendering precedence in `VanVisualRenderer` / `VanWidget`:
+
+1. available Lottie animation asset (future canonical animations) — wins;
+2. canonical static expression artwork — no motion transforms may reshape
+   canonical art, and a static image is inherently reduced-motion safe;
+3. the Flutter fallback painter with its full motion system.
+
+The artwork is contain-fit inside the widget stage: original proportions,
+crop-free, transparency preserved. A missing or unreadable canonical file
+falls back safely to the Flutter painter (no crash, no broken image, no
+silent expression substitution — the fallback always reflects the current
+state's pose).
+
+Accessibility: the widget's semantics label names the visible expression
+(`"Van — thinking"`, `"Van — excited"`, …) so expression changes are never
+communicated by artwork alone. The label is static (no live region), so no
+per-frame announcements occur. `widget.semanticLabel` still overrides.
+
+`assets/van/master/VAN_master.png` is reference material for the art
+pipeline and is deliberately not declared in pubspec (nothing reads it at
+runtime).
+
+## Animation and assets (animation layer — pending)
+
+The canonical static expression artwork (above) is the production visual; the
+following Flutter `CustomPainter` character remains the deterministic fallback
+whenever canonical art is unavailable (art-free hosts, load failure, art-free
+catalog injection) — a soft-vector duck silhouette, warm yellow
 feathers, signature three-feather tuft, rounded orange beak and feet, blue hoodie
 with drawstrings/mark, cream belly, and state-specific eyes, wing gestures and
 beak poses. It uses no generic icons or emoji. This avoids an asset load failure+
@@ -92,16 +141,18 @@ scaling, include a small visual tail, and announce loading text as a live region
 Final Lottie (or another renderer) can be injected per `VanWidget` and must
 return the supplied Flutter fallback if loading fails. `assets/van/metadata/
 van_assets.json` reserves stable `duck_*` IDs, format, dimensions, and paths;
-all entries are deliberately marked unavailable until approved source art is
-added. `duck` remains the permanent internal asset prefix; Van remains the
-public default name.
+all animation entries remain deliberately marked unavailable until approved
+source animation art is added (schemaVersion 3 now also pins the canonical
+expression set). `duck` remains the permanent internal asset prefix; Van
+remains the public default name.
 
 `VanVisualRenderer` is the production default: it renders a catalog asset only
 when it is explicitly marked available; missing, malformed, or unavailable
-Lottie assets always fall back safely to the Flutter character. The V1 asset
-manifest gives every required animation an ID, format, path, duration, loop,
-fallback, V1 requirement, and status. This is intentionally a **VISUAL ASSET
-BLOCKER** until approved vector source files are supplied.
+Lottie assets always fall back safely to the Flutter character (with the
+canonical static expression artwork as the intermediate layer — see above).
+The V1 asset manifest gives every required animation an ID, format, path,
+duration, loop, fallback, V1 requirement, and status. The animation layer
+remains pending until approved vector source files are supplied.
 
 
 ## Testing
@@ -109,4 +160,14 @@ BLOCKER** until approved vector source files are supplied.
 `test/features/van/van_controller_test.dart` covers initial state, event
 resolution, AI/Learn/Exam mappings, priority, critical interruption, timed
 fallback, every supported fallback state, reduced-motion asset bypass, and a
-narrow text-scaled speech bubble. Tests do not require final art.
+narrow text-scaled speech bubble.
+
+`test/features/van/van_expression_art_test.dart` covers the canonical art
+layer: expression resolution, the full state → expression mapping, event →
+state → art for every wired production event, art rendering in place of the
+fallback painter (including under reduced motion), safe fallback for a
+missing asset file, and the expression semantics label.
+
+`test/features/van/van_asset_catalog_parity_test.dart` additionally pins the
+JSON `expressions` section to `kVanCanonicalExpressionArt` (1:1, no
+drift, every file present on disk) alongside the animation-layer parity.

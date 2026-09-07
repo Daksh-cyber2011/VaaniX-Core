@@ -16,6 +16,7 @@ import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog_loader.dart';
+import 'package:vaanix_app/features/van/presentation/van_expression.dart';
 import 'package:vaanix_app/features/van/presentation/van_visual_renderer.dart';
 
 export 'package:vaanix_app/features/van/domain/van_state.dart';
@@ -153,6 +154,12 @@ class VanWidgetState extends State<VanWidget>
     final dialogue = presentation?.message ?? widget.dialogueText;
     final loading = presentation?.isLoading ?? widget.isLoading;
     final asset = catalog.assetFor(state);
+
+    // Canonical static artwork for the resolved state, or null when a final
+    // animation asset supersedes it (animation-first precedence) or the
+    // catalog ships without art (tests, custom hosts).
+    final canonicalArt = catalog.staticArtForState(state);
+
     final reducedMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final defaultTap =
@@ -163,7 +170,12 @@ class VanWidgetState extends State<VanWidget>
       button: widget.onTap != null ||
           widget.onLongPress != null ||
           defaultTap != null,
-      label: widget.semanticLabel ?? 'Van is ${state.definition.meaning}',
+      // The canonical expression name matches what is actually on screen
+      // ("Van — thinking", "Van — excited", …), so expression changes are
+      // never communicated by colour alone. No per-frame announcements: this
+      // is a plain static label, not a live region.
+      label: widget.semanticLabel ??
+          'Van — ${state.canonicalExpression.name}',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap ?? defaultTap,
@@ -189,19 +201,44 @@ class VanWidgetState extends State<VanWidget>
                     motion: motion,
                   ),
                 );
-                final visual = reducedMotion
-                    ? fallback
-                    : widget.visualBuilder?.call(context, asset, fallback) ??
-                        VanVisualRenderer(asset: asset, fallback: fallback);
+
+                // Visual selection layers:
+                //   1. injected visualBuilder (custom art host) — existing
+                //      seam, untouched, only while motion is allowed;
+                //   2. canonical static expression artwork — displayed
+                //      EXACTLY as supplied: no breathing/rotation/scale
+                //      transforms may reshape canonical art, and a static
+                //      image is inherently reduced-motion safe;
+                //   3. the Flutter fallback painter with its motion system.
+                final Widget visual;
+                final bool applyMotion;
+                if (!reducedMotion && widget.visualBuilder != null) {
+                  visual = widget.visualBuilder!(context, asset, fallback);
+                  applyMotion = true;
+                } else if (canonicalArt != null) {
+                  visual = VanVisualRenderer(
+                    asset: asset,
+                    expressionArt: canonicalArt,
+                    fallback: fallback,
+                  );
+                  applyMotion = false;
+                } else {
+                  visual = reducedMotion
+                      ? fallback
+                      : VanVisualRenderer(asset: asset, fallback: fallback);
+                  applyMotion = !reducedMotion;
+                }
+
+                final Widget stage = SizedBox.square(
+                  dimension: widget.size,
+                  child: visual,
+                );
+                if (!applyMotion) return stage;
                 return Transform.translate(
                   offset: Offset(0, motion.verticalOffset * widget.size),
                   child: Transform.rotate(
                     angle: motion.rotation,
-                    child: Transform.scale(
-                      scale: motion.scale,
-                      child: SizedBox.square(
-                          dimension: widget.size, child: visual),
-                    ),
+                    child: Transform.scale(scale: motion.scale, child: stage),
                   ),
                 );
               },
