@@ -61,24 +61,28 @@ class VaaniXCard extends StatelessWidget {
     if (margin != null) {
       return Padding(
         padding: margin!,
-        child: onTap != null
-            ? InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(borderRadius),
-                child: cardChild,
-              )
-            : cardChild,
+        child: onTap != null ? _tappable(cardChild) : cardChild,
       );
     }
 
     if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: cardChild,
-      );
+      return _tappable(cardChild);
     }
 
     return cardChild;
+  }
+
+  /// Tappable cards expose the button trait so screen readers announce the
+  /// control type instead of reading the card's text as plain content.
+  Widget _tappable(Widget cardChild) {
+    return Semantics(
+      button: true,
+      container: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: cardChild,
+      ),
+    );
   }
 }

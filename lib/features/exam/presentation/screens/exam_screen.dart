@@ -425,7 +425,9 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
         actions: [
           TextButton(onPressed: _backToSetup, child: const Text('Change')),
         ],
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: CircularProgressIndicator(semanticsLabel: 'Loading exam'),
+        ),
       ),
       error: (_, __) => VaaniXScaffold(
         title: 'Exam',
@@ -537,6 +539,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                       minHeight: 6,
                       backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                       color: AppColors.primary,
+                      // The bar mirrors the 'Q x / y' text; announce it so
+                      // the indicator is not an unlabeled node.
+                      semanticsLabel:
+                          'Question ${state.currentIndex + 1} of ${notifier.total}',
                     ),
                   ),
                 ),
@@ -583,7 +589,14 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                             (Theme.of(context).brightness == Brightness.dark
                                 ? AppColors.surfaceDark
                                 : AppColors.surfaceLight);
-                        Color borderColor = AppColors.borderLight;
+                        // Dark-mode fix: the default border previously fell
+                        // back to the hardcoded light-theme token, leaving
+                        // a light beige outline around every unselected
+                        // option on the dark surface.
+                        Color borderColor =
+                            (Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.borderDark
+                                : AppColors.borderLight);
                         if (showCorrect) {
                           tileColor = AppColors.success.withValues(alpha: 0.1);
                           borderColor = AppColors.success;
@@ -682,16 +695,22 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                     ),
                   ),
                   if (state.answered && question.explanation != null) ...[
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.vanYellow.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        question.explanation!,
-                        style: AppTextStyles.bodySmall(),
+                    Semantics(
+                      // The explanation appears only after submitting; a
+                      // live region means screen-reader users hear it the
+                      // moment it is revealed, like sighted users see it.
+                      liveRegion: true,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.vanYellow.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          question.explanation!,
+                          style: AppTextStyles.bodySmall(),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -798,7 +817,12 @@ class _ChapterTile extends StatelessWidget {
                       : AppColors.surfaceLight),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: selected ? AppColors.primary : AppColors.borderLight,
+                color: selected
+                    ? AppColors.primary
+                    // Dark-mode fix: was the hardcoded light-theme token.
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.borderDark
+                        : AppColors.borderLight),
                 width: selected ? 2 : 1,
               ),
             ),

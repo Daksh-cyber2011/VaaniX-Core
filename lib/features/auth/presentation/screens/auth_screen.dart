@@ -170,7 +170,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
               if (_errorMessage != null) ...[
                 const SizedBox(height: 16),
-                Container(
+                Semantics(
+                  // Auth failures appear after an async submit; a live
+                  // region announces them without a manual rescan.
+                  liveRegion: true,
+                  child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
@@ -192,6 +196,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               ],

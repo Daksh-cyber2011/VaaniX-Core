@@ -167,8 +167,13 @@ class _AchievementCard extends StatelessWidget {
                       ),
                     ),
                     if (isUnlocked)
-                      const Icon(Icons.check_circle_rounded,
-                          color: AppColors.success, size: 18),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppColors.success,
+                        size: 18,
+                        // Unlocked state is otherwise color + glyph only.
+                        semanticLabel: 'Unlocked',
+                      ),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -195,6 +200,8 @@ class _AchievementCard extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                       color: AppColors.primary,
+                      semanticsLabel:
+                          'Progress: ${progress.current} of ${ach.threshold}',
                     ),
                   ),
                   const SizedBox(height: 4),

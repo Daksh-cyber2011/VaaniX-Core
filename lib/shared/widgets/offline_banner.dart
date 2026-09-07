@@ -29,7 +29,12 @@ class OfflineBanner extends ConsumerWidget {
       alignment: Alignment.topCenter,
       child: isOnline
           ? const SizedBox(width: double.infinity)
-          : Container(
+          : Semantics(
+              // The banner animates in on connectivity loss; without a live
+              // region a screen-reader user would never be told they went
+              // offline.
+              liveRegion: true,
+              child: Container(
               width: double.infinity,
               margin: margin,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -56,6 +61,7 @@ class OfflineBanner extends ConsumerWidget {
                     ),
                   ),
                 ],
+              ),
               ),
             ),
     );

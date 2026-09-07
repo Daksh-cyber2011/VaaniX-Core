@@ -115,7 +115,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       // Typing indicator at the end while sending.
                       if (index == chatState.messages.length &&
                           chatState.isSending) {
-                        return _typingIndicator();
+                        return _typingIndicator(companionName);
                       }
                       return MessageBubble(
                         message: chatState.messages[index],
@@ -126,7 +126,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
           // ——— Error Banner (if any) ————————————————————————————————
           if (chatState.error != null)
-            Container(
+            Semantics(
+              // Errors surface mid-session; a live region announces them
+              // without the user having to hunt for the banner.
+              liveRegion: true,
+              child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: AppColors.error.withValues(alpha: 0.08),
               child: Row(
@@ -149,6 +153,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ],
               ),
+              ),
             ),
 
           // ——— Input ————————————————————————————————————————————————
@@ -165,38 +170,59 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   /// The daily-quota chip in the app bar (see the build method for why it
   /// watches [dailyUsageProvider]).
+  ///
+  /// Accessibility: the severity is ALSO spoken ("plenty / running low /
+  /// almost out") so it is never conveyed by color alone, the chip keeps a
+  /// 48dp touch target, and the tooltip names the bare number for sighted
+  /// users.
   Widget _usageChip() {
-    final usage = ref.watch(dailyUsageProvider).valueOrNull ?? DailyUsage.zero();
+    final usage =
+        ref.watch(dailyUsageProvider).valueOrNull ?? DailyUsage.zero();
     final remaining = usage.remainingRequests;
     final color = remaining > 100
         ? AppColors.success
         : (remaining > 20 ? AppColors.warning : AppColors.error);
+    final severity = remaining > 100
+        ? 'plenty of requests left'
+        : (remaining > 20
+            ? 'running low on requests'
+            : 'almost out of requests');
 
     return Padding(
       padding: const EdgeInsets.only(right: 4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _showUsageDialog(context, usage),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.bolt_rounded, size: 14, color: color),
-              const SizedBox(width: 4),
-              Text(
-                '$remaining',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
+      child: Semantics(
+        button: true,
+        label: '$remaining AI requests left today, $severity. '
+            'Double-tap for details.',
+        child: Tooltip(
+          message: '$remaining AI requests left today',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => _showUsageDialog(context, usage),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bolt_rounded, size: 14, color: color),
+                  const SizedBox(width: 4),
+                  Text(
+                    '$remaining',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -235,6 +261,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: usage.requestUsageFraction < 0.7
                     ? AppColors.success
                     : AppColors.error,
+                semanticsLabel:
+                    'Daily request usage ${(usage.requestUsageFraction * 100).round()} percent',
               ),
             ),
             const SizedBox(height: 8),
@@ -312,45 +340,51 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   /// Typing indicator shown while Van is generating a reply.
-  Widget _typingIndicator() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const VanWidget(useController: true, size: 32),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.surfaceDark
-                  : AppColors.surfaceLight,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-                bottomRight: Radius.circular(16),
+  Widget _typingIndicator(String companionName) {
+    return Semantics(
+      // "Van is typing" was previously a purely visual state; the live
+      // region announces it the moment the dots appear.
+      liveRegion: true,
+      label: '$companionName is typing…',
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const VanWidget(useController: true, size: 32),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.surfaceDark
+                    : AppColors.surfaceLight,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(3, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight,
+                      shape: BoxShape.circle,
+                    ),
+                  );
+                }),
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(3, (index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.subtextDark
-                        : AppColors.subtextLight,
-                    shape: BoxShape.circle,
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

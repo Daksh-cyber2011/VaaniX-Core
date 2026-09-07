@@ -375,28 +375,34 @@ class _SecondaryCta extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: isDark
-          ? AppColors.surfaceDark
-          : colorScheme.primary.withValues(alpha: 0.06),
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: onTap,
+    // Raw InkWell only exposes a tap action; the button trait makes the
+    // tile announce as a control.
+    return Semantics(
+      button: true,
+      container: true,
+      child: Material(
+        color: isDark
+            ? AppColors.surfaceDark
+            : colorScheme.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 22, color: colorScheme.primary),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: AppTextStyles.labelMedium(color: colorScheme.primary),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 22, color: colorScheme.primary),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: AppTextStyles.labelMedium(color: colorScheme.primary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -464,10 +470,12 @@ class _ContinueCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-          child: Padding(
+        child: Semantics(
+          button: true,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+            child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -536,6 +544,7 @@ class _ContinueCard extends StatelessWidget {
                 ),
               ],
             ),
+          ),
           ),
         ),
       ),

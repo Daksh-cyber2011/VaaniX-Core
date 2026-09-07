@@ -14,10 +14,13 @@
 // Without key.properties the release build type falls back to the debug key
 // so `flutter run --release` keeps working on developer machines. This
 // fallback is intentional; CI and store builds must provide key.properties.
-val keystoreProperties = java.util.Properties()
+import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
-    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+    keystorePropertiesFile.inputStream().use { stream -> keystoreProperties.load(stream) }
 }
 
 plugins {
@@ -40,12 +43,27 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // Keep the Kotlin JVM target aligned with the Java compile target.
+    // With JDK 21 toolchains the Kotlin plugin defaults to 21, which fails
+    // the JVM-target consistency check against the Java 17 compileOptions
+    // above ("Inconsistent JVM Target Compatibility").
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+
     defaultConfig {
         applicationId = "com.vaanix.app"
         minSdk = 24
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Explicitly pinned to Flutter's configured NDK. Without this, AGP
+        // falls back to its own default (27.0.12077973) for the synthetic
+        // externalNativeBuild the Flutter plugin registers, which then
+        // fails with CXX1101 when that NDK is not installed.
+        ndkVersion = "28.2.13676358"
     }
 
     signingConfigs {

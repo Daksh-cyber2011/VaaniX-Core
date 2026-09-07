@@ -40,7 +40,10 @@ class SectionHeader extends StatelessWidget {
               style: TextButton.styleFrom(
                 visualDensity: VisualDensity.compact,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                minimumSize: const Size(0, 40),
+                // Touch-target floor: compact density may shrink the visual,
+                // but the tappable area never goes below 48dp.
+                minimumSize: const Size(0, 48),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(actionLabel!),
             ),

@@ -247,7 +247,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             state: VanState.thinking,
             size: 120,
             showSpeechBubble: true,
-            dialogueText: 'Content coming soon!',
+            dialogueText: 'This lesson has no extra reading content yet.',
           ),
           const SizedBox(height: 16),
           Text(
@@ -363,6 +363,7 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: Colors.white,
+                        semanticsLabel: 'Saving progress',
                       ),
                     )
                   : Text(
