@@ -1,0 +1,21 @@
+# ============================================================
+# VaaniX — Release signing configuration (TEMPLATE)
+# ============================================================
+# Copy this file to android/key.properties and fill in the REAL values.
+# android/key.properties is gitignored and must NEVER be committed.
+# Keep the keystore file itself outside version control too (all
+# *.jks / *.keystore patterns are gitignored) and back it up safely —
+# losing it means losing the ability to update the app on the Play Store.
+#
+# One-time keystore creation:
+#   keytool -genkeypair -v -keystore ~/vaanix-release-key.jks \
+#       -keyalg RSA -keysize 2048 -validity 10000 -alias vaanix
+#
+# (storeFile may be an absolute path, which is recommended — it keeps the
+#  private keystore outside the project tree entirely.)
+# ============================================================
+
+storePassword=CHANGE_ME_STORE_PASSWORD
+keyPassword=CHANGE_ME_KEY_PASSWORD
+keyAlias=vaanix
+storeFile=/absolute/path/to/vaanix-release-key.jks

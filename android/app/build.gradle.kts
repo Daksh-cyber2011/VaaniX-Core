@@ -3,17 +3,19 @@
 //
 //   1. Generate a keystore (once, keep it safe — losing it means losing the
 //      ability to update the app on the Play Store):
-//        keytool -genkey -v -keystore ~/vaanix-release-key.jks \
+//        keytool -genkeypair -v -keystore ~/vaanix-release-key.jks \
 //            -keyalg RSA -keysize 2048 -validity 10000 -alias vaanix
-//   2. Create android/key.properties:
+//   2. Create android/key.properties (see android/key.properties.example):
 //        storePassword=<keystore password>
 //        keyPassword=<key password>
 //        keyAlias=vaanix
 //        storeFile=/absolute/path/to/vaanix-release-key.jks
 //
-// Without key.properties the release build type falls back to the debug key
-// so `flutter run --release` keeps working on developer machines. This
-// fallback is intentional; CI and store builds must provide key.properties.
+// RELEASE BUILDS MUST NEVER FALL BACK TO THE DEBUG KEY. When key.properties
+// is missing or incomplete, release tasks fail fast with a clear error (see
+// the taskGraph guard at the bottom of this file) instead of silently
+// producing a debug-signed artifact. Debug builds keep using the debug key
+// and remain fully usable on developer machines.
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -22,6 +24,17 @@ val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystorePropertiesFile.inputStream().use { stream -> keystoreProperties.load(stream) }
 }
+
+// True only when key.properties exists, every required entry is non-blank,
+// and the keystore file it points at is actually present on disk. Used by
+// the taskGraph guard below so release builds fail fast with a clear
+// message instead of silently producing debug-signed artifacts.
+val releaseSigningReady: Boolean =
+    keystorePropertiesFile.exists() &&
+    listOf("storeFile", "storePassword", "keyAlias", "keyPassword").all { prop ->
+        keystoreProperties.getProperty(prop)?.isNotBlank() == true
+    } &&
+    keystoreProperties.getProperty("storeFile")?.let { file(it).exists() } == true
 
 plugins {
     id("com.android.application")
@@ -68,7 +81,10 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystorePropertiesFile.exists()) {
+            // Only populated when key.properties is complete and the
+            // keystore exists; otherwise release builds are blocked by the
+            // taskGraph guard below instead of signing with the debug key.
+            if (releaseSigningReady) {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
                 storeFile = file(keystoreProperties["storeFile"] as String)
@@ -79,17 +95,30 @@ android {
 
     buildTypes {
         release {
-            // Signed with the real release key when key.properties exists,
-            // debug key otherwise (see the comment at the top of this file).
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            // ALWAYS the production signing config — never the debug key.
+            // If credentials are missing, the taskGraph guard below fails
+            // the build before any task runs, so a debug-signed release
+            // artifact is impossible.
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+// Guard: release tasks must never run without valid production signing
+// credentials. Debug builds do not match this check and keep working on
+// developer machines without android/key.properties.
+gradle.taskGraph.whenReady {
+    if (allTasks.any { it.path.endsWith("Release") } && !releaseSigningReady) {
+        throw GradleException(
+            "VaaniX RELEASE BUILD BLOCKED: production signing credentials are missing or incomplete.\n" +
+            "Expected android/key.properties (gitignored) with non-blank storeFile, storePassword, keyAlias and keyPassword,\n" +
+            "and an existing keystore file at the path given by storeFile.\n" +
+            "See android/key.properties.example and the header of android/app/build.gradle.kts for setup instructions.\n" +
+            "Release builds are never silently signed with the Android debug key."
+        )
+    }
 }
