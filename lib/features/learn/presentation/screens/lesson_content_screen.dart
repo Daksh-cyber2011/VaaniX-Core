@@ -19,13 +19,18 @@ import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/learn/presentation/widgets/lesson_content_view.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
+import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 class LessonContentScreen extends ConsumerStatefulWidget {
@@ -102,6 +107,11 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
     setState(() => _isCompleting = true);
 
     try {
+      // Milestone 7: capture newness BEFORE the idempotent completion so
+      // daily-XP is only recorded for XP that was actually awarded.
+      final wasNew =
+          !ref.read(completedLessonIdsProvider).contains(widget.lesson.id);
+
       final notifier = ref.read(completedLessonIdsProvider.notifier);
       await notifier.markComplete(widget.lesson);
       ref.invalidate(xpTotalProvider);
@@ -148,6 +158,52 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
         );
       }
 
+      // Milestone 7: daily-goal XP + competency milestones. Both checks
+      // must never break lesson completion — same safety as achievements.
+      try {
+        if (wasNew) {
+          final record =
+              await ref.read(recordDailyXpProvider)(widget.lesson.xpReward);
+          if (mounted && record.goalReachedNow) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Daily goal reached - wonderful!'),
+                behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+        final milestones =
+            await ref.read(milestoneCheckerProvider).checkMilestones();
+        if (mounted && milestones.isNotEmpty) {
+          final first = milestones.first;
+          final extra = milestones.length > 1
+              ? ' (+${milestones.length - 1} more)'
+              : '';
+          ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+                VanEventType.milestoneUnlocked,
+                message: 'Milestone unlocked: ${first.title}!',
+                payload: {
+                  'milestoneId': first.id,
+                  'milestoneCount': milestones.length,
+                },
+              ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Milestone Unlocked: ${first.emoji} ${first.title}'
+                ' (+${first.xpReward} XP)$extra',
+              ),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+      } catch (_) {
+        // Gamification must never break lesson completion.
+      }
+
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -188,9 +244,12 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 4),
-            child: VanWidget(useController: true, size: 34),
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Tooltip(
+              message: 'Van',
+              child: VanWidget(useController: true, size: 34),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -255,6 +314,15 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             style: AppTextStyles.bodyMedium(color: subtext),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 16),
+          // Never leave the learner at a dead end — the lesson's practice
+          // session is available even while reading content is missing.
+          PrimaryButton.secondary(
+            label: 'Practice this lesson instead',
+            icon: const Icon(Icons.fitness_center_rounded, size: 20),
+            onPressed: () => context.go(RouteNames.lessonPractice
+                .replaceFirst(':lessonId', widget.lesson.id)),
+          ),
         ],
       ),
     );
@@ -282,13 +350,14 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Lesson completed - review anytime',
+                'Lesson completed — review anytime',
                 style: AppTextStyles.bodyMedium(color: AppColors.success),
               ),
             ),
             OutlinedButton(
               onPressed: () =>
-                  context.go('/learn/lesson/${widget.lesson.id}/practice'),
+                  context.go(RouteNames.lessonPractice
+                      .replaceFirst(':lessonId', widget.lesson.id)),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 48),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -329,7 +398,8 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             ],
             OutlinedButton(
               onPressed: () =>
-                  context.go('/learn/lesson/${widget.lesson.id}/practice'),
+                  context.go(RouteNames.lessonPractice
+                      .replaceFirst(':lessonId', widget.lesson.id)),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 48),
                 padding: const EdgeInsets.symmetric(horizontal: 16),

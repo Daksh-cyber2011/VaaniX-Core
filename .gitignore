@@ -33,7 +33,13 @@ build/
 **/android/app/debug
 **/android/app/profile
 **/android/app/release
+
+# Production signing material — NEVER commit private keys.
+# key.properties is covered above; the keystore patterns below protect
+# keystores anywhere in the repository (the production keystore itself is
+# kept OUTSIDE the project tree; see android/key.properties.example).
 *.jks
+*.keystore
 
 # iOS / macOS (build & generated)
 **/ios/Flutter/.last_build_id

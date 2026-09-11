@@ -23,6 +23,8 @@ import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -153,6 +155,25 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 : const Text('Quiz already completed — no extra XP'),
           ),
         );
+
+        // Milestone 7: daily-goal XP (only for XP actually awarded).
+        if (saved.xpEarned > 0) {
+          try {
+            final record =
+                await ref.read(recordDailyXpProvider)(saved.xpEarned);
+            if (mounted && record.goalReachedNow) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Daily goal reached - wonderful!'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+          } catch (_) {
+            // Daily goal tracking must never break result saving.
+          }
+        }
       },
     );
     if (!mounted) return;
@@ -194,6 +215,39 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
         ),
       );
     }
+
+    // Milestone 7: exam performance can complete exam-gated competency
+    // milestones (Beginner Complete / Mastery Milestone). Same consolidated
+    // celebration pattern; never breaks the exam flow.
+    try {
+      final milestones =
+          await ref.read(milestoneCheckerProvider).checkMilestones();
+      if (!mounted || milestones.isEmpty) return;
+      final first = milestones.first;
+      final extra = milestones.length > 1
+          ? ' (+${milestones.length - 1} more)'
+          : '';
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.milestoneUnlocked,
+            message: 'Milestone unlocked: ${first.title}!',
+            payload: {
+              'milestoneId': first.id,
+              'milestoneCount': milestones.length,
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Milestone Unlocked: ${first.emoji} ${first.title}'
+            ' (+${first.xpReward} XP)$extra',
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (_) {
+      // Gamification must never break exam completion.
+    }
   }
 
   int _chapterTotal(
@@ -222,7 +276,9 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     if (all.isEmpty) {
       return const VaaniXScaffold(
         title: 'Exam',
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: CircularProgressIndicator(semanticsLabel: 'Loading exam'),
+        ),
       );
     }
     final curriculumList =
@@ -439,7 +495,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const VanWidget(
-                state: VanState.thinking,
+                // A load failure — the confused/reassuring VAN expression
+                // (the sustained "thinking" pose reads as a hang, not an
+                // error, and contradicts the shared event map).
+                state: VanState.error,
                 size: 140,
                 showSpeechBubble: true,
                 dialogueText: 'Something went wrong loading this exam.',

@@ -53,6 +53,20 @@ abstract final class AppConstants {
   static const String keySelectedClass = 'selected_class';
   static const String keyThemeMode = 'theme_mode';
   static const String keyLanguage = 'app_language';
+
+  /// SharedPreferences key for the user's currently selected LEARN MODE
+  /// language (one of the 10 VaaniX Learn languages: Hindi, Bengali,
+  /// Marathi, Telugu, Tamil, Gujarati, Urdu, Kannada, Malayalam, Odia).
+  ///
+  /// Stored as the [LearnLanguage] enum name (e.g. `'hindi'`, `'urdu'`).
+  /// Null / absent = no Learn language chosen yet → the Learn screen
+  /// continues to show the legacy Sanskrit curriculum (Exam Mode content)
+  /// until the learner picks a Learn language from the catalogue.
+  ///
+  /// NOTE: this is distinct from [keyLanguage] (the app's UI language).
+  /// Learn-language is a curriculum selector, not a localization flag.
+  static const String keyLearnLanguage = 'learn_language';
+
   static const String keyXpTotal = 'xp_total';
   static const String keyCompletedLessonIds = 'completed_lesson_ids';
   static const String keyCompletedQuizIds = 'completed_quiz_ids';
@@ -183,6 +197,19 @@ abstract final class AppConstants {
   static const String imagesPath = 'assets/images/';
   static const String animationsPath = 'assets/animations/';
   static const String iconsPath = 'assets/icons/';
+
+  /// Root directory for LEARN MODE per-language curriculum assets.
+  ///
+  /// Each of the 10 VaaniX Learn languages ships its curriculum as a
+  /// standalone JSON file under this directory, named by ISO 639-1 code
+  /// (e.g. `assets/curriculum/learn/hi.json` for Hindi, `ur.json` for
+  /// Urdu). This keeps each language's dataset independently authored,
+  /// reviewed, and versioned — and avoids the performance / maintainability
+  /// problems of one monolithic multi-language file.
+  ///
+  /// The legacy Sanskrit Exam Mode curriculum (`assets/curriculum/v1.json`)
+  /// is NOT under this root and is untouched by Learn Mode dispatch.
+  static const String learnCurriculumPath = 'assets/curriculum/learn/';
 
   /// Van animation asset names (Lottie .json files)
   static const String vanIdleAnimation = 'assets/animations/van_idle.json';

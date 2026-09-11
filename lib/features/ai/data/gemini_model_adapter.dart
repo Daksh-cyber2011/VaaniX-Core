@@ -461,7 +461,10 @@ class GeminiModelAdapter implements ModelAdapter {
         msg.contains('token limit')) {
       return const AiContextLengthFailure();
     }
-    return AiServiceFailure(msg);
+    // Unmapped SDK errors must never leak raw exception text (host names,
+    // stack fragments) into the chat banner — serve the calm, canonical
+    // message. The underlying error is still visible to crash reporting.
+    return const AiServiceFailure();
   }
 
   String _nextId() {

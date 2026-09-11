@@ -13,9 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/ai/data/token_usage_tracker.dart';
 
+import 'package:vaanix_app/features/ai/domain/ai_message.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/ai/presentation/widgets/chat_input.dart';
@@ -46,7 +48,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: AppMotion.base,
           curve: Curves.easeOut,
         );
       }
@@ -71,9 +73,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const VanWidget(useController: true, size: 32),
+            Tooltip(
+              message: 'Van',
+              child: VanWidget(useController: true, size: 32),
+            ),
             const SizedBox(width: 10),
-            Text(companionName, style: AppTextStyles.titleMedium()),
+            Flexible(
+              child: Text(
+                companionName,
+                style: AppTextStyles.titleMedium(),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         centerTitle: true,
@@ -141,9 +153,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   Expanded(
                     child: Text(
                       chatState.error!,
-                      style: AppTextStyles.bodySmall(color: AppColors.error),
+                      style: AppTextStyles.bodySmall(
+                          color: Theme.of(context).brightness ==
+                                  Brightness.dark
+                              ? AppColors.error
+                              : AppColors.errorDeep),
                     ),
                   ),
+                  // Real retry: re-sends the learner's last message so a
+                  // failed turn is one tap away from recovery — no retyping.
+                  if (!chatState.isSending &&
+                      chatState.messages.any((m) => m.role == AiRole.user))
+                    TextButton(
+                      onPressed: () => ref
+                          .read(chatControllerProvider.notifier)
+                          .retryLastUserMessage(),
+                      child: const Text('Try again'),
+                    ),
                   IconButton(
                     tooltip: 'Dismiss error',
                     icon: const Icon(Icons.close_rounded, size: 16),
@@ -179,9 +205,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final usage =
         ref.watch(dailyUsageProvider).valueOrNull ?? DailyUsage.zero();
     final remaining = usage.remainingRequests;
-    final color = remaining > 100
-        ? AppColors.success
-        : (remaining > 20 ? AppColors.warning : AppColors.error);
+    // Small 12px text on a tinted fill: light mode needs the deep AA-safe
+    // variants; dark mode keeps the vivid base tokens.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = isDark
+        ? (remaining > 100
+            ? AppColors.success
+            : (remaining > 20 ? AppColors.warning : AppColors.error))
+        : (remaining > 100
+            ? AppColors.successDeep
+            : (remaining > 20 ? AppColors.warningDeep : AppColors.errorDeep));
     final severity = remaining > 100
         ? 'plenty of requests left'
         : (remaining > 20
@@ -214,11 +247,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   const SizedBox(width: 4),
                   Text(
                     '$remaining',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
+                    style: AppTextStyles.labelMedium(color: color),
                   ),
                 ],
               ),
@@ -234,11 +263,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.bolt_rounded, color: AppColors.primary),
-            SizedBox(width: 8),
-            Text('AI Usage Today'),
+            Icon(Icons.bolt_rounded,
+                color: Theme.of(ctx).colorScheme.primary),
+            const SizedBox(width: 8),
+            const Text('AI Usage Today'),
           ],
         ),
         content: Column(
@@ -295,7 +325,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(label, style: AppTextStyles.bodyMedium()),
           Text(value,
               style: AppTextStyles.bodyMedium(
-                color: AppColors.primary,
+                color: Theme.of(context).colorScheme.primary,
               )),
         ],
       ),

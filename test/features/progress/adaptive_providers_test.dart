@@ -62,6 +62,10 @@ Future<ProviderContainer> _makeContainer(Map<String, Object> seed) async {
   // Phase 2 source — so it must be settled too before any read.
   await container.read(curriculumProvider.future);
   await container.read(quizBankProvider.future);
+  // M1 (G7): the adaptive engine reads the ACTIVE curriculum. With no
+  // Learn language selected this resolves to the legacy Sanskrit path
+  // above; settling it here keeps the no-selection contract identical.
+  await container.read(activeCurriculumProvider.future);
   return container;
 }
 

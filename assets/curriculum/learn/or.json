@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "language": {
+    "enum": "odia",
+    "iso639_1": "or",
+    "englishName": "Odia",
+    "nativeName": "ଓଡ଼ିଆ",
+    "scriptName": "Odia",
+    "scriptCode": "Orya",
+    "direction": "ltr"
+  },
+  "levels": [
+    {
+      "id": "lvl0",
+      "name": "Script Foundation",
+      "order": 0,
+      "chapters": [
+        "ch_or_script"
+      ]
+    },
+    {
+      "id": "lvl1",
+      "name": "Beginner",
+      "order": 1,
+      "chapters": [
+        "ch_or_greet"
+      ]
+    },
+    {
+      "id": "lvl2",
+      "name": "Elementary",
+      "order": 2,
+      "chapters": [
+        "ch_or_daily"
+      ]
+    },
+    {
+      "id": "lvl3",
+      "name": "Intermediate",
+      "order": 3,
+      "chapters": [
+        "ch_or_grammar"
+      ]
+    },
+    {
+      "id": "lvl4",
+      "name": "Advanced Beginner+",
+      "order": 4,
+      "chapters": [
+        "ch_or_reading"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch_or_script",
+      "title": "ଓଡ଼ିଆ ଲିପି · Odia Script",
+      "subtitle": "Level 0 — Vowels, consonants, matras, conjuncts",
+      "order": 0,
+      "lessons": [
+        {
+          "id": "or_script_vowels",
+          "chapterId": "ch_or_script",
+          "title": "ସ୍ୱର · Vowels",
+          "subtitle": "Odia's round vowels — the ସ୍ୱର, eleven in all",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ସ୍ୱର (Vowels)\n\nOdia uses the **Odia script** — the roundest of all Indian scripts,\nevolved from writing on palm leaves with an iron stylus (curves, never\nstraight lines). Its vowels are **ସ୍ୱର**.\n\n## The vowel set\n\n| Vowel | Roman | Example | Meaning |\n|---|---|---|---|\n| ଅ | a | ଅମ୍ବ | mango |\n| ଆ | ā | ଆମେ | we |\n| ଇ | i | ଇଣ୍ଟା | brick |\n| ଈ | ī | ଈଶ୍ୱର | God |\n| ଉ | u | ଉଷା | dawn |\n| ଊ | ū | ଊଟି | nap |\n| ଋ | r̥ | ଋଷି | sage |\n| ଏ | e | ଏଠାରେ | here |\n| ଐ | ai | ଐରାବତ | airavata |\n| ଓ | o | ଓଡ଼ିଆ | Odia |\n| ଔ | au | ଔଷଧ | medicine |\n\nNote: Odia has **ଏ** and **ଓ** as simple e/o (the ଐ/ଔ are diphthongs).\nThis makes the vowel chart smaller than Hindi's — eleven, not thirteen.\n\n## Short vs long\n\nLength matters: **ମାନେ** (māne, means) vs **ମନେ** (mane, to the\nmind) differ only in that held ଆ. Hold the long vowel a full beat.\n\n## Reading habit\n\nLetters hang from a rounded top curl. Vowels standing alone begin\nwords; inside words they become **ମାତ୍ରା** signs attached to\nconsonants — next lesson.\n## Mini-practice\n\nCover the Roman column and read: ଅମ୍ବ (amba, mango), ଆମେ (āmē, we),\nଇଣ୍ଟା (iṇṭā, brick), ଉଷା (uṣā, dawn), ଏଠାରେ (eṭhāre, here),\nଓଡ଼ିଆ (oṛiā, Odia). Then reverse: long ā → ଆ. Eleven vowels, one\nheld-beat rule — say ମାନେ and ମନେ back to back until your ear\ncatches the difference.\n"
+        },
+        {
+          "id": "or_script_consonants",
+          "chapterId": "ch_or_script",
+          "title": "ବ୍ୟଞ୍ଜନ · Consonants",
+          "subtitle": "The consonant grid and Odia's signature ଡ଼ / ଢ଼ sounds",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ବ୍ୟଞ୍ଜନ (Consonants)\n\nOdia consonants (**ବ୍ୟଞ୍ଜନ**) sit in the same Dravidian-era grid as its\ncousins. Each bare letter reads consonant + ଅ: **କ** = \"ka\".\n\n## The grid\n\n| | Voiceless | Aspirated | Voiced | Voiced asp. | Nasal |\n|---|---|---|---|---|---|\n| Velar | କ ka | ଖ kha | ଗ ga | ଘ gha | ଙ ṅa |\n| Palatal | ଚ cha | ଛ chha | ଜ ja | ଝ jha | ଞ nya |\n| Retroflex | ଟ ṭa | ଠ ṭha | ଡ ḍa | ଢ ḍha | ଣ ṇa |\n| Dental | ତ ta | ଥ tha | ଦ da | ଧ dha | ନ na |\n| Labial | ପ pa | ଫ pha | ବ ba | ଭ bha | ମ ma |\n\n## The \"others\" rows\n\n| Letters | Sounds |\n|---|---|\n| ଯ ର ଲ ଵ | ya, ra, la, va |\n| ଶ ଷ ସ ହ | śa, ṣa, sa, ha |\n| ଳ | retroflex ḷ |\n| ୟ | ya (special form) |\n\n## The flapped ଡ଼ and ଢ଼\n\nTwo letters are dotted versions: **ଡ଼** (ṛa) and **ଢ଼** (ṛha) — flapped\nr-like sounds, and they are *everywhere*: **ଓଡ଼ିଆ** (Oṛiā, the language\nname itself!), **ଡ଼ାଲି** (ṛāli, ladle) and\n**ଢ଼େଣୁ** (ṛheṇu, fly). The dot is not decoration; dropping it\nchanges the letter to ଡ/ଢ and the meaning goes wrong.\n\n> Compare: **ର** (ra, tooth-r) in **ରାଜା** (rājā, king) vs **ଡ଼** (ṛa,\n> flap) in **ଓଡ଼ିଆ**. Two r-sounds, both essential.\n## Mini-practice\n\nRead aloud: କମଳ (kamaḷa, lotus), ଗଜ (gaja, elephant), ବର୍ଷା\n(barṣā, rain), ବାଘ (bāgha, tiger), ହାତ (hāta, hand).\nThen the flap drill: ରାଜା (rājā, ra) vs ଓଡ଼ିଆ (oṛiā, ṛa) — plain\ntooth-r vs dotted flap. The dot is tiny; the sound is a different\nletter. Train it in the language's own name.\n"
+        },
+        {
+          "id": "or_script_matras",
+          "chapterId": "ch_or_script",
+          "title": "ମାତ୍ରା · Vowel Signs",
+          "subtitle": "Consonant + matra — how Odia words actually get written",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ମାତ୍ରା (Vowel Signs)\n\nA bare consonant **କ** says \"ka\". Attach a **ମାତ୍ରା** (vowel sign) and\nthe vowel changes.\n\n## The pattern on କ\n\n| Sign | Result | Sound |\n|---|---|---|\n| (none) | କ | ka |\n| ା | କା | kā |\n| ି | କି | ki |\n| ୀ | କୀ | kī |\n| ୁ | କୁ | ku |\n| ୂ | କୂ | kū |\n| େ | କେ | ke |\n| ୈ | କୈ | kai |\n| ୋ | କୋ | ko |\n| ୌ | କୌ | kau |\n\n## The left-side signs\n\n**ି** (i-sign) attaches on the *left* of the consonant though it is\npronounced *after*: **କି** reads \"ki\". Words like **କିମ୍ବା** (kimbā, or)\nand **ମିଠା** (miṭhā, sweet) show it: the ି sits before ମ\nbut sounds after it. Sign\norder ≠ reading order — the classic trap, same as Kannada.\n\n## The anusvāra and visarga\n\n**ଂ** adds a nasal m/n sound at the syllable end: **ଅଂଶ** (aṃśa, part). **ଃ** is a faint h: **ଦୁଃଖ** (dukha, sorrow).\nBoth appear constantly in real text.\n\n> The **ୟ**, **ୱ** special forms and the conjunct **୍ର** (ra-matra)\n> show up in words like **ପ୍ରାର୍ଥନା** — read clusters slowly.\n## Mini-practice\n\nRead: କିମ୍ବା (kimbā, or), ଗୁଡ଼ା (guḍā, jaggery), କୋଟ (koṭa,\nfort), ନଦୀ (nadī, river), ମୁଣ୍ଡ (muṇḍa, head). Then split ପୁସ୍ତକ letter by letter: ପୁ-ସ୍-ତ-କ. Note\nthe left-side ି in କି — sign on the left, sound after the\nconsonant.\n"
+        },
+        {
+          "id": "or_script_conjuncts",
+          "chapterId": "ch_or_script",
+          "title": "ଯୁକ୍ତାକ୍ଷର · Conjuncts",
+          "subtitle": "Two consonants, one shape — the conjunct system",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# ଯୁକ୍ତାକ୍ଷର (Conjunct Consonants)\n\nWhen consonants collide with no vowel between, Odia fuses them into a\n**ଯୁକ୍ତାକ୍ଷର** (conjunct). The virama **୍** signals the fusion:\n**କ୍** = bare \"k\".\n\n## Everyday conjuncts\n\n| Conjunct | Word | Meaning |\n|---|---|---|\n| କ୍କ | ପକ୍କା | ripe/certain |\n| ତ୍ତ | ଉତ୍ତର | answer |\n| ନ୍ଦ | ଆନନ୍ଦ | joy |\n| ମ୍ବ | ଅମ୍ବ | mango |\n| ଜ୍ଞ | ବିଜ୍ଞାନ | science |\n| ସ୍ଥ | ସ୍ଥାନ | place |\n| ର୍ଯ | କାର୍ଯ୍ୟ | work/deed |\n\n## The special ର rules\n\n**ର** before a consonant becomes the diagonal **ର୍** above:\n**ଧର୍ମ** (dharma) — see the slanted ra on top. **ର** after a consonant\nbecomes **୍ର** below: **ପ୍ରେମ** (prema, love).\n\n## Reading drill\n\nTry: **ସ୍ୱାଗତ** (swāgata, welcome), **ପ୍ରୀତି** (prīti, love),\n**ଉତ୍ସବ** (utsaba, festival), **ଗ୍ରନ୍ଥ** (grantha, book).\n\n> Like all its sister scripts, high-frequency conjuncts become\n> sight-shapes. Ten minutes a day and ତ୍ତ, ନ୍ଦ, ସ୍ଥ stop being\n> puzzles.\n## Mini-practice\n\nRead: ଉତ୍ତର, ଆନନ୍ଦ, ଅମ୍ବ, ବିଜ୍ଞାନ, ସ୍ଥାନ, କାର୍ଯ୍ୟ, ଧର୍ମ, ପ୍ରେମ. Count the conjuncts across all\neight words (nine: ତ୍ତ, ନ୍ଦ, ମ୍ବ, ଜ୍ଞ, ସ୍ଥ, ର୍ଯ, ର୍ମ, ପ୍ର). Sight-shapes\ncome fast — ତ୍ତ and ନ୍ଦ you have already seen three times.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_or_greet",
+      "title": "ନମସ୍କାର ଓ ପରିଚୟ · Greetings & Introductions",
+      "subtitle": "Level 1 — Namaskāra, names, family, numbers",
+      "order": 1,
+      "lessons": [
+        {
+          "id": "or_greet_namaskara",
+          "chapterId": "ch_or_greet",
+          "title": "ନମସ୍କାର · Greetings",
+          "subtitle": "Namaskāra and the warm Odia hello",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ନମସ୍କାର (Greetings)\n\n**ନମସ୍କାର** (namaskāra) is the standard Odia greeting — respectful,\ntimeless, works with anyone at any hour. Friends say **କେମନ ଅଛ?**\n(\"how are you?\") straight away — Odia warmth skips small talk.\n\n## The greeting set\n\n| Odia | Transliteration | Meaning |\n|---|---|---|\n| ନମସ୍କାର | namaskāra | hello |\n| ଶୁଭ ପ୍ରଭାତ | śubha prabhāta | good morning |\n| ଶୁଭ ରାତ୍ରି | śubha rātri | good night |\n| ଧନ୍ୟବାଦ | dhanyabāda | thank you |\n| ମାଫ କରନ୍ତୁ | māpha karantu | sorry / excuse me |\n| ଆସନ୍ତୁ | āsantu | please come |\n\n## Asking how someone is\n\n- **କେମିତି ଅଛନ୍ତି?** — How are you? (respectful)\n- **କେମନ ଅଛ?** — How are you? (friend/child)\n- Answer: **ମୁଁ ଭଲ ଅଛି.** — I am well. (**ଭଲ** = good/fine)\n- **ଆପଣ କେମିତି ଅଛନ୍ତି?** — And you (respectful)?\n\n## Goodbye\n\n**ଆସିବି** (āsibi) — \"I will come (again)\" — the standard farewell,\nframed as returning. Reply **ଆସନ୍ତୁ ଆସନ୍ତୁ** (come, come!) or simply\n**ଭଲ ରୁହନ୍ତୁ** (be well).\n\n> Odia hospitality is famous: entering a home you will be offered water\n> first. **ପାଣି ପିଅନ୍ତୁ** (please drink water) is said before hello.\n## Mini-practice\n\nThe full exchange, out loud: ନମସ୍କାର! → କେମିତି ଅଛନ୍ତି? → ମୁଁ ଭଲ ଅଛି,\nଆପଣ? → ଭଲ, ଧନ୍ୟବାଦ! Then the closer: ଆସିବି! → ଆସନ୍ତୁ ଆସନ୍ତୁ! Five\nsentences that carry a whole doorway conversation in Odisha —\nmemorise them as one breath, not five lines.\n"
+        },
+        {
+          "id": "or_greet_intro",
+          "chapterId": "ch_or_greet",
+          "title": "ମୋର ନାମ · Introductions",
+          "subtitle": "My name is…, asking back, and the learner's lines",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ମୋର ନାମ (Introductions)\n\n## Saying your name\n\n**ମୋର ନାମ ରାହୁଲ.** (Mora nāma Rāhula.) — My name is Rahul.\n**ମୋର** (my) + **ନାମ** (name). Ask back: **ଆପଣଙ୍କ ନାମ କଣ?**\n(Āpaṇaṅka nāma kṇa?) — What is your name? (respectful; **କଣ** = what)\nTo a friend: **ତୁମ ନାମ କଣ?**\n\n## Where from\n\n- **ଆପଣ କେଉଁଠୁ ଆସିଛନ୍ତି?** — Where have you come from?\n- **ମୁଁ ଭୁବନେଶ୍ୱରରୁ ଆସିଛି.** — I have come from Bhubaneswar.\n  (**-ରୁ** = from)\n- **ମୁଁ ଓଡ଼ିଶାର.** — I am of/from Odisha. (**-ର** = of)\n\n## The learner's toolkit\n\n| Odia | Transliteration | Meaning |\n|---|---|---|\n| ମୁଁ ଓଡ଼ିଆ ଶିଖୁଛି | muṃ oṛiā śikhuchi | I am learning Odia |\n| ଧୀରେ କହନ୍ତୁ | dhīre kahantu | please say (it) slowly |\n| ମୁଁ ବୁଝିପାରିଲି ନାହିଁ | muṃ bujhipārili nāhiṃ | I didn't understand |\n| ପୁଣି କୁହ | puṇi khu | say (it) again |\n\n**ଶିଖିବା** (śikhibā, to learn) is your verb of the year — and\n**ଧୀରେ ଧୀରେ** (slowly, slowly) is how everything worthwhile happens.\n## Mini-practice\n\nFill in and say: ମୋର ନାମ ___. ମୁଁ ___ ରୁ ଆସିଛି (from ___). ମୁଁ ଓଡ଼ିଆ\nଶିଖୁଛି. Then ask: ଆପଣଙ୍କ ନାମ କଣ? ଆପଣ କେଉଁଠୁ ଆସିଛନ୍ତି? Keep the\nhonorific -ନ୍ତି/-ଙ୍କ with strangers — ଆପଣଙ୍କ ନାମ (your, hon., name).\nThree loops of the intro and it stops feeling like a script.\n"
+        },
+        {
+          "id": "or_greet_family",
+          "chapterId": "ch_or_greet",
+          "title": "ପରିବାର · Family",
+          "subtitle": "The family words and the bhāi/bhaujā address culture",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ପରିବାର (Family)\n\n## Core words\n\n| Odia | Transliteration | Meaning |\n|---|---|---|\n| ମାଆ | māā | mother |\n| ବାପା | bāpā | father |\n| ଭାଇ | bhāi | brother |\n| ଭଉଣୀ | bhauṇī | sister |\n| ଜ୍ୟେଷ୍ଠ ଭାଇ | jyeṣṭha bhāi | elder brother |\n| ସାନ ଭାଇ | sāna bhāi | younger brother |\n| ବଡ଼ ଭଉଣୀ | baḍa bhauṇī | elder sister |\n| ଆଜା | ājā | grandfather |\n| ଆଜି | āji | grandmother |\n| ପୁଅ | pua | son |\n| ଝିଅ | jhiā | daughter |\n\nAge is packed into modifiers: **ବଡ଼** (big/elder) and **ସାନ** (small/\nyounger) prefix the plain word — elder brother **ବଡ଼ ଭାଇ**, younger\n**ସାନ ଭାଇ**. (Odia does have a dedicated elder-brother word too:\n**ଦାଦା** / **ଭାଇଡ଼ା**.)\n\n## Address culture\n\n**ଭାଇ** (brother) and **ମାଉସୀ/କାକୀ** (auntie) are used for strangers\nwarmly — a shopkeeper is **ଭାଇ**, an older lady **ମାଉସୀ**. Add\nrespectful **-ନ୍ତୁ** verb endings and you are instantly polite.\n\n## Sentences\n\n- **ଇହା ମୋର ମାଆ.** — This is my mother.\n- **ମୋର ଜଣେ ଭଉଣୀ ଅଛି.** — I have one sister.\n- **ମୋ ପରିବାର ବଡ଼.** — My family is big.\n- **ମୋ ଆଜି ମହାପ୍ରଭୁଙ୍କ ଭକ୍ତ.** — My grandmother is a devotee of the Lord\n  (of Puri — expect Jagannath in every Odia family conversation).\n## Mini-practice\n\nMap YOUR family: ମାଆ, ବାପା, ଭାଇ/ଭଉଣୀ (with ବଡ଼/ସାନ modifiers),\nଆଜା/ଆଜି. Then two sentences: ଇହା ମୋର ___. ମୋର ଜଣେ ___ ଅଛି. Notice\nଭାଇ/ମାଉସୀ work for strangers too — the shopkeeper is ଭାଇ, the\nlady next door is ମାଉସୀ. Kinship as politeness, the Odia way.\n"
+        },
+        {
+          "id": "or_greet_numbers",
+          "chapterId": "ch_or_greet",
+          "title": "ଗଣନା · Numbers",
+          "subtitle": "Odia numerals ୦–୯ and counting to one hundred",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# ଗଣନା (Numbers)\n\n## The numerals\n\n| Digit | Odia | Name | Digit | Odia | Name |\n|---|---|---|---|---|---|\n| 0 | ୦ | ଶୂନ | 5 | ୫ | ପାଞ୍ଚ |\n| 1 | ୧ | ଏକ | 6 | ୬ | ଛଅ |\n| 2 | ୨ | ଦୁଇ | 7 | ୭ | ସାତ |\n| 3 | ୩ | ତିନି | 8 | ୮ | ଆଠ |\n| 4 | ୪ | ଚାରି | 9 | ୯ | ନଅ |\n\nBus boards and market slates use these digits; learn the shapes beside\n0–9.\n\n## Tens to a hundred\n\n- 10 **ଦଶ** (daśa), 20 **କୁଡ଼ି** (kuṛi), 30 **ତିରିଶ**\n  (tiriśa), 40 **ଚାଳିଶ** (cāḷiśa), 50 **ପଚାଶ** (pacāśa),\n  100 **ଶହ** (śaha).\n- 21: **କୁଡ଼ି ଏକ** / common form **କୋଡ଼ିଏକ** — twenty-one.\n\n## Money and count phrases\n\n- **କେତେ?** (kete?) — how much?\n- **ପାଞ୍ଚ ଟଙ୍କା** — five rupees. (**ଟଙ୍କା** = rupee/money)\n- **ମୋର ପଚାଶ ଟଙ୍କା ଅଛି.** — I have fifty rupees.\n- Age: **ମୋର କୁଡ଼ି ବର୍ଷ ବୟସ ହେଲା.** — I turned twenty.\n\n> Tens words are irregular (kuṛi, tiriśa, cāḷiśa…) like English\n> \"eleven/twelve\" — memorise them as words, not arithmetic.\n## Mini-practice\n\nCount ଏକ → ଦଶ aloud, then the tens: କୁଡ଼ି, ତିରିଶ, ଚାଳିଶ, ପଚାଶ, ଶହ.\nMarket drill: କେତେ ଦାମ? → ପଚାଶ ଟଙ୍କା → ଅଳ୍ପ କମ୍ କରନ୍ତୁ! → ସରି. The\ntens words are irregular like English \"eleven\" — memorise them as\nwords, and haggling becomes arithmetic you already know.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_or_daily",
+      "title": "ଦୈନନ୍ଦିନ ଜୀବନ · Daily Life",
+      "subtitle": "Level 2 — Sentences, questions, negation, routine",
+      "order": 2,
+      "lessons": [
+        {
+          "id": "or_daily_sentences",
+          "chapterId": "ch_or_daily",
+          "title": "ସରଳ ବାକ୍ୟ · Simple Sentences",
+          "subtitle": "SOV order and ଅଛି / ନାହିଁ — the sentence engine",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ସରଳ ବାକ୍ୟ (Simple Sentences)\n\nOdia is **SOV**: subject → object → verb. The verb closes the sentence,\nalways.\n\n## Word order\n\n- **ମୁଁ ଭାତ ଖାଉଛି.** — I am eating rice. (I rice eating-am)\n- **ସେ ବହି ପଢ଼ୁଛି.** — He/she reads a book.\n- **ପିଲାମାନେ ଖେଳୁଛନ୍ତି.** — The children are playing.\n  (plural verb -ନ୍ତି)\n\n## ଅଛି — \"there is / have\"\n\n- **ପାଣି ଅଛି.** — There is water.\n- **ମୋର ସମୟ ଅଛି.** — I have time. (to-me time is)\n- Negative: **ନାହିଁ** — **ମୋର ସମୟ ନାହିଁ.** — I have no time.\n\n## Location words\n\n**ରେ** = in/at: **ଘରେ** (at home), **ବଜାରରେ** (in the market). \"On\" is\n**ଉପରେ**, \"under\" **ତଳେ**, \"near\" **ପାଖରେ**.\n\n- **ବହିଟି ଟେବୁଲ ଉପରେ ଅଛି.** — The book is on the table.\n- **ମାଆ ଘରେ ଅଛନ୍ତି.** — Mother is at home. (respectful -ନ୍ତି)\n\n## Everyday verbs\n\n**ଯିବା** (go), **ଆସିବା** (come), **ଖାଇବା** (eat), **ପିଇବା** (drink),\n**ଶୋଇବା** (sleep), **କାମ କରିବା** (work). Verb ends: -ଉଛି (I, right\nnow), -ଉଛ (you), -ଉଛନ୍ତି (they/respect).\n## Mini-practice\n\nSwap nouns in the frames: ମୁଁ ___ ଖାଉଛି (ଭାତ/ଫଳ/ରୁଟି). ସେ ___ ପଢ଼ୁଛି\n(ବହି/ଖବର). ବହିଟି ___ ଅଛି (ଟେବୁଲ ଉପରେ/ଘରେ). Ending drill: ଖାଉଛି (I),\nଖାଉଛ (you-fr), ଖାଉଛନ୍ତି (they/resp). Verb last, ending follows the\nperson — say each frame once and the SOV rhythm locks.\n"
+        },
+        {
+          "id": "or_daily_questions",
+          "chapterId": "ch_or_daily",
+          "title": "ପ୍ରଶ୍ନ · Questions",
+          "subtitle": "କଣ, କିଏ, କେଉଁଠି, କେବେ — question words stay in place",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ପ୍ରଶ୍ନ (Questions)\n\n## The question words\n\n| Odia | Transliteration | Meaning | Example |\n|---|---|---|---|\n| କଣ | kṇa | what | ଇହା କଣ? — What is this? |\n| କିଏ | kiē | who | ସେ କିଏ? — Who is he/she? |\n| କେଉଁଠି | keuṃṭhi | where | ବସ୍ କେଉଁଠି? — Where is the bus? |\n| କେବେ | kebe | when | କେବେ ଆସିବ? — When will (you) come? |\n| କେତେ | kete | how much | କେତେ ଦାମ? — How much price? |\n| କିପରି | kipari | how | କିପରି ଯିବି? — How to go? |\n\nQuestion words sit where the answer sits — \"you where-going?\" is the\nOdia way: **ଆପଣ କେଉଁଠି ଯାଉଛନ୍ତି?**\n\n## Yes / no\n\nAdd **-କି** at the start or **-ତା?** endings: **ଆସିବ କି?** — will you\ncome? **ଠିକ୍ ଅଛି ତା?** — it's okay, right? Tone does the rest.\n\n## The answer kit\n\n- **ହଁ** (haṃ) — yes. **ନା / ନାହିଁ** — no / not-have.\n- **ଠିକ୍ ଅଛି** — it's fine (Odia's all-purpose \"okay\").\n- **ମୋର ଜଣା ନାହିଁ** — I don't know (lit. \"it is not known to me\").\n## Mini-practice\n\nAnswer, don't just ask: ଇହା କଣ? → ଇହା ବହି. ବସ୍ କେଉଁଠି? → ସେଠାରେ!\nକେବେ ଆସିବ? → ଏବେ (now). କେତେ ଦାମ? → ଚାଳିଶ ଟଙ୍କା. Question words sit\nwhere the answer sits — practise each question with its answer so\nthe slot habit forms in both directions.\n"
+        },
+        {
+          "id": "or_daily_negation",
+          "chapterId": "ch_or_daily",
+          "title": "ନିଷେଧ · Negation",
+          "subtitle": "ନାହିଁ, ନୁହେଁ, ନା — the no-family with three jobs",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ନିଷେଧ (Negation)\n\n## ନାହିଁ — \"is not there / don't have\"\n\n- **ପାଣି ନାହିଁ.** — There is no water.\n- **ମୋର ଟଙ୍କା ନାହିଁ.** — I have no money.\n- **ଆଜି ନାହିଁ** — not today.\n\n## ନୁହେଁ — \"is not\" (identity)\n\n- **ଇହା ଦୁଧ ନୁହେଁ, ପାଣି.** — This is not milk, (it is) water.\n- **ମୁଁ ଡାକ୍ତର ନୁହେଁ.** — I am not a doctor.\n\n## Verb negation\n\nVerbs negate with **ନାହିଁ** after the participle or by negative verb\nforms: **ଯାଉଛି** (I am going) → **ଯାଉନାହିଁ** (I am not going);\nfuture **ଯିବି** → **ଯିବି ନାହିଁ / ଯିବିନି** (won't go).\n\n| Positive | Negative | Meaning |\n|---|---|---|\n| ଅଛି | ନାହିଁ | there is / there isn't |\n| ହେବ | ହେବ ନାହିଁ | will happen / won't |\n| ପାରିବି | ପାରିବି ନାହିଁ | can / cannot |\n| ଦରକାର | ଦରକାର ନାହିଁ | needed / not needed |\n\n> **ନା, ନା, ଦରକାର ନାହିଁ** (\"no, no, not needed\") is the polite shop\n> refusal — with a smile it ends any upsell kindly.\n## Mini-practice\n\nPick the right no: no water? → ପାଣି ନାହିଁ. Not milk? → ଇହା ଦୁଧ\nନୁହେଁ. Am not going? → ମୁଁ ଯାଉନାହିଁ. Not needed? → ଦରକାର ନାହିଁ. Three\nno's, three jobs — ନାହିଁ existence, ନୁହେଁ identity, verb +\nନାହିଁ/ନିନି for actions. The shop refusal: ନା, ଦରକାର ନାହିଁ.\n"
+        },
+        {
+          "id": "or_daily_routine",
+          "chapterId": "ch_or_daily",
+          "title": "ଦୈନିକ କାର୍ଯ୍ୟ · Daily Routine",
+          "subtitle": "Clocks, meals, and the verbs of an ordinary Odisha day",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# ଦୈନିକ କାର୍ଯ୍ୟ (Daily Routine)\n\n## Time\n\n- **କେତେ ସମୟ ହେଲା?** — What time is it? (how much time became)\n- **ଛଅ ଟା ହେଲା.** — It's six o'clock. (**-ଟା** is the clock-tap ending)\n- **ସକାଳ** morning, **ମଧ୍ୟାହ୍ନ** noon, **ସନ୍ଧ୍ୟା** evening,\n  **ରାତି** night. **ସକାଳ ସାତ ଟାରୁ** — from seven in the morning.\n\n## A narrated day\n\n- **ମୁଁ ସକାଳ ଛଅ ଟାରେ ଉଠେ.** — I wake at six in the morning.\n- **ଚା ପିଏ.** — I drink tea. (Odia mornings run on ଚା)\n- **ଆଠ ଟାରେ କାମକୁ ଯାଏ.** — At eight I go to work.\n- **ରାତି ଦଶ ଟାରେ ଶୋଏ.** — At ten at night I sleep.\n\nNote the habitual endings: **ଉଠେ, ପିଏ, ଯାଏ, ଶୋଏ** — the plain\npresent for daily facts.\n\n## Meals, Odisha style\n\n**ଭାତ** rice (the center of everything), **ଦାଲମା**, **ମାଛ ଭଜା**\n(fried fish), **ପଖାଳ** (pakhāḷa — fermented water-rice,\nOdisha's summer icon).\n\n- **ଭୋଜନ ହେଲା?** — Is the meal ready/done?\n- **ବହୁତ ସ୍ୱାଦ!** — Very tasty!\n## Mini-practice\n\nNarrate YOUR day in five sentences: ମୁଁ ସକାଳ ___ ଟାରେ ଉଠେ. ଚା ପିଏ.\n___ ଟାରେ କାମକୁ ଯାଏ. ସନ୍ଧ୍ୟାରେ ଘରକୁ ଆସେ. ରାତି ___ ଟାରେ ଶୋଏ. The\nhabitual endings (ଉଠେ, ପିଏ, ଯାଏ, ଶୋଏ) are for facts that repeat —\nyour routine, by definition. Say it daily; you are living the\ngrammar.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_or_grammar",
+      "title": "ବ୍ୟାକରଣ · Grammar",
+      "subtitle": "Level 3 — Pronouns, tenses, cases, politeness",
+      "order": 3,
+      "lessons": [
+        {
+          "id": "or_grammar_pronouns",
+          "chapterId": "ch_or_grammar",
+          "title": "ସର୍ବନାମ · Pronouns",
+          "subtitle": "The pronoun set and the respectful -ନ୍ତି rule",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# ସର୍ବନାମ (Pronouns)\n\n## The set\n\n| Odia | Transliteration | Meaning |\n|---|---|---|\n| ମୁଁ | muṃ | I |\n| ତୁ | tu | you (very intimate) |\n| ତୁମେ | tumē | you (friendly) |\n| ଆପଣ | āpaṇa | you (respectful) |\n| ସେ | sē | he/she |\n| ଏହା | ehā | it/this |\n| ଆମେ | āmē | we |\n| ସେମାନେ | sēmānē | they |\n\n## The three you's\n\n**ତୁ** (very close/child), **ତୁମେ** (friend), **ଆପଣ** (respect —\nstrangers, elders, customers). Verb endings follow: **ଯାଉଛ** (you-int\ngo) / **ଯାଉଛ** (you-fr go) / **ଯାଉଛନ୍ତି** (you-resp go). When in\ndoubt: **ଆପଣ** + -ନ୍ତି never insults anyone.\n\n## ସେ covers both he and she\n\nOdia **ସେ** is gender-free; if needed specify **ପୁଅଟି** (the boy) /\n**ଝିଅଟି** (the girl) or a name. Objects have no grammatical gender\neither — tables and books are all **ଏହା**. (Gender-driven declensions,\nthe classic European headache, do not exist.)\n\n## Verb agreement preview\n\n**ମୁଁ କରୁଛି / ତୁମେ କରୁଛ / ସେ କରୁଛି / ଆମେ କରୁଛୁ / ସେମାନେ କରୁଛନ୍ତି** —\nI/you/you/you/are doing. One verb, five endings, all regular.\n## Mini-practice\n\nClimb the you-ladder with one verb: ତୁ ଯାଉଛ (intimate), ତୁମେ\nଯାଉଛ (friendly), ଆପଣ ଯାଉଛନ୍ତି (respectful). Then conjugate କରିବା\nacross the full set: ମୁଁ କରୁଛି, ସେ କରୁଛି, ଆମେ କରୁଛୁ, ସେମାନେ\nକରୁଛନ୍ତି. Remember: ସେ covers he AND she; objects are all ଏହା —\nno gender grammar anywhere.\n"
+        },
+        {
+          "id": "or_grammar_tenses",
+          "chapterId": "ch_or_grammar",
+          "title": "କାଳ · Tenses",
+          "subtitle": "Present progressive, habitual, past, future — କରିବା as the map",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# କାଳ (Tenses)\n\n## The four-time map on କରିବା (do)\n\n| Tense | Form | Meaning |\n|---|---|---|\n| Present progressive | କରୁଛି | I am doing |\n| Habitual present | କରେ | (I) do (daily) |\n| Past | କଲି | I did |\n| Future | କରିବି | (you) will do |\n\nProgressive = stem + **-ଉଛି/-ଉଛ/-ଉଛନ୍ତି**; habitual = **-ଏ**-family\n(କରେ, ଖାଏ, ଯାଏ); past = **-ିଲି/-ିଲା/-ିଲେ** (କଲି, ଖାଇଲି, ଗଲି);\nfuture = **-ିବି/-ିବ/-ିବା** (କରିବି, ଯିବି).\n\n## Same verb, four sentences\n\n- **ମୁଁ ଏବେ ଚା ପିଉଛି.** — I am drinking tea now.\n- **ମୁଁ ପ୍ରତିଦିନ ଚା ପିଏ.** — I drink tea every day.\n- **ଗତକାଲ ମୁଁ ଚା ପିଇଲି.** — Yesterday I drank tea.\n- **ଆସନ୍ତାକାଲି ମୁଁ ପୁରୀକୁ ଯିବି.** — Tomorrow I will go to Puri.\n\n## Time anchors\n\n**ଆଜି** (today), **ଗତକାଲ** (yesterday), **ଆସନ୍ତାକାଲି** (tomorrow),\n**ପ୍ରତିଦିନ** (every day), **ଏବେ** (now), **ପରେ** (later).\n\n> Past forms twist: ଯିବା (go) → ଗଲି (went); ଆସିବା (come) → ଆସିଲି\n> (came); ଖାଇବା (eat) → ଖାଇଲି. Learn past forms as partner-words.\n## Mini-practice\n\nFour tenses of ଖାଇବା (eat): ଖାଉଛି (am eating), ଖାଏ (eats), ଖାଇଲି\n(ate), ଖାଇବି (will eat). Build one sentence each with time anchors:\nଏବେ, ପ୍ରତିଦିନ, ଗତକାଲ, ଆସନ୍ତାକାଲି. Past-form pairs to memorise:\nଯିବା→ଗଲି, ଆସିବା→ଆସିଲି, କରିବା→କଲି.\n"
+        },
+        {
+          "id": "or_grammar_cases",
+          "chapterId": "ch_or_grammar",
+          "title": "କାରକ · Case Endings",
+          "subtitle": "To, from, in, with — the suffixes that do prepositions' job",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# କାରକ (Case Endings)\n\n## The big six\n\n| Ending | Meaning | Example |\n|---|---|---|\n| -କୁ | to | ପୁରୀକୁ (to Puri) |\n| -ରୁ | from | ଭୁବନେଶ୍ୱରରୁ (from Bhubaneswar) |\n| -ରେ | in/at | ବଜାରରେ (in the market) |\n| ସହ / -ପାଖରେ | with | ବନ୍ଧୁ ସହ (with a friend) |\n| -ର | 's / of | ରାହୁଲର ବହି (Rahul's book) |\n| object: bare or -କୁ | — | ଭାତ ଖାଅ / ଭାତକୁ ଖାଅ |\n\n## Fusion patterns\n\n**ଘର + କୁ → ଘରକୁ** (homeward); **ଘର + ରେ → ଘରେ** (at home); after\nconsonant-final nouns the -ର/-ରେ/-ରୁ slip a **-ର-** or **-ୟ-** in:\n**ଭୁବନେଶ୍ୱର + ରୁ → ଭୁବନେଶ୍ୱର**ରୁ. Expect glue sounds — they are\nregular.\n\n## Sentences to steal\n\n- **ମୁଁ ବଜାରକୁ ଯାଉଛି.** — I'm going to the market.\n- **ସେମାନେ ଦିଲ୍ଲୀରୁ ଆସିଲେ.** — They came from Delhi.\n- **ଇହା ମୋ ଆଜିଙ୍କ ଘର.** — This is my grandmother's house.\n- **ମୁଁ ବନ୍ଧୁ ସହ ସିନେମାକୁ ଗଲି.** — I went to the movies with a friend.\n\n> The **-ଙ୍କ** honorific possessive (**ମାଆଙ୍କ, ଆପଣଙ୍କ**) marks\n> respected owners — ମାଆଙ୍କ ନାମ = mother's name (hon.).\n## Mini-practice\n\nSlot the endings: ପୁରୀ___ ଯାଉଛି (→ -କୁ), ଭୁବନେଶ୍ୱର___ ଆସିଲି (→\n-ରରୁ? careful — ଭୁବନେଶ୍ୱରରୁ, glue -ର- appears), ବଜାର___ ଅଛି (→\n-ରେ), ରାହୁଲ___ ବହି (→ -ର). Watch the glue sounds with\nconsonant-final nouns — ଭୁବନେଶ୍ୱରରୁ carries a doubled ର. Fusion is\nregular once you expect it.\n"
+        },
+        {
+          "id": "or_grammar_politeness",
+          "chapterId": "ch_or_grammar",
+          "title": "ଆଦର · Politeness",
+          "subtitle": "The -ନ୍ତି respect rule, soft imperatives, and Odia titles",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# ଆଦର (Politeness & Honorifics)\n\n## The -ନ୍ତି rule\n\nRespect = plural-style verb ending **-ନ୍ତି** + plural pronoun **ଆପଣ/\nସେମାନେ**: **ସେ ଆସିଲା** (he came) → **ଆପଣ ଆସିଲେ / ମାଆ ଆସିଲେ** (mother,\nhon., came). Possessive gets **-ଙ୍କ**: **ଆପଣଙ୍କ ନାମ** (your, hon., name).\n\n## Soft imperative ladder\n\n| Command | To whom |\n|---|---|\n| ଆସ (come) | children, very close |\n| ଆସ (come, friendly) | friends, siblings |\n| ଆସନ୍ତୁ (kindly come) | respectful |\n\nThe same ladder on sit: **ବସ / ବସନ୍ତୁ** — sit / please sit. A shop line:\n**ଆସନ୍ତୁ, ବସନ୍ତୁ, କଣ ଦରକାର?** — Come, sit, what do you need?\n\n## Softeners\n\n- **ଧୀରେ** — slowly: **ଧୀରେ କହନ୍ତୁ** — please speak slowly.\n- **ଏକ ମୁହୂର୍ତ୍ତ** — one moment.\n- **ଦୟାକରି** — please (formal; notices use it).\n- **ଅଳ୍ପ** — a little: **ଅଳ୍ପ କମ୍ କରନ୍ତୁ** — reduce (the price) a little.\n\n## Titles you'll hear\n\n**ଭାଇ** (brother — any friendly male), **ମାଉସୀ/କାକୀ** (auntie),\n**ବଡ଼ ଭାଇ/ଦାଦା** (elder brother), **ସାର୍/ମେଡାମ** offices. The\nhonorific **-ନ୍ତୁ/-ଙ୍କ** endings slot into every sentence you already\nknow.\n## Mini-practice\n\nClimb the ladder: ଆସ → ଆସନ୍ତୁ (come). ବସ → ବସନ୍ତୁ (sit). କହ →\nକହନ୍ତୁ (say). Then the honorific possessive: ମାଆ___ ନାମ (→\nମାଆଙ୍କ ନାମ), ଆପଣ___ ନାମ (→ ଆପଣଙ୍କ ନାମ). Soften: ପାଣି ଦିଅ →\nଦୟାକରି ପାଣି ଦିଅନ୍ତୁ. The -ନ୍ତୁ/-ଙ୍କ pair is Odia respect in two\nendings.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_or_reading",
+      "title": "ପଠନ · Reading",
+      "subtitle": "Level 4 — Conversations, paragraphs, proverbs, review",
+      "order": 4,
+      "lessons": [
+        {
+          "id": "or_reading_conversation",
+          "chapterId": "ch_or_reading",
+          "title": "କଥୋପକଥନ · Conversations",
+          "subtitle": "At the market and at a friend's door — two real dialogues",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# କଥୋପକଥନ (Conversations)\n\n## At the market\n\n> **ଦୋକାନୀ:** ଆସନ୍ତୁ ଆସନ୍ତୁ, କଣ ଦରକାର?\n> **ଆପଣ:** ଟମାଟୋ କେତେ ଦାମ?\n> **ଦୋକାନୀ:** କିଲୋ ଚାଳିଶ ଟଙ୍କା.\n> **ଆପଣ:** ଅଳ୍ପ କମ୍ କରନ୍ତୁ!\n> **ଦୋକାନୀ:** ସରି, ତିରିଶ ଟଙ୍କା ଦିଅନ୍ତୁ.\n> **ଆପଣ:** ଠିକ୍ ଅଛି, ଦୁଇ କିଲୋ ଦିଅନ୍ତୁ.\n\nTranslation: \"Come, come — what do you need?\" / \"How much are\ntomatoes?\" / \"Forty rupees a kilo.\" / \"Please reduce a little!\" /\n\"Okay, give thirty.\" / \"Fine, give me two kilos.\"\n\n## At a friend's door\n\n> **ଆପଣ:** ନମସ୍କାର! ମାଆ ଘରେ ଅଛନ୍ତି କି?\n> **ସେ:** ଅଛନ୍ତି. ଭିତରକୁ ଆସନ୍ତୁ.\n> **ଆପଣ:** ପରେ ଆସିବି, ଏବେ କାମକୁ ଯିବି.\n> **ସେ:** ଠିକ୍ ଅଛି. ଆସିବି ଆସିବି!\n\nTranslation: \"Hello! Is mother at home?\" / \"She is. Please come in.\" /\n\"I'll come later — I have to go to work now.\" / \"Okay. Do come back!\"\n\n## Notice\n\n- **-କି** flips a statement into a yes/no question.\n- **କଣ ଦରକାର?** — \"what is needed?\" — the standard shop opener.\n- **ଆସିବି ଆସିବି** — \"I'll come, I'll come\" — the farewell that promises\n  return.\n## Mini-practice\n\nAct both roles of the market dialogue from memory, then change the\nitem: ଆଳୁ (potato), ପିଆଜ (onion), ମାଛ (fish). Change the numbers\ntoo. The frames — କଣ ଦରକାର? / କେତେ ଦାମ? / ଅଳ୍ପ କମ୍ କରନ୍ତୁ! / ଠିକ୍\nଅଛି — never change; nouns and numerals rotate.\n"
+        },
+        {
+          "id": "or_reading_paragraph",
+          "chapterId": "ch_or_reading",
+          "title": "ଅନୁଚ୍ଛେଦ ପଠନ · Reading a Paragraph",
+          "subtitle": "A postcard from Puri — real sentences, familiar words",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# ଅନୁଚ୍ଛେଦ ପଠନ (Reading a Paragraph)\n\n## The text\n\n**ପୁରୀ ଯାତ୍ରା**\n\nଗତ ସପ୍ତାହ ମୁଁ ପୁରୀକୁ ଗଲି. ଭୁବନେଶ୍ୱରରୁ ଟ୍ରେନରେ ଏକ ଘଣ୍ଟା. ସକାଳେ ସମୁଦ୍ର\nକୂଳରେ ଚାଲିଲି — ଢେଉ ଆଉ ବାଲି! ମନ୍ଦିର ଦର୍ଶନ କଲି. ମଧ୍ୟାହ୍ନରେ ମାଛ ଭାତ ଖାଇଲି —\nବହୁତ ସ୍ୱାଦ! ସନ୍ଧ୍ୟାରେ ସମୁଦ୍ରରେ ସୂର୍ଯ୍ୟାସ୍ତ ଦେଖିଲି.\n\n## Sentence by sentence\n\n1. **ଗତ ସପ୍ତାହ ମୁଁ ପୁରୀକୁ ଗଲି.** — Last week I went to Puri.\n   (ଗତ = past; -କୁ = to; ଗଲି = went)\n2. **ଭୁବନେଶ୍ୱରରୁ ଟ୍ରେନରେ ଏକ ଘଣ୍ଟା.** — One hour by train from\n   Bhubaneswar. (-ରୁ from; -ରେ by/in)\n3. **ସକାଳେ ସମୁଦ୍ର କୂଳରେ ଚାଲିଲି.** — In the morning (I) walked on the\n   seashore. (ସମୁଦ୍ର = sea; କୂଳ = shore)\n4. **ଢେଉ ଆଉ ବାଲି!** — Waves and sand! (ଆଉ = and)\n5. **ମନ୍ଦିର ଦର୍ଶନ କଲି.** — Had darshan of the temple. (ଦର୍ଶନ = holy\n   viewing — the culturally right verb for temples)\n6. **ମଧ୍ୟାହ୍ନରେ ମାଛ ଭାତ ଖାଇଲି — ବହୁତ ସ୍ୱାଦ!** — At noon ate fish-rice —\n   very tasty!\n\n## Comprehension check\n\n- Travel time? **ଏକ ଘଣ୍ଟା** (one hour).\n- What was eaten? **ମାଛ ଭାତ**.\n- The holy-viewing word: **ଦର୍ଶନ**.\n\nYou just read a real paragraph — every word came from your earlier\nlessons. That is the ladder working.\n## Mini-practice\n\nRe-read the Puri paragraph aloud twice, then rebuild from memory:\nlast-week / I / Puri-to / went. Where does ଗଲି land? (At the end —\nevery sentence.) Then edit one detail and re-say: ଟ୍ରେନରେ → ବସ୍\nରେ (by bus). Editing your own sentences is the last skill before\nfluency.\n"
+        },
+        {
+          "id": "or_reading_proverbs",
+          "chapterId": "ch_or_reading",
+          "title": "ପ୍ରବାଦ · Proverbs",
+          "subtitle": "Four Odia proverbs and the culture inside them",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# ପ୍ରବାଦ (Proverbs & Culture)\n\nProverbs (**ପ୍ରବାଦ**) are grammar, vocabulary and worldview in one\nline. Four classics:\n\n## 1. ନିଜ ଘର ତୁଳନାରେ ପର ଘର ସ୍ୱର୍ଗ\n\n\"Another's house seems heaven compared to one's own.\" — the grass is\ngreener on the other side. **ନିଜ** (own), **ପର** (other's),\n**ଘର** (house), **ସ୍ୱର୍ଗ** (heaven), **ତୁଳନା** (comparison).\n\n## 2. ଯାହା କାମ, ସେହି ସାଜ\n\n\"That which is useful is the true adornment.\" — function is beauty; a\ncraftsman's proverb from Odisha's artisan culture. Apply it to\nlearning: useful words first, fancy words later. **କାମ** (work/use),\n**ସାଜ** (adornment).\n\n## 3. ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ\n\n\"A little knowledge is equal to poison.\" — half-knowledge misleads.\n**ଅଳ୍ପ** (little), **ଜ୍ଞାନ** (knowledge), **ବିଷ** (poison),\n**ସମ** (equal to). A perfect studying proverb — and you now hold\nnon-ଅଳ୍ପ script knowledge.\n\n## 4. ଗଛରୁ ଫଳ ତଳକୁ ଖସେ, ଉପରକୁ କେବେ ନାହିଁ\n\n\"Fruit falls from the tree downward, never upward.\" — everything\nnaturally settles; rising needs effort. **ଗଛ** (tree), **ଫଳ**\n(fruit), **ଖସେ** (falls), **ତଳ** (down), **ଉପର** (up). The engine's\nreview scheduler exists precisely to fight this proverb.\n\n> Proverbs keep SOV order too — read each aloud twice; the rhythm is\n> half the memory.\n## Mini-practice\n\nMatch proverb to situation: someone envies another's home (→ ନିଜ\nଘର ତୁଳନାରେ ପର ଘର ସ୍ୱର୍ଗ). You skipped half the lesson and got\nconfused (→ ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ). You feel practice slipping (→ ଗଛରୁ\nଫଳ ତଳକୁ ଖସେ, ଉପରକୁ କେବେ ନାହିଁ — that is why reviews exist). Say\neach with its story.\n"
+        },
+        {
+          "id": "or_reading_review",
+          "chapterId": "ch_or_reading",
+          "title": "ପୁନରାବୃତ୍ତି · Review",
+          "subtitle": "The whole beginner journey — ଅ to ହ in one page",
+          "difficulty": "advanced",
+          "xpReward": 25,
+          "order": 3,
+          "content": "# ପୁନରାବୃତ୍ତି (Review)\n\n## Script ladder\n\n- Vowels **ସ୍ୱର** (11), consonant grid **ବ୍ୟଞ୍ଜନ**, vowel signs\n  **ମାତ୍ରା**, conjuncts **ଯୁକ୍ତାକ୍ଷର**.\n- The dotted flap pair **ଡ଼/ଢ଼** — in the language's own name!\n- Left-side ି sign; top-diagonal ର୍; below ୍ର.\n\n## Words banked\n\nନମସ୍କାର, ଧନ୍ୟବାଦ, ମାଫ କରନ୍ତୁ, କେମିତି ଅଛନ୍ତି, ଭଲ ଅଛି, ମୋର ନାମ…,\nମାଆ, ବାପା, ଭାଇ, ଭଉଣୀ, ଏକ…ଦଶ, ଶହ, କେତେ, ଟଙ୍କା, ଭାତ, ଚା, ପାଣି,\nମାଛ, ପଖାଳ.\n\n## Structures banked\n\n- **ଅଛି / ନାହିଁ** existence; **ନୁହେଁ** identity negation.\n- Question words in place + **-କି** yes/no.\n- Four tenses: -ଉଛି / -ଏ / -ିଲି / -ିବି.\n- Cases: -କୁ, -ରୁ, -ରେ, ସହ, -ର, honorific -ଙ୍କ.\n- Respect ladder: ତୁ → ତୁମେ → ଆପଣ + -ନ୍ତି.\n\n## Self-check\n\n1. Finish **ମୋର ନାମ ___** with your name; ask mine respectfully.\n2. Order two kilos of tomatoes and haggle once.\n3. Say one past-tense sentence with **ଯିବା** (go).\n4. Read **ଓଡ଼ିଆ**, **ସ୍ୱାଗତ**, **କାର୍ଯ୍ୟ** aloud — dotted ଡ଼ included.\n\nAll four? The adaptive engine now schedules your reviews and lifts the\nnext rung. ଶୁଭକାମନା! (Best wishes!)\n## Mini-practice\n\nThe four self-checks — do them NOW, aloud: 1) ମୋର ନାମ ___ + ask\nback respectfully, 2) haggle two kilos of tomatoes, 3) one\npast-tense sentence with ଯିବା, 4) read ଓଡ଼ିଆ, ସ୍ୱାଗତ, କାର୍ଯ୍ୟ (dotted\nଡ଼ included). All smooth? Your practice engine moves to\nmaintenance mode — short, spaced reviews of exactly what dipped.\n"
+        }
+      ]
+    }
+  ],
+  "quizzes": [],
+  "vocabulary": [],
+  "notes": "Part J curriculum for Odia (M9). Native-script lessons grounded in beginner-accurate Odia; exercises live in lib/features/learn/data/odia_exercises.dart keyed by lesson id."
+}

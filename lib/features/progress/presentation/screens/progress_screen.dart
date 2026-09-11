@@ -12,7 +12,8 @@
 ///   4. Level + mastery meters.
 ///   5. Weak areas (real persisted mastery).
 ///   6. Chapters with exam performance.
-///   7. Achievements entry.
+///   7. LEARNING MILESTONES - competency certifications (Milestone 7).
+///   8. Achievements entry.
 library;
 
 import 'package:flutter/material.dart';
@@ -27,9 +28,13 @@ import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
+import 'package:vaanix_app/features/progress/domain/learning_milestones.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/progress_meter.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -48,6 +53,7 @@ class ProgressScreen extends ConsumerWidget {
     final nextAction = ref.watch(adaptiveNextActionProvider);
     final weakLessons = ref.watch(weakLessonsProvider);
     final chapterBest = ref.watch(chapterBestFractionProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     // Extract curriculum data (or empty list while loading/error).
     final curriculum = curriculumAsync.valueOrNull ?? [];
@@ -78,6 +84,25 @@ class ProgressScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
+          // ---- 0. Curriculum load state (loading / error) --------------
+          // The stats below stay live (XP/mastery are independent), but a
+          // failed chapter list must never silently read as zeros.
+          if (curriculumAsync.isLoading)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 12),
+              child: VaaniXLoadingIndicator(message: 'Loading your chapters…'),
+            )
+          else if (curriculumAsync.hasError) ...[
+            ErrorStateWidget(
+              title: 'Could not load chapters',
+              message:
+                  'Your progress is safe — the chapter list just did not '
+                  'load this time.',
+              retryLabel: 'Try again',
+              onRetry: () => ref.invalidate(curriculumProvider),
+            ),
+            const SizedBox(height: 8),
+          ],
           // ---- 1. Adaptive next focus (always first) ------------------
           _FocusCard(
             action: nextAction,
@@ -126,7 +151,7 @@ class ProgressScreen extends ConsumerWidget {
                   icon: Icons.menu_book_rounded,
                   label: 'Lessons Done',
                   value: '$completedCount',
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -182,7 +207,7 @@ class ProgressScreen extends ConsumerWidget {
                 Text(
                   '${(completedCount / totalLessons * 100).round()}% complete',
                   style: AppTextStyles.labelSmall(
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
             ],
@@ -210,7 +235,7 @@ class ProgressScreen extends ConsumerWidget {
                         ),
                         Text('$done/${chapter.lessons.length}',
                             style: AppTextStyles.labelMedium(
-                                color: AppColors.primary)),
+                                color: colorScheme.primary)),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -255,14 +280,18 @@ class ProgressScreen extends ConsumerWidget {
             );
           }),
 
-          // ---- 5. Achievements entry ------------------------------------
+          // ---- 5. Learning milestones (competency, M7) ----------------
           const SizedBox(height: 20),
+          const _MilestonesCard(),
+
+          // ---- 6. Achievements entry ------------------------------------
+          const SizedBox(height: 16),
           VaaniXCard(
-            onTap: () => context.go(RouteNames.achievements),
+            onTap: () => context.push(RouteNames.achievements),
             child: Row(
               children: [
-                const Icon(Icons.emoji_events_rounded,
-                    color: AppColors.primary, size: 28),
+                Icon(Icons.emoji_events_rounded,
+                    color: colorScheme.primary, size: 28),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -308,6 +337,7 @@ class _LevelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     return Container(
@@ -324,7 +354,8 @@ class _LevelCard extends StatelessWidget {
             children: [
               Text(
                 'Level $level',
-                style: AppTextStyles.titleMedium(color: AppColors.primary),
+                style: AppTextStyles.titleMedium(
+                    color: colorScheme.primary),
               ),
               const Spacer(),
               Text(
@@ -498,7 +529,7 @@ class _FocusCard extends StatelessWidget {
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.primary, size: 24),
+            child: Icon(icon, color: colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -506,7 +537,8 @@ class _FocusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('NEXT FOCUS',
-                    style: AppTextStyles.labelSmall(color: AppColors.primary)),
+                    style: AppTextStyles.labelSmall(
+                        color: colorScheme.primary)),
                 const SizedBox(height: 2),
                 Text(action.title, style: AppTextStyles.titleMedium()),
                 const SizedBox(height: 2),
@@ -572,6 +604,141 @@ class _WeakAreasCard extends StatelessWidget {
               style: AppTextStyles.labelSmall(color: subtext),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// LEARNING MILESTONES section — competency certifications rendered from
+/// the pure milestone engine ([milestoneEvaluationsProvider]). Every card
+/// shows the honest progress fraction and the current-evidence line, so a
+/// locked milestone always tells the learner exactly what is still missing.
+class _MilestonesCard extends ConsumerWidget {
+  const _MilestonesCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final evaluations = ref.watch(milestoneEvaluationsProvider);
+    if (evaluations.isEmpty) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+    final unlockedCount = evaluations.where((m) => m.isUnlocked).length;
+
+    return VaaniXCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.flag_rounded,
+                  color: colorScheme.primary, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text('Learning milestones',
+                    style: AppTextStyles.titleMedium()),
+              ),
+              Text(
+                '$unlockedCount / ${evaluations.length}',
+                style: AppTextStyles.labelMedium(color: colorScheme.primary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Proof of what you can do - unlocked by real demonstrations, '
+            'never by tapping a button.',
+            style: AppTextStyles.bodySmall(color: subtext),
+          ),
+          const SizedBox(height: 8),
+          for (final evaluation in evaluations)
+            _MilestoneTile(evaluation: evaluation),
+        ],
+      ),
+    );
+  }
+}
+
+class _MilestoneTile extends StatelessWidget {
+  const _MilestoneTile({required this.evaluation});
+
+  final MilestoneEvaluation evaluation;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+    final colorScheme = Theme.of(context).colorScheme;
+    final definition = evaluation.definition;
+    final unlocked = evaluation.isUnlocked;
+    final accent = unlocked ? AppColors.success : colorScheme.primary;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Emoji medal — dimmed while locked, full colour when unlocked.
+          Opacity(
+            opacity: unlocked ? 1.0 : 0.45,
+            child: Container(
+              width: 40,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: accent.withValues(alpha: 0.35)),
+              ),
+              child: Text(definition.emoji,
+                  style: const TextStyle(fontSize: 18)),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(definition.title,
+                          style: AppTextStyles.bodyLarge()),
+                    ),
+                    if (unlocked)
+                      const Icon(Icons.check_circle_rounded,
+                          color: AppColors.success, size: 18),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  unlocked
+                      ? definition.competency
+                      : evaluation.evidenceLine,
+                  style: AppTextStyles.bodySmall(color: subtext),
+                ),
+                const SizedBox(height: 6),
+                ProgressMeter(
+                  value: unlocked ? 1.0 : evaluation.progress,
+                  height: 6,
+                  color: accent,
+                  semanticLabel:
+                      '${definition.title} progress',
+                ),
+                if (definition.xpReward > 0) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    unlocked
+                        ? 'Unlocked - +${definition.xpReward} XP earned'
+                        : '+${definition.xpReward} XP on unlock',
+                    style: AppTextStyles.labelSmall(
+                      color: unlocked ? AppColors.success : subtext,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );

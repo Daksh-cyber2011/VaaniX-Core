@@ -43,6 +43,7 @@ abstract final class VanReactionResolver {
       VanEventType.userMessageReceived => VanState.thinking,
       VanEventType.userIdle => VanState.idle,
       VanEventType.achievementUnlocked => VanState.achievement,
+      VanEventType.milestoneUnlocked => VanState.achievement,
       VanEventType.streakExtended => VanState.surprised,
       VanEventType.onboardingCompleted => VanState.happy,
       VanEventType.errorOccurred => VanState.error,

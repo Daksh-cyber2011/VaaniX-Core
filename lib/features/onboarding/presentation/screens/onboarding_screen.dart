@@ -113,16 +113,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ),
 
-                  // Page indicators
+                  // Page indicators — position is announced for screen
+                  // readers, never conveyed by the dots alone.
                   Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(_totalPages, (i) {
-                        return _PageDot(
-                          isActive: i == currentPage,
-                          isPassed: i < currentPage,
-                        );
-                      }),
+                    child: Semantics(
+                      label:
+                          'Page ${currentPage + 1} of $_totalPages',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(_totalPages, (i) {
+                          return ExcludeSemantics(
+                            child: _PageDot(
+                              isActive: i == currentPage,
+                              isPassed: i < currentPage,
+                            ),
+                          );
+                        }),
+                      ),
                     ),
                   ),
 

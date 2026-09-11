@@ -48,6 +48,13 @@ void main() {
           'totalTokens': 420,
         },
       }),
+      // Milestone 7 stores that must NOT survive a full reset: an unlocked
+      // milestone, a daily-XP counter and a claimed review bonus.
+      'learning_milestones_unlocked': jsonEncode({
+        'first_words': {'unlockedAt': '2026-09-10T10:00:00.000Z'},
+      }),
+      'daily_xp_2026-09-11': '35',
+      'daily_review_claimed_2026-09-11': '1',
     });
     final prefs = await SharedPreferences.getInstance();
 
@@ -82,6 +89,15 @@ void main() {
         reason: 'the response cache must be emptied');
     expect(prefs.getString('ai_token_usage'), '{}',
         reason: 'the token-usage history must be cleared (defect #9)');
+
+    // Milestone 7 stores are progress, not identity — the reset clears
+    // them so milestones re-earn and the daily loops restart fresh.
+    expect(prefs.getString('learning_milestones_unlocked'), '{}',
+        reason: 'unlocked learning milestones must be cleared by reset');
+    expect(prefs.getString('daily_xp_2026-09-11'), isNull,
+        reason: 'daily-XP counters must be cleared by reset');
+    expect(prefs.getString('daily_review_claimed_2026-09-11'), isNull,
+        reason: 'review-claim markers must be cleared by reset');
 
     // …while the learner's identity survives the reset.
     expect(prefs.getString(AppConstants.keyUserCompanionName), 'Mita',

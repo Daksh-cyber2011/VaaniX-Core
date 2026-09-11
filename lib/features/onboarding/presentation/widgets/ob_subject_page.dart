@@ -86,8 +86,6 @@ class ObSubjectPage extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Text('', style: TextStyle(fontSize: 20)),
-                  const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

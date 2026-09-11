@@ -11,6 +11,12 @@
 ///
 /// The loader is exposed as an AsyncNotifierProvider so the Learn screen
 /// can show loading/error states while the curriculum is being parsed.
+///
+/// Part 0 extension: [loadLearnCurriculum] + [LearnCurriculumNotifier]
+/// add a parallel path that dispatches by Learn Mode language. The
+/// legacy Sanskrit path ([loadCurriculum], [CurriculumNotifier]) is
+/// preserved unchanged for Exam Mode and for the unselected-state
+/// fallback on the Learn screen.
 library;
 
 import 'dart:convert';
@@ -21,6 +27,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_lesson_content.dart';
 import 'package:vaanix_app/features/learn/data/unit2_lesson_content.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 /// Loads chapters from JSON, falls back to hardcoded Dart on any error.
@@ -133,3 +141,144 @@ final curriculumProvider =
     AsyncNotifierProvider<CurriculumNotifier, List<Chapter>>(
   CurriculumNotifier.new,
 );
+
+// ─── Learn Mode Per-Language Curriculum (Part 0 Foundation) ────────────────
+//
+// Parallel curriculum path for the 10 VaaniX Learn Mode languages.
+// Distinct from [curriculumProvider] (the legacy Sanskrit / Exam Mode
+// curriculum) so the two never collide: Exam Mode keeps reading
+// [loadAllQuizQuestions] + [curriculumProvider], while Learn Mode reads
+// [learnCurriculumProvider(language)] once the learner has picked a
+// language from the catalogue.
+//
+// Part 0 ships ONLY the infrastructure. All 10 languages return an
+// empty chapter list (the stub JSON files in assets/curriculum/learn/
+// parse successfully but contain zero chapters). Parts A–J replace
+// each stub with a real curriculum; the loader contract stays identical.
+
+/// Schema version for Learn Mode curriculum JSON.
+///
+/// Bumped on every breaking schema change in `assets/curriculum/learn/`.
+/// The loader validates the version field and refuses to load a newer
+/// schema than it understands (returns empty + logs) so a mismatched
+/// asset never silently produces a corrupted UI.
+const int kLearnCurriculumSchemaVersion = 1;
+
+/// Loads the curriculum for one Learn Mode language.
+///
+/// Reads `assets/curriculum/learn/<code>.json` (where `<code>` is the
+/// language's ISO 639-1 code from [LearnLanguageSpec.code]) and parses
+/// it into a list of [Chapter] objects.
+///
+/// Part 0 contract: the stub JSON files ship with `chapters: []`, so
+/// this returns an empty list for every language. The loader is still
+/// fully exercised end-to-end (asset read → JSON parse → schema check
+/// → chapter map) so Parts A–J only need to swap the asset contents.
+///
+/// Failure modes (all return an empty list rather than throwing):
+/// - asset missing → caught by the outer try/catch
+/// - JSON malformed → caught by jsonDecode
+/// - schema version newer than [kLearnCurriculumSchemaVersion] → refused
+/// - chapters array missing → defaults to `[]`
+///
+/// The Learn screen treats an empty list as "curriculum coming in
+/// Part X" — never as an error, because the absence is expected in
+/// Part 0 and the picker must keep working.
+Future<List<Chapter>> loadLearnCurriculum(LearnLanguage language) async {
+  final spec = learnLanguageSpec(language);
+  try {
+    final raw = await rootBundle.loadString(spec.curriculumAssetPath);
+    final json = jsonDecode(raw) as Map<String, dynamic>;
+
+    // Schema guard: refuse to load a newer schema than we understand.
+    final version = (json['schemaVersion'] as num?)?.toInt() ?? 0;
+    if (version > kLearnCurriculumSchemaVersion) {
+      // Future schema — leave to a newer app build. Returning empty
+      // keeps the picker alive; the Learn screen shows "coming soon".
+      return const [];
+    }
+
+    final chaptersJson = json['chapters'] as List<dynamic>? ?? [];
+    return chaptersJson
+        .map((e) => Chapter.fromJson(e as Map<String, dynamic>))
+        .toList();
+  } catch (_) {
+    // Asset missing or malformed — expected for languages whose
+    // curriculum hasn't shipped yet (Parts A–J). Empty list, not error.
+    return const [];
+  }
+}
+
+/// AsyncNotifier that loads ONE Learn Mode language's curriculum.
+///
+/// Family-keyed by [LearnLanguage] so each language's curriculum loads
+/// lazily and independently. The notifier is intentionally minimal —
+/// it delegates to [loadLearnCurriculum] and exposes a [reload] hook
+/// for future cache invalidation (e.g., after an asset hot-reload
+/// during development, or a remote curriculum update later).
+class LearnCurriculumNotifier
+    extends FamilyAsyncNotifier<List<Chapter>, LearnLanguage> {
+  @override
+  Future<List<Chapter>> build(LearnLanguage language) async {
+    return loadLearnCurriculum(language);
+  }
+
+  Future<void> reload() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => loadLearnCurriculum(arg));
+  }
+}
+
+/// Per-language Learn Mode curriculum provider.
+///
+/// Returns an empty list for every language in Part 0 (no curricula
+/// authored yet). Parts A–J replace each stub asset with real content
+/// without changing this provider's contract.
+final learnCurriculumProvider =
+    AsyncNotifierProvider.family<LearnCurriculumNotifier, List<Chapter>,
+        LearnLanguage>(
+  LearnCurriculumNotifier.new,
+);
+
+// ─── Active Curriculum (Part A integration) ────────────────────────────────
+//
+// The "active" curriculum is what the Learn screen, lesson content route,
+// and exercise route actually render. It dispatches by the learner's
+// currently selected Learn language:
+//   - null (no selection) → legacy Sanskrit curriculum (curriculumProvider)
+//   - LearnLanguage.hindi → learnCurriculumProvider(hindi)
+//   - any other language → learnCurriculumProvider(that language)
+//
+// This indirection lets the Learn screen read ONE provider regardless of
+// whether the learner is in the legacy Sanskrit path or a Learn Mode
+// language, without the screens needing to know about the dispatch.
+//
+// Part A (Hindi) is the first language to ship real content. All other
+// languages still return empty (their stubs are unchanged) — the Learn
+// screen shows the "curriculum in development" banner for those.
+
+/// FutureProvider that returns the active curriculum chapters.
+///
+/// Watches [selectedLearnLanguageProvider] and delegates to either the
+/// legacy [curriculumProvider] or the per-language [learnCurriculumProvider]
+/// family. Re-fetches automatically when the selection changes.
+///
+/// Returns an empty list (not an error) when:
+/// - a Learn language is selected but its curriculum hasn't shipped yet
+/// - the per-language asset fails to load (missing, malformed, schema mismatch)
+///
+/// The Learn screen treats an empty list as "no content available" and
+/// shows the appropriate empty state.
+final activeCurriculumProvider =
+    FutureProvider<List<Chapter>>((ref) async {
+  final selected = ref.watch(selectedLearnLanguageProvider);
+  if (selected == null) {
+    // Legacy path: no Learn language chosen → show the Sanskrit Exam
+    // Mode curriculum (the pre-Part-0 default). This keeps the Learn
+    // screen working for users who haven't picked a language yet.
+    return ref.watch(curriculumProvider.future);
+  }
+  // Learn Mode per-language path. Returns the selected language's
+  // chapters (empty for languages whose curriculum hasn't shipped).
+  return ref.watch(learnCurriculumProvider(selected).future);
+});

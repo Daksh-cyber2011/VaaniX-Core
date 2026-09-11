@@ -56,8 +56,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after splash delay
-    Future.delayed(const Duration(seconds: 2), _navigate);
+    // Navigate after the splash animation completes — snappier than the
+    // old fixed 2 s wait while still letting the reveal finish.
+    Future.delayed(const Duration(milliseconds: 1400), _navigate);
   }
 
   /// Decides the first real route after the splash animation.
@@ -115,7 +116,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Learn Sanskrit with ${AppConstants.companionDefaultName}',
+                  'Learn languages with ${AppConstants.companionDefaultName}',
                   style: AppTextStyles.bodyMedium(
                     color: AppColors.subtextDark,
                   ),

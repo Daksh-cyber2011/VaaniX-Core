@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "language": {
+    "enum": "gujarati",
+    "iso639_1": "gu",
+    "englishName": "Gujarati",
+    "nativeName": "ગુજરાતી",
+    "scriptName": "Gujarati",
+    "scriptCode": "Gujr",
+    "direction": "ltr"
+  },
+  "levels": [
+    {
+      "id": "lvl0",
+      "name": "Script Foundation",
+      "order": 0,
+      "chapters": [
+        "ch_gu_script"
+      ]
+    },
+    {
+      "id": "lvl1",
+      "name": "Beginner",
+      "order": 1,
+      "chapters": [
+        "ch_gu_greet"
+      ]
+    },
+    {
+      "id": "lvl2",
+      "name": "Elementary",
+      "order": 2,
+      "chapters": [
+        "ch_gu_daily"
+      ]
+    },
+    {
+      "id": "lvl3",
+      "name": "Lower Intermediate",
+      "order": 3,
+      "chapters": [
+        "ch_gu_grammar"
+      ]
+    },
+    {
+      "id": "lvl4",
+      "name": "Intermediate",
+      "order": 4,
+      "chapters": [
+        "ch_gu_reading"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch_gu_script",
+      "title": "ગુજરાતી લિપિ · Gujarati Script",
+      "subtitle": "Level 0 — Vowels, consonants, matras, conjuncts",
+      "order": 0,
+      "lessons": [
+        {
+          "id": "gu_script_vowels",
+          "chapterId": "ch_gu_script",
+          "title": "સ્વર · Vowels",
+          "subtitle": "Gujarati vowels — no horizontal top line",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# સ્વર (Vowels)\n\nGujarati uses the **Gujarati script** (ગુજરાતી લિપિ), which evolved from Devanagari but **does NOT have the horizontal top line** (શિરોરેખા). This makes Gujarati visually distinct from Hindi/Marathi (which use Devanagari with the top line).\n\n## The Vowels (સ્વર)\n\nGujarati has the same vowel system as Devanagari:\n\n| Vowel | Roman | Example | Meaning |\n|---|---|---|---|\n| અ | a | અન્ન | food |\n| આ | ā | આંખ | eye |\n| ઇ | i | ઇતર | other |\n| ઈ | ī | ઈશ્વર | God |\n| ઉ | u | ઉન | wool |\n| ઊ | ū | ઊંટ | camel |\n| એ | e | એક | one |\n| ઐ | ai | ઐરાવત | elephant |\n| ઓ | o | ઓરડો | room |\n| ઔ | au | ઔષધ | medicine |\n| ઋ | ru | ઋષિ | sage (rare) |\n\n> **Key visual difference:** Gujarati looks like Devanagari without the top line. Compare: Gujarati ક (no line) vs Devanagari क (with line). If you know Hindi/Marathi script, you can learn Gujarati script very quickly — just remove the top line!\n\n## Short vs Long Distinction\n\nGujarati preserves the short/long distinction:\n\n- અ (a) → આ (ā): અન્ન (ann — food) vs આંખ (ā̃kh — eye)\n- ઇ (i) → ઈ (ī): ઇતર (itar — other) vs ઈશ્વર (īshwar — God)\n- ઉ (u) → ઊ (ū): ઉન (un — wool) vs ઊંટ (ū̃ṭ — camel)\n\n> Like Hindi and Marathi, Gujarati maintains clear short/long vowel distinctions. Bengali has lost some of these, but Gujarati preserves them.\n\n## Reading Practice — Gujarati Words\n\n- અન્ન (ann) — food / grain\n- આંખ (ā̃kh) — eye\n- એક (ek) — one\n- પાણી (pāṇī) — water\n- રોટલી (roṭlī) — flatbread (bread)\n- નમસ્તે (namastē) — hello\n\n> **પાણી (pāṇī)** = water — same as Hindi's पानी but written in Gujarati script. **રોટલી (roṭlī)** = flatbread — the Gujarati word for what Hindi calls रोटी.\n\n## The Inherent Vowel\n\nLike Devanagari, a Gujarati consonant without a matra carries the inherent 'a':\n\n- ક alone = 'ka'\n- ક + ા (આ matra) = કા = 'kā'\n- ક + િ (ઇ matra) = કિ = 'ki'\n\n> The matra system is identical to Devanagari — just the shapes look slightly different without the top line.\n\n## Cultural Note: Gujarati Script\n\nGujarati script was historically used for business and trade records. It evolved from the **Śāradā script** and became standardized in the 19th century. Mahatma Gandhi wrote in Gujarati, and the script is used in Gujarat, Daman, Diu, and among Gujarati diaspora communities worldwide."
+        },
+        {
+          "id": "gu_script_consonants",
+          "chapterId": "ch_gu_script",
+          "title": "વ્યંજન · Consonants",
+          "subtitle": "Gujarati consonants — same sounds as Devanagari, different look",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# વ્યંજન (Consonants)\n\nGujarati has the same consonant system as Devanagari — the same sounds, same groups, same aspiration patterns. The only difference is the visual form (no top line).\n\n## The Consonant Groups\n\n### ક-વર્ગ (Velars)\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| ક | ka | કલમ | pen |\n| ખ | kha | ખજૂર | date (fruit) |\n| ગ | ga | ગામ | village |\n| ઘ | gha | ઘર | house |\n| ઙ | ṅa | (rare) | — |\n\n### ચ-વર્ગ (Palatals)\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| ચ | cha | ચા | tea |\n| છ | chha | છત્ર | umbrella |\n| જ | ja | જળ | water (poetic) |\n| ઝ | jha | ઝાડ | tree |\n| ઞ | ña | (rare) | — |\n\n### ટ-વર્ગ (Retroflex)\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| ટ | ṭa | ટમેટા | tomato |\n| ઠ | ṭha | ઠંડુ | cold |\n| ડ | ḍa | ડબ્બો | box |\n| ઢ | ḍha | ઢોલ | drum |\n| ણ | ṇa | પણ | also/then |\n\n### ત-વર્ગ (Dentals)\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| ત | ta | તળવુ | frying pan |\n| થ | tha | થાળી | plate |\n| દ | da | દરવાજો | door |\n| ધ | dha | ધાબળો | blanket |\n| ન | na | નદી | river |\n\n### પ-વર્ગ (Labials)\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| પ | pa | પાણી | water |\n| ફ | pha | ફળ | fruit |\n| બ | ba | બહેન | sister |\n| ભ | bha | ભાઈ | brother |\n| મ | ma | મમ્મી | mother |\n\n### Semivowels and Sibilants\n| Consonant | Roman | Example | Meaning |\n|---|---|---|---|\n| ય | ya | યુવાન | young |\n| ર | ra | રસ્તો | road |\n| લ | la | લાલ | red |\n| વ | va | વાવ | well |\n| શ | śa | શહેર | city |\n| ષ | ṣa | (rare) | — |\n| સ | sa | સવાર | morning |\n| હ | ha | હાથ | hand |\n\n> **Key point:** If you know Hindi or Marathi consonants, you already know Gujarati consonants — they produce the same sounds. The only learning curve is recognizing the visual forms without the top line.\n\n## No ળ in Standard Gujarati\n\nUnlike Marathi and Telugu, standard Gujarati does NOT have the retroflex lateral **ळ (ḷa)** as a separate letter. Words that have ळ in Marathi (काळ) use લ in Gujarati (કાળ is written કાલ). However, some Gujarati dialects do pronounce it.\n\n## Reading Practice\n\nTry these Gujarati words:\n\n- કલમ (kalam) — pen\n- ચા (chā) — tea\n- પાણી (pāṇī) — water\n- ભાઈ (bhāī) — brother\n- બહેન (bahan) — sister\n- મમ્મી (mammī) — mother\n- પપ્પા (pappā) — father\n- નમસ્તે (namastē) — hello\n\n> **મમ્મી (mammī)** and **પપ્પા (pappā)** are the common Gujarati words for mother and father — borrowed from English/Parsi influence but now fully integrated into Gujarati."
+        },
+        {
+          "id": "gu_script_matras",
+          "chapterId": "ch_gu_script",
+          "title": "માત્રા · Vowel Signs",
+          "subtitle": "How vowels attach to consonants in Gujarati",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# માત્રા (Vowel Signs)\n\nGujarati matras (માત્રા) work identically to Devanagari matras — the same system, same positions, same logic. The only difference is the visual shape (no top line).\n\n## The Matras\n\n| Vowel | Matra | Consonant + Matra | Result |\n|---|---|---|---|\n| અ (a) | (none) | ક | ka |\n| આ (ā) | ા | કા | kā |\n| ઇ (i) | િ | કિ | ki |\n| ઈ (ī) | ી | કી | kī |\n| ઉ (u) | ુ | કુ | ku |\n| ઊ (ū) | ૂ | કૂ | kū |\n| એ (e) | ે | કે | ke |\n| ઐ (ai) | ૈ | કૈ | kai |\n| ઓ (o) | ો | કો | ko |\n| ઔ (au) | ૌ | કૌ | kau |\n| ઋ (ru) | ૃ | કૃ | kru |\n\n> Note: The matra for short 'i' (િ) goes to the LEFT of the consonant (same as Devanagari). All other matras go to the right.\n\n## Reading Practice — Gujarati Words\n\n| Word | Breakdown | Reading | Meaning |\n|---|---|---|---|\n| મમ્મી | મ + ્મ + ી | mam-mī | mother |\n| પપ્પા | પ + ્પ + ા | pap-pā | father |\n| પાણી | પ + ા + ણ + ી | pā-ṇī | water |\n| રોટલી | ર + ો + ટ + ્લ + ી | ro-ṭ-lī | flatbread |\n| નમસ્તે | ન + મ + ્સ + ત + ે | nam-stē | hello |\n| ભાઈ | ભ + ા + ઈ | bhā-ī | brother |\n\n## The Halant (્) — Virama\n\nThe mark ્ (halant) cancels the inherent vowel:\n\n- ક + ્ + ષ + ટ = ક્ષટ (kṣaṭ)\n- ત + ્ + ર = ત્ર (tra)\n- મ + ્ + મ = મ્મ (mm — as in મમ્મી)\n- પ + ્ + પ = પ્પ (pp — as in પપ્પા)\n\n## Common Conjuncts\n\n| Conjunct | Written | Example | Meaning |\n|---|---|---|---|\n| ક + ષ | ક્ષ | ક્ષત્રિય | warrior |\n| ત + ર | ત્ર | ત્રણ | three |\n| જ + ઞ | જ્ઞ | જ્ઞાન | knowledge |\n| શ + ર | શ્ર | શ્રી | Sri |\n| મ + મ | મ્મ | મમ્મી | mother |\n| પ + પ | પ્પ | પપ્પા | father |\n| ન + મ | ન્મ | નમસ્તે | hello |\n\n## Writing Practice\n\nTry writing these Gujarati words:\n\n1. **namastē** (hello) → નમસ્તે\n2. **pāṇī** (water) → પાણી\n3. **roṭlī** (flatbread) → રોટલી\n4. **bhāī** (brother) → ભાઈ\n5. **bahan** (sister) → બહેન\n6. **mammī** (mother) → મમ્મી"
+        },
+        {
+          "id": "gu_script_barakhadi",
+          "chapterId": "ch_gu_script",
+          "title": "બારાખડી · Consonant + Vowel Combinations",
+          "subtitle": "The full grid of consonant-vowel combinations",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# બારાખડી (Barakhadi)\n\nThe grid of one consonant combined with each vowel. Since Gujarati matras are the same as Devanagari (just without the top line), mastering this is quick if you know Hindi/Marathi.\n\n## ક Barakhadi\n\n| Consonant + Vowel | Written | Reading |\n|---|---|---|\n| ક + અ | ક | ka |\n| ક + આ | કા | kā |\n| ક + ઇ | કિ | ki |\n| ક + ઈ | કી | kī |\n| ક + ઉ | કુ | ku |\n| ક + ઊ | કૂ | kū |\n| ક + એ | કે | ke |\n| ક + ઐ | કૈ | kai |\n| ક + ઓ | કો | ko |\n| ક + ઔ | કૌ | kau |\n| ક + ઋ | કૃ | kru |\n\n## મ Barakhadi\n\n| Consonant + Vowel | Written | Reading |\n|---|---|---|\n| મ + અ | મ | ma |\n| મ + આ | મા | mā |\n| મ + ઇ | મિ | mi |\n| મ + ઈ | મી | mī |\n| મ + ઉ | મુ | mu |\n| મ + ઊ | મૂ | mū |\n| મ + એ | મે | me |\n| મ + ઐ | મૈ | mai |\n| મ + ઓ | મો | mo |\n| મ + ઔ | મૌ | mau |\n\n## Reading Practice — Real Gujarati Words\n\n- એક (ek) — one\n- પાણી (pāṇī) — water\n- રોટલી (roṭlī) — flatbread\n- ભાઈ (bhāī) — brother\n- બહેન (bahan) — sister\n- નમસ્તે (namastē) — hello\n- મમ્મી (mammī) — mother\n- પપ્પા (pappā) — father\n- સવાર (savār) — morning\n- રાત (rāt) — night\n\n> Gujarati words often look like Hindi words with the top line removed. એક (ek — one) = Devanagari एक. પાણી (pāṇī — water) = Devanagari पानी. The similarity makes Gujarati one of the easiest Indian scripts to learn if you already know Devanagari.\n\n## Writing Practice\n\nWrite these Gujarati words:\n\n1. **namastē** (hello) → નમસ્તે\n2. **pāṇī** (water) → પાણી\n3. **roṭlī** (bread) → રોટલી\n4. **bhāī** (brother) → ભાઈ\n5. **bahan** (sister) → બહેન\n6. **ek** (one) → એક"
+        },
+        {
+          "id": "gu_script_conjuncts",
+          "chapterId": "ch_gu_script",
+          "title": "સંયુક્ત વ્યંજન · Conjunct Consonants",
+          "subtitle": "Two consonants joined without a vowel",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 4,
+          "content": "# સંયુક્ત વ્યંજન (Conjunct Consonants)\n\nGujarati conjuncts work exactly like Devanagari conjuncts — the halant (્) cancels the inherent vowel, and consonants join. The forms look different (no top line) but the logic is identical.\n\n## Common Conjuncts\n\n| Conjunct | Written | Example | Meaning |\n|---|---|---|---|\n| ક + ષ | ક્ષ | ક્ષમતા | capacity |\n| ત + ર | ત્ર | ત્રણ | three |\n| જ + ઞ | જ્ઞ | જ્ઞાન | knowledge |\n| શ + ર | શ્ર | શ્રીમાન | sir |\n| મ + મ | મ્મ | મમ્મી | mother |\n| પ + પ | પ્પ | પપ્પા | father |\n| ન + મ | ન્મ | નમસ્તે | hello |\n| ન + દ | ન્દ | આનંદ | joy |\n| ટ + લ | ટ્લ | રોટલી | flatbread |\n\n## Reading Practice — Common Words\n\n- **નમસ્તે** (namastē) — hello: ન + મ + ્સ + ત + ે\n- **આનંદ** (ānand) — joy: આ + ન + ્દ\n- **પ્રેમ** (prem) — love: પ + ્ર + ે + મ\n- **મિત્ર** (mitra) — friend: મ + િ + ત + ્ર\n- **અન્ન** (ann) — food: અ + ન + ્ન\n- **જ્ઞાન** (jñān) — knowledge: જ + ્ઞ + ા + ન\n\n## The Anusvara (ં)\n\nThe dot above (ં) nasalises the following consonant:\n\n- આંખ (ā̃kh) — eye: the ં nasalises the vowel\n- પાંચ (pā̃ch) — five: the ં nasalises\n- સંગ (saṅga) — company: ં = /ng/ before ગ\n\n## The Chandrabindu (ઁ)\n\nThe moon-dot (ઁ) nasalises the vowel itself:\n\n- આઁખ (ā̃kh) — alternative spelling of આંખ\n- હઁસી (hãsī) — laughter\n\n> In modern Gujarati, ં is more common than ઁ. Both serve similar nasalization functions.\n\n## Reading Gujarati Sentences\n\nTry reading this short sentence:\n\n> હું ગુજરાતી શીખું છું.\n> (huṃ gujarātī śīkhuṃ chuṃ.)\n> I am learning Gujarati.\n\nBreakdown:\n- હું (huṃ) — I\n- ગુજરાતી (gujarātī) — Gujarati\n- શીખું છું (śīkhuṃ chuṃ) — am learning\n\n> Gujarati uses a two-part verb construction: **શીખું** (verb stem + ending) + **છું** (auxiliary 'am'). This is similar to Hindi's शीखता हूँ but with different verb forms."
+        }
+      ]
+    },
+    {
+      "id": "ch_gu_greet",
+      "title": "શુભેચ્છા અને પરિચય · Greetings & Introductions",
+      "subtitle": "Level 1 — Namaste, names, family, numbers",
+      "order": 1,
+      "lessons": [
+        {
+          "id": "gu_greet_namaste",
+          "chapterId": "ch_gu_greet",
+          "title": "નમસ્તે · Greetings",
+          "subtitle": "Gujarati greetings — નમસ્તે and જય શ્રી કૃષ્ણ",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# નમસ્તે (Greetings)\n\nGujarati greetings center on **નમસ્તે (namastē)** — similar to Hindi's नमस्ते but with Gujarati pronunciation and cultural context. Gujaratis also use **જય શ્રી કૃષ્ણ (jay śrī kṛṣṇa)** — a distinctly Gujarati greeting.\n\n## The Universal Greeting\n\n**નમસ્તે (namastē)** is the most common Gujarati greeting:\n\n- નમસ્તે। — Hello.\n- નમસ્તે, કેમ છો? — Hello, how are you? (informal/respectful)\n\n> **નમસ્તે** is used universally — any time, any context. It's the same word as Hindi's नमस्ते, written in Gujarati script.\n\n## The Distinctive Gujarati Greeting: જય શ્રી કૃષ્ણ\n\n**જય શ્રી કૃષ્ણ (jay śrī kṛṣṇa)** — 'Victory to Lord Krishna' — is a uniquely Gujarati greeting, especially among Gujarati Hindus:\n\n- જય શ્રી કૃષ્ણ। — Hello / Greetings.\n- જય શ્રી કૃષ્ણ, કેમ છો? — Hello, how are you?\n\n> This greeting reflects Gujarat's deep devotion to Lord Krishna (who established his kingdom at Dwarka in Gujarat). Other variations: **જય સ્વામિનારાયણ (jay svāminārāyaṇ)** — used by followers of Swaminarayan; **રામ રામ (rām rām)** — a simpler traditional greeting.\n\n## Time-Based Greetings\n\n| Time | Greeting | Meaning |\n|---|---|---|\n| Morning | સુપ્રભાત | Good morning |\n| Morning | શુભ સવાર | Good morning |\n| Noon | શુભ બપોર | Good afternoon |\n| Evening | શુભ સાંજ | Good evening |\n| Night | શુભ રાત્રિ | Good night |\n\n## Informal Greetings\n\n- **હાય (hāy)** — Hi (from English)\n- **કેમ છો? (kem cho?)** — How are you? (informal/respectful)\n- **ક્યા હાલ છે? (kyā hāl che?)** — What's up? / How are things?\n\n## Responses\n\n- **હું મજામાં છું (huṃ majāmā̃ chuṃ)** — I am fine (lit: I am in fun)\n- **બધું બરાબર છે (badhuṃ barābar che)** — Everything is fine\n- **ઠીક છે (ṭhīk che)** — OK / fine\n- **સારું છે (sāruṃ che)** — Good\n\n> **હું મજામાં છું** literally means 'I am in fun/enjoyment' — a very Gujarati way to say 'I'm fine'. It reflects the Gujarati cultural emphasis on enjoyment and good living.\n\n## Parting Phrases\n\n- **ફરી મળીશું (pharī mlīśuṃ)** — See you again\n- **આવજો (āvjo)** — Come again / Bye (lit: come — a warm Gujarati farewell)\n- **બાય (bāy)** — Bye (from English)\n- **ચાલ્યો (chālyo)** — I'm going (informal, male)\n\n> **આવજો (āvjo)** — 'come' — is a uniquely Gujarati way of saying goodbye. It literally means 'come [again]' — expressing the hope that you'll meet again. This warm farewell is characteristic of Gujarati hospitality.\n\n## Cultural Note: Gujarati Hospitality\n\nGujaratis are famous for their hospitality — **આતિથ્ય (ātithya)**. The saying goes: \"અતિથિ દેવો ભવ (atithi devo bhava)\" — 'The guest is God.' When you visit a Gujarati home, you will likely be offered:\n- પાણી (water)\n- ચા (tea)\n- નસ્તો (snacks — dhokla, khandvi, fafda)\n\n> Refusing hospitality is considered impolite. Even a small acceptance shows appreciation."
+        },
+        {
+          "id": "gu_greet_intro",
+          "chapterId": "ch_gu_greet",
+          "title": "મારું નામ · Introductions",
+          "subtitle": "Introducing yourself in Gujarati",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# પરિચય (Introductions)\n\nGujarati introductions follow SOV word order. The verb **છું (chuṃ)** means 'am' and is the same for all speakers (no gender agreement in the verb 'to be').\n\n## Introducing Yourself\n\n- **મારું નામ ... છે (māruṃ nām ... che)** — My name is ...\n- **હું ... છું (huṃ ... chuṃ)** — I am ...\n\nExamples:\n- મારું નામ રાહુલ છે। — My name is Rahul.\n- હું અનિતા છું। — I am Anita.\n- મારું નામ સારા છે, હું અમેરિકાથી આવી છું। — My name is Sara, I have come from America.\n\n> **મારું (māruṃ)** = my (neuter). Gujarati possessives change by gender: મારું (neuter), મારી (feminine), મારા (masculine plural). Since નામ (name) is neuter, it's મારું નામ.\n\n## Asking Names\n\n- **તમારું નામ શું છે? (tamāruṃ nāṃ śuṃ che?)** — What is your name? (respectful)\n- **તારું નામ શું છે? (tāruṃ nāṃ śuṃ che?)** — What is your name? (informal)\n\n## Where Are You From?\n\n- **તમે ક્યાંથી છો? (tame kyā̃thī cho?)** — Where are you from? (respectful)\n- **તું ક્યાંથી છે? (tuṃ kyā̃thī che?)** — Where are you from? (informal)\n\nResponses:\n- **હું અમદાવાદથી છું। (huṃ amdāvādthī chuṃ.)** — I am from Ahmedabad.\n- **હું ગુજરાતથી છું। (huṃ gujarātthī chuṃ.)** — I am from Gujarat.\n\n> The postposition **-થી (-thī)** means 'from': અમદાવાદ + થી = અમદાવાદથી (from Ahmedabad).\n\n## What Do You Do?\n\n- **તમે શું કરો છો? (tame śuṃ karo cho?)** — What do you do?\n\nResponses:\n- **હું વિદ્યાર્થી છું। (huṃ vidyārthī chuṃ.)** — I am a student. (male)\n- **હું વિદ્યાર્થિની છું। (huṃ vidyārthinī chuṃ.)** — I am a student. (female)\n- **હું શિક્ષક છું। (huṃ śikṣak chuṃ.)** — I am a teacher.\n\n> Note: The verb **છું (chuṃ)** = 'am' is the SAME for male and female speakers. Gujarati verbs in the present tense do NOT change by gender (unlike Hindi). This is simpler than Hindi/Marathi.\n\n## Full Introduction Example\n\n> નમસ્તે! મારું નામ વિક્રમ છે. હું અમદાવાદમાં રહું છું. હું એન્જિનિયર છું. તમને મળીને આનંદ થયો.\n>\n> Hello! My name is Vikram. I live in Ahmedabad. I am an engineer. Nice to meet you.\n\n**તમને મળીને આનંદ થયો (tamanē mḷīnē ānand thayo)** — 'meeting you, joy happened' — is the standard way to say 'nice to meet you'.\n\n## Practice\n\n1. મારું નામ _____ છે। — My name is _____.\n2. હું _____-માં રહું છું। — I live in _____.\n3. હું _____ છું। — I am a _____."
+        },
+        {
+          "id": "gu_greet_family",
+          "chapterId": "ch_gu_greet",
+          "title": "પરિવાર · Family",
+          "subtitle": "Gujarati kinship terms",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# પરિવાર (Family)\n\nGujarati kinship terms are similar to Hindi's but with some distinctively Gujarati words.\n\n## Immediate Family\n\n| Gujarati | Roman | Meaning |\n|---|---|---|\n| મમ્મી / માં | mammī / mā̃ | mother |\n| પપ્પા / દાદાજી | pappā / dādājī | father |\n| ભાઈ | bhāī | brother |\n| બહેન / બહેનજી | bahan / bahanjī | sister |\n| દીકરો | dīkro | son |\n| દીકરી | dīkrī | daughter |\n| પતિ | pati | husband |\n| પત્ની | patnī | wife |\n\n> **મમ્મી (mammī)** and **પપ્પા (pappā)** are the most common everyday words for mother and father in Gujarati — borrowed from English/Parsi but now fully Gujarati. માં (mā̃) is the traditional word.\n\n## Grandparents\n\n| Gujarati | Roman | Meaning |\n|---|---|---|\n| દાદાજી | dādājī | grandfather (paternal) |\n| દાદીમા | dādīmā | grandmother (paternal) |\n| નાનાજી | nānājī | grandfather (maternal) |\n| નાનીમા | nānīmā | grandmother (maternal) |\n\n> Gujarati, like Hindi, distinguishes paternal (દાદા/દાદી) from maternal (નાના/નાની) grandparents. The -જી (-jī) and -મા (-mā) suffixes show respect.\n\n## Uncles and Aunts\n\n| Gujarati | Roman | Meaning |\n|---|---|---|\n| કાકા | kākā | father's brother |\n| કાકી | kākī | father's brother's wife |\n| મામા | māmā | mother's brother |\n| મામી | māmī | mother's brother's wife |\n| ફોઈ | foī | father's sister |\n| માસી | māsī | mother's sister |\n\n## Talking About Family\n\n- **મારા પપ્પા ડૉક્ટર છે। (mārā pappā ḍākṭar che.)** — My father is a doctor.\n- **મારી મમ્મી શિક્ષિકા છે। (mārī mammī śikṣikā che.)** — My mother is a teacher.\n- **મારે બે ભાઈ છે। (māre be bhāī che.)** — I have two brothers.\n- **મારે એક બહેન છે। (māre ek bahan che.)** — I have one sister.\n\n> Notice: Gujarati uses **મારે (māre)** for 'I have' — literally 'to me there is'. મારે બે ભાઈ છે = 'to me two brothers are'. This is different from Hindi's मेरे पास and similar to Bengali's আমার.\n\n## Sample Description\n\n> અમારો પરિવાર મોટો છે. દાદાજી, દાદીમા, મમ્મી-પપ્પા, મારા બે ભાઈ, એક બહેન અને હું — બધા સાથે રહીએ છીએ. મારા મોટા ભાઈ એન્જિનિયર છે અને મારી બહેન ડૉક્ટર છે. હું હજુ ભણું છું.\n>\n> Our family is big. Grandfather, grandmother, mother-father, my two brothers, one sister, and I — all live together. My older brother is an engineer and my sister is a doctor. I am still studying."
+        },
+        {
+          "id": "gu_greet_numbers",
+          "chapterId": "ch_gu_greet",
+          "title": "આંકડા · Numbers",
+          "subtitle": "Gujarati numerals ૦-૯",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# આંકડા (Numbers)\n\nGujarati uses its own numerals (૦-૯), which are visually distinct from Devanagari (०-९) and other Indian numeral systems.\n\n## Gujarati Numerals\n\n| Digit | Gujarati | Name | Roman |\n|---|---|---|---|\n| 0 | ૦ | શૂન્ય | śūnya |\n| 1 | ૧ | એક | ek |\n| 2 | ૨ | બે | be |\n| 3 | ૩ | ત્રણ | traṇ |\n| 4 | ૪ | ચાર | chār |\n| 5 | ૫ | પાંચ | pā̃ch |\n| 6 | ૬ | છ | chha |\n| 7 | ૭ | સાત | sāt |\n| 8 | ૮ | આઠ | āṭh |\n| 9 | ૯ | નવ | nav |\n\n> **Gujarati numbers are distinct from Hindi:** 2 = બે (be) vs Hindi दो (do), 3 = ત્રણ (traṇ) vs Hindi तीन (tīn), 6 = છ (chha) vs Hindi छह (chah), 9 = નવ (nav) vs Hindi नौ (nau).\n\n## 1–10\n\n| Number | Gujarati | Roman |\n|---|---|---|\n| 1 | એક | ek |\n| 2 | બે | be |\n| 3 | ત્રણ | traṇ |\n| 4 | ચાર | chār |\n| 5 | પાંચ | pā̃ch |\n| 6 | છ | chha |\n| 7 | સાત | sāt |\n| 8 | આઠ | āṭh |\n| 9 | નવ | nav |\n| 10 | દસ | das |\n\n## Tens\n\n| Number | Gujarati | Roman |\n|---|---|---|\n| 10 | દસ | das |\n| 20 | વીસ | vīs |\n| 30 | ત્રીસ | trīs |\n| 40 | ચાલીસ | cālīs |\n| 50 | પચાસ | pacās |\n| 60 | સાઠ | sāṭh |\n| 70 | સિત્તેર | sitter |\n| 80 | એંસી | ẽsī |\n| 90 | નેવું | nevũ |\n| 100 | સો | so |\n\n> **સો (so)** = 100 — similar to Hindi's सौ (sau) but with a different vowel. The Gujarati numerals (૦-૯) look visually distinct from Devanagari — they're more cursive and flowing.\n\n## Using Numbers\n\n- **મારે બે ભાઈ છે। (māre be bhāī che.)** — I have two brothers.\n- **આ પુસ્તક પચાસ રૂપિયાની છે। (e pustak pacās rūpiyānī che.)** — This book is fifty rupees.\n\n## Practice\n\n1. 5 → પાંચ\n2. 10 → દસ\n3. 100 → સો"
+        }
+      ]
+    },
+    {
+      "id": "ch_gu_daily",
+      "title": "રોજિંદા જીવન · Daily Life",
+      "subtitle": "Level 2 — Sentences, questions, negation, routine",
+      "order": 2,
+      "lessons": [
+        {
+          "id": "gu_daily_sentences",
+          "chapterId": "ch_gu_daily",
+          "title": "સરળ વાક્યો · Simple Sentences",
+          "subtitle": "SOV word order in Gujarati",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# સરળ વાક્યો (Simple Sentences)\n\nGujarati follows **Subject-Object-Verb (SOV)** word order. The verb always comes last. Gujarati present-tense verbs do NOT change by gender — the auxiliary **છું/છે/છો** is the same for male and female speakers.\n\n## The SOV Pattern\n\n- હું (S) રોટલી (O) ખાઉં છું (V)। — I eat flatbread.\n\n## More Examples\n\n| English | Gujarati |\n|---|---|\n| I read a book. | હું પુસ્તક વાંચું છું। |\n| She drinks tea. | તે ચા પીએ છે। |\n| We speak Gujarati. | અમે ગુજરાતી બોલીએ છીએ। |\n| They go home. | તેઓ ઘરે જાય છે। |\n\n## The Verb 'to be' — છું, છે, છો\n\n| Pronoun | Verb | Example |\n|---|---|---|\n| હું (I) | છું (chuṃ) | હું વિદ્યાર્થી છું। |\n| તું (you inf.) | છે (che) | તું મિત્ર છે। |\n| તમે (you resp.) | છો (cho) | તમે શિક્ષક છો। |\n| તે (he/she) | છે (che) | તે ડૉક્ટર છે। |\n| અમે (we) | છીએ (chīe) | અમે ગુજરાતી છીએ। |\n| તેઓ (they) | છે (che) | તેઓ માણસ છે। |\n\n> **No gender in the verb 'to be'!** હું વિદ્યાર્થી છું (I am a student) — same for male and female speakers. This is simpler than Hindi/Marathi.\n\n## Negation\n\nAdd **નથી (nathī)** to negate:\n\n- હું વિદ્યાર્થી છું। → હું વિદ્યાર્થી **નથી**। — I am not a student.\n- તે ડૉક્ટર છે। → તે ડૉક્ટર **નથી**। — He is not a doctor.\n\n## Question Words\n\n| Word | Meaning | Example |\n|---|---|---|\n| શું (śuṃ) | what | આ શું છે? |\n| કોણ (koṇ) | who | તે કોણ છે? |\n| ક્યાં (kyā̃) | where | તમે ક્યાં જાઓ છો? |\n| ક્યારે (kyāre) | when | તે ક્યારે આવશે? |\n| કેમ (kem) | how | તમે કેમ છો? |\n| શા માટે (śā māṭe) | why | તમે શા માટે જાઓ છો? |\n| કેટલા (keṭlā) | how much/many | આ કેટલાનું છે? |\n\n## Yes/No Questions\n\nAdd **શું (śuṃ)** at the start:\n\n- તે ડૉક્ટર છે। → **શું** તે ડૉક્ટર છે? — Is he a doctor?\n\n## Practice\n\n1. I eat rice. → હું ભાત ખાઉં છું।\n2. She drinks tea. → તે ચા પીએ છે।\n3. Is this a book? → શું આ પુસ્તક છે?"
+        },
+        {
+          "id": "gu_daily_questions",
+          "chapterId": "ch_gu_daily",
+          "title": "પ્રશ્નો · Questions",
+          "subtitle": "Asking questions in Gujarati",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# પ્રશ્નો (Questions)\n\n## શું (What)\n- આ શું છે? — What is this?\n- તમે શું કરો છો? — What do you do?\n\n## કોણ (Who)\n- તે કોણ છે? — Who is he/she?\n\n## ક્યાં (Where)\n- તમે ક્યાંથી છો? — Where are you from?\n- બજાર ક્યાં છે? — Where is the market?\n\n## ક્યારે (When)\n- તમે ક્યારે આવશો? — When will you come?\n\n## કેમ (How)\n- તમે કેમ છો? — How are you?\n\n## શા માટે (Why)\n- તમે શા માટે જાઓ છો? — Why do you go?\n\n## Conversational Example\n\n> **રાહુલ:** નમસ્તે! તમે ક્યાંથી છો?\n> **સારા:** હું અમેરિકાથી છું. અને તમે?\n> **રાહુલ:** હું અમદાવાદથી. તમે ભારતમાં ક્યારે આવ્યા?\n> **સારા:** હું એક અઠવાડિયા પહેલા આવી.\n> **રાહુલ:** ભારત તમને કેમ લાગે છે?\n> **સારા:** ઘણું સારું! લોકો ખૂબ મદદગાર છે.\n\n## Practice\n\n1. Answer: હું અમદાવાદથી છું। → Question: તમે ક્યાંથી છો?\n2. Answer: હું શિક્ષક છું। → Question: તમે શું કરો છો?"
+        },
+        {
+          "id": "gu_daily_negation",
+          "chapterId": "ch_gu_daily",
+          "title": "નકાર · Negation",
+          "subtitle": "નથી, નહિ, મા — Gujarati negation",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# નકાર (Negation)\n\nGujarati has two main negation words: **નથી (nathī)** for present tense and **નહિ (nahi)** for future/general negation.\n\n## નથી (nathī) — Present Tense Negation\n\n- હું વિદ્યાર્થી છું। → હું વિદ્યાર્થી **નથી**। — I am not a student.\n- તે ડૉક્ટર છે। → તે ડૉક્ટર **નથી**। — He is not a doctor.\n- હું જાઉં છું। → હું જાઉં **નથી**। — I don't go.\n\n## નહિ (nahi) — Future/General Negation\n\n- હું જઈશ। → હું જઈશ **નહિ**। — I will not go.\n- તે આવશે। → તે આવશે **નહિ**। — He will not come.\n\n## મા (mā) — Negative Command\n\n- જવા **મા**! — Don't go!\n- રડવા **મા**। — Don't cry.\n- ચિંતા કરવા **મા**। — Don't worry.\n\n## Common Negative Phrases\n\n- ખબર નથી (khabar nathī) — I don't know\n- કંઈ નથી (kaṃhī nathī) — nothing / it's nothing\n- ક્યાંય નથી (kyā̃y nathī) — nowhere\n- ક્યારેય નહિ (kyārey nahi) — never\n\n## Practice\n\n1. હું જાઉં છું। → હું જાઉં નથી।\n2. તે ડૉક્ટર છે। → તે ડૉક્ટર નથી।\n3. ખાવા. → ખાવા મા! (Don't eat!)"
+        },
+        {
+          "id": "gu_daily_routine",
+          "chapterId": "ch_gu_daily",
+          "title": "રોજિંદી દિનચર્યા · Daily Routine",
+          "subtitle": "Talking about everyday activities",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# રોજિંદી દિનચર્યા (Daily Routine)\n\n## Morning Activities\n\n| Gujarati | Roman | Meaning |\n|---|---|---|\n| સવારે ઊઠવું | savāre ūṭhvuṃ | to wake up |\n| દાંત સાફ કરવા | dā̃t sāf kare | to brush teeth |\n| સ્નાન કરવું | snān karvuṃ | to bathe |\n| ચા પીવી | chā pīvī | to drink tea |\n| નાસ્તો કરવો | nāsto kare | to have breakfast |\n\n## Present Tense\n\n- હું ઊઠું છું (huṃ ūṭhuṃ chuṃ) — I wake up\n- તે ઊઠે છે (te ūṭhe che) — He/she wakes up\n- અમે જઈએ છીએ (ame jīe chīe) — We go\n\n> The verb **છું (chuṃ)** is the same for male and female speakers — no gender agreement in present tense verbs.\n\n## Time Expressions\n\n- રોજ (roj) — daily\n- સવાર (savār) — morning\n- બપોર (bapor) — afternoon\n- સાંજ (sā̃j) — evening\n- રાત (rāt) — night\n- આજે (āje) — today\n- કાલે (kāle) — tomorrow/yesterday\n\n## Sample Routine\n\n> હું રોજ સવારે છ વાગ્યે ઊઠું છું. પછી દાંત સાફ કરું છું અને સ્નાન કરું છું. સાત વાગ્યે ચા પીઉં છું અને નાસ્તો કરું છું. આઠ વાગ્યે શાળામાં જાઉં છું.\n\n## Practice\n\nDescribe your routine: હું રોજ સવારે _____ વાગ્યે ઊઠું છું."
+        }
+      ]
+    },
+    {
+      "id": "ch_gu_grammar",
+      "title": "વ્યાકરણ · Grammar",
+      "subtitle": "Level 3 — Pronouns, 3 genders, tenses, postpositions",
+      "order": 3,
+      "lessons": [
+        {
+          "id": "gu_grammar_pronouns",
+          "chapterId": "ch_gu_grammar",
+          "title": "સર્વનામ · Pronouns",
+          "subtitle": "Gujarati pronouns — હું, તું, તમે, તે",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# સર્વનામ (Pronouns)\n\n## Personal Pronouns\n\n| Person | Pronoun | Meaning |\n|---|---|---|\n| 1st sg | હું (huṃ) | I |\n| 1st pl | અમે (ame) | we (exclusive) |\n| 1st pl | આપણે (āpṇe) | we (inclusive) |\n| 2nd inf | તું (tuṃ) | you (informal) |\n| 2nd resp | તમે (tame) | you (respectful) |\n| 3rd sg | તે (te) | he/she |\n| 3rd pl | તેઓ (teo) | they |\n\n## Three Levels of 'You'\n\n1. **તું (tuṃ)** — intimate (friends, children)\n2. **તમે (tame)** — respectful (elders, strangers)\n3. **આપ (āp)** — very formal (rare, literary)\n\n> Gujarati's તમે (tame) is like Hindi's आप — respectful but common. તું (tuṃ) is like Hindi's तू.\n\n## Possessive Forms\n\n| Pronoun | Possessive | Meaning |\n|---|---|---|\n| હું | મારું/મારી/મારા | my (n/f/m) |\n| અમે | અમારું/અમારી/અમારા | our |\n| તું | તારું/તારી/તારા | your |\n| તમે | તમારું/તમારી/તમારા | your |\n| તે | તેનું/તેની/તેના | his/her |\n\n> Gujarati possessives change by the GENDER of the noun possessed (like Hindi): મારું નામ (my name — neuter), મારી બહેન (my sister — feminine), મારા ભાઈ (my brother — masculine plural).\n\n## Practice\n\n1. _____ ઘરે જાઉં છું। → હું\n2. _____ નામ શું છે? → તમારું\n3. _____ ભાઈ ડૉક્ટર છે। → મારા"
+        },
+        {
+          "id": "gu_grammar_gender",
+          "chapterId": "ch_gu_grammar",
+          "title": "લિંગ · Three Genders",
+          "subtitle": "Gujarati has three genders (like Marathi)",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# લિંગ (Gender)\n\nGujarati has **THREE grammatical genders**: masculine (પુલ્લિંગ), feminine (સ્ત્રીલિંગ), and **neuter (નપુંસકલિંગ)** — like Marathi but unlike Hindi.\n\n## The Three Genders\n\n### Masculine\n- તે છોકરો (te chokro) — that boy\n- તે ભાઈ (te bhāī) — that brother\n\n### Feminine\n- તે છોકરી (te chokrī) — that girl\n- તે બહેન (te bahan) — that sister\n\n### Neuter — Gujarati's Distinctive Gender\n- તે પુસ્તક (te pustak) — that book\n- તે ઘર (te ghar) — that house\n- તે નામ (te nām) — that name\n- તે પાણી (te pāṇī) — that water\n\n> Like Marathi, Gujarati has a neuter gender. Many nouns that are masculine/feminine in Hindi are NEUTER in Gujarati: પુસ્તક (book — neuter in Gujarati, feminine in Hindi), ઘર (house — neuter in Gujarati, masculine in Hindi).\n\n## Possessive Agreement\n\nThe possessive changes by the gender of the thing possessed:\n\n- મારું નામ (māruṃ nām) — my name (neuter)\n- મારી બહેન (mārī bahan) — my sister (feminine)\n- મારા ભાઈ (mārā bhāī) — my brother (masculine)\n\n## Practice\n\n1. _____ પુસ્તક (book) → મારું (neuter)\n2. _____ બહેન (sister) → મારી (feminine)\n3. _____ ભાઈ (brother) → મારા (masculine)"
+        },
+        {
+          "id": "gu_grammar_tenses",
+          "chapterId": "ch_gu_grammar",
+          "title": "કાળ · Tenses",
+          "subtitle": "Present, past, and future tenses",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# કાળ (Tenses)\n\n## Present Tense\n\nUses verb stem + auxiliary:\n\n| Subject | Auxiliary | Example (જવું = to go) |\n|---|---|---|\n| હું (I) | છું | હું જાઉં છું (I go) |\n| તું (you inf.) | છે | તું જાય છે (you go) |\n| તમે (you resp.) | છો | તમે જાઓ છો |\n| તે (he/she) | છે | તે જાય છે |\n| અમે (we) | છીએ | અમે જઈએ છીએ |\n| તેઓ (they) | છે | તેઓ જાય છે |\n\n> The auxiliary **છું/છે/છો** does NOT change by gender — same for male and female speakers.\n\n## Past Tense\n\n- હું ગયો (huṃ gayo) — I went (male)\n- હું ગઈ (huṃ gaī) — I went (female)\n- તે ગયો (te gayo) — He went\n- તે ગઈ (te gaī) — She went\n\n> **Past tense DOES mark gender** in Gujarati (unlike present tense). Male: -યો (-yo), Female: -ઈ (-ī). This is different from the present tense which is gender-neutral.\n\n## Future Tense\n\n- હું જઈશ (huṃ jaīś) — I will go\n- તે આવશે (te āvaśe) — He/she will come\n\n## Practice\n\n1. હું જાઉં છું। (past, male) → હું ગયો.\n2. તે ખાય છે। (future) → તે ખાશે."
+        },
+        {
+          "id": "gu_grammar_postpositions",
+          "chapterId": "ch_gu_grammar",
+          "title": "પોસ્ટપોઝિશન્સ · Postpositions",
+          "subtitle": "Gujarati case system: -માં, -ને, -થી, -નું",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# પોસ્ટપોઝિશન્સ (Postpositions)\n\n## Core Postpositions\n\n| Postposition | Meaning | Example |\n|---|---|---|\n| -માં (-mā̃) | in | ઘરમાં — in the house |\n| -ને (-ne) | to | મને — to me |\n| -થી (-thī) | from / by | અમદાવાદથી — from Ahmedabad |\n| -નું/ની/ના (-nuṃ/nī/nā) | of | મારું — my |\n| -પર (-par) | on | ટેબલ પર — on the table |\n| -સાથે (-sāthe) | with | મારી સાથે — with me |\n| -માટે (-māṭe) | for | તમારા માટે — for you |\n\n## -માં (-mā̃) — In\n\n- ઘરમાં (gharmā̃) — in the house\n- શાળામાં (śāḷāmā̃) — in the school\n- અમદાવાદમાં (amdāvādmā̃) — in Ahmedabad\n\n## -થી (-thī) — From\n\n- અમદાવાદથી (amdāvādthī) — from Ahmedabad\n- બજારથી (bajārthī) — from the market\n\n> -થી is Gujarati's 'from' — same as Hindi's से but with a different form.\n\n## -ને (-ne) — To\n\n- મને (mane) — to me\n- તને (tane) — to you\n- તેને (tene) — to him/her\n\n## Possessive -નું/ની/ના\n\nChanges by gender of the possessed noun:\n- મારું નામ (māruṃ nām) — my name (neuter)\n- મારી બહેન (mārī bahan) — my sister (feminine)\n- મારા ભાઈ (mārā bhāī) — my brother (masculine)\n\n## Practice\n\n1. in the house → ઘરમાં\n2. from Ahmedabad → અમદાવાદથી\n3. to me → મને\n4. for you → તમારા માટે"
+        }
+      ]
+    },
+    {
+      "id": "ch_gu_reading",
+      "title": "વાંચન · Reading",
+      "subtitle": "Level 4 — Conversations, paragraphs, review",
+      "order": 4,
+      "lessons": [
+        {
+          "id": "gu_reading_conversation",
+          "chapterId": "ch_gu_reading",
+          "title": "સંવાદ · Conversations",
+          "subtitle": "Real-world Gujarati dialogues",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# સંવાદ (Conversations)\n\n## Dialogue 1: Meeting a New Neighbour\n\n> **રાહુલ:** નમસ્તે! હું રાહુલ, પાસેના ફ્લેટમાં રહું છું.\n> **શ્રીમતી શાહ:** નમસ્તે! હું શાહ બોલું છું, આ મારા પતિ. તમે અહીં નવા છો?\n> **રાહુલ:** હા, હું એક અઠવાડિયા પહેલા શિફ્ટ થયો. હું મુંબઈથી આવ્યો છું.\n> **શ્રીમતી શાહ:** ઓહો, મુંબઈથી! ત્યાં કેમ હતું?\n> **રાહુલ:** ઘણું સારું, પણ નોકરીને કારણે અમદાવાદ આવવું પડ્યું. તમે ક્યારથી અહીં છો?\n> **શ્રીમતી શાહ:** છેલ્લા વીસ વર્ષથી. આ અમારું પોતાનું ઘર છે. કંઈક જોઈએ તો કહેજો.\n> **રાહુલ:** આભાર! ચોક્કસ કહીશ.\n\n## Dialogue 2: At the Vegetable Shop\n\n> **વિક્રમ:** ભાઈ, બટાકા કેટલાના?\n> **દુકાનદાર:** વીસ રૂપિયા કિલો, ચોક્કસ.\n> **વિક્રમ:** થોડું વધારે. પચ્ચીસમાં બે કિલો આપ.\n> **દુકાનદાર:** ના ભાઈ, નહીં થાય. લે, ત્રીસમાં બે કિલો.\n> **વિક્રમ:** બરાબર, બે કિલો બટાકા આપ. અને ડુંગળી એક કિલો. ડુંગળી કેટલાના?\n> **દુકાનદાર:** ડુંગળી ચાલીસ રૂપિયા કિલો.\n> **વિક્રમ:** તો સિત્તેર રૂપિયા થયા. આ રહ્યા સો, બાકીના આપ.\n> **દુકાનદાર:** આ રહ્યા ત્રીસ રૂપિયા. બીજું કંઈ?\n> **વિક્રમ:** ના, એટલું જ. આભાર!\n\n## Dialogue 3: Planning a Trip to Dwarka\n\n> **પ્રિયા:** રવિવારે શું કરી રહ્યા છો?\n> **અમિત:** કંઈ ખાસ નહીં. શા માટે?\n> **પ્રિયા:** દ્વારકા જઈએ? કૃષ્ણ ભગવાનના દર્શન કરીએ?\n> **અમિત:** બહુ બરાબર! કેવી રીતે જઈએ — ટ્રેનથી કે ગાડીથી?\n> **પ્રિયા:** ગાડીથી જઈએ તો રસ્તામાં જામનગર પણ જોઈ શકીએ.\n> **અમિત:** બરાબર કહ્યું. ક્યારે નીકળીએ?\n> **પ્રિયા:** સવારે છ વાગ્યે. દસ વાગ્યા સુધીમાં દ્વારકા પહોંચી જઈએ.\n> **અમિત:** અને જમવાનું?\n> **પ્રિયા:** રસ્તામાં ક્યાંક રોકાશું. તું આવવાનો ને?\n> **અમિત:** હા, આવીશ. રવિવારે સવારે છ વાગ્યે મળીશું.\n\n## Cultural Note: Dwarka\n\n**દ્વારકા (Dwarka)** is a city in Gujarat, believed to be the ancient kingdom of Lord Krishna. It is one of the four sacred Hindu pilgrimage sites (ચાર ધામ). The Dwarkadhish Temple is a major attraction."
+        },
+        {
+          "id": "gu_reading_paragraph",
+          "chapterId": "ch_gu_reading",
+          "title": "ફકરો વાંચન · Reading Paragraphs",
+          "subtitle": "Comprehension through longer Gujarati texts",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# ફકરો વાંચન (Reading Paragraphs)\n\n## Passage 1: અમદાવાદ (Ahmedabad)\n\n> હું અમદાવાદમાં રહું છું. અમદાવાદ ગુજરાતનું સૌથી મોટું શહેર છે. સાબરમતી નદીના કિનારે વસેલું આ શહેર ઐતિહાસિક અને સાંસ્કૃતિક ધરોહર ધરાવે છે. સાબરમતી આશ્રમ, કાંકરિયા તળાવ, અને જામા મસ્જિદ અહીંની પ્રસિદ્ધ જગ્યાઓ છે. અમદાવાદને 'માનચેસ્ટર ઓફ ધ ઈસ્ટ' પણ કહેવાય છે કારણ કે અહીં કાપડ ઉદ્યોગ ઘણો વિકસ્યો છે. અમદાવાદનો ઉત્તરાયણ (પતંગ ઉત્સવ) વિશ્વ પ્રસિદ્ધ છે — જાન્યુઆરીમાં આકાશ રંગબેરંગી પતંગોથી ભરાઈ જાય છે. અમદાવાદની ધોકળા, ખાંડવી, અને ફાફડા-જલેબી પ્રસિદ્ધ છે.\n\n**Comprehension questions:**\n1. અમદાવાદ કયા રાજ્યનું શહેર છે?\n2. અમદાવાદને શું કહેવાય છે?\n3. અમદાવાદનો પ્રસિદ્ધ ઉત્સવ કયો છે?\n4. અમદાવાદના કેટલાક જમવાના પદાર્થો નામ આપો.\n\n## Passage 2: નવરાત્રિ (Navratri)\n\n> નવરાત્રિ ગુજરાતનો સૌથી મોટો ઉત્સવ છે. નવ રાત સુધી આ ઉત્સવ ચાલે છે. લોકો રાતે ગરબા રમે છે — ગોળ ફરીને નાચે છે. સ્ત્રીઓ રંગબેરંગી ચણિયા ચોળી પહેરે છે અને પુરુષો કેડિયા પહેરે છે. દેવી દુર્ગાની પૂજા થાય છે. દસમા દિવસે દસેરા ઉજવાય છે. આ ઉત્સવ ગુજરાતી સંસ્કૃતિનું પ્રતીક છે.\n\n**Questions:**\n1. નવરાત્રિ કેટલા દિવસ ચાલે છે?\n2. લોકો રાતે શું રમે છે?\n3. સ્ત્રીઓ શું પહેરે છે?\n\n## Passage 3: ગુજરાતી ભોજન (Gujarati Food)\n\n> ગુજરાતી ભોજન મીઠું, ખાટું અને તીખું — ત્રણેય સ્વાદનું મિશ્રણ છે. થાળીમાં રોટલી, ભાત, દાળ, શાક, કઢી, ફરસાણ, અને મીઠાઈ હોય છે. ધોકળા, ખાંડવી, ફાફડા, અને ઢોકળા ગુજરાતના પ્રસિદ્ધ નાસ્તા છે. ગુજરાતી થાળી ભારતના અન્ય પ્રદેશોમાં પણ પ્રસિદ્ધ છે. દરેક પ્રસંગે મીઠાઈ વડે શુભેચ્છા આપવાની પરંપરા છે.\n\n**Questions:**\n1. ગુજરાતી ભોજનમાં કયા સ્વાદ હોય છે?\n2. થાળીમાં શું શું હોય છે?\n3. ગુજરાતના પ્રસિદ્ધ નાસ્તા કયા છે?"
+        },
+        {
+          "id": "gu_reading_review",
+          "chapterId": "ch_gu_reading",
+          "title": "સમીક્ષા · Review",
+          "subtitle": "Cumulative practice across all five levels",
+          "difficulty": "advanced",
+          "xpReward": 25,
+          "order": 2,
+          "content": "# સમીક્ષા (Review)\n\n## Level 0 Review: Script\n\n**Read:**\n- નમસ્તે (namastē) — hello\n- પાણી (pāṇī) — water\n- રોટલી (roṭlī) — flatbread\n- ભાઈ (bhāī) — brother\n\n## Level 1 Review: Greetings\n\n- નમસ્તે / જય શ્રી કૃષ્ણ\n- કેમ છો? — How are you?\n- હું મજામાં છું — I'm fine\n\n## Level 2 Review: Daily Life\n\n- I eat rice. → હું ભાત ખાઉં છું।\n- Negation: હું વિદ્યાર્થી નથી। (I am not a student.)\n- Command: જવા મા! (Don't go!)\n\n## Level 3 Review: Grammar\n\n**Three genders (like Marathi):**\n- મારું પુસ્તક (my book — neuter)\n- મારી બહેન (my sister — feminine)\n- મારા ભાઈ (my brother — masculine)\n\n**Present tense: no gender in verbs!**\n- હું જાઉં છું = I go (any speaker)\n\n**Postpositions:**\n- in the house → ઘરમાં\n- from Ahmedabad → અમદાવાદથી\n- to me → મને\n\n## Level 4 Review: Reading\n\n**Read:**\n\n> આજે રવિવાર છે. હું સવારે ઊઠ્યો, સ્નાન કર્યું, ચા પીધી. પછી નાસ્તો કર્યો — ઢોકળા અને ચટણી. દસ વાગ્યે બજારમાં ગયો. ત્યાંથી શાકભાજી અને ફળ લાવ્યો. બપોરે જમ્યો અને આરામ કર્યો. સાંજે મિત્રોને મળ્યો. અમે બગીચામાં ફર્યા. રાતે ટીવી જોઈ અને ઊંઘી ગયો. કાલે સોમવાર છે, ફરી કામે જવું પડશે.\n\n**Questions:**\n1. આજે કયો દિવસ છે?\n2. નાસ્તામાં શું ખાધું?\n3. દસ વાગ્યે ક્યાં ગયો?\n4. સાંજે શું કર્યું?\n5. કાલે કયો દિવસ છે?\n\n## Gujarati vs Hindi — Key Differences\n\n1. **No top line** in Gujarati script (vs Devanagari)\n2. **Three genders** (neuter exists, like Marathi)\n3. **No gender in present-tense verbs** (છું is same for all)\n4. **નથી for present negation** (vs Hindi नहीं)\n5. **મા for negative command** (vs Hindi मत)\n6. **-થી for 'from'** (same as Hindi से but different form)\n7. **જય શ્રી કૃષ્ણ greeting** (distinctively Gujarati)\n8. **મમ્મી/પપ્પા kinship** (vs Hindi माँ/बाबा)\n9. **Different numbers** (બે=2, ત્રણ=3, છ=6, નવ=9)\n10. **Gujarati cultural context** (Garba, Navratri, Dhokla)\n\n> અભિનંદન! You've completed the VaaniX Gujarati Learn Mode course!"
+        }
+      ]
+    }
+  ],
+  "quizzes": [],
+  "vocabulary": [],
+  "notes": "Part F — Gujarati curriculum. 5 chapters (levels), 20 lessons."
+}

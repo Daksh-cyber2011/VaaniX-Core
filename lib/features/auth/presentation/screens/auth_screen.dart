@@ -128,7 +128,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     if (failure is UnauthenticatedFailure) {
       return 'Please sign in to continue.';
     }
-    return failure.message;
+    // Unmapped failures can carry provider internals — keep them out of
+    // the learner-facing error box.
+    return 'Something went wrong. Please try again.';
   }
 
   void _skip() {
@@ -284,10 +286,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 const SizedBox(height: 12),
               ],
 
-              PrimaryButton.text(
-                label: 'Skip for now',
-                onPressed: _isBusy ? null : _skip,
-              ),
+              // "Skip for now" only makes sense when the app can actually
+              // run without an account. When Supabase is configured the
+              // router guard bounces /home straight back here, so showing
+              // Skip would silently loop the user in place.
+              if (!AppEnvironment.isSupabaseConfigured) ...[
+                PrimaryButton.text(
+                  label: 'Skip for now',
+                  onPressed: _isBusy ? null : _skip,
+                ),
+              ],
               const SizedBox(height: 32),
             ],
           ),

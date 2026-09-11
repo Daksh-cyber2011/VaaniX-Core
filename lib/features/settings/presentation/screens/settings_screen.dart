@@ -24,6 +24,8 @@ import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart'
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -62,8 +64,8 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.brightness_6_outlined,
-                        color: AppColors.primary),
+                    Icon(Icons.brightness_6_outlined,
+                        color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -135,8 +137,8 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editDisplayName(context, ref, displayName),
             child: Row(
               children: [
-                const Icon(Icons.person_outline_rounded,
-                    color: AppColors.primary),
+                Icon(Icons.person_outline_rounded,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -167,8 +169,8 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editCompanionName(context, ref, companionName),
             child: Row(
               children: [
-                const Icon(Icons.emoji_nature_outlined,
-                    color: AppColors.primary),
+                Icon(Icons.emoji_nature_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -204,7 +206,7 @@ class SettingsScreen extends ConsumerWidget {
                     personality?.emoji != null
                         ? Icons.emoji_emotions_outlined
                         : Icons.mood_bad_outlined,
-                    color: AppColors.primary),
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -236,7 +238,8 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editDailyGoal(context, ref, dailyGoal),
             child: Row(
               children: [
-                const Icon(Icons.timer_outlined, color: AppColors.primary),
+                Icon(Icons.timer_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -267,7 +270,8 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => _editClass(context, ref, selectedClass),
             child: Row(
               children: [
-                const Icon(Icons.school_outlined, color: AppColors.primary),
+                Icon(Icons.school_outlined,
+                    color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -497,13 +501,14 @@ class SettingsScreen extends ConsumerWidget {
                     PersonalityMode.fun => Icons.mood_rounded,
                   },
                   size: 22,
-                  color: AppColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 12),
                 Text(mode.label, style: AppTextStyles.titleMedium()),
                 if (current == mode) ...[
                   const Spacer(),
-                  const Icon(Icons.check, color: AppColors.primary),
+                  Icon(Icons.check,
+                      color: Theme.of(context).colorScheme.primary),
                 ],
               ],
               ),
@@ -543,7 +548,8 @@ class SettingsScreen extends ConsumerWidget {
                 Text('min/day', style: AppTextStyles.bodySmall()),
                 if (minutes == current) ...[
                   const Spacer(),
-                  const Icon(Icons.check, color: AppColors.primary),
+                  Icon(Icons.check,
+                      color: Theme.of(context).colorScheme.primary),
                 ],
               ],
               ),
@@ -578,7 +584,8 @@ class SettingsScreen extends ConsumerWidget {
                 Text(c.label, style: AppTextStyles.titleMedium()),
                 if (current == c) ...[
                   const Spacer(),
-                  const Icon(Icons.check, color: AppColors.primary),
+                  Icon(Icons.check,
+                      color: Theme.of(context).colorScheme.primary),
                 ],
               ],
               ),
@@ -600,10 +607,10 @@ class SettingsScreen extends ConsumerWidget {
         title: const Text('Reset all progress?'),
         content: const Text(
           'This clears your XP, completed lessons/quizzes, practice '
-          'mastery, exam history, achievements, your day streak and all '
-          'AI chats with Van (including cached answers and usage stats). '
-          'Your profile (names, class, goals) is kept. This cannot be '
-          'undone.',
+          'mastery, exam history, achievements, learning milestones, '
+          'daily-goal counters, your day streak and all AI chats with '
+          'Van (including cached answers and usage stats). Your profile '
+          '(names, class, goals) is kept. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -636,6 +643,12 @@ class SettingsScreen extends ConsumerWidget {
       await ref.read(responseCacheProvider).clear();
       await ref.read(tokenUsageTrackerProvider).clear();
 
+      // Milestone 7: competency milestones and the daily-goal / review-
+      // challenge counters are progress, not identity — a full reset lets
+      // them re-earn with their bonus XP.
+      await ref.read(milestoneRepositoryProvider).clear();
+      await ref.read(dailyActivityRepositoryProvider).clear();
+
       ref.invalidate(userProfileProvider);
       // Invalidate ALL progress-related providers so the UI updates
       // immediately. Previously only xpTotalProvider was invalidated,
@@ -650,6 +663,11 @@ class SettingsScreen extends ConsumerWidget {
       // achievements map.
       ref.invalidate(progressRepositoryProvider);
       ref.invalidate(achievementRepositoryProvider);
+      // Milestone 7 stores: unlocked-milestone map, today's XP counter and
+      // the review-claim flag all re-read fresh (now empty) storage.
+      ref.invalidate(unlockedMilestonesProvider);
+      ref.invalidate(todayXpProvider);
+      ref.invalidate(isReviewClaimedProvider);
       // Rebuild the chat controller (reloads memory, now empty) and the
       // usage chip (fresh zeroed numbers).
       ref.invalidate(chatControllerProvider);

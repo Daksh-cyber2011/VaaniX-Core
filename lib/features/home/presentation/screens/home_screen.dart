@@ -30,7 +30,11 @@ import 'package:vaanix_app/features/profile/presentation/providers/profile_provi
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
+import 'package:vaanix_app/features/progress/domain/review_challenge.dart'
+    show kReviewChallengeBonusXp;
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -38,6 +42,7 @@ import 'package:vaanix_app/shared/widgets/progress_meter.dart';
 import 'package:vaanix_app/shared/widgets/streak_badge.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 import 'package:vaanix_app/shared/widgets/offline_banner.dart';
+import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/xp_badge.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -86,25 +91,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     try {
       final newlyUnlocked =
           await ref.read(achievementCheckerProvider).checkAchievements();
-      if (!mounted || newlyUnlocked.isEmpty) return;
-      // One consolidated celebration for the batch (same pattern as the
-      // lesson/practice/exam screens — no snackbar stacking).
-      final first = newlyUnlocked.first;
-      final extra = newlyUnlocked.length > 1
-          ? ' (+${newlyUnlocked.length - 1} more)'
+      if (!mounted || newlyUnlocked.isEmpty) {
+        // Fall through to the milestone check below (Milestone 7):
+        // streak-based milestones must also be evaluated on Home open.
+      } else {
+        // One consolidated celebration for the batch (same pattern as the
+        // lesson/practice/exam screens — no snackbar stacking).
+        final first = newlyUnlocked.first;
+        final extra = newlyUnlocked.length > 1
+            ? ' (+${newlyUnlocked.length - 1} more)'
+            : '';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Achievement Unlocked: ${first.title}!'
+              '${first.xpReward > 0 ? ' (+${first.xpReward} XP)' : ''}$extra',
+            ),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (_) {
+      // The achievement check must never break Home.
+    }
+
+    // Milestone 7: competency milestones (e.g. Consistent Learner from
+    // streak growth). Same never-break-Home safety as achievements.
+    try {
+      final milestones =
+          await ref.read(milestoneCheckerProvider).checkMilestones();
+      if (!mounted || milestones.isEmpty) return;
+      final first = milestones.first;
+      final extra = milestones.length > 1
+          ? ' (+${milestones.length - 1} more)'
           : '';
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.milestoneUnlocked,
+            message: 'Milestone unlocked: ${first.title}!',
+            payload: {
+              'milestoneId': first.id,
+              'milestoneCount': milestones.length,
+            },
+          ));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Achievement Unlocked: ${first.title}!'
-            '${first.xpReward > 0 ? ' (+${first.xpReward} XP)' : ''}$extra',
+            'Milestone Unlocked: ${first.emoji} ${first.title}'
+            ' (+${first.xpReward} XP)$extra',
           ),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 4),
         ),
       );
     } catch (_) {
-      // The achievement check must never break Home.
+      // The milestone check must never break Home.
     }
   }
 
@@ -241,14 +282,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () => context.go(RouteNames.chat),
+                    onPressed: () => context.push(RouteNames.chat),
                     icon: const Icon(Icons.chat_bubble_outline_rounded),
                     tooltip: 'Chat with $companionName',
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   IconButton(
-                    onPressed: () => context.go(RouteNames.settings),
+                    onPressed: () => context.push(RouteNames.settings),
                     icon: const Icon(Icons.person_outline_rounded),
                     tooltip: 'Profile and settings',
                     color: colorScheme.primary,
@@ -262,6 +303,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: OfflineBanner(),
             ),
+
+            // ---- Curriculum shelf trouble (rare — assets are bundled) ---
+            // A failed load must not pass silently: Van explains, progress
+            // stays safe, and the rest of the Nest keeps working.
+            if (curriculumAsync.hasError)
+              VanSpeechStrip(
+                state: VanState.error,
+                message: 'I could not open the lesson shelf just now. '
+                    'Your progress is safe — try again in a moment.',
+                margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+              ),
 
             // ---- The Nest: Van + greeting + continue card --------------
             Expanded(
@@ -313,9 +365,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
 
+            // ---- Milestone 7: daily goal + review challenge strip ------
+            const _DailyGoalStrip(),
+
             // ---- CTAs: continue + exam + progress ----------------------
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
               child: PrimaryButton(
                 onPressed: () => _openAction(nextAction),
                 icon: Icon(_actionIcon(nextAction.action), color: Colors.white),
@@ -346,7 +401,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: _SecondaryCta(
                       icon: Icons.emoji_events_outlined,
                       label: 'Awards',
-                      onTap: () => context.go(RouteNames.achievements),
+                      onTap: () => context.push(RouteNames.achievements),
                     ),
                   ),
                 ],
@@ -546,6 +601,141 @@ class _ContinueCard extends StatelessWidget {
             ),
           ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Milestone 7: compact daily-goal + review-challenge strip under the Nest.
+///
+/// Visibility is intentionally calm (VAN must not become annoying):
+///   - hidden entirely when today's goal is met AND there is nothing to
+///     review (or the day's review bonus was already claimed);
+///   - otherwise one slim card: goal progress row, plus (when a challenge
+///     exists) one tappable review row.
+///
+/// The review row routes into the EXISTING practice flow for the challenge
+/// lesson — the reward is claimed by the practice screen after a finished
+/// session, so there is exactly one completion path, no fake buttons.
+class _DailyGoalStrip extends ConsumerWidget {
+  const _DailyGoalStrip();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final goal = ref.watch(dailyGoalStateProvider);
+    final challenge = ref.watch(dailyReviewChallengeProvider);
+    final claimed = ref.watch(isReviewClaimedProvider);
+
+    final showChallenge = challenge != null;
+    if (goal.isMet && !showChallenge) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ---- Daily goal row --------------------------------------
+            Row(
+              children: [
+                Icon(
+                  goal.isMet
+                      ? Icons.check_circle_rounded
+                      : Icons.flag_rounded,
+                  size: 18,
+                  color: goal.isMet ? AppColors.success : colorScheme.primary,
+                  semanticLabel:
+                      goal.isMet ? 'Daily goal met' : 'Daily goal progress',
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  goal.isMet ? 'Daily goal met' : 'Daily goal',
+                  style: AppTextStyles.labelMedium(),
+                ),
+                const Spacer(),
+                Text(
+                  '${goal.xpEarnedToday} / ${goal.xpTarget} XP',
+                  style: AppTextStyles.labelSmall(color: subtext),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: ProgressMeter(
+                value: goal.fraction,
+                height: 4,
+                semanticLabel:
+                    '${goal.xpEarnedToday} of ${goal.xpTarget} daily goal XP',
+              ),
+            ),
+            // ---- Review challenge row --------------------------------
+            if (showChallenge) ...[
+              const SizedBox(height: 8),
+              Material(
+                color: Colors.transparent,
+                child: Semantics(
+                  button: !claimed,
+                  child: InkWell(
+                    onTap: claimed
+                        ? null
+                        : () => context.go(RouteNames.lessonPractice
+                            .replaceFirst(':lessonId', challenge.lesson.id)),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      children: [
+                        Icon(
+                          claimed
+                              ? Icons.verified_rounded
+                              : Icons.fitness_center_rounded,
+                          size: 18,
+                          color: claimed
+                              ? AppColors.success
+                              : AppColors.accent,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            claimed
+                                ? 'Review challenge complete'
+                                : 'Review: ${challenge.lesson.title}'
+                                    ' (${challenge.remaining} left,'
+                                    ' +${kReviewChallengeBonusXp} XP)',
+                            style: AppTextStyles.labelMedium(
+                              color:
+                                  claimed ? AppColors.success : null,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (!claimed)
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 18,
+                            color: subtext,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

@@ -11,6 +11,11 @@ abstract final class RouteNames {
   static const String auth = '/auth';
   static const String home = '/home';
   static const String learn = '/learn';
+  static const String learnLanguageSelection = '/learn/language';
+  static const String learnProfile = '/learn/profile';
+  static const String learnDiagnostic = '/learn/diagnostic';
+  static const String learnSmartPractice = '/learn/smart';
+  static const String learnSession = '/learn/session';
   static const String lessonContent = '/learn/lesson/:lessonId';
   static const String lessonPractice = '/learn/lesson/:lessonId/practice';
   static const String exam = '/exam';
@@ -26,6 +31,11 @@ abstract final class RouteNames {
   static const String authName = 'auth';
   static const String homeName = 'home';
   static const String learnName = 'learn';
+  static const String learnLanguageSelectionName = 'learn-language';
+  static const String learnProfileName = 'learn-profile';
+  static const String learnDiagnosticName = 'learn-diagnostic';
+  static const String learnSmartPracticeName = 'learn-smart-practice';
+  static const String learnSessionName = 'learn-session';
   static const String lessonContentName = 'lesson-content';
   static const String lessonPracticeName = 'lesson-exercise';
   static const String examName = 'exam';

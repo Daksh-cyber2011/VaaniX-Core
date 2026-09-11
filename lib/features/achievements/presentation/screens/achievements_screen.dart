@@ -14,6 +14,7 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/domain/achievement.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_providers.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 
 class AchievementsScreen extends ConsumerWidget {
@@ -21,6 +22,19 @@ class AchievementsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // The unlock map loads from storage on first open; wait for it instead
+    // of flashing every card as locked and reshuffling a beat later. On a
+    // storage error the map resolves empty, so the list still renders.
+    final unlockedReady =
+        !ref.watch(unlockedAchievementsProvider).isLoading;
+    if (!unlockedReady) {
+      return VaaniXScaffold(
+        title: 'Achievements',
+        body: const Center(
+          child: VaaniXLoadingIndicator(message: 'Opening your awards…'),
+        ),
+      );
+    }
     final achievements = ref.watch(allAchievementsProgressProvider);
     final unlockedCount = achievements.where((a) => a.isUnlocked).length;
     final totalCount = achievements.length;
@@ -48,8 +62,8 @@ class AchievementsScreen extends ConsumerWidget {
                     color: AppColors.primary.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.emoji_events_rounded,
-                      color: AppColors.primary, size: 30),
+                  child: Icon(Icons.emoji_events_rounded,
+                      color: Theme.of(context).colorScheme.primary, size: 30),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -199,7 +213,7 @@ class _AchievementCard extends StatelessWidget {
                       value: progress.fraction,
                       minHeight: 6,
                       backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       semanticsLabel:
                           'Progress: ${progress.current} of ${ach.threshold}',
                     ),

@@ -105,6 +105,7 @@ class _ObNamePageState extends ConsumerState<ObNamePage>
             onChanged: (v) => setState(() {}),
             maxLength: 20,
             decoration: InputDecoration(
+              labelText: 'Companion name',
               hintText: 'Van (default)',
               counterText: '',
               suffixIcon: _controller.text.isNotEmpty

@@ -141,6 +141,24 @@ class ChatController extends StateNotifier<ChatState> {
     return Duration(milliseconds: AppConstants.vanAiSpeakingBaseMs + extra);
   }
 
+  /// Retry after a failed turn: the failed attempt left the learner's
+  /// message in the transcript unanswered, so retry drops that bubble and
+  /// re-sends the same text through the normal pipeline (no duplicates).
+  Future<void> retryLastUserMessage() async {
+    if (state.isSending) return;
+    AiMessage? lastUser;
+    for (final m in state.messages) {
+      if (m.role == AiRole.user) lastUser = m;
+    }
+    if (lastUser == null) return;
+    final text = lastUser.content;
+    state = state.copyWith(
+      messages:
+          state.messages.where((m) => m.id != lastUser!.id).toList(),
+    );
+    await sendMessage(text);
+  }
+
   /// Send a user message and receive Van's reply.
   ///
   /// Routes through the streaming pipeline when the active config allows it
@@ -338,7 +356,8 @@ class ChatController extends StateNotifier<ChatState> {
       }
     } catch (e) {
       // Defensive: an adapter that throws instead of yielding an error.
-      streamFailure ??= AiServiceFailure(e.toString());
+      // Keep the raw exception out of the learner-visible banner.
+      streamFailure ??= const AiServiceFailure();
       dropPartial();
     }
 

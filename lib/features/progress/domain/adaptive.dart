@@ -94,6 +94,22 @@ bool _chapterExamPassed(
       kExamPassFraction;
 }
 
+/// True when [chapterId] actually HAS exam quizzes in the `quiz_<chapter>_<difficulty>`
+/// space.
+///
+/// M1 (Learn Mode 2.0): the adaptive engine now runs against the ACTIVE
+/// curriculum. Learn Mode language curricula (hi/bn/…/ur) ship no chapter
+/// exams — their chapters have no quiz ids. Without this guard the engine
+/// would push a "Take the exam" action for an exam that does not exist.
+/// Sanskrit (the legacy Exam Mode track) keeps an exam for every chapter,
+/// so its behaviour is byte-identical to before the guard.
+bool _chapterHasExam(
+  String chapterId,
+  Map<String, List<String>> quizIdsByChapter,
+) {
+  return (quizIdsByChapter[chapterId] ?? const <String>[]).isNotEmpty;
+}
+
 /// Best score fraction across every quiz of [chapterId] (0.0 when none).
 /// Used by the Progress screen to surface real exam performance per chapter.
 double bestExamFractionForChapter(
@@ -155,8 +171,12 @@ NextAction computeNextAction({
   final allLessons = curriculum.expand((c) => c.lessons).toList();
   final allLessonIds = allLessons.map((l) => l.id).toSet();
   final allLessonsDone = allLessonIds.difference(completedLessons).isEmpty;
+  // Chapters without any quiz (Learn Mode languages) count as "exam OK" —
+  // they gate on nothing, so allDone means every lesson done.
   final allExamsPassed = curriculum.every(
-      (c) => _chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId));
+      (c) =>
+          !_chapterHasExam(c.id, quizIdsByChapter) ||
+          _chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId));
 
   // 1. Complete journey.
   if (allLessonsDone && allExamsPassed) {
@@ -172,8 +192,10 @@ NextAction computeNextAction({
   }
 
   // 2. First chapter whose lessons are done but whose exam is not passed.
+  //    Only chapters that actually HAVE an exam can be exam-ready.
   final Chapter? examReadyChapter = curriculum
       .where((c) {
+        if (!_chapterHasExam(c.id, quizIdsByChapter)) return false;
         final chapterDone =
             c.lessons.every((l) => completedLessons.contains(l.id));
         return chapterDone &&

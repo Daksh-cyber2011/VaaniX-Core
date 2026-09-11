@@ -89,11 +89,11 @@ class ObGoalPage extends ConsumerWidget {
       case 5:
         return "5 minutes? I'll take it! Every day counts.";
       case 10:
-        return "10 minutes! That's my favourite streak size! ";
+        return "10 minutes! That's my favourite streak size!";
       case 15:
-        return "15 minutes — you mean business! Let's go! ";
+        return "15 minutes — you mean business! Let's go!";
       case 20:
-        return "20 MINUTES?! $name, you're a legend! ";
+        return "20 MINUTES?! $name, you're a legend!";
       default:
         return 'How much time do you want to study each day?';
     }
@@ -111,7 +111,7 @@ class _GoalTile extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  String get _label => '$minutes min / day';
+  String get _label => '$minutes min/day';
 
   String get _badge {
     switch (minutes) {
