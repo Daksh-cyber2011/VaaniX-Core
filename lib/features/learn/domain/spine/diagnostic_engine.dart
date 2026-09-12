@@ -50,11 +50,6 @@ import 'package:vaanix_app/features/learn/domain/spine/diagnostic.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart'
     show Difficulty;
 
-// M12 QA fix: Difficulty (progress_models) and LearnLanguage
-// (learn_language) are used below but were never imported — Dart
-// imports are not transitive, so the file would not compile.
-// Additive fix only; behavior unchanged.
-
 // ─── Resolved probe ─────────────────────────────────────────────────────────
 
 /// One concrete diagnostic probe: a trusted [Exercise] resolved from the

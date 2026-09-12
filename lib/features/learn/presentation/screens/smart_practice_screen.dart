@@ -29,8 +29,6 @@ import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
-import 'package:vaanix_app/features/learn/data/personalized_content_generator.dart'
-    show GeneratedContentResult;
 import 'package:vaanix_app/features/learn/domain/spine/content_registry.dart';
 import 'package:vaanix_app/features/learn/domain/spine/generated_content.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';

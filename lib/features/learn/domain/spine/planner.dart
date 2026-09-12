@@ -34,10 +34,6 @@ import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery.dart'
     show MasteryStage;
 
-// M12 QA fix: MasteryStage (spine/mastery.dart) is used below but was
-// never imported — concept_graph.dart only imports it, which does not
-// re-export it. Additive fix only; behavior unchanged.
-
 /// Structured learner state handed to every planner call
 /// (Master Brief §13 field list).
 class PlannerContext extends Equatable {
