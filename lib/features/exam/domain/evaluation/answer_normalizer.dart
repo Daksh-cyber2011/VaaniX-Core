@@ -22,7 +22,7 @@ library;
 
 /// Normalizes one answer string for comparison.
 String normalizeAnswer(String raw) {
-  var text = raw ?? '';
+  var text = raw;
   if (text.isEmpty) return '';
 
   // Zero-width characters (common OCR leftovers) — dropped first.
@@ -33,7 +33,8 @@ String normalizeAnswer(String raw) {
       .replaceAll('\uFEFF', '');
 
   // Devanagari digits → ASCII (०१२३४५६७८९).
-  const devDigits = '०१२३४५६७८९';
+  const devDigits =
+      '\u0966\u0967\u0968\u0969\u096A\u096B\u096C\u096D\u096E\u096F';
   const asciiDigits = '0123456789';
   final sb = StringBuffer();
   for (final ch in text.codeUnits) {
@@ -48,13 +49,13 @@ String normalizeAnswer(String raw) {
 
   // Devanagari-specific folds.
   text = text
-      .replaceAll('ऽ', "'") // avagraha → apostrophe (then stripped)
-      .replaceAll('ँ', 'ं') // chandrabindu → anusvara (school-level fold)
-      .replaceAll('\u0933', 'ल') // ळ → ल (lateral fold for comparison)
-      .replaceAll('़', ''); // nukta stripped: क़→क, ज़→ज, फ़→फ
+      .replaceAll('\u093D', "'") // avagraha → apostrophe (then stripped)
+      .replaceAll('\u0901', '\u0902') // chandrabindu → anusvara
+      .replaceAll('\u0933', '\u0932') // lateral fold for comparison
+      .replaceAll('\u093C', ''); // nukta: क़→क, ज़→ज, फ़→फ
 
   // Punctuation that never changes meaning in school answers.
-  const strip = '।॥!.,;:?\'"()[]{}<>-–—_/\\+*=|·';
+  const strip = '\u0964\u0965!.,;:?\'"()[]{}<>-\u2013\u2014_/\\+*=|\u00B7';
   for (final c in strip.split('')) {
     text = text.replaceAll(c, ' ');
   }

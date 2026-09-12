@@ -21,6 +21,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -202,9 +203,10 @@ Future<List<Chapter>> loadLearnCurriculum(LearnLanguage language) async {
     return chaptersJson
         .map((e) => Chapter.fromJson(e as Map<String, dynamic>))
         .toList();
-  } catch (_) {
+  } catch (error) {
     // Asset missing or malformed — expected for languages whose
     // curriculum hasn't shipped yet (Parts A–J). Empty list, not error.
+    debugPrint('[LearnCurriculum] Could not load ${spec.code}: $error');
     return const [];
   }
 }

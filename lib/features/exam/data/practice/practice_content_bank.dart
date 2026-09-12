@@ -69,14 +69,10 @@ class PracticeContentBank {
     final typed = <PracticeQuestion>[];
 
     for (final unit in selectedUnits) {
-      final section =
-          view.sections.firstWhere((s) => s.id == unit.sectionId);
-      final item = syllabus.allItems
-          .where((i) => i.id == unit.id)
-          .firstOrNull;
-      final subtopics = item == null
-          ? const <String>[]
-          : _subtopicsOf(item).take(6).toList();
+      final section = view.sections.firstWhere((s) => s.id == unit.sectionId);
+      final item = syllabus.allItems.where((i) => i.id == unit.id).firstOrNull;
+      final subtopics =
+          item == null ? const <String>[] : _subtopicsOf(item).take(6).toList();
 
       // 1) MCQ: section membership (recall, tier 1).
       {
@@ -117,7 +113,9 @@ class PracticeContentBank {
           prompt: '«${subtopics.first}» किस विषय के अंतर्गत आता है? '
               '(नाम लिखें)',
           acceptedAnswers: [unit.title],
-          requiredPoints: subtopics.take(3).toList(),
+          // The prompt asks only for the parent unit. Requiring unrelated
+          // subtopics made an exact, valid answer score as only partial.
+          requiredPoints: const [],
           explanation: '«${subtopics.first}» «${unit.title}» का भाग है।',
           difficultyTier: 2,
         ));
@@ -129,9 +127,8 @@ class PracticeContentBank {
         final distractorPool = <String>[];
         for (final other in scopeUnits) {
           if (other.id == unit.id) continue;
-          final otherItem = syllabus.allItems
-              .where((i) => i.id == other.id)
-              .firstOrNull;
+          final otherItem =
+              syllabus.allItems.where((i) => i.id == other.id).firstOrNull;
           if (otherItem == null) continue;
           distractorPool.addAll(_subtopicsOf(otherItem).take(3));
         }
@@ -173,12 +170,10 @@ class PracticeContentBank {
     // a one-typed-unit selection must NOT throw (§41 defensive).
     final typedCount = typed.isEmpty
         ? 0
-        : (typed.length == 1
-            ? 1
-            : (targetSize ~/ 3).clamp(2, typed.length));
+        : (typed.length == 1 ? 1 : (targetSize ~/ 3).clamp(2, typed.length));
     final selected = [
-      ...typed.take(typedCount),
       ...mcqs.take(targetSize - typedCount),
+      ...typed.take(typedCount),
     ];
     return selected;
   }
@@ -216,8 +211,7 @@ class PracticeContentBank {
     final chosen =
         deterministicShuffle(distinct, seedFromText(seed)).take(3).toList();
     final all = [correct, ...chosen];
-    final shuffled =
-        deterministicShuffle(all, seedFromText(seed + '_shuffle'));
+    final shuffled = deterministicShuffle(all, seedFromText(seed + '_shuffle'));
     return (shuffled, shuffled.indexOf(correct));
   }
 

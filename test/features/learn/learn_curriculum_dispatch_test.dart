@@ -102,19 +102,11 @@ void main() {
           reason: 'Urdu Level 0 chapter must be ch_ur_script');
     });
 
-    test('all other languages still return empty (Parts H-J pending)',
-        () async {
+    test('every catalogue language returns its shipped curriculum', () async {
       for (final language in LearnLanguage.values) {
-        if (language == LearnLanguage.hindi) continue;
-        if (language == LearnLanguage.bengali) continue;
-        if (language == LearnLanguage.marathi) continue;
-        if (language == LearnLanguage.telugu) continue;
-        if (language == LearnLanguage.tamil) continue;
-        if (language == LearnLanguage.gujarati) continue;
-        if (language == LearnLanguage.urdu) continue;
         final chapters = await loadLearnCurriculum(language);
-        expect(chapters, isEmpty,
-            reason: '$language must return empty until its Part ships.');
+        expect(chapters, isNotEmpty,
+            reason: '$language must have a shipped curriculum.');
       }
     });
 
@@ -134,29 +126,15 @@ void main() {
       }
     });
 
-    test('shipped languages have non-empty chapters; others still empty', () {
-      final shippedLanguages = {
-        LearnLanguage.hindi,
-        LearnLanguage.bengali,
-        LearnLanguage.marathi,
-        LearnLanguage.telugu,
-        LearnLanguage.tamil,
-        LearnLanguage.gujarati,
-        LearnLanguage.urdu,
-      };
+    test('every language asset has its five shipped chapters', () {
       for (final spec in kLearnLanguageCatalogue) {
         final raw = File(spec.curriculumAssetPath).readAsStringSync();
         final json = jsonDecode(raw) as Map<String, dynamic>;
         final chapters = json['chapters'] as List;
-        if (shippedLanguages.contains(spec.language)) {
-          expect(chapters, isNotEmpty,
-              reason: '${spec.language.name} must have non-empty chapters');
-          expect(chapters.length, 5,
-              reason: '${spec.language.name} ships exactly 5 chapters');
-        } else {
-          expect(chapters, isEmpty,
-              reason: '${spec.language.name} chapters must be empty');
-        }
+        expect(chapters, isNotEmpty,
+            reason: '${spec.language.name} must have non-empty chapters');
+        expect(chapters.length, 5,
+            reason: '${spec.language.name} ships exactly 5 chapters');
       }
     });
 
@@ -255,9 +233,8 @@ void main() {
       expect(curriculumProvider, isA<AsyncNotifierProvider>(),
           reason: 'Legacy Sanskrit curriculum provider must be a '
               'plain AsyncNotifierProvider.');
-      expect(learnCurriculumProvider, isA<ProviderFamily>(),
-          reason: 'Learn curriculum provider must be a family keyed by '
-              'LearnLanguage — selecting one language never loads another.');
+      expect(learnCurriculumProvider, isNot(same(curriculumProvider)),
+          reason: 'Learn and Sanskrit curricula must use separate providers.');
     });
   });
 

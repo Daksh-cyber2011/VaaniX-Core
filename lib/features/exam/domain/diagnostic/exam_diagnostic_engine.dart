@@ -40,8 +40,7 @@ class DiagnosticSessionState extends Equatable {
   final bool finished;
 
   int get answeredCount => responses.length;
-  int get correctCount =>
-      responses.where((r) => r.correct).length;
+  int get correctCount => responses.where((r) => r.correct).length;
 
   @override
   List<Object?> get props => [servedQuestions, responses, finished];
@@ -106,7 +105,8 @@ class ExamDiagnosticEngine {
 
   /// Records the answer to [state.current] and advances adaptively.
   /// [selectedIndex] -1 = skipped (counts as not-correct, §10 honest).
-  DiagnosticSessionState answer(DiagnosticSessionState state, int selectedIndex) {
+  DiagnosticSessionState answer(
+      DiagnosticSessionState state, int selectedIndex) {
     final q = state.current;
     if (q == null || state.finished) return state;
 
@@ -121,16 +121,16 @@ class ExamDiagnosticEngine {
     final responses = [...state.responses, response];
 
     // §11 adaptive ladder: correct → harder, wrong/skip → easier.
-    final nextDifficulty = response.correct
-        ? _tierUp(q.difficulty)
-        : _tierDown(q.difficulty);
+    final nextDifficulty =
+        response.correct ? _tierUp(q.difficulty) : _tierDown(q.difficulty);
 
     final attemptsByTopic = <String, int>{};
     for (final r in responses) {
       attemptsByTopic[r.topicId] = (attemptsByTopic[r.topicId] ?? 0) + 1;
     }
 
-    final done = responses.length >= maxItems || _allTopicsProbed(attemptsByTopic);
+    final done =
+        responses.length >= maxItems || _allTopicsProbed(attemptsByTopic);
     if (done) {
       return DiagnosticSessionState(
         servedQuestions: state.servedQuestions,
@@ -143,7 +143,13 @@ class ExamDiagnosticEngine {
     final served = state.servedQuestions.map((q) => q.id).toSet();
     // Preferred tier first, then NEAREST tiers (never a hard→easy jump
     // when the preferred pool is exhausted — §11 smooth ladder).
-    for (final tier in _tierOrder(nextDifficulty)) {
+    // Do not reverse the demonstrated direction merely to fill the budget.
+    // If the matching tier is exhausted, ending honestly is safer than
+    // presenting a question outside the learner's demonstrated level.
+    for (final tier in _tierOrder(
+      nextDifficulty,
+      movingUp: response.correct,
+    )) {
       final next = _pickNext(
         difficulty: tier,
         served: served,
@@ -170,23 +176,21 @@ class ExamDiagnosticEngine {
   /// For MEDIUM, the adjacent preference is EASY (a student is never
   /// escalated above their demonstrated level just because a pool
   /// ran empty).
-  List<DiagnosticDifficulty> _tierOrder(DiagnosticDifficulty d) =>
-      switch (d) {
-        DiagnosticDifficulty.hard => const [
+  List<DiagnosticDifficulty> _tierOrder(
+    DiagnosticDifficulty d, {
+    required bool movingUp,
+  }) =>
+      switch ((d, movingUp)) {
+        (DiagnosticDifficulty.hard, _) => const [DiagnosticDifficulty.hard],
+        (DiagnosticDifficulty.medium, true) => const [
+            DiagnosticDifficulty.medium,
             DiagnosticDifficulty.hard,
-            DiagnosticDifficulty.medium,
-            DiagnosticDifficulty.easy
           ],
-        DiagnosticDifficulty.medium => const [
+        (DiagnosticDifficulty.medium, false) => const [
             DiagnosticDifficulty.medium,
             DiagnosticDifficulty.easy,
-            DiagnosticDifficulty.hard
           ],
-        DiagnosticDifficulty.easy => const [
-            DiagnosticDifficulty.easy,
-            DiagnosticDifficulty.medium,
-            DiagnosticDifficulty.hard
-          ],
+        (DiagnosticDifficulty.easy, _) => const [DiagnosticDifficulty.easy],
       };
 
   /// Builds the final report from a finished session.
@@ -225,14 +229,15 @@ class ExamDiagnosticEngine {
     final overallAbility = estimates.isEmpty
         ? 0.0
         : estimates.map((e) {
-            var w = 0.0, s = 0.0;
-            for (final r in byTopic[e.topicId]!) {
-              final d = _difficultyWeight(r.difficulty);
-              w += d;
-              if (r.correct) s += d;
-            }
-            return w == 0 ? 0.0 : s / w;
-          }).reduce((a, b) => a + b) / estimates.length;
+              var w = 0.0, s = 0.0;
+              for (final r in byTopic[e.topicId]!) {
+                final d = _difficultyWeight(r.difficulty);
+                w += d;
+                if (r.correct) s += d;
+              }
+              return w == 0 ? 0.0 : s / w;
+            }).reduce((a, b) => a + b) /
+            estimates.length;
 
     return DiagnosticReport(
       trackId: '',
@@ -245,8 +250,8 @@ class ExamDiagnosticEngine {
   }
 
   /// Specific, constructive observation sentences (§10 examples).
-  List<String> _observations(
-      List<TopicEstimate> estimates, Map<String, List<DiagnosticResponse>> byTopic) {
+  List<String> _observations(List<TopicEstimate> estimates,
+      Map<String, List<DiagnosticResponse>> byTopic) {
     if (estimates.isEmpty) {
       return ['अभी कोई आकलन नहीं — कुछ प्रश्न ज़रूर हल करें।'];
     }
@@ -262,11 +267,13 @@ class ExamDiagnosticEngine {
           'इन्हें बनाए रखें।');
     }
     if (learning.isNotEmpty) {
-      obs.add('सीख रहे हैं: ${learning.map((e) => e.topicTitle).take(3).join(', ')} — '
+      obs.add(
+          'सीख रहे हैं: ${learning.map((e) => e.topicTitle).take(3).join(', ')} — '
           'अभ्यास जारी रखें।');
     }
     if (attention.isNotEmpty) {
-      obs.add('ध्यान चाहिए: ${attention.map((e) => e.topicTitle).take(3).join(', ')} — '
+      obs.add(
+          'ध्यान चाहिए: ${attention.map((e) => e.topicTitle).take(3).join(', ')} — '
           'योजना इनसे शुरू होगी।');
     }
     // Skill-level observation (§10: grammar/application dimensions).
@@ -318,9 +325,7 @@ class ExamDiagnosticEngine {
     if (pool == null || pool.isEmpty) return null;
     // Coverage-first: prefer topics with the fewest responses so far
     // (§11: enough dimensions for a useful profile, not 50 questions).
-    final ranked = pool
-        .where((q) => !served.contains(q.id))
-        .toList()
+    final ranked = pool.where((q) => !served.contains(q.id)).toList()
       ..sort((a, b) => (attemptsByTopic[a.topicId] ?? 0)
           .compareTo(attemptsByTopic[b.topicId] ?? 0));
     return ranked.isEmpty ? null : ranked.first;

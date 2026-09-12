@@ -18,7 +18,8 @@ import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 
-Future<ProviderContainer> _container({Map<String, Object> prefs = const {}}) async {
+Future<ProviderContainer> _container(
+    {Map<String, Object> prefs = const {}}) async {
   SharedPreferences.setMockInitialValues(prefs);
   final prefsInstance = await SharedPreferences.getInstance();
   return ProviderContainer(
@@ -27,6 +28,8 @@ Future<ProviderContainer> _container({Map<String, Object> prefs = const {}}) asy
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('activeCurriculumProvider — no selection (legacy Sanskrit)', () {
     test('returns Sanskrit curriculum when no language is selected', () async {
       final container = await _container();
@@ -71,8 +74,7 @@ void main() {
       ]);
       final lessonCount =
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(lessonCount, 20,
-          reason: 'Hindi curriculum has 20 lessons');
+      expect(lessonCount, 20, reason: 'Hindi curriculum has 20 lessons');
     });
 
     test('Hindi lessons use hi_ prefix (no collision with Sanskrit)', () async {
@@ -131,8 +133,7 @@ void main() {
       ]);
       final lessonCount =
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(lessonCount, 20,
-          reason: 'Bengali curriculum has 20 lessons');
+      expect(lessonCount, 20, reason: 'Bengali curriculum has 20 lessons');
     });
 
     test('Bengali lessons use bn_ prefix (no collision with Hindi or Sanskrit)',
@@ -194,8 +195,7 @@ void main() {
       ]);
       final lessonCount =
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(lessonCount, 20,
-          reason: 'Marathi curriculum has 20 lessons');
+      expect(lessonCount, 20, reason: 'Marathi curriculum has 20 lessons');
     });
 
     test('Marathi lessons use mr_ prefix (no collision with other languages)',
@@ -259,8 +259,7 @@ void main() {
       ]);
       final lessonCount =
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(lessonCount, 20,
-          reason: 'Telugu curriculum has 20 lessons');
+      expect(lessonCount, 20, reason: 'Telugu curriculum has 20 lessons');
     });
 
     test('Telugu lessons use te_ prefix (no collision with other languages)',
@@ -322,8 +321,7 @@ void main() {
       ]);
       final lessonCount =
           chapters.fold<int>(0, (sum, c) => sum + c.lessons.length);
-      expect(lessonCount, 20,
-          reason: 'Tamil curriculum has 20 lessons');
+      expect(lessonCount, 20, reason: 'Tamil curriculum has 20 lessons');
     });
 
     test('Tamil lessons use ta_ prefix (no collision)', () async {
@@ -371,7 +369,11 @@ void main() {
       expect(chapters, hasLength(5),
           reason: 'Gujarati curriculum has 5 chapters');
       expect(chapters.map((c) => c.id).toList(), [
-        'ch_gu_script', 'ch_gu_greet', 'ch_gu_daily', 'ch_gu_grammar', 'ch_gu_reading',
+        'ch_gu_script',
+        'ch_gu_greet',
+        'ch_gu_daily',
+        'ch_gu_grammar',
+        'ch_gu_reading',
       ]);
     });
 
@@ -404,10 +406,13 @@ void main() {
       final container = await _container(prefs: {'learn_language': 'urdu'});
       addTearDown(container.dispose);
       final chapters = await container.read(activeCurriculumProvider.future);
-      expect(chapters, hasLength(5),
-          reason: 'Urdu curriculum has 5 chapters');
+      expect(chapters, hasLength(5), reason: 'Urdu curriculum has 5 chapters');
       expect(chapters.map((c) => c.id).toList(), [
-        'ch_ur_script', 'ch_ur_greet', 'ch_ur_daily', 'ch_ur_grammar', 'ch_ur_reading',
+        'ch_ur_script',
+        'ch_ur_greet',
+        'ch_ur_daily',
+        'ch_ur_grammar',
+        'ch_ur_reading',
       ]);
     });
 
@@ -435,12 +440,13 @@ void main() {
     });
   });
 
-  group('activeCurriculumProvider — unshipped languages (Parts H-J)', () {
-    test('returns empty for Kannada (Part H not shipped)', () async {
+  group('activeCurriculumProvider — additional shipped languages', () {
+    test('returns Kannada curriculum when Kannada is selected', () async {
       final container = await _container(prefs: {'learn_language': 'kannada'});
       addTearDown(container.dispose);
       final chapters = await container.read(activeCurriculumProvider.future);
-      expect(chapters, isEmpty, reason: 'Kannada curriculum is empty until Part H ships');
+      expect(chapters, hasLength(5),
+          reason: 'Kannada has a complete five-chapter curriculum');
     });
   });
 
@@ -451,8 +457,7 @@ void main() {
 
       // Start with no selection → Sanskrit
       var chapters = await container.read(activeCurriculumProvider.future);
-      expect(chapters, hasLength(4),
-          reason: 'Initial: Sanskrit 4 chapters');
+      expect(chapters, hasLength(4), reason: 'Initial: Sanskrit 4 chapters');
 
       // Select Hindi → should switch to Hindi curriculum
       await container
@@ -512,18 +517,16 @@ void main() {
       expect(chapters, hasLength(5),
           reason: 'After selecting Urdu: 5 chapters (Part G shipped)');
 
-      // Switch to Kannada → should become empty (Part H not shipped)
+      // Switch to Kannada → should load its complete curriculum.
       await container
           .read(selectedLearnLanguageProvider.notifier)
           .select(LearnLanguage.kannada);
       chapters = await container.read(activeCurriculumProvider.future);
-      expect(chapters, isEmpty,
-          reason: 'After selecting Kannada: empty (Part H not shipped)');
+      expect(chapters, hasLength(5),
+          reason: 'After selecting Kannada: 5 chapters');
 
       // Clear selection → back to Sanskrit
-      await container
-          .read(selectedLearnLanguageProvider.notifier)
-          .clear();
+      await container.read(selectedLearnLanguageProvider.notifier).clear();
       chapters = await container.read(activeCurriculumProvider.future);
       expect(chapters, hasLength(4),
           reason: 'After clearing selection: back to Sanskrit 4 chapters');

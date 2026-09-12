@@ -81,9 +81,8 @@ class DiagnosticItemBank {
       // 1) Section membership — recall, easy.
       {
         final pool = [...sectionTitles, ...bookTitles];
-        final correct = view.sections
-                .firstWhere((s) => s.id == unit.sectionId)
-                .title;
+        final correct =
+            view.sections.firstWhere((s) => s.id == unit.sectionId).title;
         final options = _options(
           correct: correct,
           pool: pool.where((t) => t != correct).toList(),
@@ -140,20 +139,18 @@ class DiagnosticItemBank {
         final withMarks = selectedUnits
             .where((u) => u.marks != null && u.marks! > 0)
             .toList();
-        if (unit.marks != null &&
-            unit.marks! > 0 &&
-            withMarks.length >= 4) {
-          final pool = withMarks.where((u) => u.id != unit.id).toList()
+        if (unit.marks != null && unit.marks! > 0 && withMarks.length >= 4) {
+          // Pick only strictly lower-marked units as distractors. The
+          // previous global-descending sample made this question valid for
+          // just one unit in a course, starving the hard adaptive tier.
+          final lowerMarked = withMarks
+              .where((u) => u.id != unit.id && u.marks! < unit.marks!)
+              .toList()
             ..sort((a, b) => b.marks!.compareTo(a.marks!));
-          // Only unambiguous when the unit is the strict maximum of
-          // the sampled four.
-          final others = pool.take(3).toList();
-          final maxOther =
-              others.isEmpty ? 0.0 : others.map((u) => u.marks!).reduce((a, b) => a > b ? a : b);
-          if (unit.marks! > maxOther) {
+          if (lowerMarked.length >= 3) {
             final options = _options(
               correct: unit.title,
-              pool: others.map((u) => u.title).toList(),
+              pool: lowerMarked.take(3).map((u) => u.title).toList(),
               seed: unit.id + '_marks',
             );
             if (options != null) {
@@ -162,7 +159,8 @@ class DiagnosticItemBank {
                 topicId: unit.id,
                 topicTitle: unit.title,
                 sectionTitle: topicSections[unit.id] ?? '',
-                prompt: 'इन चार इकाइयों में से किस पर सबसे अधिक अंक निर्धारित हैं?',
+                prompt:
+                    'इन चार इकाइयों में से किस पर सबसे अधिक अंक निर्धारित हैं?',
                 options: options.$1,
                 correctIndex: options.$2,
                 difficulty: DiagnosticDifficulty.hard,
@@ -249,7 +247,8 @@ class DiagnosticItemBank {
   }) {
     final distinct = pool.toSet().toList()..remove(correct);
     if (distinct.length < 3) return null;
-    final chosen = deterministicShuffle(distinct, seedFromText(seed)).take(3).toList();
+    final chosen =
+        deterministicShuffle(distinct, seedFromText(seed)).take(3).toList();
     final all = [correct, ...chosen];
     final shuffled = deterministicShuffle(all, seedFromText(seed + '_shuffle'));
     return (shuffled, shuffled.indexOf(correct));
@@ -258,7 +257,9 @@ class DiagnosticItemBank {
   static String _suffix(String unitId) {
     // cbse_10_sanskrit_grammar_sandhi → grammar_sandhi (stable, short).
     final parts = unitId.split('_');
-    return parts.length <= 4 ? parts.sublist(2).join('_') : parts.sublist(4).join('_');
+    return parts.length <= 4
+        ? parts.sublist(2).join('_')
+        : parts.sublist(4).join('_');
   }
 }
 

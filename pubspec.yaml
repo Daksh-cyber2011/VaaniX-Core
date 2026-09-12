@@ -2,7 +2,7 @@ name: vaanix_app
 description: >
   VaaniX — A Sanskrit-first AI-powered language learning companion for Indian students.
   Built around Van, an emotionally intelligent AI duck companion.
-version: 1.0.0+1
+version: 2.0.0+2
 
 environment:
   # Color.withValues() requires Dart 3.6+; the Material 3 theme APIs
@@ -99,5 +99,6 @@ flutter:
     - assets/env/
     - assets/curriculum/
     - assets/curriculum/learn/
+    - assets/syllabus/cbse/
     - assets/van/metadata/
     - assets/van/expressions/
