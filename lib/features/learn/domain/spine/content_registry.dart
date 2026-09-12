@@ -103,8 +103,18 @@ class TrustedContent extends Equatable {
 
   @override
   List<Object?> get props => [
-        id, kind, languageCode, conceptId, lessonId, skillId, title, detail,
-        difficulty, order, exerciseType, exerciseCount,
+        id,
+        kind,
+        languageCode,
+        conceptId,
+        lessonId,
+        skillId,
+        title,
+        detail,
+        difficulty,
+        order,
+        exerciseType,
+        exerciseCount,
       ];
 }
 
@@ -171,8 +181,14 @@ class TrustedKnowledgeExcerpt extends Equatable {
 
   @override
   List<Object?> get props => [
-        languageCode, conceptId, lessonId, vocabulary, exampleSentences,
-        referenceText, isRTL, scriptCode,
+        languageCode,
+        conceptId,
+        lessonId,
+        vocabulary,
+        exampleSentences,
+        referenceText,
+        isRTL,
+        scriptCode,
       ];
 }
 
@@ -204,10 +220,11 @@ class TrustedContentRegistry extends Equatable {
     required this.entries,
     required this.excerpts,
   })  : _conceptIndex = _indexBy(entries, (e) => e.conceptId),
-        _lessonIndex = _indexBy(
-          entries.where((e) => e.kind == TrustedContentKind.lesson),
-          (e) => e.lessonId,
-        ),
+        _lessonIndex = {
+          for (final entry
+              in entries.where((e) => e.kind == TrustedContentKind.lesson))
+            entry.lessonId: entry,
+        },
         _exerciseIdIndex = {
           for (final e in entries)
             if (e.kind == TrustedContentKind.exercise)
@@ -388,13 +405,11 @@ class TrustedContentRegistry extends Equatable {
     if (subtitle != null && subtitle.isNotEmpty) return subtitle;
     final content = lesson.content?.trim() ?? '';
     if (content.isEmpty) return '';
-    final firstLine =
-        content.split(RegExp(r'\n')).firstWhere((l) => l.trim().isNotEmpty,
-            orElse: () => content);
+    final firstLine = content
+        .split(RegExp(r'\n'))
+        .firstWhere((l) => l.trim().isNotEmpty, orElse: () => content);
     final trimmed = firstLine.trim();
-    return trimmed.length <= 140
-        ? trimmed
-        : '${trimmed.substring(0, 137)}…';
+    return trimmed.length <= 140 ? trimmed : '${trimmed.substring(0, 137)}…';
   }
 
   /// Extracts the trusted knowledge excerpt for one concept from the

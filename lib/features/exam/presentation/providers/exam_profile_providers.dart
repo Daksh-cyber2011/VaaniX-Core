@@ -48,18 +48,19 @@ class ExamProfileController extends FamilyAsyncNotifier<ExamProfile, String> {
   Future<void> setStudyDaysPerWeek(int days) =>
       _edit((p) => p.copyWith(studyDaysPerWeek: days));
 
-  Future<void> setReadinessTargetDate(DateTime? date) => _edit(
-      (p) => date == null ? p.copyWith(clearReadinessTargetDate: true) : p.copyWith(readinessTargetDate: date));
+  Future<void> setReadinessTargetDate(DateTime? date) =>
+      _edit((p) => date == null
+          ? p.copyWith(clearReadinessTargetDate: true)
+          : p.copyWith(readinessTargetDate: date));
 
-  Future<void> setReadinessDurationWeeks(int? weeks) => _edit((p) => weeks ==
-          null
-      ? p.copyWith(clearReadinessDurationWeeks: true)
-      : p.copyWith(readinessDurationWeeks: weeks));
+  Future<void> setReadinessDurationWeeks(int? weeks) =>
+      _edit((p) => weeks == null
+          ? p.copyWith(clearReadinessDurationWeeks: true)
+          : p.copyWith(readinessDurationWeeks: weeks));
 
-  Future<void> setActualExamDate(DateTime? date) => _edit((p) =>
-      date == null
-          ? p.copyWith(clearActualExamDate: true)
-          : p.copyWith(actualExamDate: date));
+  Future<void> setActualExamDate(DateTime? date) => _edit((p) => date == null
+      ? p.copyWith(clearActualExamDate: true)
+      : p.copyWith(actualExamDate: date));
 
   Future<void> setPace(StudyPace pace) => _edit((p) => p.copyWith(pace: pace));
 
@@ -71,7 +72,6 @@ class ExamProfileController extends FamilyAsyncNotifier<ExamProfile, String> {
     final errors = draft.validate();
     if (errors.isNotEmpty) return errors;
     final ok = await _repo.save(draft.copyWith(
-      schemaVersion: ExamProfile.currentSchemaVersion,
       updatedAtIso: DateTime.now().toIso8601String(),
     ));
     if (!ok) return ['Profile could not be saved'];
@@ -93,8 +93,8 @@ final examProfileProvider =
 
 /// Whether the track has a SAVED (persisted, valid) profile — the M4
 /// diagnostic gate ("profile set?" step of the setup flow).
-final hasExamProfileProvider = FutureProvider.family<bool, String>(
-    (ref, trackId) async {
+final hasExamProfileProvider =
+    FutureProvider.family<bool, String>((ref, trackId) async {
   final profiles = await ref.watch(examProfileMapProvider.future);
   return profiles[trackId]?.isValid ?? false;
 });

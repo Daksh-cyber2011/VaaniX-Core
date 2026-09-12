@@ -38,6 +38,8 @@ import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_weakarea_providers.dart'
     show examAttemptLogRepositoryProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_repository_providers.dart'
+    show pyqPerformanceRepositoryProvider, mockResultRepositoryProvider;
 
 // The PYQ/mock repository providers now live in the shared leaf file
 // (M10 wiring fix — the weak-area overview reads both repositories
@@ -100,7 +102,8 @@ class ExamPyqController extends FamilyAsyncNotifier<PyqStateData, String> {
       return;
     }
     final learner = await ref.read(examLearnerProfileProvider(trackId).future);
-    final weakIds = learner.weakTopicsFirst(limit: 30)
+    final weakIds = learner
+        .weakTopicsFirst(limit: 30)
         .map((t) => t.topicId)
         .where((id) => scope.selection.isSelected(id))
         .toSet();
@@ -178,14 +181,12 @@ class ExamPyqController extends FamilyAsyncNotifier<PyqStateData, String> {
     ));
   }
 
-  Future<void> _absorb(
-      PyqStateData current, PracticeSessionState next) async {
+  Future<void> _absorb(PyqStateData current, PracticeSessionState next) async {
     if (next.finished) {
       await _persistAll(next);
       // M10: the finished PYQ session feeds the app-wide gamification
       // (XP once-ever, streak evidence, checkers, VAN) — §41.
-      await _recordSessionGamification(
-          ref, arg, next, ExamSessionKind.pyq);
+      await _recordSessionGamification(ref, arg, next, ExamSessionKind.pyq);
       state = AsyncData(PyqStateData(
         trackId: current.trackId,
         session: next,
@@ -209,19 +210,19 @@ class ExamPyqController extends FamilyAsyncNotifier<PyqStateData, String> {
           q.id: q.kind == PracticeQuestionKind.mcq ? 'mcq' : 'typed',
       };
       await ref.read(examAttemptLogRepositoryProvider).recordSession(
-            trackId: trackId,
-            attempts: [
-              for (final a in next.attempts)
-                ErrorEvidence(
-                  questionId: a.questionId,
-                  topicId: a.topicId,
-                  kind: kinds[a.questionId] ?? 'mcq',
-                  verdict: a.verdict,
-                  retries: a.retries,
-                  atIso: a.attemptedAtIso,
-                ),
-            ],
-          );
+        trackId: trackId,
+        attempts: [
+          for (final a in next.attempts)
+            ErrorEvidence(
+              questionId: a.questionId,
+              topicId: a.topicId,
+              kind: kinds[a.questionId] ?? 'mcq',
+              verdict: a.verdict,
+              retries: a.retries,
+              atIso: a.attemptedAtIso,
+            ),
+        ],
+      );
     } catch (_) {
       // §41.
     }
@@ -283,8 +284,8 @@ Future<void> _recordSessionGamification(
   }
 }
 
-final examPyqProvider = AsyncNotifierProvider.family<
-    ExamPyqController, PyqStateData, String>(
+final examPyqProvider =
+    AsyncNotifierProvider.family<ExamPyqController, PyqStateData, String>(
   ExamPyqController.new,
 );
 
@@ -322,8 +323,7 @@ class ExamMockController extends FamilyAsyncNotifier<MockStateData, String> {
 
   @override
   Future<MockStateData> build(String trackId) async {
-    final history =
-        await ref.read(mockResultRepositoryProvider).load(trackId);
+    final history = await ref.read(mockResultRepositoryProvider).load(trackId);
     return MockStateData(
       trackId: trackId,
       paper: null,
@@ -351,9 +351,8 @@ class ExamMockController extends FamilyAsyncNotifier<MockStateData, String> {
     // Official board structure (§60 — from the canonical syllabus).
     final boardSections = <({String id, String title, double marks})>[];
     for (final section in scope.view!.sections) {
-      final official = syllabus.sections
-          .where((s) => s.id == section.id)
-          .firstOrNull;
+      final official =
+          syllabus.sections.where((s) => s.id == section.id).firstOrNull;
       // Only BOARD sections are mockable — internal assessment is
       // never faked into a mock (§25 honesty).
       if (official == null ||
@@ -516,19 +515,19 @@ class ExamMockController extends FamilyAsyncNotifier<MockStateData, String> {
           q.id: q.kind == PracticeQuestionKind.mcq ? 'mcq' : 'typed',
       };
       await ref.read(examAttemptLogRepositoryProvider).recordSession(
-            trackId: trackId,
-            attempts: [
-              for (final a in next.attempts)
-                ErrorEvidence(
-                  questionId: a.questionId,
-                  topicId: a.topicId,
-                  kind: kinds[a.questionId] ?? 'mcq',
-                  verdict: a.verdict,
-                  retries: a.retries,
-                  atIso: a.attemptedAtIso,
-                ),
-            ],
-          );
+        trackId: trackId,
+        attempts: [
+          for (final a in next.attempts)
+            ErrorEvidence(
+              questionId: a.questionId,
+              topicId: a.topicId,
+              kind: kinds[a.questionId] ?? 'mcq',
+              verdict: a.verdict,
+              retries: a.retries,
+              atIso: a.attemptedAtIso,
+            ),
+        ],
+      );
     } catch (_) {
       // §41.
     }
@@ -556,8 +555,8 @@ class ExamMockController extends FamilyAsyncNotifier<MockStateData, String> {
   }
 }
 
-final examMockProvider = AsyncNotifierProvider.family<
-    ExamMockController, MockStateData, String>(
+final examMockProvider =
+    AsyncNotifierProvider.family<ExamMockController, MockStateData, String>(
   ExamMockController.new,
 );
 

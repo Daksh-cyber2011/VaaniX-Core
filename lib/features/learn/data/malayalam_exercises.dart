@@ -87,7 +87,12 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       type: ExerciseType.mcq,
       prompt: 'മലയാളം എന്ന വാക്കിൽ ഏത് പ്രത്യേക ലിപിയാണ്? '
           '(Which special letter appears in മലയാളം itself?)',
-      options: ['ല (dental la)', 'ള (retroflex ḷa)', 'ഴ (zh)', 'റ (alveolar ra)'],
+      options: [
+        'ല (dental la)',
+        'ള (retroflex ḷa)',
+        'ഴ (zh)',
+        'റ (alveolar ra)'
+      ],
       correctIndex: 1,
       explanation:
           'മലയാളം ends in ള (retroflex l). The even rarer ഴ appears in പഴം (fruit) and വഴി (way) — both everyday words.',
@@ -96,7 +101,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_cons_3',
       lessonId: 'ml_script_consonants',
       type: ExerciseType.ordering,
-      prompt: 'മൂന്ന് l-ശബ്ദങ്ങൾ ക്രമീകരിക്കുക (Order the three l-sounds: dental → retroflex → zh)',
+      prompt:
+          'മൂന്ന് l-ശബ്ദങ്ങൾ ക്രമീകരിക്കുക (Order the three l-sounds: dental → retroflex → zh)',
       items: ['ല (dental l)', 'ള (retroflex ḷ)', 'ഴ (zh)'],
       explanation:
           'ല → ള → ഴ is the difficulty ladder of the mouth: teeth → curled tongue → fully-back zh. Drill with കലം, കളം, കഴി.',
@@ -134,7 +140,12 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       type: ExerciseType.mcq,
       prompt: 'മലയാളം, കാലം, വർഷം — ഇവയുടെ പൊതു അന്ത്യം? '
           '(What ending do മലയാളം, കാലം and വർഷം share?)',
-      options: ['് (virama)', 'ം (anusvāra, "m")', 'ൻ (chillu n)', 'ാ (ā sign)'],
+      options: [
+        '് (virama)',
+        'ം (anusvāra, "m")',
+        'ൻ (chillu n)',
+        'ാ (ā sign)'
+      ],
       correctIndex: 1,
       explanation:
           'The final ം adds "m" — the most common word ending in Malayalam. പുസ്തകം (book) has it too.',
@@ -198,7 +209,12 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       lessonId: 'ml_greet_namaskaram',
       type: ExerciseType.mcq,
       prompt: 'സുഖമാണോ? എന്നതിന്റെ അർത്ഥം: (What does സുഖമാണോ? ask?)',
-      options: ['Are you well?', 'Where are you?', 'What is your name?', 'Did you eat?'],
+      options: [
+        'Are you well?',
+        'Where are you?',
+        'What is your name?',
+        'Did you eat?'
+      ],
       correctIndex: 0,
       explanation:
           'സുഖമാണോ? = "are you well?" — with the -ോ question tag. The classic reply: സുഖമാണ്, നന്ദി (well, thanks).',
@@ -221,7 +237,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_greet_3',
       lessonId: 'ml_greet_namaskaram',
       type: ExerciseType.mcq,
-      prompt: 'സുഖമാണോ? എന്ന ചോദ്യത്തിന്റെ ഉത്തരം ഏത്? (Which answers സുഖമാണോ?)',
+      prompt:
+          'സുഖമാണോ? എന്ന ചോദ്യത്തിന്റെ ഉത്തരം ഏത്? (Which answers സുഖമാണോ?)',
       options: ['സുഖമാണ്, നന്ദി', 'നമസ്കാരം', 'എന്റെ പേര്', 'ശരി'],
       correctIndex: 0,
       explanation:
@@ -302,7 +319,11 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       lessonId: 'ml_greet_family',
       type: ExerciseType.translation,
       prompt: 'മലയാളത്തിൽ പറയുക: "This is my mother."',
-      acceptedAnswers: ['ഇത് എന്റെ അമ്മയാണ്', 'ithu ente ammayaanu', 'ithu ente ammayāṇu'],
+      acceptedAnswers: [
+        'ഇത് എന്റെ അമ്മയാണ്',
+        'ithu ente ammayaanu',
+        'ithu ente ammayāṇu'
+      ],
       explanation:
           'ഇത് എന്റെ അമ്മയാണ് — note the fusion: അമ്മ + ആണ് → അമ്മയാണ് (the glue യ appears).',
     ),
@@ -407,7 +428,12 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       lessonId: 'ml_daily_questions',
       type: ExerciseType.mcq,
       prompt: "'ബസ് എവിടെ?' എന്നതിന്റെ അർത്ഥം: (What does ബസ് എവിടെ? ask?)",
-      options: ['When is the bus?', 'Where is the bus?', 'How much is the bus?', 'Who is on the bus?'],
+      options: [
+        'When is the bus?',
+        'Where is the bus?',
+        'How much is the bus?',
+        'Who is on the bus?'
+      ],
       correctIndex: 1,
       explanation:
           'എവിടെ = where. "Bus where?" — the question word holds the answer\'s slot.',
@@ -555,7 +581,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_gram1_3',
       lessonId: 'ml_grammar_pronouns',
       type: ExerciseType.mcq,
-      prompt: 'പുസ്തകത്തിന് ലിംഗഭേദമുണ്ടോ? (Does a book have grammatical gender in Malayalam?)',
+      prompt:
+          'പുസ്തകത്തിന് ലിംഗഭേദമുണ്ടോ? (Does a book have grammatical gender in Malayalam?)',
       options: [
         'No — objects are all അത് (it)',
         'Yes — masculine',
@@ -667,7 +694,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_gram4_2',
       lessonId: 'ml_grammar_politeness',
       type: ExerciseType.mcq,
-      prompt: "Respect മൂന്നാം പേർക്ക്: (How is a respected third person referred to?)",
+      prompt:
+          "Respect മൂന്നാം പേർക്ക്: (How is a respected third person referred to?)",
       options: [
         'With അവർ (they) + plural verb',
         'With അത്',
@@ -721,7 +749,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_read1_2',
       lessonId: 'ml_reading_conversation',
       type: ExerciseType.mcq,
-      prompt: "'പോകണം' എന്ത് സൂചിപ്പിക്കുന്നു? (What does -ണം express in പോകണം?)",
+      prompt:
+          "'പോകണം' എന്ത് സൂചിപ്പിക്കുന്നു? (What does -ണം express in പോകണം?)",
       options: [
         'must / have to',
         'past tense',
@@ -754,8 +783,14 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_read2_1',
       lessonId: 'ml_reading_paragraph',
       type: ExerciseType.mcq,
-      prompt: 'കൊച്ചി യാത്ര: എങ്ങനെ യാത്ര ചെയ്തു? (In the paragraph, how did they travel?)',
-      options: ['ട്രെയിനിൽ (by train)', 'ബസ്സിൽ (by bus)', 'കാറിൽ (by car)', 'കാൽനടയായി (on foot)'],
+      prompt:
+          'കൊച്ചി യാത്ര: എങ്ങനെ യാത്ര ചെയ്തു? (In the paragraph, how did they travel?)',
+      options: [
+        'ട്രെയിനിൽ (by train)',
+        'ബസ്സിൽ (by bus)',
+        'കാറിൽ (by car)',
+        'കാൽനടയായി (on foot)'
+      ],
       correctIndex: 0,
       explanation:
           'ബാംഗ്ലൂരിൽ നിന്ന് ട്രെയിനിൽ പത്ത് മണിക്കൂർ — ten hours by train from Bengaluru.',
@@ -778,7 +813,11 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_read2_3',
       lessonId: 'ml_reading_paragraph',
       type: ExerciseType.mcq,
+      /*
       prompt: "'-ഉം' എത്ര തവണ? (How many "and"s (-ഉം) appear in കടലും കപ്പലും കാറ്റും?)",
+      */
+      prompt:
+          'How many times does the Malayalam conjunction appear in the sentence?',
       options: ['1', '2', '3', '0'],
       correctIndex: 2,
       explanation:
@@ -793,8 +832,14 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       type: ExerciseType.matching,
       prompt: 'പഴഞ്ചൊല്ലുകൾ (Match proverbs to meanings)',
       pairs: [
-        (left: 'കൈയിലുള്ളത് കൈമാറരുത്', right: "don't hand over what's in your hand"),
-        (left: 'ആനയില്ലാത്ത ഊരിൽ', right: 'buffalo is the elephant (where no elephant)'),
+        (
+          left: 'കൈയിലുള്ളത് കൈമാറരുത്',
+          right: "don't hand over what's in your hand"
+        ),
+        (
+          left: 'ആനയില്ലാത്ത ഊരിൽ',
+          right: 'buffalo is the elephant (where no elephant)'
+        ),
         (left: 'കൈ', right: 'hand'),
         (left: 'ആന', right: 'elephant'),
       ],
@@ -821,7 +866,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_read3_3',
       lessonId: 'ml_reading_proverbs',
       type: ExerciseType.mcq,
-      prompt: 'പഴഞ്ചൊല്ലുകളിലെ വാക്യക്രമം: (Word order inside Malayalam proverbs is…)',
+      prompt:
+          'പഴഞ്ചൊല്ലുകളിലെ വാക്യക്രമം: (Word order inside Malayalam proverbs is…)',
       options: ['SVO', 'SOV (same as sentences)', 'random', 'VSO'],
       correctIndex: 1,
       explanation:

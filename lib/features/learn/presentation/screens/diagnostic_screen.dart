@@ -55,8 +55,9 @@ class DiagnosticScreen extends ConsumerWidget {
             ? const _NoLanguageView()
             : _IntroView(
                 language: selected,
-                onStart: () =>
-                    ref.read(diagnosticSessionProvider.notifier).start(selected),
+                onStart: () => ref
+                    .read(diagnosticSessionProvider.notifier)
+                    .start(selected),
               ),
         DiagnosticPhase.unavailable => _UnavailableView(
             reason: session.unavailableReason ??
@@ -135,7 +136,7 @@ class _IntroView extends StatelessWidget {
           const SizedBox(height: 28),
           PrimaryButton(
             label: "Let's play",
-            icon: Icons.sports_esports_rounded,
+            icon: const Icon(Icons.sports_esports_rounded),
             onPressed: onStart,
           ),
           const SizedBox(height: 8),
@@ -203,8 +204,7 @@ class _NoLanguageView extends StatelessWidget {
     return EmptyStateWidget(
       icon: Icons.language_rounded,
       title: 'Choose a language first',
-      description:
-          'The placement game is per language — pick the language you '
+      description: 'The placement game is per language — pick the language you '
           'want to learn and VAN will start the discovery round.',
       actionLabel: 'Choose a language',
       onActionPressed: () => context.go(RouteNames.learnLanguageSelection),
@@ -288,11 +288,9 @@ class _RoundView extends ConsumerWidget {
                         : (session.askedCount / session.estimatedMax)
                             .clamp(0.0, 1.0),
                     minHeight: 6,
-                    backgroundColor:
-                        AppColors.primary.withValues(alpha: 0.1),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                     color: AppColors.primary,
-                    semanticsLabel:
-                        'Round ${session.askedCount} of about '
+                    semanticsLabel: 'Round ${session.askedCount} of about '
                         '${session.estimatedMax} played',
                   ),
                 ),
@@ -309,9 +307,8 @@ class _RoundView extends ConsumerWidget {
                     color: Theme.of(context).cardTheme.color,
                     borderRadius: BorderRadius.circular(AppDimens.radiusLg),
                     border: Border.all(
-                      color: isDark
-                          ? AppColors.borderDark
-                          : AppColors.borderLight,
+                      color:
+                          isDark ? AppColors.borderDark : AppColors.borderLight,
                     ),
                   ),
                   child: Directionality(
@@ -341,8 +338,8 @@ class _RoundView extends ConsumerWidget {
                     wasCorrect: session.lastAnswerWasCorrect,
                     explanation: exercise.explanation,
                     cheer: (session.lastAnswerWasCorrect
-                            ? _cheers
-                            : _nudges)[session.askedCount % 3],
+                        ? _cheers
+                        : _nudges)[session.askedCount % 3],
                     subtext: subtext,
                   ),
                 ],
@@ -466,8 +463,7 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
   Widget build(BuildContext context) {
     final exercise = widget.exercise;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final subtext = _subtext(context);
 
     final answer = _buildAnswer();
@@ -475,7 +471,7 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ...switch (exercise.type) {
+        switch (exercise.type) {
           ExerciseType.mcq || ExerciseType.fillBlank => _choiceArea(),
           ExerciseType.translation => _translationArea(subtext),
           ExerciseType.ordering => _orderingArea(borderColor),
@@ -487,7 +483,7 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
           onPressed: !widget.locked && _canSubmit(answer)
               ? () => ref
                   .read(diagnosticSessionProvider.notifier)
-                  .submitAnswer(answer!),
+                  .submitAnswer(answer!)
               : null,
         ),
       ],
@@ -544,8 +540,7 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
           enabled: !widget.locked,
           onChanged: (value) => setState(() => _text = value),
           textInputAction: TextInputAction.done,
-          textDirection:
-              _isRTL ? TextDirection.rtl : TextDirection.ltr,
+          textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
           decoration: InputDecoration(
             hintText: 'Type your answer',
             filled: true,
@@ -566,9 +561,8 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
 
   Widget _orderingArea(Color borderColor) {
     final exercise = widget.exercise;
-    final remaining = exercise.items
-        .where((o) => !_chosen.contains(o))
-        .toList();
+    final remaining =
+        exercise.items.where((o) => !_chosen.contains(o)).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -611,8 +605,7 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
             for (final item in remaining)
               ActionChip(
                 label: Directionality(
-                  textDirection:
-                      _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
                   child: Text(item),
                 ),
                 onPressed: widget.locked
@@ -663,8 +656,8 @@ class _ProbeAnswerAreaState extends ConsumerState<_ProbeAnswerArea> {
                   for (var slot = 0; slot < rightOptions.length; slot++)
                     _PairTile(
                       label: rightOptions[slot],
-                      highlight: _pendingLeft != null &&
-                          !_pairs.containsValue(slot),
+                      highlight:
+                          _pendingLeft != null && !_pairs.containsValue(slot),
                       paired: _pairs.containsValue(slot),
                       onTap: widget.locked || _pendingLeft == null
                           ? null
@@ -717,12 +710,12 @@ class _ChoiceTile extends StatelessWidget {
   final bool selected;
   final bool locked;
   final VoidCallback onTap;
+  final bool rtl;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final surface = Theme.of(context).cardTheme.color;
 
     return Padding(
@@ -737,59 +730,58 @@ class _ChoiceTile extends StatelessWidget {
         label: 'Option $optionLetter: $label',
         child: ExcludeSemantics(
           child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: locked ? null : onTap,
-          borderRadius: BorderRadius.circular(14),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: surface,
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: locked ? null : onTap,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: selected ? AppColors.primary : borderColor,
-                width: selected ? 2 : 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: selected
-                        ? AppColors.primary
-                        : Colors.transparent,
-                    border: Border.all(
-                      color:
-                          selected ? AppColors.primary : borderColor,
-                      width: 2,
-                    ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: selected ? AppColors.primary : borderColor,
+                    width: selected ? 2 : 1,
                   ),
-                  child: Center(
-                    child: Text(
-                      optionLetter,
-                      style: AppTextStyles.labelMedium(
-                        color: selected ? Colors.white : null,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            selected ? AppColors.primary : Colors.transparent,
+                        border: Border.all(
+                          color: selected ? AppColors.primary : borderColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          optionLetter,
+                          style: AppTextStyles.labelMedium(
+                            color: selected ? Colors.white : null,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Directionality(
+                        textDirection:
+                            rtl ? TextDirection.rtl : TextDirection.ltr,
+                        child: Text(label, style: AppTextStyles.bodyLarge()),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Directionality(
-                    textDirection:
-                        rtl ? TextDirection.rtl : TextDirection.ltr,
-                    child: Text(label, style: AppTextStyles.bodyLarge()),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }
@@ -808,12 +800,12 @@ class _PairTile extends StatelessWidget {
   final bool highlight;
   final bool paired;
   final VoidCallback? onTap;
+  final bool rtl;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       // Screen-reader parity with the practice engine: highlight/paired
@@ -826,40 +818,39 @@ class _PairTile extends StatelessWidget {
         label: paired ? '$label, already matched' : label,
         child: ExcludeSemantics(
           child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            constraints: const BoxConstraints(
-                minHeight: AppDimens.minTouchTarget),
-            alignment: Alignment.centerLeft,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: paired
-                    ? AppColors.success.withValues(alpha: 0.6)
-                    : highlight
-                        ? AppColors.primary
-                        : borderColor,
-                width: highlight ? 2 : 1,
-              ),
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: Directionality(
-                textDirection:
-                    rtl ? TextDirection.rtl : TextDirection.ltr,
-                child: Text(label, style: AppTextStyles.bodyMedium()),
+              child: Container(
+                constraints:
+                    const BoxConstraints(minHeight: AppDimens.minTouchTarget),
+                alignment: Alignment.centerLeft,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardTheme.color,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: paired
+                        ? AppColors.success.withValues(alpha: 0.6)
+                        : highlight
+                            ? AppColors.primary
+                            : borderColor,
+                    width: highlight ? 2 : 1,
+                  ),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Directionality(
+                    textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+                    child: Text(label, style: AppTextStyles.bodyMedium()),
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }
@@ -938,7 +929,7 @@ class _ResultView extends ConsumerWidget {
           const SizedBox(height: 24),
           PrimaryButton(
             label: 'See my path',
-            icon: Icons.map_rounded,
+            icon: const Icon(Icons.map_rounded),
             onPressed: () {
               ref.read(diagnosticSessionProvider.notifier).reset();
               context.go(RouteNames.learn);

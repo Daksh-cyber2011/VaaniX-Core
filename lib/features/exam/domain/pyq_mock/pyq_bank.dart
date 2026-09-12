@@ -41,7 +41,7 @@ class PyqBank {
     PyqFilter filter = const PyqFilter(),
     int targetSize = 12,
   }) {
-    final sectionByUnit = <String, SyllabusSection>{};
+    final sectionByUnit = <String, ScopeSection>{};
     for (final section in view.sections) {
       for (final unit in section.selectableUnits) {
         sectionByUnit[unit.id] = section;
@@ -72,9 +72,8 @@ class PyqBank {
         // official chapter title, official section titles (§60).
         // Without this, full mocks would silently skip the
         // literature section's marks.
-        final chapter = section.selectableUnits
-            .where((u) => u.id == unitId)
-            .firstOrNull;
+        final chapter =
+            section.selectableUnits.where((u) => u.id == unitId).firstOrNull;
         if (chapter == null) continue;
         final pool = [...sectionTitles]..remove(section.title);
         final options = _options(
@@ -134,8 +133,7 @@ class PyqBank {
           ));
         } else {
           // MCQ honoring the pattern (recall/membership, grounded).
-          final pool = [...sectionTitles]
-            ..remove(section.title);
+          final pool = [...sectionTitles]..remove(section.title);
           final options = _options(
             correct: section.title,
             pool: pool,
@@ -234,9 +232,8 @@ class PyqBank {
     for (final section in view.sections) {
       for (final unit in section.selectableUnits) {
         if (selection.isSelected(unit.id)) {
-          final item = syllabus.allItems
-              .where((i) => i.id == unit.id)
-              .firstOrNull;
+          final item =
+              syllabus.allItems.where((i) => i.id == unit.id).firstOrNull;
           if (item != null &&
               (item.questionPatterns.isNotEmpty || item.marks != null)) {
             out.add(section.id);
@@ -248,7 +245,7 @@ class PyqBank {
   }
 
   /// Marks of one pattern (marksEach → total/count → 1; bounded).
-  static double _marksOf(dynamic pattern) {
+  static double _marksOf(QuestionPattern pattern) {
     final each = pattern.marksEach;
     if (each != null && each > 0) return each.clamp(0.5, 5.0).toDouble();
     final total = pattern.totalMarks;
@@ -263,15 +260,23 @@ class PyqBank {
   static bool _patternWantsTyped(String patternText) {
     final t = patternText.toLowerCase();
     const typedMarkers = [
-      'पूर्णवाक्यात्मक', 'लघूत्तरात्मक', 'वाक्य', 'रचनात्मक', 'निर्माण',
-      'संवाद', 'पत्र', 'निबंध', 'अनुच्छेद', 'वर्णन',
+      'पूर्णवाक्यात्मक',
+      'लघूत्तरात्मक',
+      'वाक्य',
+      'रचनात्मक',
+      'निर्माण',
+      'संवाद',
+      'पत्र',
+      'निबंध',
+      'अनुच्छेद',
+      'वर्णन',
     ];
     const mcqMarkers = ['बहुविकल्पीय', 'mcq', 'objective', 'वस्तुनिष्ठ'];
     if (mcqMarkers.any(t.contains)) return false;
     return typedMarkers.any(t.contains);
   }
 
-  static List<String> _subtopicsOf(dynamic item) {
+  static List<String> _subtopicsOf(SyllabusItem item) {
     final details = item.details;
     if (details == null) return const [];
     final out = <String>[];
@@ -304,8 +309,7 @@ class PyqBank {
     final chosen =
         deterministicShuffle(distinct, seedFromText(seed)).take(3).toList();
     final all = [correct, ...chosen];
-    final shuffled =
-        deterministicShuffle(all, seedFromText(seed + '_shuffle'));
+    final shuffled = deterministicShuffle(all, seedFromText(seed + '_shuffle'));
     return (shuffled, shuffled.indexOf(correct));
   }
 

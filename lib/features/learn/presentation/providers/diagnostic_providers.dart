@@ -148,9 +148,9 @@ class DiagnosticSessionState {
 ///   build result → saveDiagnostic → seed state extras (review queue +
 ///   recent performance) → write profile.currentLevel → invalidate the
 ///   spine providers → publish the finished state.
-class DiagnosticSessionNotifier
-    extends StateNotifier<DiagnosticSessionState> {
-  DiagnosticSessionNotifier(this._ref) : super(const DiagnosticSessionState.idle());
+class DiagnosticSessionNotifier extends StateNotifier<DiagnosticSessionState> {
+  DiagnosticSessionNotifier(this._ref)
+      : super(const DiagnosticSessionState.idle());
 
   final Ref _ref;
   DiagnosticEngine? _engine;
@@ -195,7 +195,9 @@ class DiagnosticSessionNotifier
   void submitAnswer(DiagnosticAnswer answer) {
     final engine = _engine;
     final item = state.currentItem;
-    if (engine == null || item == null || state.phase != DiagnosticPhase.active) {
+    if (engine == null ||
+        item == null ||
+        state.phase != DiagnosticPhase.active) {
       return;
     }
     final correct = answer.isCorrectFor(item);
@@ -313,6 +315,11 @@ class DiagnosticSessionNotifier
     );
   }
 }
+
+final diagnosticSessionProvider =
+    StateNotifierProvider<DiagnosticSessionNotifier, DiagnosticSessionState>(
+  (ref) => DiagnosticSessionNotifier(ref),
+);
 
 /// Cap for review entries seeded by one diagnostic run (keeps the queue
 /// meaningful and the planner digest small).

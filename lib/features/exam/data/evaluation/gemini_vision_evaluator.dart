@@ -22,6 +22,7 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -93,15 +94,14 @@ class GeminiExamVisionClient implements ExamVisionClient {
   }) async {
     await _rateLimiter.awaitSlot();
     final model = _modelFor();
-    final response = await model
-        .generateContent([
-          Content.multi([
-            TextPart(_extractionPrompt(questionPrompt)),
-            // Inline multimodal part — image bytes (§42).
-            if (photoBytes.isNotEmpty) InlineDataPart(mime, photoBytes),
-          ])
-        ])
-        .timeout(requestTimeout);
+    final response = await model.generateContent([
+      Content.multi([
+        TextPart(_extractionPrompt(questionPrompt)),
+        // Inline multimodal part — image bytes (§42).
+        if (photoBytes.isNotEmpty)
+          DataPart(mime, Uint8List.fromList(photoBytes)),
+      ])
+    ]).timeout(requestTimeout);
 
     final text = response.text;
     if (text == null || text.trim().isEmpty) {
@@ -125,7 +125,7 @@ class GeminiExamVisionClient implements ExamVisionClient {
       model: AppEnvironment.geminiModel,
       apiKey: apiKey,
       systemInstruction: Content.system(_systemInstruction),
-      generationConfig: const GenerationConfig(
+      generationConfig: GenerationConfig(
         temperature: 0.0, // extraction: deterministic reads
         maxOutputTokens: 1024,
       ),
@@ -273,7 +273,7 @@ class PhotoAnswerEvaluator {
       return _uncertain(
         const [],
         'फ़ोटो अभी पढ़ी नहीं जा सकी — कृपया उत्तर टाइप करें (आपकी '
-            'प्रगति सुरक्षित है)।',
+        'प्रगति सुरक्षित है)।',
       );
     }
 

@@ -74,8 +74,7 @@ class LearnPlanRepository {
   }
 
   /// True when a readable, non-empty plan exists for [language].
-  bool hasPlan(LearnLanguage language) =>
-      getPlan(language)?.isNotEmpty ?? false;
+  bool hasPlan(LearnLanguage language) => !(getPlan(language)?.isEmpty ?? true);
 
   /// Persists [plan] under its own language's key. Only VALIDATED plans
   /// reach this method (the Gemini planner writes through after the

@@ -50,7 +50,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: 'आम शब्द में कौन सा स्वर है?',
       options: ['अ', 'आ', 'इ', 'ई'],
       correctIndex: 1,
-      explanation: 'आम (ām) में आ स्वर है। आ की मात्रा ा है जो क के साथ का बनाती है।',
+      explanation:
+          'आम (ām) में आ स्वर है। आ की मात्रा ा है जो क के साथ का बनाती है।',
     ),
     Exercise(
       id: 'ex_hi_vowels_4',
@@ -83,11 +84,18 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       id: 'ex_hi_consonants_2',
       lessonId: 'hi_script_consonants',
       type: ExerciseType.mcq,
+      /*
       prompt: 'महाप्राण (aspirated) व्यंजन कौन सा है?',
       options: ['क', 'ख', 'ग', 'घ'],
       correctIndex: 1,
       explanation:
           'ख (kha) महाप्राण है — इसमें 'क' की ध्वनि के साथ हवा का झोंका होता है। कपड़े का टेस्ट: क से कपड़ा नहीं हिलता, ख से हिलता है।',
+      */
+      prompt: 'Which Hindi consonant is aspirated?',
+      options: ['ka', 'kha', 'ga', 'gha'],
+      correctIndex: 1,
+      explanation:
+          'The aspirated consonant kha is pronounced with an audible puff of air.',
     ),
     Exercise(
       id: 'ex_hi_consonants_3',
@@ -96,7 +104,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: 'घोड़ा शब्द में कौन सा व्यंजन नहीं है?',
       options: ['घ', 'र', 'ड', 'क'],
       correctIndex: 3,
-      explanation: 'घोड़ा में घ, र, ड, और आ (मात्रा) हैं। क इस शब्द में नहीं है।',
+      explanation:
+          'घोड़ा में घ, र, ड, और आ (मात्रा) हैं। क इस शब्द में नहीं है।',
     ),
   ],
 
@@ -160,7 +169,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: 'म + ा = ?',
       options: ['मि', 'मा', 'मे', 'मो'],
       correctIndex: 1,
-      explanation: 'म + ा (आ की मात्रा) = मा। आ की मात्रा व्यंजन के बाद आती है।',
+      explanation:
+          'म + ा (आ की मात्रा) = मा। आ की मात्रा व्यंजन के बाद आती है।',
     ),
     Exercise(
       id: 'ex_hi_barakhadi_3',
@@ -200,7 +210,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: 'त्र किन दो व्यंजनों से बनता है?',
       options: ['त + र', 'ट + र', 'त + ड', 'त + य'],
       correctIndex: 0,
-      explanation: 'त्र = त + ् + र। हलंत (्) पहले व्यंजन का अ स्वर हटा देता है।',
+      explanation:
+          'त्र = त + ् + र। हलंत (्) पहले व्यंजन का अ स्वर हटा देता है।',
     ),
     Exercise(
       id: 'ex_hi_conjuncts_3',
@@ -249,7 +260,12 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       lessonId: 'hi_greet_namaste',
       type: ExerciseType.mcq,
       prompt: '"आप कैसे हैं?" का अर्थ क्या है?',
-      options: ['What is your name?', 'How are you?', 'Where are you?', 'Who are you?'],
+      options: [
+        'What is your name?',
+        'How are you?',
+        'Where are you?',
+        'Who are you?'
+      ],
       correctIndex: 1,
       explanation:
           'आप कैसे हैं? = How are you? (respectful)। आप = you (respectful), कैसे = how, हैं = are।',
@@ -288,7 +304,12 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       lessonId: 'hi_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"आप कहाँ से हैं?" का अर्थ क्या है?',
-      options: ['What is your name?', 'Where are you from?', 'How are you?', 'When are you coming?'],
+      options: [
+        'What is your name?',
+        'Where are you from?',
+        'How are you?',
+        'When are you coming?'
+      ],
       correctIndex: 1,
       explanation:
           'आप कहाँ से हैं? = Where are you from?। कहाँ = where, से = from। से postposition स्थान के बाद आता है।',
@@ -298,7 +319,12 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       lessonId: 'hi_greet_intro',
       type: ExerciseType.mcq,
       prompt: 'एक पुरुष छात्र खुद को कैसे परिचित करेगा?',
-      options: ['मैं छात्रा हूँ।', 'मैं छात्र हूँ।', 'मैं शिक्षिका हूँ।', 'मैं शिक्षक हूँ।'],
+      options: [
+        'मैं छात्रा हूँ।',
+        'मैं छात्र हूँ।',
+        'मैं शिक्षिका हूँ।',
+        'मैं शिक्षक हूँ।'
+      ],
       correctIndex: 1,
       explanation:
           'पुरुष छात्र = छात्र (chātr)। स्त्री = छात्रा (chātrā)। शिक्षक = teacher (पुरुष), शिक्षिका = teacher (स्त्री)।',
@@ -424,7 +450,12 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       lessonId: 'hi_daily_sentences',
       type: ExerciseType.mcq,
       prompt: '"वह डॉक्टर है" का अर्थ क्या है?',
-      options: ['He is a doctor', 'She is a doctor', 'He/She is a doctor', 'They are doctors'],
+      options: [
+        'He is a doctor',
+        'She is a doctor',
+        'He/She is a doctor',
+        'They are doctors'
+      ],
       correctIndex: 2,
       explanation:
           'वह डॉक्टर है = He/She is a doctor। हिन्दी में वह पुरुष और स्त्री दोनों के लिए इस्तेमाल होता है — संदर्भ से पता चलता है।',
@@ -439,7 +470,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: '"कहाँ" का अर्थ क्या है?',
       options: ['What', 'Who', 'Where', 'When'],
       correctIndex: 2,
-      explanation: 'कहाँ (kahā̃) = where। जैसे: आप कहाँ जाते हैं? = Where do you go?',
+      explanation:
+          'कहाँ (kahā̃) = where। जैसे: आप कहाँ जाते हैं? = Where do you go?',
     ),
     Exercise(
       id: 'ex_hi_questions_2',
@@ -448,7 +480,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: '"क्यों" का अर्थ क्या है?',
       options: ['How', 'Why', 'What', 'Who'],
       correctIndex: 1,
-      explanation: 'क्यों (kyõ) = why। जवाब आमतौर पर क्योंकि (because) से शुरू होता है।',
+      explanation:
+          'क्यों (kyõ) = why। जवाब आमतौर पर क्योंकि (because) से शुरू होता है।',
     ),
     Exercise(
       id: 'ex_hi_questions_3',
@@ -469,7 +502,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       id: 'ex_hi_negation_1',
       lessonId: 'hi_daily_negation',
       type: ExerciseType.mcq,
-      prompt: 'मानक निषेध (standard negation) के लिए कौन सा शब्द इस्तेमाल होता है?',
+      prompt:
+          'मानक निषेध (standard negation) के लिए कौन सा शब्द इस्तेमाल होता है?',
       options: ['नहीं', 'न', 'मत', 'नहीं तो'],
       correctIndex: 0,
       explanation:
@@ -684,9 +718,15 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       lessonId: 'hi_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"घर में" का अर्थ क्या है?',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
-      explanation: 'में (mein) = in/inside। घर में = in the house। postposition संज्ञा के बाद आती है।',
+      explanation:
+          'में (mein) = in/inside। घर में = in the house। postposition संज्ञा के बाद आती है।',
     ),
     Exercise(
       id: 'ex_hi_post_2',
@@ -695,7 +735,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       prompt: '"दिल्ली से" का अर्थ क्या है?',
       options: ['to Delhi', 'in Delhi', 'from Delhi', 'near Delhi'],
       correctIndex: 2,
-      explanation: 'से (se) = from। दिल्ली से = from Delhi। से के कई अर्थ हैं: from, with, by।',
+      explanation:
+          'से (se) = from। दिल्ली से = from Delhi। से के कई अर्थ हैं: from, with, by।',
     ),
     Exercise(
       id: 'ex_hi_post_3',
@@ -706,7 +747,8 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
         'on the table',
         'On the table',
       ],
-      explanation: 'मेज़ पर = on the table। पर (par) = on/at। मेज़ (table) + पर = on the table।',
+      explanation:
+          'मेज़ पर = on the table। पर (par) = on/at। मेज़ (table) + पर = on the table।',
     ),
     Exercise(
       id: 'ex_hi_post_4',

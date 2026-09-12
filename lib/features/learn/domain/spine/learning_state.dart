@@ -130,8 +130,7 @@ class PerformanceEvent extends Equatable {
 
 /// Bounded rolling window of recent performance events.
 class RecentPerformance extends Equatable {
-  RecentPerformance({List<PerformanceEvent> events = const []})
-      : events = List.unmodifiable(events.take(kMaxEvents));
+  const RecentPerformance({this.events = const []});
 
   /// Window cap — keeps the planner prompt small and memory bounded.
   static const int kMaxEvents = 30;
@@ -153,8 +152,8 @@ class RecentPerformance extends Equatable {
     return firstTryCorrect / events.length;
   }
 
-  RecentPerformance add(PerformanceEvent event) =>
-      RecentPerformance(events: [...events, event].toList()
+  RecentPerformance add(PerformanceEvent event) => RecentPerformance(
+      events: [...events, event].toList()
         ..sort((a, b) => a.at.compareTo(b.at)));
 
   List<Map<String, dynamic>> toRawJsonList() =>
@@ -198,8 +197,7 @@ class LearningState extends Equatable {
       ];
 
   /// Mastery stage of [conceptId], or `null` when never started.
-  MasteryStage? stageOf(String conceptId) =>
-      conceptMasteries[conceptId]?.stage;
+  MasteryStage? stageOf(String conceptId) => conceptMasteries[conceptId]?.stage;
 
   /// Concepts whose prerequisites are satisfied but which have no mastery
   /// record yet — the planner's "ready to learn" pool.

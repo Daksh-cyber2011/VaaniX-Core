@@ -115,11 +115,11 @@ class WeakAreaReport extends Equatable {
   bool get hasAttentionFinding =>
       findings.any((f) => f.severity == WeakSeverity.needsAttention);
 
-  List<WeakTopicFinding> attentionFirst => [...findings]..sort((a, b) {
-        final r = b.severity.index.compareTo(a.severity.index);
-        if (r != 0) return r; // needsAttention > focus > watch
-        return b.signals.length.compareTo(a.signals.length);
-      });
+  List<WeakTopicFinding> get attentionFirst => [...findings]..sort((a, b) {
+      final r = b.severity.index.compareTo(a.severity.index);
+      if (r != 0) return r; // needsAttention > focus > watch
+      return b.signals.length.compareTo(a.signals.length);
+    });
 
   @override
   List<Object?> get props => [findings, insufficientEvidence];
@@ -141,7 +141,7 @@ class WeakAreaEngine {
     required List<ErrorPattern> patterns,
     required List<RevisionItem> revisionItems,
     Map<String, PyqTopicPerformance> pyqPerformance = const {},
-    List<MockSectionResult> weakMockSections = const {},
+    List<MockSectionResult> weakMockSections = const [],
     DateTime? now,
   }) {
     final t = now ?? DateTime.now();
@@ -178,14 +178,13 @@ class WeakAreaEngine {
       //   focus = 2+ signals;
       //   watch = single signal.
       final severity = (signals
-                  .map((s) => s == WeakSignal.repeatedMisconception ||
+                  .map((s) =>
+                      s == WeakSignal.repeatedMisconception ||
                       s == WeakSignal.lowMastery)
                   .any((b) => b) ||
               learner.topics[topicId]?.stage == TopicStage.needsAttention)
           ? WeakSeverity.needsAttention
-          : (signals.length >= 2
-              ? WeakSeverity.focus
-              : WeakSeverity.watch);
+          : (signals.length >= 2 ? WeakSeverity.focus : WeakSeverity.watch);
       candidates[topicId] = WeakTopicFinding(
         topicId: topicId,
         severity: severity,
@@ -200,8 +199,9 @@ class WeakAreaEngine {
     //     (stage itself needs 2, so single mistakes never land here).
     for (final mastery in learner.topics.values) {
       if (!mastery.hasEvidence) continue;
-      final accuracy =
-          mastery.attemptCount == 0 ? 0.0 : mastery.correctCount / mastery.attemptCount;
+      final accuracy = mastery.attemptCount == 0
+          ? 0.0
+          : mastery.correctCount / mastery.attemptCount;
 
       if (mastery.stage == TopicStage.needsAttention) {
         upsert(
@@ -289,7 +289,7 @@ class WeakAreaEngine {
         {WeakSignal.weakPyq},
         const {},
         'PYQ-अभ्यास में यह विषय बार-बार कमज़ोर रहा — परीक्षा-पैटर्न पर '
-            'थोड़ा और काम करेंगे।',
+        'थोड़ा और काम करेंगे।',
       );
     }
 
@@ -305,7 +305,7 @@ class WeakAreaEngine {
         {WeakSignal.weakMock},
         const {},
         'mock में «${section.title}» खंड कमज़ोर रहा — इस खंड पर एक दिन '
-            'केंद्रित अभ्यास देंगे।',
+        'केंद्रित अभ्यास देंगे।',
       );
     }
 
@@ -326,8 +326,8 @@ class WeakAreaEngine {
     final findings = ranked.take(maxFindings).toList();
 
     // --- Honesty: insufficient evidence (never guess, §21).
-    final hasAnyEvidence =
-        findings.isNotEmpty || learner.topics.values.any((t) => t.attemptCount >= 2);
+    final hasAnyEvidence = findings.isNotEmpty ||
+        learner.topics.values.any((t) => t.attemptCount >= 2);
     final insufficient = findings.isEmpty && !hasAnyEvidence;
     final note = findings.isNotEmpty
         ? 'ये निष्कर्ष आपके असली अभ्यास से निकले हैं — अंदाज़ा नहीं।'

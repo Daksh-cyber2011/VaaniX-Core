@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/generated_content_repository.dart';
 import 'package:vaanix_app/features/learn/data/personalized_content_generator.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
@@ -79,8 +80,7 @@ final trustedContentRegistryProvider =
 // ─── Generated-material plumbing (§16/§35/§61) ──────────────────────────────
 
 /// The bounded cache for AI-personalized material (§35).
-final generatedContentRepositoryProvider =
-    Provider<GeneratedContentRepository>(
+final generatedContentRepositoryProvider = Provider<GeneratedContentRepository>(
   (ref) => GeneratedContentRepository(ref.watch(localStorageServiceProvider)),
 );
 
@@ -212,8 +212,9 @@ class SmartPracticeState {
       activity: activity ?? this.activity,
       lessonEntry: lessonEntry ?? this.lessonEntry,
       exerciseEntries: exerciseEntries ?? this.exerciseEntries,
-      personalizingKind:
-          clearPersonalizing ? null : (personalizingKind ?? this.personalizingKind),
+      personalizingKind: clearPersonalizing
+          ? null
+          : (personalizingKind ?? this.personalizingKind),
       material: clearMaterial ? null : (material ?? this.material),
       materialError:
           clearMaterialError ? null : (materialError ?? this.materialError),
@@ -285,18 +286,15 @@ class SmartPracticeController extends StateNotifier<SmartPracticeState> {
       final entry = registry.lessonEntryFor(conceptId);
       if (entry == null) continue;
       resolved = SmartPracticeActivity(
-        activityId: i < plan.activityIds.length
-            ? plan.activityIds[i]
-            : 'act-$i',
+        activityId:
+            i < plan.activityIds.length ? plan.activityIds[i] : 'act-$i',
         kind: i < plan.activityKinds.length
             ? plan.activityKinds[i]
             : ActivityKind.practice,
         title: i < plan.activityTitles.length
             ? plan.activityTitles[i]
             : entry.title,
-        reason: i < plan.activityReasons.length
-            ? plan.activityReasons[i]
-            : '',
+        reason: i < plan.activityReasons.length ? plan.activityReasons[i] : '',
         conceptId: conceptId,
         lessonId: entry.lessonId,
         difficultyKnob: i < plan.activityDifficulties.length
@@ -363,8 +361,7 @@ class SmartPracticeController extends StateNotifier<SmartPracticeState> {
         state = state.copyWith(
           personalizingKind: null,
           clearPersonalizing: true,
-          materialError:
-              'That concept is no longer in the trusted curriculum.',
+          materialError: 'That concept is no longer in the trusted curriculum.',
         );
         return;
       }

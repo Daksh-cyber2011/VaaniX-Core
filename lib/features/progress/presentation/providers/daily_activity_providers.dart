@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/analytics/analytics_client.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
+import 'package:vaanix_app/core/providers/app_providers.dart';
 
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
@@ -27,7 +28,8 @@ import 'package:vaanix_app/features/progress/presentation/providers/adaptive_pro
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 
 /// The repository instance.
-final dailyActivityRepositoryProvider = Provider<DailyActivityRepository>((ref) {
+final dailyActivityRepositoryProvider =
+    Provider<DailyActivityRepository>((ref) {
   return DailyActivityRepository(ref.watch(localStorageServiceProvider));
 });
 
@@ -158,9 +160,7 @@ final claimReviewChallengeProvider =
 
   return (lessonId) async {
     final challenge = ref.read(dailyReviewChallengeProvider);
-    final mastered = ref
-        .read(masteredExercisesProvider(lessonId))
-        .length;
+    final mastered = ref.read(masteredExercisesProvider(lessonId)).length;
     final total = ref.read(exercisesForLessonProvider(lessonId)).length;
 
     final completes = completesReviewChallenge(

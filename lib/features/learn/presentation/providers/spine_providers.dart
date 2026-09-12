@@ -103,8 +103,7 @@ final activeLearningStateProvider = FutureProvider<LearningState>((ref) async {
       exerciseCountByLesson: exerciseCounts,
     ),
     reviewQueue: extras?.reviewQueue ?? const <ReviewEntry>[],
-    recentPerformance:
-        extras?.recentPerformance ?? const RecentPerformance(),
+    recentPerformance: extras?.recentPerformance ?? const RecentPerformance(),
   );
 
   // M6 evidence overlay (no-op when the extras carry no evidence).
@@ -123,8 +122,8 @@ final activeLearningStateProvider = FutureProvider<LearningState>((ref) async {
 /// "diagnostic results" are planner input); `null` until the learner
 /// takes the placement game, and the digest stays truthful because every
 /// field is derived from real data.
-final activePlannerContextProvider = FutureProvider<PlannerContext>(
-    (ref) async {
+final activePlannerContextProvider =
+    FutureProvider<PlannerContext>((ref) async {
   final graph = await ref.watch(activeConceptGraphProvider.future);
   final state = await ref.watch(activeLearningStateProvider.future);
   final selected = ref.watch(selectedLearnLanguageProvider);
@@ -132,9 +131,8 @@ final activePlannerContextProvider = FutureProvider<PlannerContext>(
   final diagnostic =
       selected == null ? null : ref.watch(lastDiagnosticProvider(selected));
 
-  final languageName = selected == null
-      ? 'Sanskrit'
-      : learnLanguageSpec(selected).englishName;
+  final languageName =
+      selected == null ? 'Sanskrit' : learnLanguageSpec(selected).englishName;
 
   return PlannerContext(
     languageCode: graph.languageCode,
@@ -143,8 +141,8 @@ final activePlannerContextProvider = FutureProvider<PlannerContext>(
     state: state,
     profile: profile,
     diagnostic: diagnostic,
-    minutesAvailable: profile?.dailyGoalMinutes ??
-        LearnerProfile.kDefaultDailyGoalMinutes,
+    minutesAvailable:
+        profile?.dailyGoalMinutes ?? LearnerProfile.kDefaultDailyGoalMinutes,
     supportedActivityTypes: kDeterministicPlannerActivityKinds,
   );
 });

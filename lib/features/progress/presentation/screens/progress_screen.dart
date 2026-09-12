@@ -95,8 +95,7 @@ class ProgressScreen extends ConsumerWidget {
           else if (curriculumAsync.hasError) ...[
             ErrorStateWidget(
               title: 'Could not load chapters',
-              message:
-                  'Your progress is safe — the chapter list just did not '
+              message: 'Your progress is safe — the chapter list just did not '
                   'load this time.',
               retryLabel: 'Try again',
               onRetry: () => ref.invalidate(curriculumProvider),
@@ -267,10 +266,10 @@ class ProgressScreen extends ConsumerWidget {
                           ),
                         ),
                         Icon(Icons.chevron_right_rounded,
-                            color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                ? AppColors.subtextDark
-                                : AppColors.subtextLight,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight,
                             size: 20),
                       ],
                     ),
@@ -354,8 +353,7 @@ class _LevelCard extends StatelessWidget {
             children: [
               Text(
                 'Level $level',
-                style: AppTextStyles.titleMedium(
-                    color: colorScheme.primary),
+                style: AppTextStyles.titleMedium(color: colorScheme.primary),
               ),
               const Spacer(),
               Text(
@@ -529,7 +527,7 @@ class _FocusCard extends StatelessWidget {
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: colorScheme.primary, size: 24),
+            child: Icon(icon, color: AppColors.primary, size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -537,8 +535,7 @@ class _FocusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('NEXT FOCUS',
-                    style: AppTextStyles.labelSmall(
-                        color: colorScheme.primary)),
+                    style: AppTextStyles.labelSmall(color: AppColors.primary)),
                 const SizedBox(height: 2),
                 Text(action.title, style: AppTextStyles.titleMedium()),
                 const SizedBox(height: 2),
@@ -547,8 +544,7 @@ class _FocusCard extends StatelessWidget {
               ],
             ),
           ),
-          if (onTap != null)
-            Icon(Icons.chevron_right_rounded, color: subtext),
+          if (onTap != null) Icon(Icons.chevron_right_rounded, color: subtext),
         ],
       ),
     );
@@ -631,8 +627,7 @@ class _MilestonesCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.flag_rounded,
-                  color: colorScheme.primary, size: 22),
+              Icon(Icons.flag_rounded, color: AppColors.primary, size: 22),
               const SizedBox(width: 10),
               Expanded(
                 child: Text('Learning milestones',
@@ -640,7 +635,7 @@ class _MilestonesCard extends ConsumerWidget {
               ),
               Text(
                 '$unlockedCount / ${evaluations.length}',
-                style: AppTextStyles.labelMedium(color: colorScheme.primary),
+                style: AppTextStyles.labelMedium(color: AppColors.primary),
               ),
             ],
           ),
@@ -690,8 +685,8 @@ class _MilestoneTile extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: accent.withValues(alpha: 0.35)),
               ),
-              child: Text(definition.emoji,
-                  style: const TextStyle(fontSize: 18)),
+              child:
+                  Text(definition.emoji, style: const TextStyle(fontSize: 18)),
             ),
           ),
           const SizedBox(width: 12),
@@ -712,9 +707,7 @@ class _MilestoneTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  unlocked
-                      ? definition.competency
-                      : evaluation.evidenceLine,
+                  unlocked ? definition.competency : evaluation.evidenceLine,
                   style: AppTextStyles.bodySmall(color: subtext),
                 ),
                 const SizedBox(height: 6),
@@ -722,8 +715,7 @@ class _MilestoneTile extends StatelessWidget {
                   value: unlocked ? 1.0 : evaluation.progress,
                   height: 6,
                   color: accent,
-                  semanticLabel:
-                      '${definition.title} progress',
+                  semanticLabel: '${definition.title} progress',
                 ),
                 if (definition.xpReward > 0) ...[
                   const SizedBox(height: 4),

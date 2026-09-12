@@ -95,18 +95,17 @@ OUTPUT ONLY this JSON schema, no prose, no markdown fences:
           final marks = unit.marks == null
               ? ''
               : ' [${unit.marks!.toStringAsFixed(0)} marks]';
-          scopeLines.add('- ${unit.id}$marks: ${unit.title} (${section.title})');
+          scopeLines
+              .add('- ${unit.id}$marks: ${unit.title} (${section.title})');
         }
       }
     }
     final weak = ctx.learner.weakTopicsFirst(limit: 8);
-    final learnerLines = ctx.learner.hasDiagnostic
+    final List<String> learnerLines = ctx.learner.hasDiagnostic
         ? (weak.isEmpty
-            ? '- diagnostic: no weak topics'
-            : weak
-                .map((t) => '- ${t.topicId}: ${t.stage.name}')
-                .toList())
-        : const ['- diagnostic: not taken yet'];
+            ? <String>['- diagnostic: no weak topics']
+            : weak.map((t) => '- ${t.topicId}: ${t.stage.name}').toList())
+        : const <String>['- diagnostic: not taken yet'];
 
     final anchor = ctx.profile.readinessAnchor(DateTime.now());
     final anchorLine = anchor == null
@@ -156,8 +155,7 @@ class ExamPlanParser {
   }
 
   /// Parses raw model output into a validated-or-Left plan.
-  static Either<Failure, ExamPlan> parse(
-      String raw, ExamPlannerContext ctx) {
+  static Either<Failure, ExamPlan> parse(String raw, ExamPlannerContext ctx) {
     final json = _extractJson(raw);
     if (json == null) {
       return const Left(AiServiceFailure('Planner output was not JSON'));
@@ -223,9 +221,9 @@ class GeminiExamPlanner {
       return const Left(TimeoutFailure());
     } catch (e) {
       // Never leak raw exception text into Failure messages.
-      return const Left(AiServiceFailure(
-          'VAN could not reach the planner just now. '
-          'The offline plan takes over automatically.'));
+      return const Left(
+          AiServiceFailure('VAN could not reach the planner just now. '
+              'The offline plan takes over automatically.'));
     }
   }
 }

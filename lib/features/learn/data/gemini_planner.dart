@@ -92,8 +92,7 @@ class GeminiPlannerTextClient implements PlannerTextClient {
 
     final model = _modelFor(system);
     final response = await model
-        .generateContent([Content.text(user)])
-        .timeout(requestTimeout);
+        .generateContent([Content.text(user)]).timeout(requestTimeout);
 
     final text = response.text;
     if (text == null || text.trim().isEmpty) {
@@ -116,7 +115,7 @@ class GeminiPlannerTextClient implements PlannerTextClient {
       model: AppEnvironment.geminiModel,
       apiKey: apiKey,
       systemInstruction: Content.system(system),
-      generationConfig: const GenerationConfig(
+      generationConfig: GenerationConfig(
         temperature: 0.3, // structured output — keep it conservative
         maxOutputTokens: 1024,
       ),
@@ -206,7 +205,7 @@ class GeminiPlanner implements LearningPlanner {
 /// so even a cached plan is re-checked against the CURRENT graph before
 /// it reaches the learner.
 class CachedPlanPlanner implements LearningPlanner {
-  const CachedPlanPlanner({required LearnPlanRepository repository});
+  const CachedPlanPlanner({required this.repository});
 
   final LearnPlanRepository repository;
 
@@ -214,7 +213,8 @@ class CachedPlanPlanner implements LearningPlanner {
   String get id => 'cached-plan-v1';
 
   @override
-  Future<Either<Failure, LearningPlan>> buildPlan(PlannerContext context) async {
+  Future<Either<Failure, LearningPlan>> buildPlan(
+      PlannerContext context) async {
     final language = learnLanguageForCode(context.languageCode);
     if (language == null) {
       // Legacy Sanskrit track: no plan cache exists by design.
@@ -228,7 +228,8 @@ class CachedPlanPlanner implements LearningPlanner {
       return Left(const AiServiceFailure('No cached plan available'));
     }
     if (cached.languageCode != context.languageCode) {
-      return Left(const AiServiceFailure('Cached plan is for another language'));
+      return Left(
+          const AiServiceFailure('Cached plan is for another language'));
     }
     if (!LearnPlanRepository.isFresh(cached)) {
       return Left(const AiServiceFailure('Cached plan has expired'));

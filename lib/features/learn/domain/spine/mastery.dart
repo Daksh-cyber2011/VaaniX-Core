@@ -27,18 +27,13 @@ import 'package:equatable/equatable.dart';
 /// [ConceptMastery] record means "never started", so empty learners carry
 /// no data at all.
 enum MasteryStage {
-  introduced(0),
-  practiced(1),
-  understood(2),
-  recalled(3),
-  applied(4),
-  mastered(5),
-  maintained(6);
-
-  const MasteryStage(this.index);
-
-  /// Stable ordinal used for comparisons and persistence.
-  final int index;
+  introduced,
+  practiced,
+  understood,
+  recalled,
+  applied,
+  mastered,
+  maintained;
 
   /// True when this stage is at or beyond [other].
   bool isAtLeast(MasteryStage other) => index >= other.index;
@@ -124,8 +119,7 @@ class ConceptMastery extends Equatable {
       correctCount: correctCount ?? this.correctCount,
       attemptCount: attemptCount ?? this.attemptCount,
       lastPracticedAt: lastPracticedAt ?? this.lastPracticedAt,
-      reviewDueAt:
-          clearReviewDueAt ? null : (reviewDueAt ?? this.reviewDueAt),
+      reviewDueAt: clearReviewDueAt ? null : (reviewDueAt ?? this.reviewDueAt),
     );
   }
 

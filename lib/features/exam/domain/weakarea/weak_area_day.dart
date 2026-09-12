@@ -197,8 +197,7 @@ class WeakAreaDayEngine {
         dayCount: dayCount,
         daysSinceLastRecovery: daysSinceLastRecovery,
         lastRecoveryDayIndex: lastRecoveryDayIndex,
-        rationale:
-            'प्रगति ठीक है — बस एक हल्की recovery रखी गई है ताकि दोहराव '
+        rationale: 'प्रगति ठीक है — बस एक हल्की recovery रखी गई है ताकि दोहराव '
             'छूटे नहीं।',
       );
     }
@@ -237,8 +236,8 @@ class WeakAreaDayEngine {
     // Gap rule: minimum study-days since the last recovery (§22
     // frequency by tier). Never had one → eligible from day 1.
     final gap = frequencyGapDays[frequency]!;
-    final eligible = daysSinceLastRecovery == null ||
-        daysSinceLastRecovery >= gap;
+    final eligible =
+        daysSinceLastRecovery == null || daysSinceLastRecovery >= gap;
 
     // Hard cap: no back-to-back recovery days inside a window —
     // the candidate must be ≥ 2 days after the previous recovery

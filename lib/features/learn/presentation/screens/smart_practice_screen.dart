@@ -32,6 +32,7 @@ import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/content_registry.dart';
 import 'package:vaanix_app/features/learn/domain/spine/generated_content.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
+import 'package:vaanix_app/features/learn/data/personalized_content_generator.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_content_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
@@ -181,9 +182,10 @@ class _ReadyView extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // ── Trusted seeded content (§15/§32) — always first (§34) ──
-        Text('TRUSTED MATERIAL', style: AppTextStyles.labelMedium(
-          color: subtext,
-        )),
+        Text('TRUSTED MATERIAL',
+            style: AppTextStyles.labelMedium(
+              color: subtext,
+            )),
         const SizedBox(height: 8),
         _TrustedLessonCard(
           lesson: lesson,
@@ -197,9 +199,10 @@ class _ReadyView extends ConsumerWidget {
         const SizedBox(height: 20),
 
         // ── Personalization (learner-triggered, §15) ──
-        Text('MAKE IT PERSONAL', style: AppTextStyles.labelMedium(
-          color: subtext,
-        )),
+        Text('MAKE IT PERSONAL',
+            style: AppTextStyles.labelMedium(
+              color: subtext,
+            )),
         const SizedBox(height: 8),
         _PersonalizeChips(
           enabled: state.personalizingKind == null,
@@ -389,9 +392,8 @@ class _TrustedLessonCard extends ConsumerWidget {
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.menu_book_rounded, size: 18),
                   label: const Text('Read lesson'),
-                  onPressed: () =>
-                      context.go(RouteNames.lessonContent
-                          .replaceFirst(':lessonId', lesson.lessonId)),
+                  onPressed: () => context.go(RouteNames.lessonContent
+                      .replaceFirst(':lessonId', lesson.lessonId)),
                 ),
               ),
               if (exerciseCount > 0) ...[
@@ -400,8 +402,8 @@ class _TrustedLessonCard extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     icon: const Icon(Icons.fitness_center_rounded, size: 18),
                     label: const Text('Practice'),
-                    onPressed: () => context
-                        .go('/learn/lesson/${lesson.lessonId}/practice'),
+                    onPressed: () =>
+                        context.go('/learn/lesson/${lesson.lessonId}/practice'),
                   ),
                 ),
               ],
@@ -545,17 +547,16 @@ class _KindChip extends StatelessWidget {
           onTap: enabled && !busy ? onTap : null,
           borderRadius: BorderRadius.circular(AppDimens.radiusPill),
           child: Container(
-            constraints: const BoxConstraints(
-                minHeight: AppDimens.minTouchTarget),
+            constraints:
+                const BoxConstraints(minHeight: AppDimens.minTouchTarget),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: Theme.of(context).cardTheme.color,
               borderRadius: BorderRadius.circular(AppDimens.radiusPill),
               border: Border.all(
-                color: busy
-                    ? Theme.of(context).colorScheme.primary
-                    : borderColor,
+                color:
+                    busy ? Theme.of(context).colorScheme.primary : borderColor,
               ),
             ),
             child: Row(
@@ -638,6 +639,7 @@ class _MaterialCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final content = material.content;
 
     return Container(
@@ -763,8 +765,7 @@ class _ExampleLines extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Directionality(
-                  textDirection:
-                      isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
                   child: Text(
                     lines[i].text,
                     style: AppTextStyles.titleSmall(),
@@ -891,9 +892,7 @@ class _GeneratedExerciseRunnerState extends State<_GeneratedExerciseRunner> {
           Row(
             children: [
               Icon(
-                _wasCorrect
-                    ? Icons.check_circle_rounded
-                    : Icons.cancel_rounded,
+                _wasCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
                 size: 18,
                 color: _wasCorrect ? AppColors.success : subtext,
               ),
@@ -901,8 +900,7 @@ class _GeneratedExerciseRunnerState extends State<_GeneratedExerciseRunner> {
               Text(
                 _wasCorrect ? 'Correct!' : 'Not quite — try again?',
                 style: AppTextStyles.titleSmall(
-                  color:
-                      _wasCorrect ? AppColors.success : subtext,
+                  color: _wasCorrect ? AppColors.success : subtext,
                 ),
               ),
               if (!_wasCorrect && !_isChoice) ...[
@@ -946,45 +944,45 @@ class _GeneratedExerciseRunnerState extends State<_GeneratedExerciseRunner> {
                   ? '${_display.options[i]} — correct answer'
                   : _display.options[i],
               child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                color: _answered && i == _display.correctIndex
-                    ? AppColors.success.withValues(alpha: 0.12)
-                    : (_answered && i == _selected
-                        ? (isDark
-                                ? AppColors.subtextDark
-                                : AppColors.subtextLight)
-                            .withValues(alpha: 0.08)
-                        : Theme.of(context).cardTheme.color),
-                borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-                border: Border.all(
-                  color: _answered && i == _display.correctIndex
-                      ? AppColors.success
-                      : borderColor,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
                 ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Directionality(
-                      textDirection: widget.isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      child: Text(
-                        _display.options[i],
-                        style: AppTextStyles.bodyMedium(),
+                decoration: BoxDecoration(
+                  color: _answered && i == _display.correctIndex
+                      ? AppColors.success.withValues(alpha: 0.12)
+                      : (_answered && i == _selected
+                          ? (isDark
+                                  ? AppColors.subtextDark
+                                  : AppColors.subtextLight)
+                              .withValues(alpha: 0.08)
+                          : Theme.of(context).cardTheme.color),
+                  borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+                  border: Border.all(
+                    color: _answered && i == _display.correctIndex
+                        ? AppColors.success
+                        : borderColor,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Directionality(
+                        textDirection: widget.isRTL
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                        child: Text(
+                          _display.options[i],
+                          style: AppTextStyles.bodyMedium(),
+                        ),
                       ),
                     ),
-                  ),
-                  if (_answered && i == _display.correctIndex)
-                    const Icon(Icons.check_rounded,
-                        size: 18, color: AppColors.success),
-                ],
-              ),
+                    if (_answered && i == _display.correctIndex)
+                      const Icon(Icons.check_rounded,
+                          size: 18, color: AppColors.success),
+                  ],
+                ),
               ),
             ),
           ),

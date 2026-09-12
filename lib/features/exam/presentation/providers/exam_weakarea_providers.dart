@@ -250,15 +250,11 @@ class ExamWeakAreaController
 
     // §15/§60 recap: official title, official section, official
     // sub-topics — never invented.
-    final item = syllabus.allItems
-        .where((i) => i.id == topicId)
-        .firstOrNull;
-    final section = scope.view!.sections
-        .where((s) => s.id == item?.sectionId)
-        .firstOrNull;
-    final subtopics = item == null
-        ? const <String>[]
-        : _subtopicsOf(item).take(4).toList();
+    final item = syllabus.allItems.where((i) => i.id == topicId).firstOrNull;
+    final section =
+        scope.view!.sections.where((s) => s.id == item?.sectionId).firstOrNull;
+    final subtopics =
+        item == null ? const <String>[] : _subtopicsOf(item).take(4).toList();
     final recap = RemediationRecap(
       topicTitle: item?.title ?? topicId,
       sectionTitle: section?.title ?? '',
@@ -504,8 +500,8 @@ class ExamWeakAreaController
     if (current.mode == WeakSessionMode.recovery &&
         current.phase == WeakSessionPhase.recheck) {
       final plan = current.plan;
-      final recheckIds = plan?.recheckQuestions.map((q) => q.id).toSet() ??
-          const <String>{};
+      final recheckIds =
+          plan?.recheckQuestions.map((q) => q.id).toSet() ?? const <String>{};
       final recheckAttempts = next.attempts
           .where((a) => recheckIds.contains(a.questionId))
           .map((a) => (questionId: a.questionId, verdict: a.verdict))
@@ -582,8 +578,9 @@ class ExamWeakAreaController
                 lastReviewedIso: t.toIso8601String(),
                 dueIso: t.toIso8601String(),
               );
-          revision[topicId] =
-              clean ? RevisionEngine.expand(item, t) : RevisionEngine.contract(item, t);
+          revision[topicId] = clean
+              ? RevisionEngine.expand(item, t)
+              : RevisionEngine.contract(item, t);
         });
         waState = waState.withRevision(revision);
         await repo.save(waState);
@@ -614,7 +611,8 @@ class ExamWeakAreaController
 
   /// Question-level evidence write (batched, one write per finished
   /// phase — §18; kind from the question pool, §21 vocabulary).
-  Future<void> _persistAttempts(String trackId, PracticeSessionState next) async {
+  Future<void> _persistAttempts(
+      String trackId, PracticeSessionState next) async {
     try {
       final repo = ref.read(examAttemptLogRepositoryProvider);
       final kinds = {
@@ -672,9 +670,7 @@ class ExamWeakAreaController
       await gamification.sessionFinished(ExamSessionRecord(
         kind: kind,
         trackId: arg,
-        correctCount: next.attempts
-            .where((a) => a.verdict == 'correct')
-            .length,
+        correctCount: next.attempts.where((a) => a.verdict == 'correct').length,
         totalCount: next.attempts.length,
         questionFingerprint: examSessionFingerprintOf(
           [for (final a in next.attempts) a.questionId],
@@ -699,7 +695,7 @@ extension _FirstOrNull<T> on Iterable<T> {
 
 /// Official sub-topics of a syllabus item (same extraction as the
 /// practice bank — §15 trusted content, no invention).
-List<String> _subtopicsOf(dynamic item) {
+List<String> _subtopicsOf(SyllabusItem item) {
   final details = item.details;
   if (details == null) return const [];
   final out = <String>[];

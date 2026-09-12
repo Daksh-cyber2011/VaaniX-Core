@@ -200,8 +200,14 @@ class AdaptiveSessionConfig extends Equatable {
 
   @override
   List<Object?> get props => [
-        kind, languageCode, pools, explanations, prerequisiteOf,
-        difficultyKnob, maxSteps, reviewFirstConceptIds,
+        kind,
+        languageCode,
+        pools,
+        explanations,
+        prerequisiteOf,
+        difficultyKnob,
+        maxSteps,
+        reviewFirstConceptIds,
       ];
 }
 
@@ -237,7 +243,12 @@ class SessionAnswerRecord extends Equatable {
 
   @override
   List<Object?> get props => [
-        conceptId, exerciseId, correct, firstTry, presentation, isGenerated,
+        conceptId,
+        exerciseId,
+        correct,
+        firstTry,
+        presentation,
+        isGenerated,
       ];
 }
 
@@ -281,9 +292,10 @@ class AdaptiveSessionEngine {
   AdaptiveSessionEngine({required AdaptiveSessionConfig config})
       : _config = config,
         _pools = [for (final p in config.pools) p.copy()],
-        maxSteps = config.maxSteps.clamp(1, AdaptiveSessionPolicy.kMaxStepsCeiling)
+        maxSteps = config.maxSteps
+            .clamp(1, AdaptiveSessionPolicy.kMaxStepsCeiling)
             .toInt() {
-    _planQueue = _buildQueue();
+    _queue = _buildQueue();
     _materializeNext();
   }
 
@@ -426,7 +438,8 @@ class AdaptiveSessionEngine {
       _correctStreak[conceptId] = 0;
     }
 
-    if (_wrongStreak[conceptId] >= AdaptiveSessionPolicy.kLadderAfterWrongStreak &&
+    if ((_wrongStreak[conceptId] ?? 0) >=
+            AdaptiveSessionPolicy.kLadderAfterWrongStreak &&
         _config.kind != ActivityKind.masteryCheck &&
         _config.kind != ActivityKind.challenge &&
         !_laddered.contains(conceptId)) {
@@ -562,8 +575,8 @@ class AdaptiveSessionEngine {
       (p) => p.conceptId == conceptId,
       orElse: () => const SessionExercisePool(conceptId: '', exercises: []),
     );
-    final easier = _firstUnused(pool.generatedVariants) ??
-        _firstUnused(pool.exercises);
+    final easier =
+        _firstUnused(pool.generatedVariants) ?? _firstUnused(pool.exercises);
     if (easier != null) {
       _reservedIds.add(easier.id);
       steps.add(SessionStep.exercise(

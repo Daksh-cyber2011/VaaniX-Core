@@ -20,7 +20,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'اردو کسکریپٹ میں لکھی جاتی ہے؟ (Which script does Urdu use?)',
       options: ['Devanagari', 'Nastaliq (Arabic)', 'Bengali', 'Tamil'],
       correctIndex: 1,
-      explanation: 'Urdu uses the Nastaliq style of the Perso-Arabic script, written right-to-left.',
+      explanation:
+          'Urdu uses the Nastaliq style of the Perso-Arabic script, written right-to-left.',
     ),
     Exercise(
       id: 'ex_ur_letters_2',
@@ -36,9 +37,15 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_script_letters',
       type: ExerciseType.mcq,
       prompt: 'اردو کس طرف پڑھی جاتی ہے؟ (In which direction is Urdu read?)',
-      options: ['Left to right', 'Right to left', 'Top to bottom', 'Bottom to top'],
+      options: [
+        'Left to right',
+        'Right to left',
+        'Top to bottom',
+        'Bottom to top'
+      ],
       correctIndex: 1,
-      explanation: 'Urdu is read RIGHT-TO-LEFT — the only RTL script in VaaniX Learn Mode.',
+      explanation:
+          'Urdu is read RIGHT-TO-LEFT — the only RTL script in VaaniX Learn Mode.',
     ),
     Exercise(
       id: 'ex_ur_letters_4',
@@ -51,7 +58,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: 'سلام', right: 'greeting'),
         (left: 'اماں', right: 'mother'),
       ],
-      explanation: 'These are core Urdu vocabulary words using Persian/Arabic script.',
+      explanation:
+          'These are core Urdu vocabulary words using Persian/Arabic script.',
     ),
   ],
   'ur_script_joining': const [
@@ -59,19 +67,23 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       id: 'ex_ur_joining_1',
       lessonId: 'ur_script_joining',
       type: ExerciseType.mcq,
-      prompt: 'ایک حرف کے کتنے روپ ہوتے ہیں؟ (How many forms does a connecting letter have?)',
+      prompt:
+          'ایک حرف کے کتنے روپ ہوتے ہیں؟ (How many forms does a connecting letter have?)',
       options: ['1', '2', '4', '6'],
       correctIndex: 2,
-      explanation: 'Connecting letters have 4 forms: isolated, initial, medial, final.',
+      explanation:
+          'Connecting letters have 4 forms: isolated, initial, medial, final.',
     ),
     Exercise(
       id: 'ex_ur_joining_2',
       lessonId: 'ur_script_joining',
       type: ExerciseType.mcq,
-      prompt: 'کون سا حرف آگے نہیں جوڑتا؟ (Which letter does NOT connect forward?)',
+      prompt:
+          'کون سا حرف آگے نہیں جوڑتا؟ (Which letter does NOT connect forward?)',
       options: ['ب', 'ا', 'ج', 'س'],
       correctIndex: 1,
-      explanation: 'ا (alif) is a non-connecting letter — it only has isolated and final forms.',
+      explanation:
+          'ا (alif) is a non-connecting letter — it only has isolated and final forms.',
     ),
     Exercise(
       id: 'ex_ur_joining_3',
@@ -99,7 +111,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'زبر (zabar) کیسی آواز دیتا ہے؟ (What sound does zabar produce?)',
       options: ['short a', 'short i', 'short u', 'long ū'],
       correctIndex: 0,
-      explanation: 'زبر (zabar) is the mark ABOVE a letter, producing short "a".',
+      explanation:
+          'زبر (zabar) is the mark ABOVE a letter, producing short "a".',
     ),
     Exercise(
       id: 'ex_ur_vowels_3',
@@ -118,16 +131,24 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '۵ کس نمبر کے لیے ہے؟ (۵ represents which number?)',
       options: ['3', '4', '5', '6'],
       correctIndex: 2,
-      explanation: '۵ = 5 (پانچ / pā̃ch). These are Eastern Arabic-Indic digits.',
+      explanation:
+          '۵ = 5 (پانچ / pā̃ch). These are Eastern Arabic-Indic digits.',
     ),
     Exercise(
       id: 'ex_ur_numerals_2',
       lessonId: 'ur_script_numerals',
       type: ExerciseType.mcq,
-      prompt: 'اردو ہندسے کس طرف لکھے جاتے ہیں؟ (In which direction are Urdu numerals written?)',
-      options: ['Right to left', 'Left to right', 'Top to bottom', 'Either way'],
+      prompt:
+          'اردو ہندسے کس طرف لکھے جاتے ہیں؟ (In which direction are Urdu numerals written?)',
+      options: [
+        'Right to left',
+        'Left to right',
+        'Top to bottom',
+        'Either way'
+      ],
       correctIndex: 1,
-      explanation: 'Numbers are written LEFT-TO-RIGHT even within right-to-left Urdu text.',
+      explanation:
+          'Numbers are written LEFT-TO-RIGHT even within right-to-left Urdu text.',
     ),
     Exercise(
       id: 'ex_ur_numerals_3',
@@ -140,7 +161,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: '۱۰', right: 'دس'),
         (left: '۱۰۰', right: 'سو'),
       ],
-      explanation: 'Urdu number names (ek, do, tīn) are shared with Hindi, but the digits differ.',
+      explanation:
+          'Urdu number names (ek, do, tīn) are shared with Hindi, but the digits differ.',
     ),
   ],
   'ur_script_special': const [
@@ -148,28 +170,48 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       id: 'ex_ur_special_1',
       lessonId: 'ur_script_special',
       type: ExerciseType.mcq,
-      prompt: 'do chashmi he (ھ) کا کیا کام ہے؟ (What is the role of do chashmi he?)',
-      options: ['Nasalises vowels', 'Aspirates consonants', 'Doubles consonants', 'Marks long vowels'],
+      prompt:
+          'do chashmi he (ھ) کا کیا کام ہے؟ (What is the role of do chashmi he?)',
+      options: [
+        'Nasalises vowels',
+        'Aspirates consonants',
+        'Doubles consonants',
+        'Marks long vowels'
+      ],
       correctIndex: 1,
-      explanation: 'ھ (do chashmi he) aspirates the preceding consonant: ب + ھ = بھ (bh).',
+      explanation:
+          'ھ (do chashmi he) aspirates the preceding consonant: ب + ھ = بھ (bh).',
     ),
     Exercise(
       id: 'ex_ur_special_2',
       lessonId: 'ur_script_special',
       type: ExerciseType.mcq,
       prompt: 'ں (noon ghunna) کہاں آتا ہے؟ (Where does noon ghunna appear?)',
-      options: ['Start of words', 'Middle of words', 'End of words only', 'Anywhere'],
+      options: [
+        'Start of words',
+        'Middle of words',
+        'End of words only',
+        'Anywhere'
+      ],
       correctIndex: 2,
-      explanation: 'ں (noon ghunna) only appears at the END of words, nasalising the preceding vowel (like Hindi ).',
+      explanation:
+          'ں (noon ghunna) only appears at the END of words, nasalising the preceding vowel (like Hindi ).',
     ),
     Exercise(
       id: 'ex_ur_special_3',
       lessonId: 'ur_script_special',
       type: ExerciseType.mcq,
-      prompt: '"بھائی" میں کون سا خاص حرف ہے؟ (Which special letter is in "بھائی"?)',
-      options: ['hamza (ء)', 'do chashmi he (ھ)', 'bari ye (ے)', 'noon ghunna (ں)'],
+      prompt:
+          '"بھائی" میں کون سا خاص حرف ہے؟ (Which special letter is in "بھائی"?)',
+      options: [
+        'hamza (ء)',
+        'do chashmi he (ھ)',
+        'bari ye (ے)',
+        'noon ghunna (ں)'
+      ],
       correctIndex: 1,
-      explanation: 'بھائی (bhāī) uses ھ (do chashmi he) after ب to make the aspirated "bh" sound.',
+      explanation:
+          'بھائی (bhāī) uses ھ (do chashmi he) after ب to make the aspirated "bh" sound.',
     ),
     Exercise(
       id: 'ex_ur_special_4',
@@ -182,7 +224,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: 'ء', right: 'فائدہ'),
         (left: 'ے', right: 'لڑکے'),
       ],
-      explanation: 'Each special letter serves a distinct function in Urdu orthography.',
+      explanation:
+          'Each special letter serves a distinct function in Urdu orthography.',
     ),
   ],
   'ur_greet_salam': const [
@@ -190,10 +233,12 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       id: 'ex_ur_salam_1',
       lessonId: 'ur_greet_salam',
       type: ExerciseType.mcq,
-      prompt: 'اردو میں سب سے عام سلام کیا ہے؟ (What is the most common Urdu greeting?)',
+      prompt:
+          'اردو میں سب سے عام سلام کیا ہے؟ (What is the most common Urdu greeting?)',
       options: ['نمستے', 'سلام', 'ہیلو', 'آداب'],
       correctIndex: 1,
-      explanation: 'سلام (salām) is the universal Urdu greeting, from Arabic "peace". Hindi uses namaste.',
+      explanation:
+          'سلام (salām) is the universal Urdu greeting, from Arabic "peace". Hindi uses namaste.',
     ),
     Exercise(
       id: 'ex_ur_salam_2',
@@ -202,16 +247,23 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"خدا حافظ" کا کیا مطلب ہے؟ (What does "خدا حافظ" mean?)',
       options: ['Hello', 'Thank you', 'Goodbye', 'Sorry'],
       correctIndex: 2,
-      explanation: 'خدا حافظ (khudā hāfiz) = Goodbye (lit: May God be your protector). Distinctly Urdu.',
+      explanation:
+          'خدا حافظ (khudā hāfiz) = Goodbye (lit: May God be your protector). Distinctly Urdu.',
     ),
     Exercise(
       id: 'ex_ur_salam_3',
       lessonId: 'ur_greet_salam',
       type: ExerciseType.mcq,
       prompt: '"آپ کیسے ہیں؟" کا کیا مطلب ہے؟',
-      options: ['What is your name?', 'How are you?', 'Where are you from?', 'What do you do?'],
+      options: [
+        'What is your name?',
+        'How are you?',
+        'Where are you from?',
+        'What do you do?'
+      ],
       correctIndex: 1,
-      explanation: 'آپ کیسے ہیں؟ = How are you? (formal, to a man). کیسے changes to کیسی for a woman.',
+      explanation:
+          'آپ کیسے ہیں؟ = How are you? (formal, to a man). کیسے changes to کیسی for a woman.',
     ),
     Exercise(
       id: 'ex_ur_salam_4',
@@ -224,7 +276,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: 'خدا حافظ', right: 'Goodbye'),
         (left: 'آداب', right: 'Respect (formal greeting)'),
       ],
-      explanation: 'Urdu greetings reflect Persian/Arabic influence — distinct from Hindi namaste.',
+      explanation:
+          'Urdu greetings reflect Persian/Arabic influence — distinct from Hindi namaste.',
     ),
   ],
   'ur_greet_intro': const [
@@ -234,14 +287,20 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Translate: میرا نام راشد ہے۔',
       acceptedAnswers: ['My name is Rashid', 'My name is Rashid.'],
-      explanation: 'میرا نام راشد ہے = My name is Rashid. میرا (merā) = my (m.), since نام is masculine.',
+      explanation:
+          'میرا نام راشد ہے = My name is Rashid. میرا (merā) = my (m.), since نام is masculine.',
     ),
     Exercise(
       id: 'ex_ur_intro_2',
       lessonId: 'ur_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"آپ کہاں سے ہیں؟" کا کیا مطلب ہے؟',
-      options: ['What is your name?', 'Where are you from?', 'How are you?', 'When did you come?'],
+      options: [
+        'What is your name?',
+        'Where are you from?',
+        'How are you?',
+        'When did you come?'
+      ],
       correctIndex: 1,
       explanation: 'کہاں سے = from where. سے (se) = from (postposition).',
     ),
@@ -250,9 +309,15 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_greet_intro',
       type: ExerciseType.mcq,
       prompt: 'اردو میں "I am a student" کیسے کہیں؟',
-      options: ['میں طالب علم ہوں۔', 'میں استاد ہوں۔', 'میں ڈاکٹر ہوں۔', 'میں انجینئر ہوں۔'],
+      options: [
+        'میں طالب علم ہوں۔',
+        'میں استاد ہوں۔',
+        'میں ڈاکٹر ہوں۔',
+        'میں انجینئر ہوں۔'
+      ],
       correctIndex: 0,
-      explanation: 'میں طالب علم ہوں = I am a student. The copula ہوں is gender-neutral.',
+      explanation:
+          'میں طالب علم ہوں = I am a student. The copula ہوں is gender-neutral.',
     ),
   ],
   'ur_greet_family': const [
@@ -263,7 +328,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"امّاں" کا کیا مطلب ہے؟',
       options: ['father', 'mother', 'sister', 'grandmother'],
       correctIndex: 1,
-      explanation: 'امّاں (ammā̃) = mother. Distinct from Hindi mā̃ — uses noon ghunna (ں).',
+      explanation:
+          'امّاں (ammā̃) = mother. Distinct from Hindi mā̃ — uses noon ghunna (ں).',
     ),
     Exercise(
       id: 'ex_ur_family_2',
@@ -272,29 +338,38 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"ابو" کا کیا مطلب ہے؟',
       options: ['father', 'uncle', 'brother', 'grandfather'],
       correctIndex: 0,
-      explanation: 'ابو (abū) = father. The everyday Urdu word; formal is والد (wālid) from Arabic.',
+      explanation:
+          'ابو (abū) = father. The everyday Urdu word; formal is والد (wālid) from Arabic.',
     ),
     Exercise(
       id: 'ex_ur_family_3',
       lessonId: 'ur_greet_family',
       type: ExerciseType.matching,
-      prompt: 'خاندان کے الفاظ کو معنی سے ملیں (Match family words to meanings)',
+      prompt:
+          'خاندان کے الفاظ کو معنی سے ملیں (Match family words to meanings)',
       pairs: [
         (left: 'امّاں', right: 'mother'),
         (left: 'ابو', right: 'father'),
         (left: 'بھائی', right: 'brother'),
         (left: 'بہن', right: 'sister'),
       ],
-      explanation: 'Urdu kinship: امّاں/ابو for parents are distinct from Hindi mā̃/bāp.',
+      explanation:
+          'Urdu kinship: امّاں/ابو for parents are distinct from Hindi mā̃/bāp.',
     ),
     Exercise(
       id: 'ex_ur_family_4',
       lessonId: 'ur_greet_family',
       type: ExerciseType.mcq,
       prompt: '"میرے دو بھائی ہیں" کا کیا مطلب ہے؟',
-      options: ['I have two sisters', 'I have two brothers', 'I have two sons', 'I have two fathers'],
+      options: [
+        'I have two sisters',
+        'I have two brothers',
+        'I have two sons',
+        'I have two fathers'
+      ],
       correctIndex: 1,
-      explanation: 'میرے دو بھائی ہیں = I have two brothers. میرے (mere) = my (m. pl.) because بھائی is masculine.',
+      explanation:
+          'میرے دو بھائی ہیں = I have two brothers. میرے (mere) = my (m. pl.) because بھائی is masculine.',
     ),
   ],
   'ur_greet_numbers': const [
@@ -327,7 +402,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: '۱۰', right: 'دس'),
         (left: '۱۰۰۰', right: 'ہزار'),
       ],
-      explanation: 'Urdu digit shapes (۰-۹) differ from Hindi (0-9) but number names are shared.',
+      explanation:
+          'Urdu digit shapes (۰-۹) differ from Hindi (0-9) but number names are shared.',
     ),
   ],
   'ur_daily_sentences': const [
@@ -338,7 +414,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'اردو میں جملے کا کیا ترتیب ہے؟ (What is Urdu word order?)',
       options: ['SVO', 'SOV', 'VSO', 'OSV'],
       correctIndex: 1,
-      explanation: 'Subject-Object-Verb (SOV). The verb always comes LAST — same as Hindi.',
+      explanation:
+          'Subject-Object-Verb (SOV). The verb always comes LAST — same as Hindi.',
     ),
     Exercise(
       id: 'ex_ur_sentences_2',
@@ -346,7 +423,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Translate: میں روٹی کھاتا ہوں۔',
       acceptedAnswers: ['I eat bread', 'I eat roti', 'I eat flatbread'],
-      explanation: 'میں روٹی کھاتا ہوں = I eat bread (male speaker). کھاتا (m.) → کھاتی (f.) for female.',
+      explanation:
+          'میں روٹی کھاتا ہوں = I eat bread (male speaker). کھاتا (m.) → کھاتی (f.) for female.',
     ),
     Exercise(
       id: 'ex_ur_sentences_3',
@@ -355,7 +433,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'اردو میں کتنے جنس (gender) ہیں؟',
       options: ['1 (no gender)', '2 (m. and f.)', '3 (m., f., neuter)', '4'],
       correctIndex: 1,
-      explanation: 'Urdu has TWO genders (مذکر/m. and مؤنث/f.) — like Hindi, NOT like Bengali (which has none).',
+      explanation:
+          'Urdu has TWO genders (مذکر/m. and مؤنث/f.) — like Hindi, NOT like Bengali (which has none).',
     ),
   ],
   'ur_daily_questions': const [
@@ -392,9 +471,15 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_daily_negation',
       type: ExerciseType.mcq,
       prompt: '"میں ڈاکٹر نہیں ہوں" کا کیا مطلب ہے؟',
-      options: ['I am a doctor', 'I am not a doctor', 'I want to be a doctor', 'Where is the doctor'],
+      options: [
+        'I am a doctor',
+        'I am not a doctor',
+        'I want to be a doctor',
+        'Where is the doctor'
+      ],
       correctIndex: 1,
-      explanation: 'نہیں (nahīñ) = not. It is placed before the verb to negate.',
+      explanation:
+          'نہیں (nahīñ) = not. It is placed before the verb to negate.',
     ),
     Exercise(
       id: 'ex_ur_negation_2',
@@ -403,7 +488,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"مت جاؤ!" کا کیا مطلب ہے؟',
       options: ['I am going', 'Don\'t go!', 'He is going', 'Go now'],
       correctIndex: 1,
-      explanation: 'مت (mat) = don\'t! (negative command). Equivalent to Hindi mat.',
+      explanation:
+          'مت (mat) = don\'t! (negative command). Equivalent to Hindi mat.',
     ),
     Exercise(
       id: 'ex_ur_negation_3',
@@ -411,7 +497,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Make negative: میں جاتا ہوں۔',
       acceptedAnswers: ['میں نہیں جاتا', 'میں نہیں جاتا۔'],
-      explanation: 'میں جاتا ہوں → میں نہیں جاتا۔ نہیں replaces the verb phrase.',
+      explanation:
+          'میں جاتا ہوں → میں نہیں جاتا۔ نہیں replaces the verb phrase.',
     ),
   ],
   'ur_daily_routine': const [
@@ -422,7 +509,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"میں روز صبح چھ بجے اٹھتا ہوں" — کون سا زمانہ ہے؟',
       options: ['Past', 'Present', 'Future', 'Command'],
       correctIndex: 1,
-      explanation: 'Present tense. "روز" (roz) = daily. اٹھتا ہوں = I wake up (m.).',
+      explanation:
+          'Present tense. "روز" (roz) = daily. اٹھتا ہوں = I wake up (m.).',
     ),
     Exercise(
       id: 'ex_ur_routine_2',
@@ -461,19 +549,25 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       id: 'ex_ur_pronouns_2',
       lessonId: 'ur_grammar_pronouns',
       type: ExerciseType.mcq,
+      /*
       prompt: 'اردو میں 'you' کے کتنے درجے ہیں؟ (How many levels of 'you' does Urdu have?)',
+      */
+      prompt: 'How many levels of "you" does Urdu have?',
       options: ['1', '2', '3', '4'],
       correctIndex: 2,
-      explanation: 'Urdu has THREE levels of you: آپ (formal), تم (informal), تو (intimate).',
+      explanation:
+          'Urdu has THREE levels of you: آپ (formal), تم (informal), تو (intimate).',
     ),
     Exercise(
       id: 'ex_ur_pronouns_3',
       lessonId: 'ur_grammar_pronouns',
       type: ExerciseType.mcq,
-      prompt: 'اپنے استاد کو کیسے مخاطب کریں؟ (How do you address your teacher?)',
+      prompt:
+          'اپنے استاد کو کیسے مخاطب کریں؟ (How do you address your teacher?)',
       options: ['تو', 'تم', 'آپ', 'تم/آپ'],
       correctIndex: 2,
-      explanation: 'Use آپ (āp — formal) for teachers. تو would be insulting; تم is too casual.',
+      explanation:
+          'Use آپ (āp — formal) for teachers. تو would be insulting; تم is too casual.',
     ),
     Exercise(
       id: 'ex_ur_pronouns_4',
@@ -485,7 +579,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
         (left: 'تم', right: 'informal/familiar'),
         (left: 'تو', right: 'intimate/poetic'),
       ],
-      explanation: 'The three-level you system is a hallmark of Urdu social grammar.',
+      explanation:
+          'The three-level you system is a hallmark of Urdu social grammar.',
     ),
   ],
   'ur_grammar_gender': const [
@@ -496,7 +591,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'اردو میں کتنے جنس (genders) ہیں؟',
       options: ['1 (no gender)', '2 (m. and f.)', '3 (m., f., neuter)', '4'],
       correctIndex: 1,
-      explanation: 'Urdu has TWO genders (مذکر/m. and مؤنث/f.) — like Hindi, unlike Bengali (no gender).',
+      explanation:
+          'Urdu has TWO genders (مذکر/m. and مؤنث/f.) — like Hindi, unlike Bengali (no gender).',
     ),
     Exercise(
       id: 'ex_ur_gender_2',
@@ -505,7 +601,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"لڑکی" (girl) کون سی جنس ہے؟',
       options: ['مذکر (m.)', 'مؤنث (f.)', 'neuter', 'either'],
       correctIndex: 1,
-      explanation: 'لڑکی (larakī) = girl, feminine. Nouns ending in ـی (-ī) are usually feminine.',
+      explanation:
+          'لڑکی (larakī) = girl, feminine. Nouns ending in ـی (-ī) are usually feminine.',
     ),
     Exercise(
       id: 'ex_ur_gender_3',
@@ -529,7 +626,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: '"میں نے کتاب پڑھی" — کون سا زمانہ؟',
       options: ['Present', 'Past (transitive)', 'Future', 'Command'],
       correctIndex: 1,
-      explanation: 'Past transitive tense. نے (ne) marks the agent; verb agrees with object (کتاب, f. → پڑھی).',
+      explanation:
+          'Past transitive tense. نے (ne) marks the agent; verb agrees with object (کتاب, f. → پڑھی).',
     ),
     Exercise(
       id: 'ex_ur_tenses_2',
@@ -538,7 +636,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'نے (ne) کس کے بعد آتا ہے؟ (نے comes after what?)',
       options: ['Object', 'Subject (in transitive past)', 'Verb', 'Adjective'],
       correctIndex: 1,
-      explanation: 'نے marks the AGENT (subject) in transitive past tense. The verb then agrees with the object.',
+      explanation:
+          'نے marks the AGENT (subject) in transitive past tense. The verb then agrees with the object.',
     ),
     Exercise(
       id: 'ex_ur_tenses_3',
@@ -555,7 +654,12 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"گھر میں" کا کیا مطلب ہے؟',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
       explanation: 'میں (meñ) = in. گھر میں = in the house.',
     ),
@@ -573,9 +677,15 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"علی کی بہن" میں کی (kī) کیوں استعمال ہوئی؟',
-      options: ['بہن is masculine', 'بہن is feminine', 'It is always کی', 'Ali is feminine'],
+      options: [
+        'بہن is masculine',
+        'بہن is feminine',
+        'It is always کی',
+        'Ali is feminine'
+      ],
       correctIndex: 1,
-      explanation: 'کی (kī) = of (feminine). بہن (sister) is feminine, so the ezafe is کی, not کا.',
+      explanation:
+          'کی (kī) = of (feminine). بہن (sister) is feminine, so the ezafe is کی, not کا.',
     ),
     Exercise(
       id: 'ex_ur_post_4',
@@ -597,16 +707,26 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_reading_conversation',
       type: ExerciseType.mcq,
       prompt: '"بھائی، ٹماٹر کتنے کے ہیں؟" — یہ کس موقع پر کہا جاتا ہے؟',
-      options: ['Friend سے', 'سبزی خریدتے وقت', 'گھر میں کھانا بناتے وقت', 'ریسٹورنٹ میں'],
+      options: [
+        'Friend سے',
+        'سبزی خریدتے وقت',
+        'گھر میں کھانا بناتے وقت',
+        'ریسٹورنٹ میں'
+      ],
       correctIndex: 1,
-      explanation: 'This is asked at a vegetable shop. بھائی addresses the shopkeeper.',
+      explanation:
+          'This is asked at a vegetable shop. بھائی addresses the shopkeeper.',
     ),
     Exercise(
       id: 'ex_ur_conv_2',
       lessonId: 'ur_reading_conversation',
       type: ExerciseType.translation,
       prompt: 'Translate: صبح چھ بجے ملیں گے۔',
-      acceptedAnswers: ['See you at six in the morning', 'See you at 6 AM', 'We will meet at six in the morning'],
+      acceptedAnswers: [
+        'See you at six in the morning',
+        'See you at 6 AM',
+        'We will meet at six in the morning'
+      ],
       explanation: 'ملیں گے = we will meet. چھ بجے = at six o\'clock.',
     ),
     Exercise(
@@ -616,7 +736,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'Dialogue 3 میں کس شہر جانے کا منصوبہ ہے؟',
       options: ['کراچی', 'لاہور', 'اسلام آباد', 'فیصل آباد'],
       correctIndex: 1,
-      explanation: 'They plan to visit Lahore (لاہور) to see شاہی قلعہ and بادشاہی مسجد.',
+      explanation:
+          'They plan to visit Lahore (لاہور) to see شاہی قلعہ and بادشاہی مسجد.',
     ),
   ],
   'ur_reading_paragraph': const [
@@ -627,7 +748,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'Passage 1 کے مطابق پاکستان کا دارالحکومت کیا ہے؟',
       options: ['کراچی', 'لاہور', 'اسلام آباد', 'فیصل آباد'],
       correctIndex: 2,
-      explanation: 'پاکستان کا دارالحکومت اسلام آباد ہے، جبکہ سب سے بڑا شہر کراچی ہے۔',
+      explanation:
+          'پاکستان کا دارالحکومت اسلام آباد ہے، جبکہ سب سے بڑا شہر کراچی ہے۔',
     ),
     Exercise(
       id: 'ex_ur_para_2',
@@ -645,7 +767,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       prompt: 'غزل کس صنف کی شاعری ہے؟',
       options: ['Hindi', 'Urdu', 'Persian only', 'Arabic only'],
       correctIndex: 1,
-      explanation: 'غزل (ghazal) is the most famous Urdu poetic form. Each couplet is a complete idea.',
+      explanation:
+          'غزل (ghazal) is the most famous Urdu poetic form. Each couplet is a complete idea.',
     ),
   ],
   'ur_reading_review': const [
@@ -663,9 +786,15 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       lessonId: 'ur_reading_review',
       type: ExerciseType.mcq,
       prompt: 'اردو اور ہندی میں سب سے بڑا فرق کیا ہے؟',
-      options: ['Different grammar', 'Different script and formal vocabulary', 'Different word order', 'No relation'],
+      options: [
+        'Different grammar',
+        'Different script and formal vocabulary',
+        'Different word order',
+        'No relation'
+      ],
       correctIndex: 1,
-      explanation: 'Urdu uses Nastaliq script + Persian/Arabic loans; Hindi uses Devanagari + Sanskrit loans. Grammar is shared.',
+      explanation:
+          'Urdu uses Nastaliq script + Persian/Arabic loans; Hindi uses Devanagari + Sanskrit loans. Grammar is shared.',
     ),
     Exercise(
       id: 'ex_ur_review_3',
@@ -673,7 +802,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Translate: میرا نام _____ ہے۔',
       acceptedAnswers: ['My name is _____', 'My name is _____.'],
-      explanation: 'میرا نام _____ ہے = My name is _____. میرا (merā) = my (m., since نام is masculine).',
+      explanation:
+          'میرا نام _____ ہے = My name is _____. میرا (merā) = my (m., since نام is masculine).',
     ),
   ],
 };

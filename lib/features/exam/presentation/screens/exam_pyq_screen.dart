@@ -76,9 +76,7 @@ class _ExamPyqScreenState extends ConsumerState<ExamPyqScreen> {
             _resetInput();
           },
           onAdvance: () async {
-            await ref
-                .read(examPyqProvider(widget.trackId).notifier)
-                .advance();
+            await ref.read(examPyqProvider(widget.trackId).notifier).advance();
             _resetInput();
           },
           onReveal: () async {
@@ -229,7 +227,8 @@ class _PyqBody extends ConsumerWidget {
               FutureBuilder<List<({String id, String title})>>(
                 future: _sectionChoices(ref),
                 builder: (context, snap) {
-                  final choices = snap.data ?? const <({String id, String title})>[];
+                  final choices =
+                      snap.data ?? const <({String id, String title})>[];
                   if (choices.isEmpty) {
                     return const Text('इस दायरे में कोई खंड उपलब्ध नहीं है।');
                   }
@@ -241,7 +240,7 @@ class _PyqBody extends ConsumerWidget {
                         _SectionChip(
                           title: choice.title,
                           selected: selectedSection == choice.id,
-                          onTap: () => onSectionTap(choice.id),
+                          onTap: (_) => onSectionTap(choice.id),
                         ),
                     ],
                   );
@@ -270,8 +269,7 @@ class _PyqBody extends ConsumerWidget {
       WidgetRef ref) async {
     try {
       final scope = await ref.read(examScopeProvider(trackId).future);
-      final syllabus =
-          await ref.read(courseSyllabusProvider(trackId).future);
+      final syllabus = await ref.read(courseSyllabusProvider(trackId).future);
       if (syllabus == null || scope.view == null) return const [];
       final available = data.availableSectionIds;
       return [
@@ -326,9 +324,7 @@ class _PerformanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final withEvidence = performance.values
-        .where((p) => p.hasEvidence)
-        .toList()
+    final withEvidence = performance.values.where((p) => p.hasEvidence).toList()
       ..sort((a, b) => a.band.compareTo(b.band));
     return _Card(
       child: Column(
@@ -367,7 +363,8 @@ class _PerformanceCard extends StatelessWidget {
                         switch (p.band) {
                           'needsAttention' =>
                             '«${_shortTopic(p.topicId)}» — PYQ में कमज़ोर',
-                          'strong' => '«${_shortTopic(p.topicId)}» — ठीक चल रहा है',
+                          'strong' =>
+                            '«${_shortTopic(p.topicId)}» — ठीक चल रहा है',
                           _ => '«${_shortTopic(p.topicId)}» — बनता जा रहा है',
                         },
                         style: AppTextStyles.bodyMedium(),
@@ -428,8 +425,8 @@ class _QuestionCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: AppColors.vanOrange.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
@@ -539,8 +536,7 @@ class _OptionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary.withValues(alpha: 0.10)
@@ -552,9 +548,7 @@ class _OptionTile extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                selected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off,
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
                 size: 18,
                 color: selected ? AppColors.primary : AppColors.subtextLight,
               ),
@@ -625,8 +619,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

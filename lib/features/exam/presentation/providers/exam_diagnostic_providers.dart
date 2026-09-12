@@ -32,9 +32,7 @@ final examLearnerProfileRepositoryProvider =
 /// The learner's exam profile snapshot (live state for M5/M6 too).
 final examLearnerProfileProvider =
     FutureProvider.family<ExamLearnerProfile, String>((ref, trackId) async {
-  return ref
-      .watch(examLearnerProfileRepositoryProvider)
-      .load(trackId);
+  return ref.watch(examLearnerProfileRepositoryProvider).load(trackId);
 });
 
 /// Live diagnostic session state.
@@ -75,8 +73,7 @@ class ExamDiagnosticController
     ref.read(examGamificationProvider).clearLastOutcome();
     final trackId = state.value?.trackId ?? arg;
     final scope = await ref.read(examScopeProvider(trackId).future);
-    final syllabus =
-        await ref.read(courseSyllabusProvider(trackId).future);
+    final syllabus = await ref.read(courseSyllabusProvider(trackId).future);
     if (syllabus == null || scope.selection.isEmpty) {
       state = AsyncError(
         StateError('No scope selected — nothing to diagnose'),
@@ -105,7 +102,7 @@ class ExamDiagnosticController
     )..registerBank(bank.questions);
 
     state = AsyncData(DiagnosticSessionStateData(
-      session: _engine.start(),
+      session: _engine!.start(),
       report: null,
       trackId: trackId,
     ));
@@ -131,8 +128,7 @@ class ExamDiagnosticController
     final report = engine.buildReport(session);
     // Merge into the persistent learner profile (§12).
     final profile = await _learnerRepo.load(arg);
-    final seeded =
-        profile.mergeDiagnosticEstimates(report.estimatePairs);
+    final seeded = profile.mergeDiagnosticEstimates(report.estimatePairs);
     final withBand = ExamLearnerProfile(
       trackId: seeded.trackId,
       topics: seeded.topics,
@@ -152,8 +148,7 @@ class ExamDiagnosticController
             ExamSessionRecord(
               kind: ExamSessionKind.diagnostic,
               trackId: arg,
-              correctCount:
-                  session.responses.where((r) => r.correct).length,
+              correctCount: session.responses.where((r) => r.correct).length,
               totalCount: session.responses.length,
               questionFingerprint: examSessionFingerprintOf(
                 [
@@ -188,8 +183,8 @@ final examDiagnosticProvider = AsyncNotifierProvider.family<
 );
 
 /// Whether the track has a completed diagnostic (the M5 plan gate).
-final hasDiagnosticProvider = FutureProvider.family<bool, String>(
-    (ref, trackId) async {
+final hasDiagnosticProvider =
+    FutureProvider.family<bool, String>((ref, trackId) async {
   final profile = await ref.watch(examLearnerProfileProvider(trackId).future);
   return profile.hasDiagnostic;
 });

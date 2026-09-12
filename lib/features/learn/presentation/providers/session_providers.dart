@@ -37,6 +37,7 @@ import 'package:vaanix_app/features/learn/domain/spine/session_engine.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_content_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
@@ -47,7 +48,14 @@ import 'package:vaanix_app/features/van/van.dart';
 /// Phases of the guided session flow (mirrors the diagnostic flow's
 /// pacing: the engine adapts immediately, the UI shows a feedback beat
 /// first — Master Brief §43/§44).
-enum AdaptiveSessionPhase { idle, loading, active, feedback, finished, unavailable }
+enum AdaptiveSessionPhase {
+  idle,
+  loading,
+  active,
+  feedback,
+  finished,
+  unavailable
+}
 
 /// Immutable snapshot the session screen renders.
 class AdaptiveSessionState {
@@ -225,16 +233,13 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
     //    add up to two more due concepts from the persisted queue.
     final focusIds = <String>[concept.id];
     if (kind == ActivityKind.review || kind == ActivityKind.weakRepair) {
-      final learningState =
-          await _ref.read(activeLearningStateProvider.future);
+      final learningState = await _ref.read(activeLearningStateProvider.future);
       for (final entry in learningState.reviewQueue) {
         if (focusIds.length >= 3) break;
         if (focusIds.contains(entry.conceptId)) continue;
         final c = graph.conceptById(entry.conceptId);
         if (c == null) continue;
-        if (_ref
-            .read(exercisesForLessonProvider(c.lessonId))
-            .isEmpty) {
+        if (_ref.read(exercisesForLessonProvider(c.lessonId)).isEmpty) {
           continue;
         }
         focusIds.add(c.id);
@@ -295,9 +300,10 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
       return;
     }
 
-    final reviewFirst = kind == ActivityKind.review || kind == ActivityKind.weakRepair
-        ? await _reviewQueueConceptIds()
-        : const <String>[];
+    final reviewFirst =
+        kind == ActivityKind.review || kind == ActivityKind.weakRepair
+            ? await _reviewQueueConceptIds()
+            : const <String>[];
 
     _engine = AdaptiveSessionEngine(
       config: AdaptiveSessionConfig(
@@ -366,7 +372,9 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
         ));
 
     _ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
-          correct ? VanEventType.quizAnswerCorrect : VanEventType.quizAnswerWrong,
+          correct
+              ? VanEventType.quizAnswerCorrect
+              : VanEventType.quizAnswerWrong,
           message: correct ? null : "Let's take this one step at a time.",
           payload: {'conceptId': step.conceptId},
         ));
@@ -377,8 +385,7 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
       lastWasCorrect: correct,
       lastWasFirstTry: firstTry,
       answered: state.answered + 1,
-      firstTryCorrect:
-          state.firstTryCorrect + (correct && firstTry ? 1 : 0),
+      firstTryCorrect: state.firstTryCorrect + (correct && firstTry ? 1 : 0),
     );
   }
 
@@ -571,8 +578,7 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
       switch (kind) {
         ActivityKind.review => "Quick review of $conceptTitle — you've "
             'got this!',
-        ActivityKind.weakRepair =>
-          "Let's rebuild $conceptTitle step by step.",
+        ActivityKind.weakRepair => "Let's rebuild $conceptTitle step by step.",
         ActivityKind.masteryCheck =>
           'Ready to show what you know about $conceptTitle?',
         ActivityKind.challenge => 'Challenge time on $conceptTitle!',
