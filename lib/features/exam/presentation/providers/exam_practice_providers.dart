@@ -323,7 +323,7 @@ class ExamPracticeController
         trackId: trackId,
         questionId: question.id,
         topicId: question.topicId,
-        kind: AnswerKind.photo,
+        kind: AnswerKind.photo.name,
         verdict: result.verdict.name,
       );
     } catch (_) {

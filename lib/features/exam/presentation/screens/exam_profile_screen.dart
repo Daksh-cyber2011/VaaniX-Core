@@ -29,6 +29,10 @@ import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 
+const List<int> _dailyMinuteChoices = [10, 15, 20, 30, 45, 60, 90];
+const List<int> _daysPerWeekChoices = [2, 3, 4, 5, 6, 7];
+const List<int> _durationWeekChoices = [2, 4, 6, 8, 12, 16, 24];
+
 class ExamProfileScreen extends ConsumerStatefulWidget {
   const ExamProfileScreen({super.key, required this.trackId});
 
@@ -41,10 +45,6 @@ class ExamProfileScreen extends ConsumerStatefulWidget {
 
 class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
   String? _error;
-
-  static const List<int> _dailyMinuteChoices = [10, 15, 20, 30, 45, 60, 90];
-  static const List<int> _daysPerWeekChoices = [2, 3, 4, 5, 6, 7];
-  static const List<int> _durationWeekChoices = [2, 4, 6, 8, 12, 16, 24];
 
   @override
   Widget build(BuildContext context) {
