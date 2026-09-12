@@ -284,13 +284,19 @@ class SyllabusItem extends Equatable {
   List<Object?> get props => [id, title, marks, status, assessmentType];
 }
 
-/// A chapter of a prescribed book (Class 10 Sanskrit tracks publish these).
+/// A chapter of a prescribed book.
+///
+/// This supports a book's official contents without copying its copyrighted
+/// prose into the app. A chapter can therefore be used as the stable scope
+/// boundary for diagnostics, plans, practice, mocks and progress.
 class SyllabusChapter extends Equatable {
   const SyllabusChapter({
     required this.id,
     required this.number,
     required this.title,
     required this.type,
+    this.author,
+    this.sourceFile,
     this.examRelevance,
     this.ocrUncertain = false,
   });
@@ -301,6 +307,8 @@ class SyllabusChapter extends Equatable {
         number: (json['number'] as num).toInt(),
         title: json['title'] as String,
         type: json['type'] as String? ?? 'prose',
+        author: json['author'] as String?,
+        sourceFile: json['sourceFile'] as String?,
         examRelevance: json['examRelevance'] as String?,
         ocrUncertain: json['ocrUncertain'] as bool? ?? false,
       );
@@ -311,6 +319,13 @@ class SyllabusChapter extends Equatable {
 
   /// `prose` | `poetry` (informational).
   final String type;
+
+  /// Official author/poet credit where the prescribed book identifies one.
+  /// It is display and AI-grounding metadata, never a content substitute.
+  final String? author;
+
+  /// File name in the verified supplied NCERT package, when available.
+  final String? sourceFile;
 
   /// Chapters can be `internal-only` (Sanskrit Communicative ch. 10 & 11).
   final String? examRelevance;
@@ -323,6 +338,8 @@ class SyllabusChapter extends Equatable {
         'number': number,
         'title': title,
         'type': type,
+        if (author != null) 'author': author,
+        if (sourceFile != null) 'sourceFile': sourceFile,
         if (examRelevance != null) 'examRelevance': examRelevance,
         if (ocrUncertain) 'ocrUncertain': true,
       };

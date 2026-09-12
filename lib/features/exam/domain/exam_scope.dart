@@ -125,15 +125,24 @@ class ExamScopeView extends Equatable {
       var chaptersAdded = false;
 
       // Literature chapters become the selectable units when the course's
-      // books publish them (Class 10 Sanskrit tracks).
+      // books publish them. Keep the owning book here: Hindi A/B have more
+      // than one prescribed book, and a chapter number alone is ambiguous.
       if (section.stableKey == 'literature') {
-        final chapters = syllabus.allChapters;
-        final internalOnly = chapters.where((c) => c.isInternalOnly).toList();
-        final boardChapters = chapters.where((c) => !c.isInternalOnly).toList();
+        final chapters = [
+          for (final book in syllabus.books)
+            for (final chapter in book.chapters) (book: book, chapter: chapter),
+        ];
+        final internalOnly = chapters
+            .where((entry) => entry.chapter.isInternalOnly)
+            .toList();
+        final boardChapters = chapters
+            .where((entry) => !entry.chapter.isInternalOnly)
+            .toList();
 
         if (boardChapters.isNotEmpty || internalOnly.isNotEmpty) {
           chaptersAdded = true;
-          for (final ch in boardChapters) {
+          for (final entry in boardChapters) {
+            final ch = entry.chapter;
             units.add(ScopeUnit(
               id: ch.id,
               title: ch.title,
@@ -141,10 +150,11 @@ class ExamScopeView extends Equatable {
               sectionId: section.id,
               selectable: true,
               isChapter: true,
-              subtitle: ch.type == 'poetry' ? 'काव्य खंड' : 'गद्य खंड',
+              subtitle: _chapterSubtitle(entry.book.title, ch),
             ));
           }
-          for (final ch in internalOnly) {
+          for (final entry in internalOnly) {
+            final ch = entry.chapter;
             units.add(ScopeUnit(
               id: ch.id,
               title: ch.title,
@@ -204,6 +214,13 @@ class ExamScopeView extends Equatable {
       sections: sections,
       boardMarks: syllabus.boardExamTotalMarks,
     );
+  }
+
+  static String _chapterSubtitle(String bookTitle, SyllabusChapter chapter) {
+    final kind = chapter.type == 'poetry' ? 'काव्य खंड' : 'गद्य खंड';
+    final author = chapter.author;
+    return [bookTitle, kind, if (author != null && author.isNotEmpty) author]
+        .join(' · ');
   }
 
   static String? _pendingNoteFor(CourseSyllabus syllabus) {
