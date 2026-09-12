@@ -297,9 +297,8 @@ class _TaskRow extends StatelessWidget {
       ExamTaskType.review => RouteNames.examWeakAreaName,
       ExamTaskType.pyq => RouteNames.examPyqName,
       ExamTaskType.mock => RouteNames.examMockName,
-      _ => null,
     };
-    final isActionable = isToday && routeName != null;
+    final isActionable = isToday;
     return Semantics(
       label: '${task.title}, ${task.minutes} मिनट',
       child: InkWell(
@@ -307,7 +306,7 @@ class _TaskRow extends StatelessWidget {
         // (practice / weak-area / revision / PYQ / mock).
         onTap: isActionable
             ? () => GoRouter.of(context).pushNamed(
-                  routeName!,
+                  routeName,
                   pathParameters: task.type == ExamTaskType.learn
                       ? {'trackId': trackId, 'topicId': task.topicId}
                       : {'trackId': trackId},

@@ -81,7 +81,9 @@ class SyllabusTrackId extends Equatable {
   });
 
   factory SyllabusTrackId.parse(String id) {
-    // cbse_10_hindi_a -> board=cbse, class=10, subject=hindi, course=a
+    // cbse_10_hindi_a -> board=cbse, class=10, subject=hindi, course=a.
+    // Sanskrit Communicative preserves its complete course identity as
+    // `sanskrit_communicative` rather than a generic `communicative`.
     // cbse_9_sanskrit -> course segment omitted (single-course subject).
     final parts = id.split('_');
     if (parts.length < 3 || parts[0].isEmpty) {
@@ -95,7 +97,11 @@ class SyllabusTrackId extends Equatable {
       board: BoardId(parts[0]),
       klass: klass,
       subjectId: parts[2],
-      courseId: parts.length > 3 ? parts.sublist(3).join('_') : '',
+      courseId: parts.length > 3
+          ? (parts[2] == 'sanskrit'
+              ? parts.sublist(2).join('_')
+              : parts.sublist(3).join('_'))
+          : '',
     );
   }
 
@@ -108,7 +114,9 @@ class SyllabusTrackId extends Equatable {
   /// Single-course subjects omit the course segment: `cbse_9_sanskrit`.
   String get value => courseId.isEmpty
       ? '${board.value}_${klass}_$subjectId'
-      : '${board.value}_${klass}_$subjectId\_$courseId';
+      : courseId.startsWith('${subjectId}_')
+          ? '${board.value}_${klass}_$courseId'
+          : '${board.value}_${klass}_${subjectId}_$courseId';
 
   /// Asset path of this course's canonical file.
   String get assetPath => 'assets/syllabus/${board.value}/$value.json';

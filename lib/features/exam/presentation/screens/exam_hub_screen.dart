@@ -289,7 +289,6 @@ class _TodayTaskRow extends StatelessWidget {
       ExamTaskType.review => RouteNames.examWeakAreaName,
       ExamTaskType.pyq => RouteNames.examPyqName,
       ExamTaskType.mock => RouteNames.examMockName,
-      _ => null,
     };
     return Semantics(
       label: '${task.title}, ${task.minutes} मिनट'
@@ -297,14 +296,12 @@ class _TodayTaskRow extends StatelessWidget {
       child: InkWell(
         // §20 freedom preserved: every task stays openable, done or
         // not — the plan is a recommendation.
-        onTap: routeName == null
-            ? null
-            : () => GoRouter.of(context).pushNamed(
-                  routeName,
-                  pathParameters: task.type == ExamTaskType.learn
-                      ? {'trackId': trackId, 'topicId': task.topicId}
-                      : {'trackId': trackId},
-                ),
+        onTap: () => GoRouter.of(context).pushNamed(
+          routeName,
+          pathParameters: task.type == ExamTaskType.learn
+              ? {'trackId': trackId, 'topicId': task.topicId}
+              : {'trackId': trackId},
+        ),
         borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -392,7 +389,6 @@ class _ContinueSection extends StatelessWidget {
       ExamTaskType.review => RouteNames.examWeakAreaName,
       ExamTaskType.pyq => RouteNames.examPyqName,
       ExamTaskType.mock => RouteNames.examMockName,
-      _ => null,
     };
     return _Card(
       child: Row(
@@ -411,17 +407,16 @@ class _ContinueSection extends StatelessWidget {
               ],
             ),
           ),
-          if (routeName != null)
-            IconButton(
-              tooltip: 'Continue',
-              icon: const Icon(Icons.play_arrow, color: AppColors.primary),
-              onPressed: () => GoRouter.of(context).pushNamed(
-                routeName,
-                pathParameters: task.type == ExamTaskType.learn
-                    ? {'trackId': trackId, 'topicId': task.topicId}
-                    : {'trackId': trackId},
-              ),
+          IconButton(
+            tooltip: 'Continue',
+            icon: const Icon(Icons.play_arrow, color: AppColors.primary),
+            onPressed: () => GoRouter.of(context).pushNamed(
+              routeName,
+              pathParameters: task.type == ExamTaskType.learn
+                  ? {'trackId': trackId, 'topicId': task.topicId}
+                  : {'trackId': trackId},
             ),
+          ),
         ],
       ),
     );
