@@ -16,7 +16,9 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/domain/planner/exam_plan_models.dart';
+import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_plan_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -71,12 +73,19 @@ class _PlanBody extends ConsumerWidget {
     }
 
     final plan = state.plan;
+    final scope = ref.watch(examScopeProvider(trackId)).valueOrNull;
+    final selectedUnits = <ScopeUnit>[
+      for (final section in scope?.view?.sections ?? const [])
+        for (final unit in section.selectableUnits)
+          if (scope!.selection.isSelected(unit.id)) unit,
+    ];
     if (plan == null || plan.days.isEmpty) {
       return ListView(
         padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
         children: [
           VanSpeechStrip(
-            message: 'दायरा और profile तैयार है — अब आपकी निजी योजना बनाते हैं!',
+            message:
+                'दायरा और profile तैयार है — अब आपकी निजी योजना बनाते हैं!',
             state: VanState.happy,
           ),
           const SizedBox(height: 12),
@@ -86,9 +95,8 @@ class _PlanBody extends ConsumerWidget {
                 PrimaryButton(
                   label: 'योजना बनाएँ',
                   icon: const Icon(Icons.auto_awesome),
-                  onPressed: () => ref
-                      .read(examPlanProvider(trackId).notifier)
-                      .buildPlan(),
+                  onPressed: () =>
+                      ref.read(examPlanProvider(trackId).notifier).buildPlan(),
                 ),
               ],
             ),
@@ -114,16 +122,14 @@ class _PlanBody extends ConsumerWidget {
         _Card(
           child: Row(
             children: [
-              const Icon(Icons.healing,
-                  size: 20, color: AppColors.warning),
+              const Icon(Icons.healing, size: 20, color: AppColors.warning),
               const SizedBox(width: 12),
               Expanded(
                 child: Text('कमज़ोर क्षेत्र और दोहराव',
                     style: AppTextStyles.titleSmall()),
               ),
               IconButton(
-                icon: const Icon(Icons.play_arrow,
-                    color: AppColors.primary),
+                icon: const Icon(Icons.play_arrow, color: AppColors.primary),
                 tooltip: 'Weak areas',
                 onPressed: () => GoRouter.of(context).pushNamed(
                   RouteNames.examWeakAreaName,
@@ -135,6 +141,19 @@ class _PlanBody extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         _SourceBadge(source: plan.source),
+        const SizedBox(height: 8),
+        PrimaryButton.secondary(
+          label: 'Choose a different topic',
+          icon: const Icon(Icons.tune),
+          onPressed: selectedUnits.isEmpty
+              ? null
+              : () => _showTopicPicker(
+                    context: context,
+                    ref: ref,
+                    trackId: trackId,
+                    units: selectedUnits,
+                  ),
+        ),
         if (state.notice != null) ...[
           const SizedBox(height: 8),
           _NoticeCard(text: state.notice!),
@@ -167,6 +186,40 @@ class _PlanBody extends ConsumerWidget {
   }
 }
 
+Future<void> _showTopicPicker({
+  required BuildContext context,
+  required WidgetRef ref,
+  required String trackId,
+  required List<ScopeUnit> units,
+}) async {
+  await showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (sheetContext) => SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          const ListTile(
+            title: Text('What would you like to study instead?'),
+            subtitle: Text('This stays within your selected official scope.'),
+          ),
+          for (final unit in units)
+            ListTile(
+              leading: const Icon(Icons.menu_book_outlined),
+              title: Text(unit.title),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                ref
+                    .read(examPlanProvider(trackId).notifier)
+                    .chooseStudentTopic(unit.id);
+              },
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
 class _DayCard extends StatelessWidget {
   const _DayCard({required this.day, required this.trackId});
 
@@ -178,7 +231,9 @@ class _DayCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final label = day.dayIndex == 0
         ? 'आज'
-        : day.dayIndex == 1 ? 'कल' : 'दिन ${day.dayIndex + 1}';
+        : day.dayIndex == 1
+            ? 'कल'
+            : 'दिन ${day.dayIndex + 1}';
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +245,9 @@ class _DayCard extends StatelessWidget {
               Text(
                 day.tasks.isEmpty ? 'आराम का दिन' : '${day.totalMinutes} मिनट',
                 style: AppTextStyles.labelMedium(
-                    color: isDark ? AppColors.subtextDark : AppColors.subtextLight),
+                    color: isDark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ),
             ],
           ),
@@ -234,13 +291,13 @@ class _TaskRow extends StatelessWidget {
     // review → the M8 weak-area hub; pyq → the M9 PYQ track; mock →
     // the M9 mock ladder.
     final routeName = switch (task.type) {
-        ExamTaskType.practice => RouteNames.examPracticeName,
-        ExamTaskType.weakArea => RouteNames.examWeakAreaName,
-        ExamTaskType.review => RouteNames.examWeakAreaName,
-        ExamTaskType.pyq => RouteNames.examPyqName,
-        ExamTaskType.mock => RouteNames.examMockName,
-        _ => null,
-      };
+      ExamTaskType.practice => RouteNames.examPracticeName,
+      ExamTaskType.weakArea => RouteNames.examWeakAreaName,
+      ExamTaskType.review => RouteNames.examWeakAreaName,
+      ExamTaskType.pyq => RouteNames.examPyqName,
+      ExamTaskType.mock => RouteNames.examMockName,
+      _ => null,
+    };
     final isActionable = isToday && routeName != null;
     return Semantics(
       label: '${task.title}, ${task.minutes} मिनट',
@@ -270,8 +327,7 @@ class _TaskRow extends StatelessWidget {
                           : AppColors.subtextLight)),
               if (isActionable) ...[
                 const SizedBox(width: 6),
-                Icon(Icons.play_arrow,
-                    size: 18, color: AppColors.primary),
+                Icon(Icons.play_arrow, size: 18, color: AppColors.primary),
               ],
             ],
           ),
@@ -347,8 +403,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

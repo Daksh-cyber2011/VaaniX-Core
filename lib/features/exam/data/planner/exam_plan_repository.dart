@@ -19,6 +19,7 @@ class ExamPlanRepository {
   ExamPlanRepository(this._storage);
 
   static const String storageKey = 'exam_plan_v1';
+  static const String overrideStorageKey = 'exam_plan_overrides_v1';
 
   /// Plans are rolling 7-day windows — anything older has served its
   /// purpose and rebuilds fresh.
@@ -37,8 +38,8 @@ class ExamPlanRepository {
       final plans = <String, ExamPlan>{};
       plansJson.forEach((trackId, value) {
         try {
-          plans[trackId] =
-              ExamPlan.fromJson((value as Map<String, dynamic>).cast<String, dynamic>());
+          plans[trackId] = ExamPlan.fromJson(
+              (value as Map<String, dynamic>).cast<String, dynamic>());
         } catch (_) {
           // Corrupt entry — skip (§41).
         }
@@ -50,8 +51,55 @@ class ExamPlanRepository {
     }
   }
 
-  Future<ExamPlan?> load(String trackId) async =>
-      (await loadAll())[trackId];
+  Future<ExamPlan?> load(String trackId) async => (await loadAll())[trackId];
+
+  /// Topics a student explicitly chose over the recommended task. This is a
+  /// bounded preference signal, not a replacement syllabus: callers still
+  /// validate every id against the active scope before planning.
+  Future<List<String>> loadStudentOverrideTopicIds(String trackId) async {
+    final raw = await _storage.getString(overrideStorageKey);
+    if (raw == null || raw.isEmpty) return const [];
+    try {
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      final values = json[trackId] as List<dynamic>? ?? const [];
+      return values
+          .whereType<String>()
+          .where((id) => id.isNotEmpty)
+          .take(12)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  /// Records one voluntary topic choice and keeps only recent distinct ids.
+  /// The record is device-local and is used solely to improve the next plan.
+  Future<void> recordStudentOverride({
+    required String trackId,
+    required String topicId,
+  }) async {
+    final raw = await _storage.getString(overrideStorageKey);
+    final all = <String, List<String>>{};
+    try {
+      final json = raw == null || raw.isEmpty
+          ? const <String, dynamic>{}
+          : jsonDecode(raw) as Map<String, dynamic>;
+      json.forEach((id, values) {
+        if (values is List<dynamic>) {
+          all[id] =
+              values.whereType<String>().where((v) => v.isNotEmpty).toList();
+        }
+      });
+    } catch (_) {
+      // A corrupt preference store must not erase plans or block choice.
+    }
+    final next = <String>[
+      topicId,
+      ...?all[trackId]?.where((id) => id != topicId)
+    ].take(12).toList(growable: false);
+    all[trackId] = next;
+    await _storage.setString(overrideStorageKey, jsonEncode(all));
+  }
 
   Future<void> save(ExamPlan plan, {bool markCached = false}) async {
     final all = await loadAll();
@@ -59,12 +107,14 @@ class ExamPlanRepository {
         ? ExamPlan.fromJson({...plan.toJson(), 'source': 'cached'})
         : plan;
     all[plan.trackId] = stored;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'plans': {
-        for (final e in all.entries) e.key: e.value.toJson(),
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'plans': {
+            for (final e in all.entries) e.key: e.value.toJson(),
+          },
+        }));
   }
 
   /// The cached-plan fallback hop: serves the last accepted plan ONLY
@@ -83,5 +133,6 @@ class ExamPlanRepository {
   @visibleForTesting
   Future<void> reset() async {
     await _storage.remove(storageKey);
+    await _storage.remove(overrideStorageKey);
   }
 }

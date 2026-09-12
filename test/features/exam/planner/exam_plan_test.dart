@@ -31,10 +31,9 @@ void main() {
   late ExamProfile examProfile;
 
   setUpAll(() async {
-    final raw =
-        await rootBundle.loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
-    syllabus =
-        CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final raw = await rootBundle
+        .loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    syllabus = CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     view = ExamScopeView.fromSyllabus(syllabus);
     selection = ExamScopeSelection.empty(view.trackId)
         .selectAll(view.selectableUnitIds);
@@ -100,12 +99,36 @@ void main() {
 
   test('weak topics come first when the diagnostic exists', () {
     final weakId = selection.selectedUnitIds.first;
-    final learner = ExamLearnerProfile.empty(view.trackId).recordAttempt(
-        topicId: weakId, correct: false);
+    final learner = ExamLearnerProfile.empty(view.trackId)
+        .recordAttempt(topicId: weakId, correct: false);
     final plan = DeterministicExamPlanner.build(ctx(learner: learner));
     final firstTasks = plan.days.first.tasks;
     expect(firstTasks.any((t) => t.topicId == weakId), isTrue,
         reason: 'weak topic should lead day 0');
+  });
+
+  test('student-selected in-scope topic leads the next offline replan', () {
+    final preferredId = selection.selectedUnitIds.last;
+    final plan = DeterministicExamPlanner.build(DeterministicExamContext(
+      trackId: view.trackId,
+      view: view,
+      selection: selection,
+      profile: examProfile,
+      learner: ExamLearnerProfile.empty(view.trackId),
+      scopeRevision: selection.revision,
+      studentOverrideTopicIds: [preferredId, 'out_of_scope_must_be_ignored'],
+    ));
+    expect(
+      plan.days.first.tasks.any((task) => task.topicId == preferredId),
+      isTrue,
+      reason: 'the student\'s selected topic should lead the ordinary plan',
+    );
+    expect(
+      plan.days
+          .expand((day) => day.tasks)
+          .any((task) => task.topicId == 'out_of_scope_must_be_ignored'),
+      isFalse,
+    );
   });
 
   test('validator rejects hallucinated topics (§16 rule 1)', () {
@@ -131,7 +154,10 @@ void main() {
     );
     expect(
       ExamPlanValidator.validate(
-          plan: hallucinated, view: view, selection: selection, profile: examProfile),
+          plan: hallucinated,
+          view: view,
+          selection: selection,
+          profile: examProfile),
       isNotEmpty,
     );
   });
@@ -149,9 +175,15 @@ void main() {
       days: [
         ExamDayPlan(dayIndex: 0, tasks: [
           ExamPlanTask(
-              type: ExamTaskType.learn, topicId: realId, title: 'x', minutes: 60),
+              type: ExamTaskType.learn,
+              topicId: realId,
+              title: 'x',
+              minutes: 60),
           ExamPlanTask(
-              type: ExamTaskType.practice, topicId: realId, title: 'y', minutes: 60),
+              type: ExamTaskType.practice,
+              topicId: realId,
+              title: 'y',
+              minutes: 60),
         ]),
       ],
       createdAtIso: '',
@@ -198,7 +230,8 @@ void main() {
     final fenced = '```json\n$goodJson\n```';
     expect(ExamPlanParser.parse(fenced, plannerCtx).isRight(), isTrue);
 
-    expect(ExamPlanParser.parse('AI is down today', plannerCtx).isLeft(), isTrue);
+    expect(
+        ExamPlanParser.parse('AI is down today', plannerCtx).isLeft(), isTrue);
 
     // Hallucinated topic inside AI output → rejected.
     final hallucinatedJson = jsonEncode({
@@ -215,13 +248,17 @@ void main() {
           {
             'dayIndex': d,
             'tasks': [
-              {'type': 'practice', 'topicId': topicId, 'title': 'x', 'minutes': 15},
+              {
+                'type': 'practice',
+                'topicId': topicId,
+                'title': 'x',
+                'minutes': 15
+              },
             ],
           },
       ],
     });
-    expect(
-        ExamPlanParser.parse(hallucinatedJson, plannerCtx).isLeft(), isTrue);
+    expect(ExamPlanParser.parse(hallucinatedJson, plannerCtx).isLeft(), isTrue);
   });
 
   test('§17: unavailable client short-circuits without network', () async {
@@ -244,10 +281,7 @@ void main() {
     final editedScope = selection.toggle(selection.selectedUnitIds.first)!;
     expect(
       ExamPlanValidator.validate(
-          plan: plan,
-          view: view,
-          selection: editedScope,
-          profile: examProfile),
+          plan: plan, view: view, selection: editedScope, profile: examProfile),
       isNotEmpty,
       reason: 'plan built for a different scope revision must not validate '
           'against the edited scope',
@@ -267,7 +301,8 @@ class _FakeTextClient implements PlannerTextClient {
   bool get isAvailable => available;
 
   @override
-  Future<String> complete({required String system, required String user}) async {
+  Future<String> complete(
+      {required String system, required String user}) async {
     final r = response;
     if (r == null) throw Exception('network down');
     return r;

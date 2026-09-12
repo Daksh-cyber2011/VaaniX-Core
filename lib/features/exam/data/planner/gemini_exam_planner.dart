@@ -47,6 +47,7 @@ class ExamPlannerContext {
     required this.learner,
     required this.scopeRevision,
     this.weakAreaDigest = const [],
+    this.studentOverrideTopicIds = const [],
   });
 
   final String trackId;
@@ -60,6 +61,11 @@ class ExamPlannerContext {
   /// + the recommended recovery day + due revision topics. Empty = no
   /// weak-area evidence yet (honest omission, never fabrication).
   final List<String> weakAreaDigest;
+
+  /// Recent student-led topic choices. They are trusted only after the
+  /// application filters them against [selection]; Gemini never receives a
+  /// free-form topic outside the official scope.
+  final List<String> studentOverrideTopicIds;
 }
 
 /// Prompt builder — bounded, structured, strict-schema (§18).
@@ -82,6 +88,8 @@ HARD CONSTRAINTS:
   day's weakArea task on the stated focus topic) and prefer review tasks on its due revision
   topics. Never turn every day into weak-area work.
 - rationale: one short paragraph in Hindi explaining priorities (explainable plan).
+- STUDENT PREFERENCE is a voluntary in-scope choice. Respect it by giving
+  the preferred topic an early non-recovery task; do not guilt or override the student.
 
 OUTPUT ONLY this JSON schema, no prose, no markdown fences:
 {"focusSummary": "...", "rationale": "...", "days": [{"dayIndex": 0, "tasks": [{"type": "learn", "topicId": "...", "title": "...", "minutes": 15}]}]}
@@ -117,6 +125,13 @@ OUTPUT ONLY this JSON schema, no prose, no markdown fences:
         ? ''
         : 'WEAK AREA (evidence-based — respect it):\n'
             '${ctx.weakAreaDigest.join('\n')}\n';
+    final preferred = ctx.studentOverrideTopicIds
+        .where(ctx.selection.isSelected)
+        .take(3)
+        .toList(growable: false);
+    final preferenceBlock = preferred.isEmpty
+        ? ''
+        : 'STUDENT PREFERENCE (selected scope ids): ${preferred.join(', ')}\n';
 
     return '''
 COURSE: ${ctx.trackId}
@@ -127,6 +142,7 @@ ${scopeLines.join('\n')}
 LEARNER PROFILE:
 ${learnerLines.join('\n')}
 $weakAreaBlock
+$preferenceBlock
 Create the 7-day plan JSON now.
 ''';
   }

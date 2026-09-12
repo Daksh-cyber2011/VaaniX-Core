@@ -15,6 +15,9 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/ai/domain/learning_context.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_profile_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
@@ -32,6 +35,43 @@ final learningContextProvider = Provider<LearningContext>((ref) {
   final weak = ref.watch(weakLessonsProvider);
   final completedCount = ref.watch(completedLessonIdsProvider).length;
   final streak = ref.watch(userProfileProvider).currentStreak;
+
+  // Exam Mode is a first-class learning context, not a disconnected screen.
+  // All values come from the same persisted scope/profile/diagnostic stores
+  // used by the exam engines. Async values may still be loading; in that
+  // case we omit them rather than manufacture context for the model.
+  final activeExamTrack =
+      ref.watch(examScopeStoreProvider).valueOrNull?.activeTrackId;
+  final examScope = activeExamTrack == null
+      ? null
+      : ref.watch(examScopeProvider(activeExamTrack)).valueOrNull;
+  final examProfile = activeExamTrack == null
+      ? null
+      : ref.watch(examProfileProvider(activeExamTrack)).valueOrNull;
+  final examLearner = activeExamTrack == null
+      ? null
+      : ref.watch(examLearnerProfileProvider(activeExamTrack)).valueOrNull;
+
+  final examTitleById = <String, String>{
+    for (final section in examScope?.view?.sections ?? const [])
+      for (final unit in section.selectableUnits) unit.id: unit.title,
+  };
+  final examScopeTitles = <String>[
+    for (final id in examScope?.selection.selectedUnitIds ?? const <String>{})
+      if (examTitleById[id] != null) examTitleById[id]!,
+  ]..sort();
+  final examWeakTitles = <String>[
+    for (final topic
+        in examLearner?.weakTopicsFirst(limit: maxWeakTitlesInContext) ??
+            const [])
+      if (examTitleById[topic.topicId] != null) examTitleById[topic.topicId]!,
+  ];
+  final readinessAnchor = examProfile?.readinessAnchor(DateTime.now());
+  final readinessLabel = readinessAnchor == null
+      ? null
+      : '${readinessAnchor.year.toString().padLeft(4, '0')}-'
+          '${readinessAnchor.month.toString().padLeft(2, '0')}-'
+          '${readinessAnchor.day.toString().padLeft(2, '0')}';
 
   // Resolve the chapter the next action points into (lesson target or
   // exam target), so Van knows the learner's current chapter title.
@@ -68,5 +108,11 @@ final learningContextProvider = Provider<LearningContext>((ref) {
     lessonsTotal: lessons.length,
     currentStreak: streak,
     weakLessonTitles: weak.map((l) => l.title).toList(growable: false),
+    examCourseId: activeExamTrack,
+    examScopeTitles: examScopeTitles,
+    examWeakTopicTitles: examWeakTitles,
+    examReadinessLabel: readinessLabel,
+    examDailyStudyMinutes: examProfile?.dailyStudyMinutes,
+    examDiagnosticCompleted: examLearner?.hasDiagnostic ?? false,
   );
 });

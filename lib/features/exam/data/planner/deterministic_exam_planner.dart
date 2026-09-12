@@ -44,10 +44,14 @@ class DeterministicExamPlanner {
     }
 
     // Priority order: weak-first (with diagnostic), else marks-weighted.
-    final weakIds = ctx.learner.weakTopicsFirst(limit: 30)
-        .map((t) => t.topicId)
-        .toSet();
+    final weakIds =
+        ctx.learner.weakTopicsFirst(limit: 30).map((t) => t.topicId).toSet();
+    final preferredIds =
+        ctx.studentOverrideTopicIds.where(ctx.selection.isSelected).toSet();
     final ordered = [...selected]..sort((a, b) {
+        final aPreferred = preferredIds.contains(a.id) ? 0 : 1;
+        final bPreferred = preferredIds.contains(b.id) ? 0 : 1;
+        if (aPreferred != bPreferred) return aPreferred.compareTo(bPreferred);
         final aWeak = weakIds.contains(a.id) ? 0 : 1;
         final bWeak = weakIds.contains(b.id) ? 0 : 1;
         if (aWeak != bWeak) return aWeak.compareTo(bWeak);
@@ -64,9 +68,7 @@ class DeterministicExamPlanner {
     // rolling window is bounded by min(7, studyDaysPerWeek).
     final budget = ctx.profile.dailyStudyMinutes;
     // §9 hard guarantee: a task NEVER exceeds the daily budget itself.
-    final taskMinutes = budget >= 45
-        ? 15
-        : (budget >= 10 ? 10 : budget);
+    final taskMinutes = budget >= 45 ? 15 : (budget >= 10 ? 10 : budget);
     final tasksPerDay = (budget / taskMinutes).floor().clamp(1, 4);
     final dayCount = ctx.profile.studyDaysPerWeek.clamp(1, 7);
 
@@ -75,9 +77,8 @@ class DeterministicExamPlanner {
 
     // --- M8 §22: the reserved weak-area recovery day, if any.
     final decision = ctx.weakArea?.decision;
-    final recoveryDay = (decision != null && decision.shouldRecover)
-        ? decision.dayIndex
-        : -1;
+    final recoveryDay =
+        (decision != null && decision.shouldRecover) ? decision.dayIndex : -1;
 
     // --- M8 §23: due/overdue revision items become review tasks,
     //     spread over the earliest days (overdue first). Only
@@ -191,9 +192,8 @@ class DeterministicExamPlanner {
         if (weakIds.isNotEmpty &&
             tasks.isNotEmpty &&
             usedMinutes() + 10 <= budget) {
-          final weakUnit = ordered
-              .where((u) => weakIds.contains(u.id))
-              .firstOrNull;
+          final weakUnit =
+              ordered.where((u) => weakIds.contains(u.id)).firstOrNull;
           if (weakUnit != null && !tasks.any((t) => t.topicId == weakUnit.id)) {
             tasks.add(ExamPlanTask(
               type: ExamTaskType.weakArea,
@@ -315,6 +315,7 @@ class DeterministicExamContext {
     required this.learner,
     required this.scopeRevision,
     this.weakArea,
+    this.studentOverrideTopicIds = const [],
   });
 
   final String trackId;
@@ -326,6 +327,10 @@ class DeterministicExamContext {
 
   /// M8 weak-area connection (optional — absent = pre-M8 behavior).
   final WeakAreaPlannerInput? weakArea;
+
+  /// Recent in-scope choices made by the student. A reserved recovery day
+  /// remains evidence-led, but ordinary planning honours these first.
+  final List<String> studentOverrideTopicIds;
 }
 
 extension _FirstOrNullExt<T> on Iterable<T> {

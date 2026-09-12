@@ -194,6 +194,23 @@ void main() {
       expect(f, contains('Topics to revisit: Vowel matras, Sandhi.'));
     });
 
+    test('carries exact Exam Mode scope without expanding it', () {
+      final ctx = LearningContext.bounded(
+        examCourseId: 'cbse_10_hindi_a',
+        examScopeTitles: const ['व्याकरण', 'अपठित बोध'],
+        examWeakTopicTitles: const ['समास'],
+        examReadinessLabel: '2027-01-15',
+        examDailyStudyMinutes: 45,
+        examDiagnosticCompleted: true,
+      );
+      final f = ctx.fragment;
+      expect(f, contains('EXAM MODE CONTEXT'));
+      expect(f, contains('Exact course: cbse_10_hindi_a.'));
+      expect(f, contains('Selected exam scope: व्याकरण, अपठित बोध.'));
+      expect(f, contains('Exam topics needing support: समास.'));
+      expect(f, contains('never guilt them for missed study'));
+    });
+
     test('never exceeds maxFragmentLength even with extreme input', () {
       final ctx = LearningContext.bounded(
         nextActionHint: 'z' * 5000,
@@ -226,8 +243,7 @@ void main() {
       expect(cc.learningContextFragment, '');
     });
 
-    test('append / truncated / withPersona preserve the learning context',
-        () {
+    test('append / truncated / withPersona preserve the learning context', () {
       final lc = LearningContext.bounded(currentChapterTitle: 'Ch 1');
       final base = ConversationContext(
         conversationId: 'c1',
@@ -257,8 +273,7 @@ void main() {
   group('DefaultPromptPipeline keeps the persona stable', () {
     const pipeline = DefaultPromptPipeline();
 
-    test('persona does NOT embed the learning context fragment (Phase 4)',
-        () {
+    test('persona does NOT embed the learning context fragment (Phase 4)', () {
       final lc = LearningContext.bounded(
         currentChapterTitle: 'Devanagari Basics',
         nextActionLabel: 'Practice: Vowel matras',
@@ -376,8 +391,7 @@ void main() {
       expect(f, contains('Topics to revisit:'));
     });
 
-    test('fragment is bounded even for a fully-completed curriculum',
-        () async {
+    test('fragment is bounded even for a fully-completed curriculum', () async {
       final container = await makeContainer(<String, Object>{
         AppConstants.keyCompletedLessonIds: <String>[
           'ls_alphabet_vowels',
@@ -398,8 +412,8 @@ void main() {
       addTearDown(container.dispose);
       await settleProfile(container);
       final lc = container.read(learningContextProvider);
-      expect(
-          lc.weakLessonTitles.length, lessThanOrEqualTo(maxWeakTitlesInContext));
+      expect(lc.weakLessonTitles.length,
+          lessThanOrEqualTo(maxWeakTitlesInContext));
       expect(lc.fragment.length, lessThanOrEqualTo(maxFragmentLength));
     });
   });
@@ -408,9 +422,9 @@ void main() {
   // Pipeline travel: ChatController → ConversationPipelineImpl → AI adapter
   // -------------------------------------------------------------------------
 
-  group('pipeline travel (ChatController → ConversationPipelineImpl → AI)',
-      () {
-    test('ChatController stamps learningContextProvider output onto the '
+  group('pipeline travel (ChatController → ConversationPipelineImpl → AI)', () {
+    test(
+        'ChatController stamps learningContextProvider output onto the '
         'context it hands the pipeline', () async {
       dotenv.testLoad();
       SharedPreferences.setMockInitialValues(<String, Object>{});
@@ -436,7 +450,8 @@ void main() {
           contains('Suggested next step: Start Learning'));
     });
 
-    test('ConversationPipelineImpl builds a stable persona while the adapter '
+    test(
+        'ConversationPipelineImpl builds a stable persona while the adapter '
         'sees the fragment as message content', () async {
       final service = _CapturingService();
       final pipeline = ConversationPipelineImpl(

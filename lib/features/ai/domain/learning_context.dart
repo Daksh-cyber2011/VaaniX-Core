@@ -46,6 +46,12 @@ class LearningContext extends Equatable {
     this.lessonsTotal = 0,
     this.currentStreak = 0,
     this.weakLessonTitles = const <String>[],
+    this.examCourseId,
+    this.examScopeTitles = const <String>[],
+    this.examWeakTopicTitles = const <String>[],
+    this.examReadinessLabel,
+    this.examDailyStudyMinutes,
+    this.examDiagnosticCompleted = false,
   });
 
   /// Title of the chapter the learner is currently working in.
@@ -74,6 +80,26 @@ class LearningContext extends Equatable {
   /// ALREADY capped at [maxWeakTitlesInContext] by the factory.
   final List<String> weakLessonTitles;
 
+  /// The exact persisted Exam Mode course id. This is deliberately an id,
+  /// rather than a guessed display name, so Hindi A/B and the two Sanskrit
+  /// courses can never be collapsed in an AI turn.
+  final String? examCourseId;
+
+  /// A small, trusted digest of the student's selected Exam Mode scope.
+  final List<String> examScopeTitles;
+
+  /// Evidence-backed weak exam topics, not model-generated labels.
+  final List<String> examWeakTopicTitles;
+
+  /// The student's readiness anchor in a compact human-readable form.
+  final String? examReadinessLabel;
+
+  /// Realistic daily budget collected in Exam Mode, when configured.
+  final int? examDailyStudyMinutes;
+
+  /// Whether the selected Exam Mode course has been diagnostically sampled.
+  final bool examDiagnosticCompleted;
+
   /// An empty context — renders an empty fragment (nothing injected).
   static const LearningContext empty = LearningContext();
 
@@ -86,7 +112,13 @@ class LearningContext extends Equatable {
           lessonsCompleted == 0 &&
           lessonsTotal == 0 &&
           currentStreak == 0 &&
-          weakLessonTitles.isEmpty);
+          weakLessonTitles.isEmpty &&
+          examCourseId == null &&
+          examScopeTitles.isEmpty &&
+          examWeakTopicTitles.isEmpty &&
+          examReadinessLabel == null &&
+          examDailyStudyMinutes == null &&
+          !examDiagnosticCompleted);
 
   /// Builds a bounded LearningContext from raw curriculum data.
   ///
@@ -101,6 +133,12 @@ class LearningContext extends Equatable {
     int lessonsTotal = 0,
     int currentStreak = 0,
     List<String> weakLessonTitles = const <String>[],
+    String? examCourseId,
+    List<String> examScopeTitles = const <String>[],
+    List<String> examWeakTopicTitles = const <String>[],
+    String? examReadinessLabel,
+    int? examDailyStudyMinutes,
+    bool examDiagnosticCompleted = false,
   }) {
     return LearningContext(
       currentChapterTitle: _clamp(currentChapterTitle),
@@ -116,6 +154,25 @@ class LearningContext extends Equatable {
           .where((t) => t.isNotEmpty)
           .take(maxWeakTitlesInContext)
           .toList(growable: false),
+      examCourseId: _clamp(examCourseId),
+      examScopeTitles: examScopeTitles
+          .map(_clamp)
+          .whereType<String>()
+          .where((t) => t.isNotEmpty)
+          .take(maxWeakTitlesInContext)
+          .toList(growable: false),
+      examWeakTopicTitles: examWeakTopicTitles
+          .map(_clamp)
+          .whereType<String>()
+          .where((t) => t.isNotEmpty)
+          .take(maxWeakTitlesInContext)
+          .toList(growable: false),
+      examReadinessLabel: _clamp(examReadinessLabel),
+      examDailyStudyMinutes:
+          examDailyStudyMinutes == null || examDailyStudyMinutes < 1
+              ? null
+              : examDailyStudyMinutes,
+      examDiagnosticCompleted: examDiagnosticCompleted,
     );
   }
 
@@ -157,6 +214,29 @@ class LearningContext extends Equatable {
     if (weakLessonTitles.isNotEmpty) {
       lines.add('- Topics to revisit: ${weakLessonTitles.join(', ')}.');
     }
+    if (examCourseId != null) {
+      lines.add(
+          'EXAM MODE CONTEXT (trusted on-device scope; do not expand it):');
+      lines.add('- Exact course: $examCourseId.');
+      if (examScopeTitles.isNotEmpty) {
+        lines.add('- Selected exam scope: ${examScopeTitles.join(', ')}.');
+      }
+      if (examReadinessLabel != null) {
+        lines.add('- Readiness target: $examReadinessLabel.');
+      }
+      if (examDailyStudyMinutes != null) {
+        lines.add(
+            '- Realistic daily study time: $examDailyStudyMinutes minutes.');
+      }
+      lines.add(
+          '- Diagnostic: ${examDiagnosticCompleted ? 'completed' : 'not completed yet'}.');
+      if (examWeakTopicTitles.isNotEmpty) {
+        lines.add(
+            '- Exam topics needing support: ${examWeakTopicTitles.join(', ')}.');
+      }
+      lines.add(
+          '- Respect the student\'s chosen plan and pace; never guilt them for missed study.');
+    }
     var text = lines.join('\n');
     if (text.length > maxFragmentLength) {
       text = '${text.substring(0, maxFragmentLength)}…';
@@ -174,5 +254,11 @@ class LearningContext extends Equatable {
         lessonsTotal,
         currentStreak,
         weakLessonTitles,
+        examCourseId,
+        examScopeTitles,
+        examWeakTopicTitles,
+        examReadinessLabel,
+        examDailyStudyMinutes,
+        examDiagnosticCompleted,
       ];
 }

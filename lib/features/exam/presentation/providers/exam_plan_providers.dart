@@ -83,7 +83,7 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
   /// Builds a plan through the fallback chain. Requires scope (M2) +
   /// exam profile (M3); uses the diagnostic when present (M4) and
   /// works honestly without it (marks-weighted ordering).
-  Future<void> buildPlan() async {
+  Future<void> buildPlan({bool ignoreCached = false}) async {
     final trackId = arg;
     final scope = await ref.read(examScopeProvider(trackId).future);
     final syllabus = await ref.read(courseSyllabusProvider(trackId).future);
@@ -115,6 +115,8 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
     ));
 
     final learner = await ref.read(examLearnerProfileProvider(trackId).future);
+    final studentOverrideTopicIds =
+        await _planRepo.loadStudentOverrideTopicIds(trackId);
 
     // M8: the weak-area overview (best-effort — a storage hiccup must
     // never block planning; the plan degrades to the pre-M8 behavior).
@@ -127,8 +129,7 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
     final digest = <String>[];
     if (overview != null) {
       for (final f in overview.report.findings) {
-        digest.add(
-            '- weak topic ${f.topicId}: ${f.severity.name} '
+        digest.add('- weak topic ${f.topicId}: ${f.severity.name} '
             '(${f.signals.map((s) => s.name).join('+')})');
       }
       if (overview.decision.shouldRecover) {
@@ -151,6 +152,7 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
       learner: learner,
       scopeRevision: scope.selection.revision,
       weakAreaDigest: digest,
+      studentOverrideTopicIds: studentOverrideTopicIds,
     );
 
     // Hop 1: Gemini (validated inside, §16 checks).
@@ -172,7 +174,7 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
     // Hop 2: cached plan (fresh + same revision, §33 trigger).
     final cached =
         await _planRepo.loadUsableCached(trackId, scope.selection.revision);
-    if (cached != null) {
+    if (!ignoreCached && cached != null) {
       state = AsyncData(ExamPlanState(
         plan: cached,
         building: false,
@@ -194,10 +196,9 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
           : WeakAreaPlannerInput(
               decision: overview.decision,
               revisionItems: overview.revisionItems,
-              findings: overview.report.findings
-                  .map((f) => f.topicId)
-                  .toList(),
+              findings: overview.report.findings.map((f) => f.topicId).toList(),
             ),
+      studentOverrideTopicIds: studentOverrideTopicIds,
     ));
     try {
       await _planRepo.save(plan, markCached: true);
@@ -207,6 +208,20 @@ class ExamPlanController extends FamilyAsyncNotifier<ExamPlanState, String> {
       building: false,
       notice: 'ऑफ़लाइन योजना — बिना AI, आपके दायरे और समय के अनुसार।',
     ));
+  }
+
+  /// The learner can choose an in-scope topic instead of today's suggested
+  /// one. Store the choice, then rebuild so both the AI and offline planner
+  /// receive it as a preference signal on the next plan.
+  Future<void> chooseStudentTopic(String topicId) async {
+    final trackId = arg;
+    final scope = await ref.read(examScopeProvider(trackId).future);
+    if (!scope.selection.isSelected(topicId)) return;
+    await _planRepo.recordStudentOverride(
+      trackId: trackId,
+      topicId: topicId,
+    );
+    await buildPlan(ignoreCached: true);
   }
 }
 
