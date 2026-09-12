@@ -18,11 +18,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -39,6 +44,14 @@ class ExerciseScreen extends ConsumerStatefulWidget {
 }
 
 class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
+  /// RTL awareness for the active Learn language (mirrors session/smart-
+  /// practice): Urdu prompts, options, chips and typed answers must lay out
+  /// right-to-left instead of being forced into the LTR frame.
+  bool get _isRTL {
+    final selected = ref.watch(selectedLearnLanguageProvider);
+    return selected == null ? false : learnLanguageSpec(selected).isRTL;
+  }
+
   bool _isCompleting = false;
   bool _completionDone = false;
 
@@ -165,6 +178,11 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     setState(() => _isCompleting = true);
 
     try {
+      // Milestone 7: capture newness BEFORE the idempotent completion so
+      // daily-XP is only recorded for XP that was actually awarded.
+      final wasNew =
+          !ref.read(completedLessonIdsProvider).contains(widget.lesson.id);
+
       final notifier = ref.read(completedLessonIdsProvider.notifier);
       await notifier.markComplete(widget.lesson);
       ref.invalidate(xpTotalProvider);
@@ -216,6 +234,52 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             duration: const Duration(seconds: 4),
           ),
         );
+      }
+
+      // Milestone 7: daily-goal XP + competency milestones. Never breaks
+      // practice completion — same safety as the achievement path.
+      try {
+        if (wasNew) {
+          final record =
+              await ref.read(recordDailyXpProvider)(widget.lesson.xpReward);
+          if (mounted && record.goalReachedNow) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Daily goal reached - wonderful!'),
+                behavior: SnackBarBehavior.floating,
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+        final milestones =
+            await ref.read(milestoneCheckerProvider).checkMilestones();
+        if (mounted && milestones.isNotEmpty) {
+          final first = milestones.first;
+          final extra = milestones.length > 1
+              ? ' (+${milestones.length - 1} more)'
+              : '';
+          ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+                VanEventType.milestoneUnlocked,
+                message: 'Milestone unlocked: ${first.title}!',
+                payload: {
+                  'milestoneId': first.id,
+                  'milestoneCount': milestones.length,
+                },
+              ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Milestone Unlocked: ${first.emoji} ${first.title}'
+                ' (+${first.xpReward} XP)$extra',
+              ),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
+      } catch (_) {
+        // Gamification must never break practice completion.
       }
     } catch (_) {
       // Persistence failed: surface it and re-enable the button so the
@@ -270,12 +334,34 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       _masteryRecorded = true;
       final ids = notifier.masteredExerciseIds;
       if (ids.isNotEmpty) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (!mounted) return;
           ref.read(recordMasteryProvider)(widget.lesson.id, ids);
           ref
               .read(masteredExercisesProvider(widget.lesson.id).notifier)
               .refresh();
+
+          // Milestone 7 review reward: if THIS session completed today's
+          // review challenge, pay the once-per-day bonus. Claiming is
+          // gated (challenge match + full mastery + once per day) inside
+          // the provider; it returns 0 when nothing was paid.
+          try {
+            final paid = await ref
+                .read(claimReviewChallengeProvider)(widget.lesson.id);
+            if (mounted && paid > 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Review challenge complete! +$paid XP earned.',
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 4),
+                ),
+              );
+            }
+          } catch (_) {
+            // Review rewards must never break the practice flow.
+          }
         });
       }
     }
@@ -292,10 +378,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: VanWidget(useController: true, size: 34),
+            padding: const EdgeInsets.only(right: 16),
+            child: Tooltip(
+              message: 'Van',
+              child: VanWidget(useController: true, size: 34),
+            ),
           ),
         ],
       ),
@@ -370,7 +459,9 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     value: (state.currentIndex + 1) / notifier.total,
                     minHeight: 6,
                     backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
+                    semanticsLabel:
+                        'Question ${state.currentIndex + 1} of ${notifier.total}',
                   ),
                 ),
               ),
@@ -405,9 +496,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   border: Border.all(
                       color: AppColors.primary.withValues(alpha: 0.15)),
                 ),
-                child: Text(
-                  exercise.prompt,
-                  style: AppTextStyles.headlineSmall(),
+                child: Directionality(
+                  textDirection:
+                      _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  child: Text(
+                    exercise.prompt,
+                    style: AppTextStyles.headlineSmall(),
+                  ),
                 ),
               ),
               if (exercise.hint != null && !state.answered) ...[
@@ -469,9 +564,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               border:
                   Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
             ),
-            child: Text(
-              exercise.hint!,
-              style: AppTextStyles.bodyMedium(color: _subtext),
+            child: Directionality(
+              textDirection:
+                  _isRTL ? TextDirection.rtl : TextDirection.ltr,
+              child: Text(
+                exercise.hint!,
+                style: AppTextStyles.bodyMedium(color: _subtext),
+              ),
             ),
           ),
       ],
@@ -547,7 +646,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           onTap: state.answered ? null : () => notifier.select(index),
           borderRadius: BorderRadius.circular(14),
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
+            duration: AppMotion.fast,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: tileColor,
@@ -579,7 +678,11 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(label, style: AppTextStyles.bodyLarge()),
+                  child: Directionality(
+                    textDirection:
+                        _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                    child: Text(label, style: AppTextStyles.bodyLarge()),
+                  ),
                 ),
               ],
             ),
@@ -628,15 +731,19 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   children: [
                     for (var i = 0; i < state.chosenItems.length; i++)
                       InputChip(
-                        label: Text(
-                          state.chosenItems[i],
-                          // Sequence position is only conveyed visually by
-                          // chip order; speak it explicitly so screen-reader
-                          // users hear where in the sentence they placed it.
-                          semanticsLabel: 'Position ${i + 1} of '
-                              '${exercise.items.length}: '
-                              '${state.chosenItems[i]}',
-                          style: AppTextStyles.labelMedium(),
+                        label: Directionality(
+                          textDirection:
+                              _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                          child: Text(
+                            state.chosenItems[i],
+                            // Sequence position is only conveyed visually by
+                            // chip order; speak it explicitly so screen-reader
+                            // users hear where in the sentence they placed it.
+                            semanticsLabel: 'Position ${i + 1} of '
+                                '${exercise.items.length}: '
+                                '${state.chosenItems[i]}',
+                            style: AppTextStyles.labelMedium(),
+                          ),
                         ),
                         onDeleted: state.answered
                             ? null
@@ -657,7 +764,11 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           children: [
             for (final item in remaining)
               ActionChip(
-                label: Text(item, style: AppTextStyles.labelMedium()),
+                label: Directionality(
+                  textDirection:
+                      _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  child: Text(item, style: AppTextStyles.labelMedium()),
+                ),
                 onPressed:
                     state.answered ? null : () => notifier.addChosenItem(item),
                 backgroundColor: _surface,
@@ -688,11 +799,15 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           enabled: !state.answered,
           onChanged: notifier.setAnswerText,
           textInputAction: TextInputAction.done,
+          // Typed Urdu answers lay out right-to-left; every other language
+          // keeps the LTR field.
+          textDirection:
+              _isRTL ? TextDirection.rtl : TextDirection.ltr,
           onSubmitted: (_) {
             if (state.answerText.trim().isNotEmpty) notifier.submit();
           },
           decoration: InputDecoration(
-            hintText: 'e.g. namaste',
+            hintText: 'Type your answer',
             filled: true,
             fillColor: _surface,
             border: OutlineInputBorder(
@@ -759,6 +874,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                     contentPadding: EdgeInsets.zero,
                     title: Text(
                       '${exercise.pairs[state.selectedPairs[i].left].left}'
+                      ' — '
                       '${rightOptions[state.selectedPairs[i].right]}',
                       style: AppTextStyles.bodyMedium(),
                     ),
@@ -786,6 +902,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   for (var i = 0; i < exercise.pairs.length; i++)
                     _matchChip(
                       label: exercise.pairs[i].left,
+                      rtl: _isRTL,
                       selected: _pendingLeftIndex == i,
                       done: pairedLeft.contains(i) || state.answered,
                       onTap: () {
@@ -825,7 +942,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Matched pairs appear above - tap  to undo.',
+          'Matched pairs appear above — tap the cross to undo.',
           style: AppTextStyles.bodySmall(color: _subtext),
         ),
       ],
@@ -855,6 +972,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     required bool done,
     required VoidCallback onTap,
     String? actionHint,
+    bool rtl = false,
   }) {
     // Screen-reader parity: selected/done states are otherwise conveyed
     // by highlight color and dimming only. "Already matched" is spoken as
@@ -875,7 +993,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             onTap: done ? null : onTap,
             borderRadius: BorderRadius.circular(12),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
+              duration: AppMotion.fast,
               width: double.infinity,
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -896,10 +1014,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   width: selected ? 2 : 1,
                 ),
               ),
-              child: Text(
-                label,
-                style: AppTextStyles.bodyMedium(
-                  color: done ? _subtext : null,
+              child: Directionality(
+                textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+                child: Text(
+                  label,
+                  style: AppTextStyles.bodyMedium(
+                    color: done ? _subtext : null,
+                  ),
                 ),
               ),
             ),
@@ -921,12 +1042,21 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           color: isCorrect ? AppColors.success : AppColors.error,
         ),
       ),
-      child: Text(
-        isCorrect
-            ? 'Correct!'
-            : exercise.explanation ?? 'Not quite - try again!',
-        style: AppTextStyles.bodySmall(
-          color: isCorrect ? AppColors.success : AppColors.error,
+      child: Directionality(
+        textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
+        child: Text(
+          isCorrect
+              ? 'Correct!'
+              : exercise.explanation ?? 'Not quite — try again!',
+          style: AppTextStyles.bodySmall(
+            // Light mode uses the deep AA-safe variants on the tinted fill;
+            // dark mode keeps the vivid base tokens.
+            color: Theme.of(context).brightness == Brightness.dark
+                ? (isCorrect ? AppColors.success : AppColors.error)
+                : (isCorrect
+                    ? AppColors.successDeep
+                    : AppColors.errorDeep),
+          ),
         ),
       ),
     );
@@ -954,7 +1084,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         if (state.answered && !isCurrentCorrect) ...[
           Expanded(
             child: PrimaryButton.secondary(
-              label: 'Try Again',
+              label: 'Try again',
               icon: const Icon(Icons.refresh_rounded, size: 20),
               onPressed: () {
                 notifier.retry();
@@ -981,7 +1111,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                   : VanEventType.quizAnswerWrong,
                               message: notifier.currentAnswerIsCorrect
                                   ? 'Nice thinking!'
-                                  : 'Almost there - learn and try again.',
+                                  : 'Almost there — learn and try again.',
                             ));
                       }
                     : null)
@@ -995,7 +1125,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                                 ? VanEventType.perfectScore
                                 : VanEventType.quizCompleted,
                             message: perfect
-                                ? 'Perfect practice - wonderful work!'
+                                ? 'Perfect practice — wonderful work!'
                                 : 'Practice finished. Nice effort!',
                           ));
                     }
@@ -1028,7 +1158,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
               showSpeechBubble: true,
               dialogueText: passed
                   ? 'Great practice! ${(pct * 100).round()}%'
-                  : 'Keep practising - you\'ve got this!',
+                  : 'Keep practising — you\'ve got this!',
             ),
             const SizedBox(height: 24),
             Text('${state.score} / ${notifier.total}',
@@ -1042,7 +1172,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             PrimaryButton(
               label: isAlreadyDone
                   ? 'Lesson completed'
-                  : 'Complete Lesson (+${widget.lesson.xpReward} XP)',
+                  : 'Complete lesson (+${widget.lesson.xpReward} XP)',
               icon: const Icon(Icons.check_circle_outline_rounded,
                   color: Colors.white),
               onPressed:
@@ -1050,7 +1180,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             ),
             const SizedBox(height: 12),
             PrimaryButton.secondary(
-              label: 'Practise Again',
+              label: 'Practice again',
               icon: const Icon(Icons.refresh_rounded, size: 20),
               onPressed: () {
                 setState(() => _masteryRecorded = false);

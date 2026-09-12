@@ -139,7 +139,7 @@ class ObPersonalityPage extends ConsumerWidget {
       case PersonalityMode.calm:
         return "Perfect. We'll take it step by step, together.";
       case PersonalityMode.fun:
-        return 'Quack! This is gonna be a great time';
+        return 'Quack! This is gonna be a great time.';
     }
   }
 }

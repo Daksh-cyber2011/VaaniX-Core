@@ -9,12 +9,20 @@
 /// from the JSON question bank ([quizBankProvider]) — the hardcoded Dart
 /// maps are no longer consulted, so the exam flow and the adaptive engine
 /// can never drift apart.
+///
+/// M1 (Learn Mode 2.0, gap G7 fix): the adaptive engine now runs against
+/// the ACTIVE Learn Mode curriculum ([activeCurriculumProvider]) instead of
+/// the legacy Sanskrit curriculum, and lesson exercise counts come from the
+/// language-dispatched bank ([exercisesForLessonProvider]) instead of the
+/// Sanskrit-only map. With NO Learn language selected the active provider
+/// falls back to the legacy Sanskrit curriculum — the pre-M1 behaviour —
+/// so Exam Mode and the unselected path are untouched.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
 import 'package:vaanix_app/features/progress/domain/adaptive.dart';
@@ -99,8 +107,10 @@ typedef AdaptiveInputs = ({
 });
 
 AdaptiveInputs _adaptiveInputs(Ref ref) {
+  // M1 (G7): ACTIVE curriculum — the selected Learn Mode language, or the
+  // legacy Sanskrit curriculum when nothing is selected (fallback path).
   final curriculum =
-      ref.watch(curriculumProvider).valueOrNull ?? const <Chapter>[];
+      ref.watch(activeCurriculumProvider).valueOrNull ?? const <Chapter>[];
   final completed = ref.watch(completedLessonIdsProvider).toSet();
   final attemptsIndex = ref.watch(quizAttemptsIndexProvider);
 
@@ -110,7 +120,9 @@ AdaptiveInputs _adaptiveInputs(Ref ref) {
     for (final lesson in chapter.lessons) {
       masteredByLesson[lesson.id] =
           ref.watch(masteredExercisesProvider(lesson.id));
-      exerciseCounts[lesson.id] = exercisesByLesson[lesson.id]?.length ?? 0;
+      // M1 (G7): language-dispatched exercise bank (was Sanskrit-only).
+      exerciseCounts[lesson.id] =
+          ref.watch(exercisesForLessonProvider(lesson.id)).length;
     }
   }
 

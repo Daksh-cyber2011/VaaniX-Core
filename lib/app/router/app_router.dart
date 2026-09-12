@@ -20,9 +20,26 @@ import 'package:vaanix_app/features/auth/presentation/screens/auth_screen.dart';
 import 'package:vaanix_app/features/ai/presentation/screens/chat_screen.dart';
 import 'package:vaanix_app/features/achievements/presentation/screens/achievements_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_profile_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_diagnostic_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_plan_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_hub_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_practice_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_pyq_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_mock_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_weak_area_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_scope_selection_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_scope_summary_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_track_selection_screen.dart';
 import 'package:vaanix_app/features/home/presentation/screens/home_screen.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/diagnostic_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/learn_language_selection_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/learn_profile_screen.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/smart_practice_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/session_screen.dart';
+import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/lesson_content_screen.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/exercise_screen.dart';
 import 'package:vaanix_app/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -178,6 +195,67 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: RouteNames.learnName,
                 builder: (context, state) => const LearnScreen(),
                 routes: [
+                  // Learn Mode language picker (Part 0 Foundation).
+                  // Nested under /learn so back-nav returns to the
+                  // lesson tree. Reachable from the Learn screen's
+                  // AppBar action.
+                  GoRoute(
+                    path: 'language',
+                    name: RouteNames.learnLanguageSelectionName,
+                    builder: (context, state) =>
+                        const LearnLanguageSelectionScreen(),
+                  ),
+                  // M2: per-language learner profile (goal / desired
+                  // level / pace / self-report / daily goal). Nested so
+                  // back-nav returns to the lesson tree. Automatically
+                  // auth-gated: any '/learn/...' location is protected.
+                  GoRoute(
+                    path: 'profile',
+                    name: RouteNames.learnProfileName,
+                    builder: (context, state) =>
+                        const LearnProfileScreen(),
+                  ),
+                  // M3: VAN-led adaptive placement game (Discover your
+                  // level). Nested under /learn so back-nav returns to
+                  // the lesson tree; auth-gated via the '/learn/'
+                  // prefix like every other Learn sub-route.
+                  GoRoute(
+                    path: 'diagnostic',
+                    name: RouteNames.learnDiagnosticName,
+                    builder: (context, state) =>
+                        const DiagnosticScreen(),
+                  ),
+                  // M5: Smart Practice — trusted-first content resolution
+                  // for today's plan step, with learner-triggered AI
+                  // personalization (validated, grounded, honestly
+                  // labelled). Same '/learn/' auth-gate as the others.
+                  GoRoute(
+                    path: 'smart',
+                    name: RouteNames.learnSmartPracticeName,
+                    builder: (context, state) =>
+                        const SmartPracticeScreen(),
+                  ),
+                  // M6: Guided session — the adaptive exercise engine
+                  // (Master Brief §18): any of the six activity kinds,
+                  // live ladder adaptation, mastery/review evidence.
+                  // Query params: kind (ActivityKind name), concept
+                  // (trusted concept id), optional knob (1..5). Same
+                  // '/learn/' auth-gate as every other Learn route.
+                  GoRoute(
+                    path: 'session',
+                    name: RouteNames.learnSessionName,
+                    builder: (context, state) {
+                      final query = state.uri.queryParameters;
+                      final kind = ActivityKind.tryParse(query['kind']) ??
+                          ActivityKind.practice;
+                      return SessionScreen(
+                        kind: kind,
+                        conceptId: query['concept'] ?? '',
+                        difficultyKnob:
+                            int.tryParse(query['knob'] ?? ''),
+                      );
+                    },
+                  ),
                   // Lesson content — nested under /learn so back-nav
                   // returns to the lesson tree.
                   GoRoute(
@@ -209,6 +287,107 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: RouteNames.exam,
                 name: RouteNames.examName,
                 builder: (context, state) => const ExamScreen(),
+                routes: [
+                  // Exam Mode 2.0 setup flow (M2): board → class → subject
+                  // → course → official syllabus scope → summary. Nested
+                  // under the exam branch so the shell stays mounted.
+                  GoRoute(
+                    path: 'setup',
+                    name: RouteNames.examSetupName,
+                    builder: (context, state) =>
+                        const ExamTrackSelectionScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'scope/:trackId',
+                        name: RouteNames.examScopeName,
+                        builder: (context, state) =>
+                            ExamScopeSelectionScreen(
+                          trackId:
+                              state.pathParameters['trackId'] ?? '',
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'summary/:trackId',
+                        name: RouteNames.examScopeSummaryName,
+                        builder: (context, state) =>
+                            ExamScopeSummaryScreen(
+                          trackId:
+                              state.pathParameters['trackId'] ?? '',
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Exam Mode 2.0 — post-setup flow (M3–M7): profile →
+                  // diagnostic → plan → practice. Top-level under the
+                  // exam branch: reachable both from the setup chain
+                  // and later re-entry (edit profile, today's plan).
+                  GoRoute(
+                    path: 'profile/:trackId',
+                    name: RouteNames.examProfileName,
+                    builder: (context, state) => ExamProfileScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'diagnostic/:trackId',
+                    name: RouteNames.examDiagnosticName,
+                    builder: (context, state) => ExamDiagnosticScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'plan/:trackId',
+                    name: RouteNames.examPlanName,
+                    builder: (context, state) => ExamPlanScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  // Exam Mode 2.0 — M10: the exam-mode HOME. The smart
+                  // gate lands here once scope + profile + diagnostic
+                  // exist; today's plan, weak area, revision, PYQ,
+                  // mock, XP/streak and VAN context live together.
+                  GoRoute(
+                    path: 'hub/:trackId',
+                    name: RouteNames.examHubName,
+                    builder: (context, state) => ExamHubScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'practice/:trackId',
+                    name: RouteNames.examPracticeName,
+                    builder: (context, state) => ExamPracticeScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  // Exam Mode 2.0 — M8: weak-area hub (report + revision
+                  // schedule + recovery-day session). Reached from the
+                  // plan's weakArea/review tasks.
+                  GoRoute(
+                    path: 'weakarea/:trackId',
+                    name: RouteNames.examWeakAreaName,
+                    builder: (context, state) => ExamWeakAreaScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  // Exam Mode 2.0 — M9: PYQ practice track (official
+                  // exam-pattern + PYQ-style, §25 labels) and the mock
+                  // ladder (mini / section / full).
+                  GoRoute(
+                    path: 'pyq/:trackId',
+                    name: RouteNames.examPyqName,
+                    builder: (context, state) => ExamPyqScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'mock/:trackId',
+                    name: RouteNames.examMockName,
+                    builder: (context, state) => ExamMockScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -343,9 +522,11 @@ class _AppShell extends StatelessWidget {
   }
 }
 
-/// Wrapper widget that looks up a [Lesson] by ID from [curriculumProvider]
+/// Wrapper widget that looks up a [Lesson] by ID from [activeCurriculumProvider]
 /// and renders [LessonContentScreen]. Shows loading, error, and not-found
-/// states. The curriculum is now loaded asynchronously (Segment 8).
+/// states. The curriculum is loaded asynchronously and dispatches by the
+/// selected Learn language (legacy Sanskrit when no language is selected,
+/// the per-language Learn curriculum when one is).
 class _LessonContentRoute extends ConsumerWidget {
   const _LessonContentRoute({required this.lessonId});
 
@@ -353,7 +534,7 @@ class _LessonContentRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curriculumAsync = ref.watch(curriculumProvider);
+    final curriculumAsync = ref.watch(activeCurriculumProvider);
 
     return curriculumAsync.when(
       loading: () => Scaffold(
@@ -412,7 +593,7 @@ class _ExerciseRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final curriculumAsync = ref.watch(curriculumProvider);
+    final curriculumAsync = ref.watch(activeCurriculumProvider);
 
     return curriculumAsync.when(
       loading: () => Scaffold(

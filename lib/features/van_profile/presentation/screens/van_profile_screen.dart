@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
@@ -65,7 +66,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
 
           // --- Chat with Van CTA ------------------------------------
           PrimaryButton(
-            onPressed: () => context.go(RouteNames.chat),
+            onPressed: () => context.push(RouteNames.chat),
             icon: const Icon(Icons.chat_bubble_rounded, color: Colors.white),
             label: 'Chat with $companionName',
           ),
@@ -89,7 +90,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                       .updatePersonalityMode(m),
                   borderRadius: BorderRadius.circular(16),
                   child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
+                  duration: AppMotion.fast,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(

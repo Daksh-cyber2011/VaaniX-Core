@@ -16,13 +16,45 @@ import 'package:vaanix_app/core/analytics/analytics_client.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
+import 'package:vaanix_app/features/learn/data/bengali_exercises.dart';
+import 'package:vaanix_app/features/learn/data/hindi_exercises.dart';
+import 'package:vaanix_app/features/learn/data/kannada_exercises.dart';
+import 'package:vaanix_app/features/learn/data/malayalam_exercises.dart';
+import 'package:vaanix_app/features/learn/data/marathi_exercises.dart';
+import 'package:vaanix_app/features/learn/data/odia_exercises.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
+import 'package:vaanix_app/features/learn/data/gujarati_exercises.dart';
+import 'package:vaanix_app/features/learn/data/tamil_exercises.dart';
+import 'package:vaanix_app/features/learn/data/urdu_exercises.dart';
+import 'package:vaanix_app/features/learn/data/telugu_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 /// Exercises available for a lesson (empty when none authored yet).
+///
+/// Looks up the lesson ID across ALL language exercise banks. Lesson
+/// IDs are globally unique (Sanskrit uses `ls_*`, Hindi uses `hi_*`,
+/// Bengali uses `bn_*`, Marathi uses `mr_*`, Telugu uses `te_*`,
+/// Tamil uses `ta_*`, Urdu uses `ur_*`, Kannada uses `kn_*`,
+/// Malayalam uses `ml_*`, Odia uses `or_*`), so only one bank will
+/// ever match per lesson.
+///
+/// M9 (Part H–J): Kannada, Malayalam and Odia banks are now wired —
+/// all ten languages have authored exercises. The provider's public
+/// contract never changes.
 final exercisesForLessonProvider =
     Provider.family<List<Exercise>, String>((ref, lessonId) {
-  return exercisesByLesson[lessonId] ?? const [];
+  return exercisesByLesson[lessonId] ??
+      hindiExercisesByLesson[lessonId] ??
+      bengaliExercisesByLesson[lessonId] ??
+      marathiExercisesByLesson[lessonId] ??
+      teluguExercisesByLesson[lessonId] ??
+      tamilExercisesByLesson[lessonId] ??
+      gujaratiExercisesByLesson[lessonId] ??
+      urduExercisesByLesson[lessonId] ??
+      kannadaExercisesByLesson[lessonId] ??
+      malayalamExercisesByLesson[lessonId] ??
+      odiaExercisesByLesson[lessonId] ??
+      const [];
 });
 
 /// A matched pair in the user's answer for a `matching` exercise.

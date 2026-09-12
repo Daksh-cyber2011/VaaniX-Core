@@ -1,0 +1,961 @@
+{
+  "schemaVersion": 1,
+  "id": "cbse_9_sanskrit",
+  "board": {
+    "id": "cbse",
+    "name": "Central Board of Secondary Education",
+    "nameHi": "केन्द्रीय माध्यमिक शिक्षा बोर्ड"
+  },
+  "class": 9,
+  "subject": {
+    "id": "sanskrit",
+    "name": "संस्कृतम्"
+  },
+  "course": {
+    "id": "cbse_9_sanskrit",
+    "name": "संस्कृतम्",
+    "nameEn": "Sanskrit"
+  },
+  "syllabusVersion": "2026-27",
+  "source": {
+    "authority": "Official CBSE curriculum document",
+    "pdf": "Sanskrit_SecP1IX_2026-27.pdf",
+    "extraction": "text-layer + OCR dual verification (see docs/Syllabus/INGESTION_REPORT.md)"
+  },
+  "assessment": {
+    "boardExam": {
+      "totalMarks": 80,
+      "durationHours": 3
+    },
+    "internalAssessment": {
+      "totalMarks": 20,
+      "components": [
+        {
+          "id": "cbse_9_sanskrit_internal_periodic",
+          "title": "आवर्तक परीक्षा (पीरियडाइड टेस्ट, असैसमेंट)",
+          "titleEn": "Periodic tests",
+          "marks": 5
+        },
+        {
+          "id": "cbse_9_sanskrit_internal_subject_enrichment",
+          "title": "विषयविध मूल्याङ्कन",
+          "titleEn": "Subject enrichment",
+          "marks": 5
+        },
+        {
+          "id": "cbse_9_sanskrit_internal_portfolio",
+          "title": "निवेशसूचिका (पोर्टफोलियो)",
+          "titleEn": "Portfolio",
+          "marks": 5
+        },
+        {
+          "id": "cbse_9_sanskrit_internal_language_activities",
+          "title": "भाषा-संवर्धनाय गतिविधयः (श्रवण-भाषण-लेखन)",
+          "titleEn": "Language development activities",
+          "marks": 5
+        }
+      ]
+    }
+  },
+  "sections": [
+    {
+      "id": "cbse_9_sanskrit_unread",
+      "stableKey": "unread",
+      "title": "अपठितावबोधनम्",
+      "titleEn": "Unseen Comprehension",
+      "marks": 10,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_9_sanskrit_unread_gadyansh",
+          "title": "एकः गद्यांशः (80–100 शब्दपरिमितः), सरलकथा वा",
+          "titleEn": "One unseen prose passage (80–100 words)",
+          "sectionId": "cbse_9_sanskrit_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 10,
+          "questionPatterns": [
+            {
+              "pattern": "अतिलघूत्तरात्मक 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            },
+            {
+              "pattern": "दीर्घोत्तरात्मक 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            },
+            {
+              "pattern": "शीर्षकलेखनम् (लघूत्तरात्मक) 1×1",
+              "marksEach": 1,
+              "count": 1,
+              "totalMarks": 1
+            },
+            {
+              "pattern": "अनुच्छेदाधारितं भाषिकं कार्यम् (बहुविकल्पीय) 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "कतृ-क्रिया-अन्वितिः",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्",
+              "सर्वनामस्थाने संज्ञाप्रयोगः"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              3
+            ]
+          },
+          "contentTags": [
+            "reading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_9_sanskrit_writing",
+      "stableKey": "writing",
+      "title": "रचनात्मककार्यम्",
+      "titleEn": "Creative Writing",
+      "marks": 15,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_9_sanskrit_writing_letter",
+          "title": "संकेताधारितम् औपचारिकम् अथवा अनौपचारिकं पत्रलेखनम्",
+          "titleEn": "Cue-based formal/informal letter",
+          "sectionId": "cbse_9_sanskrit_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः (मञ्जषायाः सहायतया रिक्तस्थानपूर्तिमाध्यमेन) 10×½",
+              "marksEach": 0.5,
+              "count": 10,
+              "totalMarks": 5
+            }
+          ],
+          "details": {
+            "माध्यम": "मञ्जषा (शब्द-सहायता) + रिक्तस्थानपूर्ति"
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_writing_picture_or_paragraph",
+          "title": "चित्राधारितं वर्णनम् अथवा अनुच्छेदलेखनम्",
+          "titleEn": "Picture description or paragraph",
+          "sectionId": "cbse_9_sanskrit_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "details": {
+            "माध्यम": "मञ्जषायाः सहायतया"
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_writing_dialogue_or_story",
+          "title": "संवादपूर्तिः / कथापूर्तिः",
+          "titleEn": "Dialogue or story completion",
+          "sectionId": "cbse_9_sanskrit_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 10×½",
+              "marksEach": 0.5,
+              "count": 10,
+              "totalMarks": 5
+            }
+          ],
+          "details": {
+            "कथा": "छात्रस्तरानुगुणम् एव भवेत्",
+            "माध्यम": "मञ्जषा + रिक्तस्थानपूर्तिः"
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_9_sanskrit_grammar",
+      "stableKey": "grammar",
+      "title": "अनुप्रयुक्तव्याकरणम्",
+      "titleEn": "Applied Grammar",
+      "marks": 25,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_9_sanskrit_grammar_sandhi",
+          "title": "सन्धिः",
+          "titleEn": "Sandhi (euphonic junctions)",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "लघूत्तरात्मकाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "स्वरसन्धिः": [
+              "दीर्घः",
+              "गुणः",
+              "वृद्धिः",
+              "यण्",
+              "अयादि",
+              "पूर्वरूपम्"
+            ],
+            "व्यञ्जनसन्धिः": [
+              "जश्त्वसन्धिः",
+              "‘म्’ स्थाने अनुस्वारः",
+              "तुगागमः"
+            ],
+            "विसर्गसन्धिः": [
+              "उत्",
+              "विसर्गं स्थाने स्, श्, ष्",
+              "रत्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_karaka",
+          "title": "कारक-उपपद-विभक्तयः",
+          "titleEn": "Kāraka–upapada–vibhakti",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "द्वितीया": [
+              "उभयतः",
+              "अधिक्",
+              "परितः",
+              "समया",
+              "निकषा",
+              "प्रति",
+              "विना"
+            ],
+            "तृतीया": [
+              "सह",
+              "साकम्",
+              "समम्",
+              "सार्धम्",
+              "विना",
+              "अलम्",
+              "सदृश",
+              "हीन"
+            ],
+            "चतुर्थी": [
+              "रुच्",
+              "दा (यच्छ्)",
+              "नमः",
+              "कुप्",
+              "स्वस्ति"
+            ],
+            "पञ्चमी": [
+              "विना",
+              "बहिः",
+              "भी",
+              "रक्ष्",
+              "ऋते"
+            ],
+            "षष्ठी": [
+              "उपरि",
+              "अधः",
+              "पुरतः",
+              "पृष्ठतः",
+              "निर्धारणे"
+            ],
+            "सप्तमी": [
+              "स्पृह्",
+              "निपुणः",
+              "विश्वस्",
+              "पटु"
+            ]
+          },
+          "ocrUncertain": true,
+          "note": "कारक-उपपद सूचियों की पुष्टि OCR द्वारा की गई; कुछ शब्द (सदृश, स्वस्ति, रक्ष्, स्पृह्) OCR-अस्पष्ट हैं — docs/Syllabus/INGESTION_REPORT.md देखें।",
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_shabdarupa",
+          "title": "शब्दरूपाणि",
+          "titleEn": "Noun declensions",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "पुंल्लिङ्गशब्दाः": [
+              "बालकवत्",
+              "कविवत्",
+              "साधुवत्",
+              "पितृवत्",
+              "राजन्",
+              "भवत्",
+              "विश्वस्",
+              "पाणिनः"
+            ],
+            "स्त्रीलिङ्गशब्दाः": [
+              "लतावत्",
+              "मतिवत्",
+              "नदीवत्",
+              "मातृवत्",
+              "धेनुवत्"
+            ],
+            "नपुंसकलिङ्गशब्दाः": [
+              "फलवत्",
+              "वारि",
+              "जगत्",
+              "मनस्",
+              "चक्षुष्"
+            ],
+            "सर्वनामशब्दाः": [
+              "तत्",
+              "इदम्",
+              "किम् (त्रिषु लिङ्गेषु)",
+              "अस्मद्",
+              "युष्मद्"
+            ]
+          },
+          "ocrUncertain": true,
+          "note": "अंतिम पुंल्लिङ्ग शब्द OCR से ‘पाणिनः’ पढ़ा गया — रिपोर्ट में ध्वजित।",
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_dhaturupa",
+          "title": "धातुरूपाणि",
+          "titleEn": "Verb conjugations",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "परस्मैपदिनः": [
+              "पठ्",
+              "गम्",
+              "वद्",
+              "भू",
+              "क्रीड्",
+              "नी",
+              "दृश्",
+              "शक्",
+              "ज्ञा",
+              "अस्",
+              "कृ",
+              "दा",
+              "क्री",
+              "ध्रु",
+              "पा (पिब्)"
+            ],
+            "आत्मनेपदिनः": [
+              "सेव्",
+              "लभ्",
+              "रुच्",
+              "मुद्",
+              "वृध्"
+            ],
+            "उभयपदिनः": [
+              "कृ",
+              "पच्",
+              "नी",
+              "कृष्",
+              "वह्",
+              "भज्"
+            ],
+            "लकाराः": "परस्मैपदिनः — पञ्चसु लकारेषु; आत्मनेपदिनः — लट्-लृट्-लोट्-लङ्-लकारेषु; उभयपदिनः — केवलं लट्लकारे"
+          },
+          "ocrUncertain": true,
+          "note": "क्री/ध्रु/दृश् तथा लकार-सीमाएँ OCR-सत्यापित; रिपोर्ट में ध्वजित।",
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_kridanta",
+          "title": "कृदन्तः — क्त्वा, तुमुन्, ल्यप्, क्त, क्तवतु, शतृ, शानच्",
+          "titleEn": "Kṛdanta participles",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "कृत्-प्रत्ययाः": [
+              "क्त्वा",
+              "तुमुन्",
+              "ल्यप्",
+              "क्त",
+              "क्तवतु",
+              "शतृ",
+              "शानच्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_samasa",
+          "title": "समासः — तत्पुरुषः (विभक्ति-नञ्-उपपद-कर्मधारय)",
+          "titleEn": "Samāsa — tatpuruṣa compounds",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "तत्पुरुषभेदाः": [
+              "विभक्ति-तत्पुरुषः",
+              "नञ्-तत्पुरुषः",
+              "उपपद-तत्पुरुषः",
+              "कर्मधारयः"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_sankhya",
+          "title": "सङ्ख्या — 1 से 100 (1–4 केवलं प्रथमा-विभक्तौ)",
+          "titleEn": "Numbers 1–100",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "लघूत्तरात्मकाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_udaharanani",
+          "title": "उदाहरणानि",
+          "titleEn": "Example usage",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 2,
+          "questionPatterns": [
+            {
+              "pattern": "लघूत्तरात्मकाः 4×½",
+              "marksEach": 0.5,
+              "count": 4,
+              "totalMarks": 2
+            }
+          ],
+          "ocrUncertain": true,
+          "note": "शीर्षक OCR-सत्यापित ‘उदाहरणानि’; अस्पष्ट होने पर रिपोर्ट देखें।",
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_grammar_avyayani",
+          "title": "अव्ययानि",
+          "titleEn": "Indeclinables",
+          "sectionId": "cbse_9_sanskrit_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 2,
+          "questionPatterns": [
+            {
+              "pattern": "लघूत्तरात्मकाः 4×½",
+              "marksEach": 0.5,
+              "count": 4,
+              "totalMarks": 2
+            }
+          ],
+          "details": {
+            "स्थानबोधकानि": [
+              "इतः",
+              "तत्र",
+              "अन्यत्र",
+              "सर्वत्र",
+              "यत्र",
+              "एकत्र",
+              "उभयत्र"
+            ],
+            "कालबोधकानि": [
+              "यदा",
+              "तदा",
+              "सर्वदा",
+              "एकदा",
+              "पुरा",
+              "अधुना",
+              "अपि",
+              "इदानीम्",
+              "सद्यः"
+            ],
+            "प्रश्नबोधकानि": [
+              "किम्",
+              "कुत्र",
+              "कः",
+              "कदा",
+              "कुतः",
+              "कथम्",
+              "किमर्थम्"
+            ],
+            "अव्ययानि": [
+              "च",
+              "अपि",
+              "यदि",
+              "तर्हि",
+              "यथा",
+              "तथा",
+              "एव",
+              "तु"
+            ]
+          },
+          "ocrUncertain": true,
+          "note": "कालबोधक/अव्यय उपसूचियाँ आंशिक OCR-सत्यापित; रिपोर्ट देखें।",
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_9_sanskrit_literature",
+      "stableKey": "literature",
+      "title": "पठितावबोधनम्",
+      "titleEn": "Prescribed Text Comprehension",
+      "marks": 30,
+      "assessmentType": "board",
+      "note": "निधारित पाठ्यपुस्तक: ‘शीघ्रमेव सूचयिष्यते’ — अध्याय सूची अभी जारी नहीं हुई। खंड-घ तालिका (PDF पृष्ठ 4) के अंक 5+5+5+5+4+3+3=30; ‘वार्षिकं मूल्याङ्कम्’ लेआउट (पृष्ठ 7) के साइड-अंक से सामान्य अंतर दिखता है — आधिकारिक अंक-पैटर्न योग के अनुरूप पृष्ठ 4 की तालिका ली गई (रिपोर्ट में ध्वजित)।",
+      "items": [
+        {
+          "id": "cbse_9_sanskrit_literature_gadyansh",
+          "title": "गद्यांशम् अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Prose-passage comprehension",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "अतिलघूत्तरात्मकौ 2×½",
+              "marksEach": 0.5,
+              "count": 2,
+              "totalMarks": 1
+            },
+            {
+              "pattern": "दीर्घोत्तरात्मकौ 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            },
+            {
+              "pattern": "लघूत्तरात्मकौ (भाषिककार्यम्) 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            }
+          ],
+          "details": {
+            "प्रश्नप्रकाराः": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कर्तृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्",
+              "सर्वनामस्थाने संज्ञाप्रयोगः"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "reading"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_padyansh",
+          "title": "पद्यांशम् अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Poetry-passage comprehension",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "अतिलघूत्तरात्मकौ 2×½",
+              "marksEach": 0.5,
+              "count": 2,
+              "totalMarks": 1
+            },
+            {
+              "pattern": "दीर्घोत्तरात्मकौ 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            },
+            {
+              "pattern": "लघूत्तरात्मकौ (भाषिककार्यम्) 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            }
+          ],
+          "details": {
+            "प्रश्नप्रकाराः": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कर्तृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्",
+              "सर्वनामस्थाने संज्ञाप्रयोगः"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "poetry"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_natyansh",
+          "title": "नाट्यांशम् अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Drama-excerpt comprehension",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "अतिलघूत्तरात्मकौ 2×½",
+              "marksEach": 0.5,
+              "count": 2,
+              "totalMarks": 1
+            },
+            {
+              "pattern": "दीर्घोत्तरात्मकौ 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            },
+            {
+              "pattern": "लघूत्तरात्मकौ (भाषिककार्यम्) 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            }
+          ],
+          "details": {
+            "प्रश्नप्रकाराः": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्",
+              "सर्वनामस्थाने संज्ञाप्रयोगः"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "drama"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_question_formation",
+          "title": "वाक्येषु रेखाङ्कितपदानि अधिकृत्य उचितप्रश्ननिर्माणम्",
+          "titleEn": "Question formation from underlined words",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "दीर्घोत्तरात्मकाः 5×1",
+              "marksEach": 1,
+              "count": 5,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_anvaya_bharth",
+          "title": "अन्वयः अथवा भावार्थः",
+          "titleEn": "Anvaya or bhāvārtha",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "दीर्घोत्तरात्मकः 4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "poetry"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_katha_purti",
+          "title": "पाठाधारित-कथापूर्तिः (मञ्जषापदसहायतया)",
+          "titleEn": "Story completion with word-pool",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 6×½",
+              "marksEach": 0.5,
+              "count": 6,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_sanskrit_literature_artha_chayanam",
+          "title": "प्रसङ्गानुकूलम् अर्थचयनम्",
+          "titleEn": "Context-appropriate meaning selection",
+          "sectionId": "cbse_9_sanskrit_literature",
+          "assessmentType": "board",
+          "status": "pendingOfficialAnnouncement",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीयाः 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_sanskrit",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "vocabulary"
+          ]
+        }
+      ]
+    }
+  ],
+  "prescribedBooks": [
+    {
+      "id": "cbse_9_sanskrit_book_textbook",
+      "title": "निधारित पाठ्यपुस्तक — शीघ्रमेव सूचयिष्यते",
+      "publisher": "राष्ट्रीय शैक्षणिक अनुसंधान एवं प्रशिक्षण परिषद् (NCERT)",
+      "status": "pendingOfficialAnnouncement"
+    }
+  ],
+  "pendingOfficialAnnouncement": {
+    "appliesTo": "literature",
+    "reason": "PDF states the prescribed textbook and chapter list will be announced shortly (शीघ्रमेव सूचयिष्यते).",
+    "sourceQuote": "परीक्षायै निर्धारिताः पाठाः — शीघ्रमेव सूचयिष्यन्ते। निधारितपाठ्यपुस्तकम् — पाठ्यपुस्तकम् शीघ्रमेव सूचयिष्यते (प्रकाशनम् – रा.शै.अनु.प्र.परि.)। पुस्तकपाठादिसहितं पूर्णः पाठ्यक्रमः शीघ्रमेव सूचयिष्यते।",
+    "sourcePages": [
+      8
+    ],
+    "action": "Ingest chapter list when announced. Literature items carry status=pendingOfficialAnnouncement until then."
+  },
+  "notes": [
+    "CBSE has restructured Class 9 Sanskrit for 2026-27; chapter list pending official announcement — never invent.",
+    "अनुप्रयुक्तव्याकरणस्य अंशानां चयनं यथासम्भवं पाठ्यपुस्तकात् करणीयम् (per PDF अवधेयम्)."
+  ]
+}

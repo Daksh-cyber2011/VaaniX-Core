@@ -11,18 +11,29 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:go_router/go_router.dart';
+
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
+import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart'
+    show examLearnerProfileProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_profile_providers.dart'
+    show examProfileRepositoryProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart'
+    show examScopeStoreProvider;
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/adaptive_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -56,6 +67,45 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
 
   ExamConfig get _config =>
       ExamConfig(chapterId: _chapterId, difficulty: _difficulty);
+
+  /// Exam Mode 2.0 smart gate (M2–M10): no active track → setup; scope
+  /// confirmed but profile missing → profile; profile done but no
+  /// diagnostic → diagnostic; otherwise → the M10 exam HUB (today's
+  /// plan, weak area, revision, PYQ, mock, XP/streak and VAN context
+  /// in one cohesive home; the full plan is one tap deeper). Async
+  /// reads are cached repositories — cheap and offline.
+  Future<void> _openExamMode2(BuildContext context) async {
+    final router = GoRouter.maybeOf(context);
+    if (router == null) return;
+    final store =
+        await ref.read(examScopeStoreProvider.future);
+    final trackId = store.activeTrackId;
+    if (trackId == null) {
+      router.pushNamed(RouteNames.examSetupName);
+      return;
+    }
+    final selection = store.scopes[trackId];
+    if (selection == null || selection.isEmpty) {
+      router.pushNamed(RouteNames.examSetupName);
+      return;
+    }
+    final profileRepo = ref.read(examProfileRepositoryProvider);
+    final profile = await profileRepo.load(trackId);
+    if (profile == null || !profile.isValid) {
+      router.pushNamed(RouteNames.examProfileName,
+          pathParameters: {'trackId': trackId});
+      return;
+    }
+    final learner =
+        await ref.read(examLearnerProfileProvider(trackId).future);
+    if (!learner.hasDiagnostic) {
+      router.pushNamed(RouteNames.examDiagnosticName,
+          pathParameters: {'trackId': trackId});
+      return;
+    }
+    router.pushNamed(RouteNames.examHubName,
+        pathParameters: {'trackId': trackId});
+  }
 
   void _startExam() {
     setState(() => _confirming = true);
@@ -153,6 +203,25 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 : const Text('Quiz already completed — no extra XP'),
           ),
         );
+
+        // Milestone 7: daily-goal XP (only for XP actually awarded).
+        if (saved.xpEarned > 0) {
+          try {
+            final record =
+                await ref.read(recordDailyXpProvider)(saved.xpEarned);
+            if (mounted && record.goalReachedNow) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Daily goal reached - wonderful!'),
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+          } catch (_) {
+            // Daily goal tracking must never break result saving.
+          }
+        }
       },
     );
     if (!mounted) return;
@@ -194,6 +263,39 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
         ),
       );
     }
+
+    // Milestone 7: exam performance can complete exam-gated competency
+    // milestones (Beginner Complete / Mastery Milestone). Same consolidated
+    // celebration pattern; never breaks the exam flow.
+    try {
+      final milestones =
+          await ref.read(milestoneCheckerProvider).checkMilestones();
+      if (!mounted || milestones.isEmpty) return;
+      final first = milestones.first;
+      final extra = milestones.length > 1
+          ? ' (+${milestones.length - 1} more)'
+          : '';
+      ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
+            VanEventType.milestoneUnlocked,
+            message: 'Milestone unlocked: ${first.title}!',
+            payload: {
+              'milestoneId': first.id,
+              'milestoneCount': milestones.length,
+            },
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Milestone Unlocked: ${first.emoji} ${first.title}'
+            ' (+${first.xpReward} XP)$extra',
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (_) {
+      // Gamification must never break exam completion.
+    }
   }
 
   int _chapterTotal(
@@ -222,7 +324,9 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     if (all.isEmpty) {
       return const VaaniXScaffold(
         title: 'Exam',
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: CircularProgressIndicator(semanticsLabel: 'Loading exam'),
+        ),
       );
     }
     final curriculumList =
@@ -246,6 +350,15 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
         children: [
+          // Exam Mode 2.0 entry (M2–M7): official CBSE syllabus scope
+          // flow + profile/diagnostic/plan/practice. Smart gate: when
+          // a track is already set up, the card continues the flow
+          // (profile → diagnostic → plan) instead of restarting
+          // setup. The legacy quiz below stays fully functional.
+          _BoardPrepCard(
+            onTap: () => _openExamMode2(context),
+          ),
+          const SizedBox(height: 20),
           Text('Choose your exam', style: AppTextStyles.headlineSmall()),
           const SizedBox(height: 8),
           Text(
@@ -439,7 +552,10 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const VanWidget(
-                state: VanState.thinking,
+                // A load failure — the confused/reassuring VAN expression
+                // (the sustained "thinking" pose reads as a hang, not an
+                // error, and contradicts the shared event map).
+                state: VanState.error,
                 size: 140,
                 showSpeechBubble: true,
                 dialogueText: 'Something went wrong loading this exam.',
@@ -767,6 +883,76 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _BoardPrepCard extends StatelessWidget {
+  const _BoardPrepCard({required this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // One semantics node for the whole card: spoken title, subtitle and
+    // button affordance (accessibility parity with _ChapterTile).
+    return Semantics(
+      button: true,
+      onTap: onTap,
+      label:
+          'CBSE Board Exam Prep, choose your official syllabus and exam scope',
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.12),
+                  AppColors.vanYellow.withValues(alpha: 0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.verified_outlined,
+                    color: AppColors.primary, semanticLabel: 'official'),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('CBSE Board Exam Prep',
+                          style: AppTextStyles.titleMedium(
+                              color: AppColors.primary)),
+                      const SizedBox(height: 4),
+                      Text(
+                        'आधिकारिक पाठ्यक्रम से अपनी परीक्षा दायरा चुनें — '
+                        'नया, AI आधारित तैयारी मोड',
+                        style: AppTextStyles.bodySmall(
+                            color: isDark
+                                ? AppColors.subtextDark
+                                : AppColors.subtextLight),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right,
+                    color: isDark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

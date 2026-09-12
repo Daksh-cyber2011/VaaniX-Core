@@ -119,6 +119,14 @@ abstract final class AppColors {
   static const Color warningContainerLight = Color(0xFFFFF3E0);
   static const Color warningContainerDark = Color(0xFF41331C);
 
+  /// Deep semantic variants — small (10-13px) colored text/icons on LIGHT
+  /// tinted fills must meet AA contrast; the base success/warning/error
+  /// tokens only reach ~3:1 on white. Dark theme keeps the base tokens,
+  /// which already pop on dark surfaces.
+  static const Color successDeep = Color(0xFF2E7D46);
+  static const Color warningDeep = Color(0xFF9A5B00);
+  static const Color errorDeep = Color(0xFFC62828);
+
   /// Info accent - AI explanations, tips, hints.
   static const Color info = Color(0xFF4A90D9);
   static const Color infoContainerLight = Color(0xFFE7F1FB);

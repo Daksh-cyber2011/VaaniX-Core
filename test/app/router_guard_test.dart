@@ -33,6 +33,9 @@ void main() {
       expect(isProtectedLocation('/learn/lesson/ls_greetings/practice'),
           isTrue);
       expect(isProtectedLocation('/home/x'), isTrue);
+      // Part 0: the Learn language picker is nested under /learn so it
+      // inherits the same protection as the rest of the Learn branch.
+      expect(isProtectedLocation('/learn/language'), isTrue);
     });
 
     test('does not match public routes or look-alike prefixes', () {

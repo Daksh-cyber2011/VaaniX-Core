@@ -27,6 +27,11 @@ enum VanEventType {
   /// contract change. Decision recorded in the Phase 3 changelog.
   userIdle,
   achievementUnlocked,
+
+  /// A competency learning milestone was unlocked (Milestone 7). Mapped
+  /// to the achievement presentation so celebration visuals stay
+  /// consistent; the payload carries the milestone id.
+  milestoneUnlocked,
   streakExtended,
   onboardingCompleted,
   errorOccurred,

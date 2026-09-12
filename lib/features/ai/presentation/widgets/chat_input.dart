@@ -136,6 +136,7 @@ class _ChatInputState extends State<ChatInput> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.white,
+                          semanticsLabel: 'Van is replying',
                         ),
                       )
                     : const Icon(

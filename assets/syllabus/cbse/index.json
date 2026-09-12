@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "board": {
+    "id": "cbse",
+    "name": "Central Board of Secondary Education",
+    "nameHi": "केन्द्रीय माध्यमिक शिक्षा बोर्ड"
+  },
+  "syllabusVersion": "2026-27",
+  "description": "VaaniX canonical syllabus index. Official CBSE 2026-27 curriculum documents are the sole authority; see docs/Syllabus/INGESTION_REPORT.md.",
+  "classes": [
+    {
+      "class": 9,
+      "subjects": [
+        {
+          "id": "hindi",
+          "name": "हिन्दी",
+          "courses": [
+            {
+              "id": "cbse_9_hindi_r1",
+              "name": "हिन्दी आर-1",
+              "nameEn": "Hindi R-1 (First Language)",
+              "file": "cbse_9_hindi_r1.json",
+              "literatureStatus": "pendingOfficialAnnouncement"
+            },
+            {
+              "id": "cbse_9_hindi_r2",
+              "name": "हिन्दी आर-2",
+              "nameEn": "Hindi R-2 (Second Language)",
+              "file": "cbse_9_hindi_r2.json",
+              "literatureStatus": "pendingOfficialAnnouncement"
+            }
+          ]
+        },
+        {
+          "id": "sanskrit",
+          "name": "संस्कृतम्",
+          "courses": [
+            {
+              "id": "cbse_9_sanskrit",
+              "name": "संस्कृतम्",
+              "nameEn": "Sanskrit",
+              "file": "cbse_9_sanskrit.json",
+              "literatureStatus": "pendingOfficialAnnouncement"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class": 10,
+      "subjects": [
+        {
+          "id": "hindi",
+          "name": "हिन्दी",
+          "courses": [
+            {
+              "id": "cbse_10_hindi_a",
+              "name": "हिन्दी मातृभाषा (अ)",
+              "nameEn": "Hindi A",
+              "subjectCode": "002",
+              "file": "cbse_10_hindi_a.json",
+              "literatureStatus": "published"
+            },
+            {
+              "id": "cbse_10_hindi_b",
+              "name": "हिन्दी ब",
+              "nameEn": "Hindi B",
+              "subjectCode": "085",
+              "file": "cbse_10_hindi_b.json",
+              "literatureStatus": "published"
+            }
+          ]
+        },
+        {
+          "id": "sanskrit",
+          "name": "संस्कृतम्",
+          "courses": [
+            {
+              "id": "cbse_10_sanskrit",
+              "name": "संस्कृतम्",
+              "nameEn": "Sanskrit",
+              "subjectCode": "122",
+              "file": "cbse_10_sanskrit.json",
+              "literatureStatus": "published"
+            },
+            {
+              "id": "cbse_10_sanskrit_communicative",
+              "name": "संस्कृतम् (संप्रेषणात्मकम्)",
+              "nameEn": "Sanskrit Communicative",
+              "subjectCode": "119",
+              "file": "cbse_10_sanskrit_communicative.json",
+              "literatureStatus": "published"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

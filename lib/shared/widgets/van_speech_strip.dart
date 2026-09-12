@@ -13,6 +13,16 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
+// M10 QA fix: the strip's [state] parameter takes [VanState], so every
+// consumer needs the enum visible. Dart imports are not transitive —
+// previously each caller had to import van_widget/van_state directly
+// (or, as the Exam Mode 2.0 screens shipped in M2-M9 accidentally
+// did, rely on it being visible when it was not — a latent compile
+// error caught by the M10 wiring). Exporting it here mirrors
+// van_widget.dart (which exports it for the same reason) and makes
+// every VanSpeechStrip consumer compile as written.
+export 'package:vaanix_app/features/van/domain/van_state.dart';
+
 class VanSpeechStrip extends StatelessWidget {
   const VanSpeechStrip({
     super.key,

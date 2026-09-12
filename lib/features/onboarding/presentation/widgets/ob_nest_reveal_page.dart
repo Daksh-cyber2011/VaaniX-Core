@@ -93,9 +93,14 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
     } catch (e) {
       // On failure, surface a snackbar so the user knows something went
       // wrong instead of being stuck on a forever-spinning button.
+      // Never show raw exception text to learners — keep it calm and
+      // actionable; the error itself is visible to the OS logger.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not complete onboarding: $e')),
+          const SnackBar(
+            content: Text(
+                'We could not save your setup just now. Please try again.'),
+          ),
         );
       }
     } finally {
@@ -206,7 +211,8 @@ class _ObNestRevealPageState extends ConsumerState<ObNestRevealPage>
                             showSpeechBubble: true,
                             dialogueText:
                                 'This is where we\'ll study together, $companionName!',
-                            onTap: () {},
+                            // No onTap: a no-op tap made Van announce as a
+                            // button that did nothing (accessibility).
                           ),
                         ),
                       ),

@@ -1,0 +1,798 @@
+{
+  "schemaVersion": 1,
+  "id": "cbse_10_sanskrit_communicative",
+  "board": {
+    "id": "cbse",
+    "name": "Central Board of Secondary Education",
+    "nameHi": "केन्द्रीय माध्यमिक शिक्षा बोर्ड"
+  },
+  "class": 10,
+  "subject": {
+    "id": "sanskrit",
+    "name": "संस्कृतम्",
+    "course": "communicative"
+  },
+  "course": {
+    "id": "cbse_10_sanskrit_communicative",
+    "name": "संस्कृतम् (संप्रेषणात्मकम्)",
+    "nameEn": "Sanskrit Communicative",
+    "subjectCode": "119"
+  },
+  "syllabusVersion": "2026-27",
+  "source": {
+    "authority": "Official CBSE curriculum document",
+    "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+    "extraction": "text-layer + OCR dual verification (see docs/Syllabus/INGESTION_REPORT.md)"
+  },
+  "assessment": {
+    "boardExam": {
+      "totalMarks": 80,
+      "durationHours": 3
+    },
+    "internalAssessment": {
+      "totalMarks": 20,
+      "components": [
+        {
+          "id": "cbse_10_sanskrit_communicative_internal_periodic",
+          "title": "आवर्तक परीक्षा (पीरियोडाइड टेस्ट, असैसमेंट)",
+          "titleEn": "Periodic tests",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_internal_subject_enrichment",
+          "title": "विषयविध मूल्याङ्कन",
+          "titleEn": "Subject enrichment",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_internal_portfolio",
+          "title": "निवेशसूचिका (पोर्टफोलियो)",
+          "titleEn": "Portfolio",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_internal_language_activities",
+          "title": "भाषा-संवर्धनाय गतिविधयः (श्रवण-भाषण-लेखन)",
+          "titleEn": "Language development activities",
+          "marks": 5
+        }
+      ]
+    }
+  },
+  "sections": [
+    {
+      "id": "cbse_10_sanskrit_communicative_unread",
+      "stableKey": "unread",
+      "title": "अपठितावबोधनम्",
+      "titleEn": "Unseen Comprehension",
+      "marks": 10,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_sanskrit_communicative_unread_gadyansh",
+          "title": "एकः गद्यांशः (80–100 शब्दपरिमितः), सरलकथा",
+          "titleEn": "One unseen prose passage (80–100 words)",
+          "sectionId": "cbse_10_sanskrit_communicative_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 10,
+          "questionPatterns": [
+            {
+              "pattern": "अतिलघूत्तरात्मकौ 2×1",
+              "marksEach": 1,
+              "count": 2,
+              "totalMarks": 2
+            },
+            {
+              "pattern": "पूर्णवाक्यात्मकौ 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            },
+            {
+              "pattern": "शीर्षकलेखनम् (लघूत्तरात्मकः) 1×1",
+              "marksEach": 1,
+              "count": 1,
+              "totalMarks": 1
+            },
+            {
+              "pattern": "गद्यांशाधारितं भाषिकं कार्यम् (बहुविकल्पीयाः) 3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "details": {
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "reading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_sanskrit_communicative_writing",
+      "stableKey": "writing",
+      "title": "रचनात्मककार्यम्",
+      "titleEn": "Creative Writing",
+      "marks": 15,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_sanskrit_communicative_writing_letter",
+          "title": "संकेताधारितम् औपचारिकम् अथवा अनौपचारिकं पत्रलेखनम् (मञ्जषायाः सहायतया पूर्णं पत्रं लेखनीयम्)",
+          "titleEn": "Cue-based formal/informal letter",
+          "sectionId": "cbse_10_sanskrit_communicative_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 10×½",
+              "marksEach": 0.5,
+              "count": 10,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_writing_picture_or_diary",
+          "title": "चित्राधारितं वर्णनम् अथवा अनुच्छेदलेखनम् (मञ्जषायाः सहायतया)",
+          "titleEn": "Picture description or paragraph",
+          "sectionId": "cbse_10_sanskrit_communicative_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "पूर्णवाक्यात्मकः 5×1",
+              "marksEach": 1,
+              "count": 5,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_writing_dialogue_or_story",
+          "title": "संवादपूर्तिः / कथापूर्तिः (कथा छात्रस्तरानुगुणम् एव भवेत्)",
+          "titleEn": "Dialogue or story completion",
+          "sectionId": "cbse_10_sanskrit_communicative_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 10×½",
+              "marksEach": 0.5,
+              "count": 10,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              3,
+              6
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_sanskrit_communicative_grammar",
+      "stableKey": "grammar",
+      "title": "अनुप्रयुक्तव्याकरणम्",
+      "titleEn": "Applied Grammar",
+      "marks": 25,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_sandhi",
+          "title": "सन्धिकार्यम् (1+1+2)",
+          "titleEn": "Sandhi",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "स्वरसन्धिः": [
+              "वृद्धिः",
+              "यण्",
+              "अयादि",
+              "पूर्वरूपम्"
+            ],
+            "व्यञ्जनसन्धिः": [
+              "परसवर्णः (अनुस्वारस्थाने पञ्चमवर्णप्रयोगः)",
+              "तुगागमः",
+              "वर्गीयप्रथमवर्णं तृतीयवर्णं परिवर्तनम्"
+            ],
+            "विसर्गसन्धिः": [
+              "उत्",
+              "रत्",
+              "विसर्गलोपः",
+              "विसर्गं स्थाने स्, श्, ष्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              6
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_samasa",
+          "title": "समासाः — वाक्येषु समापदानां विग्रहः विग्रहपदानां च समासः (2+1+1)",
+          "titleEn": "Samāsa — vigraha and synthesis",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "तत्पुरुषः": [
+              "विभक्तिः",
+              "नञ्",
+              "उपपदः"
+            ],
+            "द्वन्द्वः": [],
+            "अव्ययीभावः": [
+              "अनु",
+              "उप",
+              "सह",
+              "निर्",
+              "प्रति",
+              "यथा"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              6,
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_kridanta",
+          "title": "कृदन्ताः (1+2+1)",
+          "titleEn": "Kṛdanta",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "कृत्-प्रत्ययाः": [
+              "तव्यत्",
+              "अनीयर्"
+            ],
+            "तद्धिताः": [
+              "मतुप्",
+              "ठक्",
+              "त्व",
+              "तल्"
+            ],
+            "स्त्री-प्रत्ययौ": [
+              "टाप्",
+              "ङीप्"
+            ]
+          },
+          "ocrUncertain": true,
+          "note": "तद्धित तृतीय प्रत्यय तथा ङीप् OCR-अस्पष्ट — रिपोर्ट देखें।",
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_vachya",
+          "title": "वाच्यपरिवर्तनम् — केवलं लट्लकारे (कर्तृ-कर्म-क्रिया)",
+          "titleEn": "Voice transformation (laṭ only)",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_samaya",
+          "title": "समयः — अङ्कानां स्थाने शब्देषु समयलेखनम् (सामान्य-सपाद-सार्ध-पादोन)",
+          "titleEn": "Writing time in words",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_avyayani",
+          "title": "अव्ययानि",
+          "titleEn": "Indeclinables",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "अव्ययानि": [
+              "इव",
+              "उच्चैः",
+              "एव",
+              "नूनम्",
+              "इतरतः",
+              "विना",
+              "तु",
+              "सहसा",
+              "वृथा",
+              "शनैः",
+              "इति",
+              "मा",
+              "यत्",
+              "अथ",
+              "सद्यः",
+              "इदानीम्",
+              "अधुना",
+              "यावत्-तावत्",
+              "बहिः",
+              "कदापि",
+              "तु",
+              "च",
+              "अपि",
+              "पुरा",
+              "अलं-तराम्",
+              "यथा-तथा",
+              "कदा",
+              "अपि",
+              "नीचैः",
+              "परनीचैः",
+              "नीचैः",
+              "परनीचैः",
+              "नीचैः",
+              "किमर्थम्",
+              "कुत्र",
+              "यदि-तर्हि",
+              "अतः"
+            ]
+          },
+          "ocrUncertain": true,
+          "note": "अव्यय-सूची OCR-सत्यापित; दोहराव/अस्पष्ट पद संभव — रिपोर्ट देखें।",
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_grammar_ashuddhi",
+          "title": "अशुद्धि-संशोधनम् (वचन-विलिङ्ग(?)-पुरुष-लकार-विभक्तिदृष्ट्या संशोधनम्)",
+          "titleEn": "Error correction",
+          "sectionId": "cbse_10_sanskrit_communicative_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "3×1",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_sanskrit_communicative_literature",
+      "stableKey": "literature",
+      "title": "पठितावबोधनम्",
+      "titleEn": "Prescribed Text Comprehension",
+      "marks": 30,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_gadyansh",
+          "title": "गद्यांशम् अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Prose-passage comprehension",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "details": {
+            "प्रश्ननिर्माणम्": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "reading"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_padyansh",
+          "title": "पद्यम् (श्लोकम्/श्लोकौ) अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Poetry (śloka) comprehension",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "details": {
+            "प्रश्ननिर्माणम्": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "poetry"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_natyansh",
+          "title": "नाट्यांशम् अधिकृत्य अवबोधनात्मकं कार्यम्",
+          "titleEn": "Drama-excerpt comprehension",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "details": {
+            "प्रश्ननिर्माणम्": "एकपदेन पूर्णवाक्येन च",
+            "भाषिककार्यम्": [
+              "वाक्ये कतृ-क्रियापदचयनम्",
+              "विशेषण-विशेष्यचयनम्",
+              "पर्याय-विलोमपदचयनम्"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "drama"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_prashnanirmana",
+          "title": "वाक्येषु रेखाङ्कितपदानि अधिकृत्य चतुर्णां प्रश्नानां निर्माणम्",
+          "titleEn": "Question formation from underlined words",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "पूर्णवाक्यात्मकाः 5×1",
+              "marksEach": 1,
+              "count": 5,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              4,
+              7
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_shloka_bharth",
+          "title": "एकस्य श्लोकस्य अन्वयः अथवा भावार्थः (मञ्जषायाः सहायतया)",
+          "titleEn": "Anvaya or bhāvārtha of one śloka",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 2,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 4×½",
+              "marksEach": 0.5,
+              "count": 4,
+              "totalMarks": 2
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              7,
+              8
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "poetry"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_prashnachayanam",
+          "title": "प्रसङ्गानुसारम् अर्थचयनम् (पाठान् आधृत्य बहुविकल्पीयाः प्रश्नाः)",
+          "titleEn": "Context-appropriate meaning (MCQ)",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "vocabulary"
+          ]
+        },
+        {
+          "id": "cbse_10_sanskrit_communicative_literature_katha_purti",
+          "title": "पाठाधारित-कथापूर्तिः (मञ्जषापदसहायतया)",
+          "titleEn": "Story completion with word-pool",
+          "sectionId": "cbse_10_sanskrit_communicative_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "निबन्धात्मकः 8×½",
+              "marksEach": 0.5,
+              "count": 8,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Sanskrit_Communiucative_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "writing"
+          ]
+        }
+      ]
+    }
+  ],
+  "prescribedBooks": [
+    {
+      "id": "cbse_10_sanskrit_communicative_book_manika",
+      "title": "मणिका — द्वितीयो भागः (पाठ्यपुस्तकम्)",
+      "publisher": "केन्द्रीय माध्यमिक शिक्षा बोर्ड (CBSE), भारतम्",
+      "status": "published",
+      "chapters": [
+        {
+          "number": 1,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_1",
+          "title": "वाङ्मयं तपः",
+          "type": "prose"
+        },
+        {
+          "number": 2,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_2",
+          "title": "नास्ति त्यागसमं सुखम्",
+          "type": "prose"
+        },
+        {
+          "number": 3,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_3",
+          "title": "रमणीया हि सृष्टिः एषा",
+          "type": "poetry"
+        },
+        {
+          "number": 4,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_4",
+          "title": "आज्ञा गुरूणां हि अविचारणीया",
+          "type": "prose"
+        },
+        {
+          "number": 5,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_5",
+          "title": "अभ्यासवशगं मनः",
+          "type": "poetry"
+        },
+        {
+          "number": 6,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_6",
+          "title": "राष्ट्रं संरक्ष्यमेव हि",
+          "type": "poetry",
+          "ocrUncertain": true
+        },
+        {
+          "number": 7,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_7",
+          "title": "साधुवृत्तं समाचरेत्",
+          "type": "poetry"
+        },
+        {
+          "number": 8,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_8",
+          "title": "तिरुक्कुरल्-सूक्ति-सौरभम्",
+          "type": "poetry"
+        },
+        {
+          "number": 9,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_9",
+          "title": "सुस्वागतं भो! अरुणाचलेऽस्मिन्",
+          "type": "prose"
+        },
+        {
+          "number": 10,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_10",
+          "title": "कालोऽहम्",
+          "type": "prose",
+          "examRelevance": "internal-only"
+        },
+        {
+          "number": 11,
+          "id": "cbse_10_sanskrit_communicative_ch_manika_11",
+          "title": "किं किम् उपादेयम्",
+          "type": "prose",
+          "examRelevance": "internal-only"
+        }
+      ],
+      "note": "पाठ 10 तथा 11 ‘केवलम् आन्तरिकमूल्याङ्कनाय’ चिह्नित हैं (PDF स्वयं)।"
+    },
+    {
+      "id": "cbse_10_sanskrit_communicative_book_manika_abhyas",
+      "title": "मणिका-अभ्यासपुस्तकम् — द्वितीयो भागः",
+      "publisher": "केन्द्रीय माध्यमिक शिक्षा बोर्ड (CBSE), भारतम्",
+      "status": "published"
+    }
+  ],
+  "notes": [
+    "अवधेयम्: अनुप्रयुक्तव्याकरणस्य अंशानां चयनं यथासम्भवं ‘मणिका-द्वितीयो भागः’ पाठ्यपुस्तकात् करणीयम्; यदि ततः न सम्भवति तर्हि ‘मणिका-अभ्यासपुस्तकम् द्वितीयो भागः’ इत्यस्मात् चेतुं शक्यते।"
+  ]
+}

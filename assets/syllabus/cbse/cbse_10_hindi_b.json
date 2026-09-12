@@ -1,0 +1,544 @@
+{
+  "schemaVersion": 1,
+  "id": "cbse_10_hindi_b",
+  "board": {
+    "id": "cbse",
+    "name": "Central Board of Secondary Education",
+    "nameHi": "केन्द्रीय माध्यमिक शिक्षा बोर्ड"
+  },
+  "class": 10,
+  "subject": {
+    "id": "hindi",
+    "name": "हिन्दी",
+    "course": "B"
+  },
+  "course": {
+    "id": "cbse_10_hindi_b",
+    "name": "हिन्दी ब",
+    "nameEn": "Hindi B",
+    "subjectCode": "085"
+  },
+  "syllabusVersion": "2026-27",
+  "source": {
+    "authority": "Official CBSE curriculum document",
+    "pdf": "Hindi_B_SecP1_2026-27.pdf",
+    "extraction": "text-layer + OCR dual verification (see docs/Syllabus/INGESTION_REPORT.md)"
+  },
+  "assessment": {
+    "boardExam": {
+      "totalMarks": 80,
+      "durationHours": 3
+    },
+    "internalAssessment": {
+      "totalMarks": 20,
+      "components": [
+        {
+          "id": "cbse_10_hindi_b_internal_periodic",
+          "title": "सामयिक आकलन",
+          "titleEn": "Periodic assessment",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_hindi_b_internal_multiform",
+          "title": "बहुविध आकलन",
+          "titleEn": "Multiple assessment",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_hindi_b_internal_portfolio",
+          "title": "पोर्टफोलियो",
+          "titleEn": "Portfolio",
+          "marks": 5
+        },
+        {
+          "id": "cbse_10_hindi_b_internal_listen_speak",
+          "title": "श्रवण एवं वाचन (परीक्षण 2.5+2.5)",
+          "titleEn": "Listening & speaking",
+          "marks": 5
+        }
+      ]
+    }
+  },
+  "sections": [
+    {
+      "id": "cbse_10_hindi_b_unread",
+      "stableKey": "unread",
+      "title": "अपठित बोध (बहुविकल्पीय प्रश्न)",
+      "titleEn": "Unseen Comprehension (MCQ)",
+      "marks": 14,
+      "assessmentType": "board",
+      "note": "दो अपठित गद्यांश (प्रत्येक लगभग 200 शब्द) — 7+7।",
+      "items": [
+        {
+          "id": "cbse_10_hindi_b_unread_prose_a",
+          "title": "अपठित गद्यांश 1 (लगभग 200 शब्द)",
+          "titleEn": "Unseen prose passage 1 (~200 words)",
+          "sectionId": "cbse_10_hindi_b_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 7,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय (MCQ) 1×3",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            },
+            {
+              "pattern": "अतिलघूत्तरात्मक / लघूत्तरात्मक 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "reading"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_unread_prose_b",
+          "title": "अपठित गद्यांश 2 (लगभग 200 शब्द)",
+          "titleEn": "Unseen prose passage 2 (~200 words)",
+          "sectionId": "cbse_10_hindi_b_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 7,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय (MCQ) 1×3",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            },
+            {
+              "pattern": "अतिलघूत्तरात्मक / लघूत्तरात्मक 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "reading"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_hindi_b_grammar",
+      "stableKey": "grammar",
+      "title": "व्यावहारिक व्याकरण",
+      "titleEn": "Applied Grammar",
+      "marks": 16,
+      "assessmentType": "board",
+      "note": "कुल 20 प्रश्न पूछे जाएँगे; केवल 16 के उत्तर देने होंगे (1×16)।",
+      "items": [
+        {
+          "id": "cbse_10_hindi_b_grammar_padbandh",
+          "title": "पदबंध",
+          "titleEn": "Phrases",
+          "sectionId": "cbse_10_hindi_b_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न 1×4",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_grammar_vakya_roopantaran",
+          "title": "रूप के आधार पर वाक्य रूपांतरण",
+          "titleEn": "Sentence transformation by form",
+          "sectionId": "cbse_10_hindi_b_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न 1×4",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_grammar_samasa",
+          "title": "समास",
+          "titleEn": "Compounds",
+          "sectionId": "cbse_10_hindi_b_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न 1×4",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_grammar_muhavare",
+          "title": "मुहावरे",
+          "titleEn": "Idioms",
+          "sectionId": "cbse_10_hindi_b_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न 1×4",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              7
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "vocabulary"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_hindi_b_literature",
+      "stableKey": "literature",
+      "title": "पाठ्यपुस्तक एवं पूरक पाठ्यपुस्तक",
+      "titleEn": "Prescribed & Supplementary Books",
+      "marks": 28,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_hindi_b_literature_sparsh_prose",
+          "title": "गद्य खंड — स्पर्श भाग 2 (निर्धारित पाठ)",
+          "titleEn": "Prose — Sparsh Part 2",
+          "sectionId": "cbse_10_hindi_b_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 11,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय 1×5",
+              "marksEach": 1,
+              "count": 5,
+              "totalMarks": 5
+            },
+            {
+              "pattern": "लघूत्तरात्मक (25–30 शब्द, 4 में से 3) 2×3",
+              "marksEach": 2,
+              "count": 3,
+              "totalMarks": 6
+            }
+          ],
+          "details": {
+            "excludedChapters": [
+              {
+                "author": "अंतोन चेखव",
+                "chapter": "गिरगिट",
+                "scope": "पूरा पाठ छोड़ा गया"
+              }
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "prose"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_literature_sparsh_poetry",
+          "title": "काव्य खंड — स्पर्श भाग 2 (निर्धारित कविताएँ)",
+          "titleEn": "Poetry — Sparsh Part 2",
+          "sectionId": "cbse_10_hindi_b_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 11,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय 1×5",
+              "marksEach": 1,
+              "count": 5,
+              "totalMarks": 5
+            },
+            {
+              "pattern": "लघूत्तरात्मक (25–30 शब्द, 4 में से 3) 2×3",
+              "marksEach": 2,
+              "count": 3,
+              "totalMarks": 6
+            }
+          ],
+          "details": {
+            "excludedChapters": [
+              {
+                "author": "बिहारी",
+                "chapter": "बिहारी-दोहे",
+                "scope": "पूरा पाठ छोड़ा गया"
+              },
+              {
+                "author": "महादेवी वर्मा",
+                "chapter": "मधुर-मधुर मेरे दीपक जल",
+                "scope": "पूरा पाठ छोड़ा गया"
+              }
+            ]
+          },
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "poetry"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_literature_sanchayan",
+          "title": "पूरक पाठ्यपुस्तक — संचयन भाग 2 (निर्धारित पाठ)",
+          "titleEn": "Supplementary — Sanchayan Part 2",
+          "sectionId": "cbse_10_hindi_b_literature",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 6,
+          "questionPatterns": [
+            {
+              "pattern": "प्रश्न (50–60 शब्द, 3 में से 2) 3×2",
+              "marksEach": 3,
+              "count": 2,
+              "totalMarks": 6
+            }
+          ],
+          "details": {
+            "note": "पुस्तक में कोई परिवर्तन नहीं — कोई भी पाठ नहीं हटाया गया है।"
+          },
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8,
+              9
+            ]
+          },
+          "contentTags": [
+            "literature",
+            "prose"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_10_hindi_b_writing",
+      "stableKey": "writing",
+      "title": "रचनात्मक लेखन",
+      "titleEn": "Creative Writing",
+      "marks": 22,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_10_hindi_b_writing_paragraph",
+          "title": "अनुच्छेद लेखन (लगभग 120 शब्द, 3 विषयों में से 1)",
+          "titleEn": "Paragraph writing (~120 words)",
+          "sectionId": "cbse_10_hindi_b_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "5×1",
+              "marksEach": 5,
+              "count": 1,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_writing_letter_formal",
+          "title": "पत्र लेखन — औपचारिक (लगभग 100 शब्द, विकल्प सहित)",
+          "titleEn": "Formal letter (~100 words, with choice)",
+          "sectionId": "cbse_10_hindi_b_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "5×1",
+              "marksEach": 5,
+              "count": 1,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_writing_suchna",
+          "title": "सूचना लेखन (लगभग 60 शब्द, विकल्प सहित)",
+          "titleEn": "Notice writing (~60 words, with choice)",
+          "sectionId": "cbse_10_hindi_b_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "4×1",
+              "marksEach": 4,
+              "count": 1,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_writing_advertisement",
+          "title": "विज्ञापन लेखन (लगभग 40 शब्द, विकल्प सहित)",
+          "titleEn": "Advertisement writing (~40 words, with choice)",
+          "sectionId": "cbse_10_hindi_b_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 3,
+          "questionPatterns": [
+            {
+              "pattern": "3×1",
+              "marksEach": 3,
+              "count": 1,
+              "totalMarks": 3
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_10_hindi_b_writing_email_or_story",
+          "title": "ई-मेल लेखन (लगभग 80 शब्द) अथवा लघुकथा लेखन (लगभग 100 शब्द)",
+          "titleEn": "E-mail (~80 words) or short story (~100 words)",
+          "sectionId": "cbse_10_hindi_b_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "questionPatterns": [
+            {
+              "pattern": "5×1",
+              "marksEach": 5,
+              "count": 1,
+              "totalMarks": 5
+            }
+          ],
+          "sourceRef": {
+            "pdf": "Hindi_B_SecP1_2026-27.pdf",
+            "pages": [
+              8,
+              9
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        }
+      ]
+    }
+  ],
+  "prescribedBooks": [
+    {
+      "id": "cbse_10_hindi_b_book_sparsh",
+      "title": "स्पर्श, भाग–2",
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
+      "status": "published"
+    },
+    {
+      "id": "cbse_10_hindi_b_book_sanchayan",
+      "title": "संचयन, भाग–2",
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
+      "status": "published"
+    }
+  ],
+  "notes": [
+    "विस्तृत प्रश्न-पत्र प्रारूप हेतु बोर्ड की वेबसाइट पर जारी आदर्श प्रश्न-पत्र देखें (PDF नोट)।",
+    "नोट: निम्नलिखित पाठों से प्रश्न नहीं पूछे जाएँगे — स्पर्श: बिहारी-दोहे, महादेवी वर्मा (मधुर-मधुर मेरे दीपक जल), अंतोन चेखव (गिरगिट)। संचयन: कोई परिवर्तन नहीं, कोई पाठ हटाया नहीं गया।"
+  ]
+}

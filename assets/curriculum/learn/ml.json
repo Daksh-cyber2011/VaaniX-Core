@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "language": {
+    "enum": "malayalam",
+    "iso639_1": "ml",
+    "englishName": "Malayalam",
+    "nativeName": "മലയാളം",
+    "scriptName": "Malayalam",
+    "scriptCode": "Mlym",
+    "direction": "ltr"
+  },
+  "levels": [
+    {
+      "id": "lvl0",
+      "name": "Script Foundation",
+      "order": 0,
+      "chapters": [
+        "ch_ml_script"
+      ]
+    },
+    {
+      "id": "lvl1",
+      "name": "Beginner",
+      "order": 1,
+      "chapters": [
+        "ch_ml_greet"
+      ]
+    },
+    {
+      "id": "lvl2",
+      "name": "Elementary",
+      "order": 2,
+      "chapters": [
+        "ch_ml_daily"
+      ]
+    },
+    {
+      "id": "lvl3",
+      "name": "Intermediate",
+      "order": 3,
+      "chapters": [
+        "ch_ml_grammar"
+      ]
+    },
+    {
+      "id": "lvl4",
+      "name": "Advanced Beginner+",
+      "order": 4,
+      "chapters": [
+        "ch_ml_reading"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch_ml_script",
+      "title": "മലയാളം ലിപി · Malayalam Script",
+      "subtitle": "Level 0 — Vowels, consonants, signs, chillu",
+      "order": 0,
+      "lessons": [
+        {
+          "id": "ml_script_vowels",
+          "chapterId": "ch_ml_script",
+          "title": "സ്വരങ്ങൾ · Vowels",
+          "subtitle": "Malayalam's round vowels — the സ്വരങ്ങൾ",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# സ്വരങ്ങൾ (Vowels)\n\nMalayalam is written in the **Malayalam script** — famously round,\nbecause it was historically carved on palm leaves (straight cuts split\nthe leaf; curves did not). Its vowels (**സ്വരങ്ങൾ**) come in short/long\npairs.\n\n## The vowel set\n\n| Vowel | Roman | Example | Meaning |\n|---|---|---|---|\n| അ | a | അമ്മ | mother |\n| ആ | ā | ആന | elephant |\n| ഇ | i | ഇവിടെ | here |\n| ഈ | ī | ഈ പുസ്തകം | this book |\n| ഉ | u | ഉണ്ട് | there is |\n| ഊ | ū | ഊണ് | meal |\n| ഋ | r̥ | ഋഷി | sage |\n| എ | e | എന്റെ | my |\n| ഏ | ē | ഏഴ് | seven |\n| ഐ | ai | ഐന്ന് | five |\n| ഒ | o | ഒരു | one/a |\n| ഓ | ō | ഓടി | ran |\n| ഔ | au | ഔഷധം | medicine |\n\n## Why two e's and two o's\n\nMalayalam keeps **എ/ഏ** and **ഒ/ഓ** as short/long pairs, and — unlike\nHindi — uses ഇ/ഈ and ഉ/ഊ the same way. Length is meaning-bearing:\n**കാലം** (kālaṃ, time/season) vs **കലം** (kalaṃ, pot) differ only in\nthat held vowel. Train your ear on the hold.\n\n## Reading habit\n\nWords flow left → right, letters hang from a gentle top curve. Vowel\nsigns (ചിഹ്നങ്ങൾ) attach to consonants — that is the very next lesson.\n## Mini-practice\n\nCover the Roman column and read: അമ്മ (amma, mother), ആന (āna,\nelephant), ഇവിടെ (iviṭe, here), ഈ പുസ്തകം (ī pustakaṃ, this book),\nഏഴ് (ēḻŭ, seven), ഔഷധം (auṣadhaṃ, medicine). Then reverse: the long\nā → ആ. Notice how അമ്മ and ആന differ in one held beat — that is the\nwhole vowel system in two words.\n"
+        },
+        {
+          "id": "ml_script_consonants",
+          "chapterId": "ch_ml_script",
+          "title": "വ്യഞ്ജനങ്ങൾ · Consonants",
+          "subtitle": "The consonant grid plus the retroflex-l ള Malayalam is proud of",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# വ്യഞ്ജനങ്ങൾ (Consonants)\n\nLike its Dravidian sisters, Malayalam arranges consonants in a grid:\ntongue position × breath. Each bare letter says consonant + അ:\n**ക** = \"ka\".\n\n## The grid\n\n| | Voiceless | Aspirated | Voiced | Voiced asp. | Nasal |\n|---|---|---|---|---|---|\n| Velar | ക ka | ഖ kha | ഗ ga | ഘ gha | ങ ṅa |\n| Palatal | ച cha | ഛ chha | ജ ja | ഝ jha | ഞ ña |\n| Retroflex | ട ṭa | ഠ ṭha | ഡ ḍa | ഢ ḍha | ണ ṇa |\n| Dental | ത tha | ഥ thha | ദ da | ധ dha | ന na |\n| Labial | പ pa | ഫ pha | ബ ba | ഭ bha | മ ma |\n\n## The rich \"other\" rows\n\n| Letters | Sounds |\n|---|---|\n| യ ര ല വ | ya, ra, la, va |\n| ശ ഷ സ ഹ | śa, ṣa, sa, ha |\n| ള | retroflex ḷ (tongue curled, air around the sides) |\n| ഴ | retroflex żh — the famous \"Malayalam zh\", as in മലയാളം itself |\n| റ | alveolar trill/tap (as in പറയുക, to say) |\n\n## The zh sound\n\n**ഴ** is the sound outsiders cannot make first try — halfway between l\nand r, tongue curled back. It is literally in the language's name:\nമലയാ**ള**ം uses ള, but **പഴം** (paḻaṃ, fruit) and **വഴി** (vaḻi, way)\nuse ഴ. Say \"mol-l…zh\" slowly and let the tongue relax backwards.\n\n> Drill pairs: ല (dental l) as in കലം, ള (retroflex) as in കളം,\n> ഴ as in കഴി (finish). Three l-sounds, three meanings.\n## Mini-practice\n\nRead aloud: കമലം (kamalaṃ, lotus), ഗജം (gajaṃ, elephant), മഴ\n(maḻa, rain), കളം (kalaṃ, floor/art), വാരം (vāraṃ, week). Then the\nthree-l drill in order: കലം (dental ല) → കളം (retroflex ള) → കഴി\n(kaḻi, the zh). Say it three times slowly — most learners unlock ഴ\non the third try.\n"
+        },
+        {
+          "id": "ml_script_signs",
+          "chapterId": "ch_ml_script",
+          "title": "ചിഹ്നങ്ങൾ · Vowel Signs",
+          "subtitle": "Consonant + vowel sign = ഗുണിതാക്ഷരം",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ചിഹ്നങ്ങൾ (Vowel Signs)\n\nA bare consonant **ക** reads \"ka\". Add a vowel sign (**ചിഹ്നം**) and the\nvowel changes while the consonant stays. The joined letter is a\n**ഗുണിതാക്ഷരം**.\n\n## The pattern on ക\n\n| Sign | Result | Sound |\n|---|---|---|\n| (none) | ക | ka |\n| ാ | കാ | kā |\n| ി | കി | ki |\n| ീ | കീ | kī |\n| ു | കു | ku |\n| ൂ | കൂ | kū |\n| െ | കെ | ke |\n| േ | കേ | kē |\n| ൈ | കൈ | kai |\n| ൊ | കൊ | ko |\n| ോ | കോ | kō |\n| ൌ | കൌ | kau |\n\n## Sign position\n\n**ി** and **െ**-family signs write on the *left* of the consonant but\nsound *after* it: **കി** = ക+ി read \"ki\". Words like **കിടക്ക**\n(kiṭakku, lie down) flip visual order constantly — slow down and read\nthe consonant first, sign second.\n\n## The virama\n\n**്** (chandrakkala) removes the built-in അ: **ക്** = just \"k\". In\n**പുസ്തകം** (pustakaṃ, book) the final **ം** (anusvāra) adds \"m\" — the\nmost common word ending in Malayalam. **മലയാളം**, **വർഷം**, **കാലം** —\nall end in ം.\n## Mini-practice\n\nRead: കിടക്ക (kiṭakka, lie down), ഗുരു (guru, teacher), കോട്\n(kōṭŭ, fort), നദി (nadi, river), മൂന്ന് (mūnnŭ, three). Then split\nപുസ്തകം letter by letter: പു-സ്ത-കം — sign, cluster, ending. And\nപേര് (pēru, name) ends in the chillu ർ you met last lesson.\n"
+        },
+        {
+          "id": "ml_script_chillu",
+          "chapterId": "ch_ml_script",
+          "title": "ചില്ല് · Conjuncts & Chillu",
+          "subtitle": "Malayalam's pure consonant endings and twin-letter clusters",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# ചില്ല് (Chillu Letters)\n\nUnique to Malayalam: six **chillu** letters are *bare consonants with no\nvowel at all*, ending a syllable. They look like small hooks:\n\n| Chillu | Sound | Example | Meaning |\n|---|---|---|---|\n| ൺ | ṇ | പെൺ | female (as in പെൺകുട്ടി, girl) |\n| ൻ | n | അവൻ | he |\n| ർ | r | അവർ | they / respected he-she |\n| ൽ | l | അവൾ | she |\n| ൾ | ḷ | കാൽ | leg |\n\nWait — read the examples carefully: **അവൻ** (avan, he) ends in ൻ,\n**അവൾ** (avaḷ, she) ends in ൽ, **അവർ** (avar, they) ends in ർ, and\n**കാൽ** (kāl, leg/foot) also ends in ൽ. The chillu is the *bare\nconsonant sound*, not a full syllable.\n\n## Doubled consonants\n\nMalayalam loves gemination (twin letters): **അമ്മ** (amma, mother) —\nthe double മ you already know; **പട്ടം** (paṭṭaṃ, title/silk);\n**വെള്ളം** (veḷḷaṃ, water); **പത്ത്** (pattŭ, ten) — the double ത in\nthe number itself. Doubled letters are held longer, and holding them\n(or not) changes meaning, so read them as two beats.\n\n## Clusters with ്\n\n**ക്ക, ത്ത, ന്റ, സ്ഥ** appear everywhere: **സ്കൂൾ** (skūḷ, school),\n**സ്റ്റേഷൻ** (sṭēṣan, station). Break clusters into their letters when\nreading: സ്കൂൾ = സ് + കൂ + ൾ.\n## Mini-practice\n\nIdentify the chillu in each: അവൻ (ൻ), അവൾ (ൽ), അവർ (ർ), കാൽ (ൽ),\nപെൺ (ൺ). Then read the cluster words: സ്കൂൾ, പട്ടം, വെള്ളം, പത്ത്.\nRule of thumb: chillu = bare consonant ending; ് = vowel killer;\ndoubled letters = two beats. Three tools cover most printed\nMalayalam.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_ml_greet",
+      "title": "ആമുഖവും വാഴ്ത്തുകളും · Greetings & Introductions",
+      "subtitle": "Level 1 — Namaskāram, names, family, numbers",
+      "order": 1,
+      "lessons": [
+        {
+          "id": "ml_greet_namaskaram",
+          "chapterId": "ch_ml_greet",
+          "title": "നമസ്കാരം · Greetings",
+          "subtitle": "Namaskāram, the Kerala nod, and everyday pleasantries",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# നമസ്കാരം (Greetings)\n\n**നമസ്കാരം** (namaskāram) is the standard Malayalam greeting — polite,\ntimeless, safe everywhere. Friends more often just say **ഹായ്** (hai) or\n**എന്തൊരു കാര്യം?** (\"what's up?\").\n\n## The greeting set\n\n| Malayalam | Transliteration | Meaning |\n|---|---|---|\n| നമസ്കാരം | namaskāram | hello |\n| സുഖമാണോ? | sukhamāṇō? | are you well? |\n| സുഖമാണ് | sukhamāṇŭ | I am well |\n| നന്ദി | nandi | thank you |\n| ക്ഷമിക്കണം | kṣamikkaṇam | sorry / excuse me |\n| പോയി വരാം | pōyi varāṃ | \"I'll go and come\" (goodbye) |\n\n## The classic Kerala exchange\n\n- **സുഖമാണോ?** — Are you well?\n- **സുഖമാണ്, നന്ദി.** — Well, thanks.\n- **അതു സുഖമാണോ?** — And is *that* well? (the follow-up everyone\n  actually uses — wellbeing about home, work, family)\n\n## Goodbye = return\n\nLike Kannada, Malayalam frames leaving as returning: **പോയി വരാം**\n(\"I'll go and come back\"). Reply **വരൂ** (come / do come). A final\n**വിട** is rare outside songs and movies.\n\n> Note: **നന്ദി** is correct but a little formal for tiny favours — a\n> smile and **വേണ്ട, വേണ്ട** (\"no need, no need\") is the everyday way.\n## Mini-practice\n\nThe full exchange, out loud: നമസ്കാരം! → സുഖമാണോ? → സുഖമാണ്, നന്ദി.\n→ അതു സുഖമാണോ? → സുഖമാണ്. Then the closer: പോയി വരാം! → വരൂ. That\ndouble check (അതു സുഖമാണോ?) is the Kerala signature — the\nconversation only ends when both sides are confirmed well.\n"
+        },
+        {
+          "id": "ml_greet_intro",
+          "chapterId": "ch_ml_greet",
+          "title": "എന്റെ പേര് · Introductions",
+          "subtitle": "My name is…, where are you from, and the learning line",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# എന്റെ പേര് (Introductions)\n\n## Saying your name\n\n**എന്റെ പേര് മീര.** (Ente pēru Mīra.) — My name is Meera.\n**എന്റെ** (my) + **പേര്** (name — note the chillu ർ).\n\nAsk back: **നിങ്ങളുടെ പേരെന്ത്?** (Niṅṅaḷuṭe pērentu?) — What is your\nname? (polite). To a friend: **നിന്റെ പേരെന്ത്?**\n\n## Where from\n\n- **നിങ്ങൾ എവിടെ നിന്നാണ് വരുന്നത്?** — Where do you come from?\n- **ഞാൻ കൊച്ചിയിൽ നിന്നാണ്.** — I am from Kochi.\n- **ഞാൻ ഇന്ത്യക്കാരനാണ്.** — I am Indian. (male -ന് / female -ള്ള്:\n  ഇന്ത്യക്കാരി)\n\n## The learner's toolkit\n\n| Malayalam | Transliteration | Meaning |\n|---|---|---|\n| ഞാൻ മലയാളം പഠിക്കുന്നു | ñān malayāḷaṃ paṭhikkunnu | I am learning Malayalam |\n| പതുക്കെ പറയാമോ? | patukke parayāmō? | can you say it slowly? |\n| ഒന്നും മനസ്സിലായില്ല | onnuṃ manasstilāyilla | I didn't understand anything |\n| വീണ്ടും പറയൂ | vīṇṭuṃ parayū | please say it again |\n\n**പഠിക്കുക** (paṭhikkuka, to study/learn) is the verb to remember —\nKerala asks **എന്ത് പഠിക്കുന്നു?** (what are you studying?) the way\nothers ask about weather.\n## Mini-practice\n\nFill in and say: എന്റെ പേര് ___. ഞാൻ ___ ൽ നിന്നാണ് (from ___).\nഞാൻ മലയാളം പഠിക്കുന്നു. Then ask: നിങ്ങളുടെ പേരെന്ത്? നിങ്ങൾ എവിടെ\nനിന്നാണ് വരുന്നത്? End with the learner's lifeline: പതുക്കെ\nപറയാമോ? Practise the whole loop three times.\n"
+        },
+        {
+          "id": "ml_greet_family",
+          "chapterId": "ch_ml_greet",
+          "title": "കുടുംബം · Family",
+          "subtitle": "Mother, father, and the household words of a Malayali home",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# കുടുംബം (Family)\n\n## Core words\n\n| Malayalam | Transliteration | Meaning |\n|---|---|---|\n| അമ്മ | amma | mother |\n| അച്ഛൻ | acchan | father |\n| സഹോദരൻ | sahōdaran | brother |\n| സഹോദരി | sahōdari | sister |\n| മുത്തച്ഛൻ | muttacchan | grandfather |\n| മുത്തശ്ശി | muttaśśi | grandmother |\n| മകൻ | makan | son |\n| മകൾ | makaḷ | daughter |\n| അണ്ണൻ | aṇṇan | elder brother |\n| ചേട്ടൻ | cēṭṭan | elder brother (also respectful for any older male) |\n\n## The ചേട്ടൻ / ചേച്ചി culture\n\n**ചേട്ടൻ** (cēṭṭan, elder brother) and **ചേച്ചി** (cēcci, elder sister)\ndouble as respectful addresses for ANY slightly older person — shop,\nbus, office. A young woman is **ചേച്ചി** until proven otherwise; an\nauto driver is **ചേട്ടോ** (vocative). It is Kerala's built-in\npoliteness chip.\n\n## Sentences\n\n- **ഇത് എന്റെ അമ്മയാണ്.** — This is my mother. (-ആണ് = is)\n- **എന്റെ സഹോദരി നഴ്സാണ്.** — My sister is a nurse. (Kerala's pride\n  profession, said with real respect)\n- **എനിക്ക് രണ്ട് സഹോദരന്മാരുണ്ട്.** — I have two brothers.\n- **ഞങ്ങളുടെ കുടുംബം വലുതാണ്.** — Our family is big.\n## Mini-practice\n\nMap YOUR family: അമ്മ, അച്ഛൻ, brothers/sisters (അണ്ണൻ/സഹോദരൻ,\nചേച്ചി/സഹോദരി), grandparents (മുത്തച്ഛൻ/മുത്തശ്ശി). Then two\nsentences: ഇത് എന്റെ ___ ആണ്. എനിക്ക് രണ്ട് ___ ഉണ്ട്. Notice ചേട്ടൻ\nand ചേച്ചി work for strangers too — try it next time you are in\nKerala and watch the smile.\n"
+        },
+        {
+          "id": "ml_greet_numbers",
+          "chapterId": "ch_ml_greet",
+          "title": "എണ്ണൽ · Numbers",
+          "subtitle": "One to one hundred — and how Kerala counts money",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# എണ്ണൽ (Numbers)\n\n## 1–10\n\n| Malayalam | Transliteration | Digit |\n|---|---|---|\n| ഒന്ന് | onnŭ | 1 |\n| രണ്ട് | randŭ | 2 |\n| മൂന്ന് | mūnnŭ | 3 |\n| നാല് | nālŭ | 4 |\n| അഞ്ച് | añjŭ | 5 |\n| ആറ് | āṟŭ | 6 |\n| ഏഴ് | ēḻŭ | 7 |\n| എട്ട് | eṭṭŭ | 8 |\n| ഒൻപത് | onpatŭ | 9 |\n| പത്ത് | pattŭ | 10 |\n\nNotice: 1, 2, 3, 5, 7, 8, 10 end in a chillu — the number words are\nbuilt from pure consonant endings.\n\n## Tens and hundreds\n\n20 **ഇരുപത്** (irupatu), 30 **മുപ്പത്** (muppatu), 50 **അമ്പത്**\n(ampatu), 100 **നൂറ്** (nūṟŭ). Compound: 21 **ഇരുപത്തൊന്ന്**\n(irupattonnŭ) — twenty, one.\n\n## Counting things\n\n- **രണ്ട് ചായ** — two teas (that's the whole order at a chayakkada)\n- **എത്ര?** (etra?) — how many/how much?\n- **അമ്പത് രൂപ** — fifty rupees.\n- Age: **എനിക്ക് ഇരുപത് വയസ്സാണ്** — I am twenty.\n\n> Kerala also uses Tamil-style counting in daily bargains (\"രണ്ട്,\n> മൂന്ന്\" while handing bananas) — numbers 1–10 will genuinely carry a\n> whole shopping trip.\n## Mini-practice\n\nCount ഒന്ന് → പത്ത് aloud, then tens: ഇരുപത്, മുപ്പത്, അമ്പത്, നൂറ്.\nChayakkada drill: രണ്ട് ചായ, എത്ര? → പത്ത് രൂപ → സരി. Age drill:\nഎനിക്ക് ___ വയസ്സാണ്. Seven number-words carry a whole day in\nKerala — they are worth over-learning.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_ml_daily",
+      "title": "ദൈനംദിന ജീവിതം · Daily Life",
+      "subtitle": "Level 2 — Sentences, questions, negation, routine",
+      "order": 2,
+      "lessons": [
+        {
+          "id": "ml_daily_sentences",
+          "chapterId": "ch_ml_daily",
+          "title": "ലളിതമായ വാക്യങ്ങൾ · Simple Sentences",
+          "subtitle": "SOV order and ആണ് / ഉണ്ട് — the two little words that build sentences",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ലളിതമായ വാക്യങ്ങൾ (Simple Sentences)\n\nMalayalam is **SOV** — the verb ends the sentence. And two tiny words do\nenormous work: **ആണ്** (āṇŭ, is/identity) and **ഉണ്ട്** (uṇṭŭ,\nthere is/have).\n\n## ആണ് — identity\n\n- **ഇത് പുസ്തകമാണ്.** — This is a book.\n- **ഞാൻ വിദ്യാർത്ഥിയാണ്.** — I am a student.\n- The noun + ആണ് fuse: പുസ്തകം + ആണ് → **പുസ്തകമാണ്**.\n\n## ഉണ്ട് — existence / possession\n\n- **വെള്ളം ഉണ്ട്.** — There is water.\n- **എനിക്ക് സമയം ഉണ്ട്.** — I have time. (Lit. \"to-me time is\")\n- Negative: **ഇല്ല** (illa) — **എനിക്ക് സമയം ഇല്ല.** — I have no time.\n\n## Verbs at the end\n\n- **ഞാൻ ചായ കുടിക്കുന്നു.** — I drink tea. (I tea drink)\n- **അവൻ പാട്ട് പാടുന്നു.** — He sings a song.\n- Location: **അമ്മ അടുക്കളയിലാണ്.** — Mother is in the kitchen.\n  (-ിൽ = in; fused with ആണ് → അടുക്കളയിലാണ്)\n\n## Two directional glues\n\n**-ഇല്ഇല്ല** no — sorry: **-ിൽ** = in/at (കൊച്ചിയിൽ, in Kochi);\n**-ിലേക്ക്** = towards (വീട്ടിലേക്ക്, homeward); **-ിൽ നിന്ന്** = from\n(കൊച്ചിയിൽ നിന്ന്, from Kochi).\n## Mini-practice\n\nSwap nouns in the frames: ഞാൻ ___ കുടിക്കുന്നു (ചായ/വെള്ളം/കാപ്പ്).\nഅവൻ ___ പാടുന്നു (പാട്ട്). പുസ്തകം ___ ഉണ്ട് (മേശപ്പുറത്ത്). Keep ആണ്\nfor identity and ഉണ്ട് for existence: ഇത് പുസ്തകമാണ് vs പുസ്തകം\nഉണ്ട്. Two words, two entirely different claims — say both.\n"
+        },
+        {
+          "id": "ml_daily_questions",
+          "chapterId": "ch_ml_daily",
+          "title": "ചോദ്യങ്ങൾ · Questions",
+          "subtitle": "എന്ത്, ആര്, എവിടെ, എപ്പോൾ — question words stay in place",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ചോദ്യങ്ങൾ (Questions)\n\n## The question words\n\n| Malayalam | Transliteration | Meaning | Example |\n|---|---|---|---|\n| എന്ത് | entu | what | ഇത് എന്താണ്? — What is this? |\n| ആര് | āru | who | അത് ആരാണ്? — Who is that? |\n| എവിടെ | eviṭe | where | ബസ് എവിടെ? — Where is the bus? |\n| എപ്പോൾ | eppōḷ | when | എപ്പോൾ വരുന്നു? — When are (you) coming? |\n| എത്ര | etra | how much | എത്ര രൂപ? — How many rupees? |\n| എങ്ങനെ | eṅṅane | how | എങ്ങനെ പോകും? — How to go? |\n\nQuestion words sit where the answer would sit — no word-order shuffle:\n**നീ എവിടെ പോകുന്നു?** — You where-going? (You are going where?)\n\n## Yes / no questions\n\nEnd with **-ഓ**: **സുഖമാണോ?** (are you well?), **വരുമോ?** (will you\ncome?), **ശരിയാണോ?** (is it okay?). Intonation does the rest.\n\n## The answer kit\n\n- **അതെ** (athe) — yes. **അല്ല / ഇല്ല** — no / not-have.\n- **ശരി** (śari) — okay.\n- **അറിയില്ല** (aṟiyilla) — (I) don't know.\n- **എനിക്കറിയാം** (enikk aṟiyāṃ) — I know (a very satisfying sentence).\n## Mini-practice\n\nAnswer, don't just ask: ഇത് എന്താണ്? → ഇത് പുസ്തകമാണ്. ബസ് എവിടെ? →\nഅവിടെ! എപ്പോൾ വരുന്നു? → ഇപ്പോൾ തന്നെ (right now). എത്ര രൂപ? →\nഅമ്പത്. The question word never moves; the answer drops into the\nsame slot. Practise in pairs, question + answer together.\n"
+        },
+        {
+          "id": "ml_daily_negation",
+          "chapterId": "ch_ml_daily",
+          "title": "നിഷേധം · Negation",
+          "subtitle": "അല്ല vs ഇല്ല vs വേണ്ട — three no's with three jobs",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# നിഷേധം (Negation)\n\n## അല്ല — identity negation (\"is not\")\n\n- **ഇത് ചായ അല്ല, കാപ്പി ആണ്.** — This is not tea, it is coffee.\n- **ഞാൻ ഡോക്ടർ അല്ല.** — I am not a doctor.\n\n## ഇല്ല — existence negation (\"isn't there / don't have\")\n\n- **പണം ഇല്ല.** — There's no money.\n- **എനിക്ക് വേണ്ട.** — I don't want. (dative + വേണ്ട)\n- **ഇനി വേണ്ട** — no more, enough!\n\n## Verb negation — the -ില്ല ending\n\nPresent-tense verbs negate by swapping the ending:\n**പോകുന്നു** (goes) → **പോകുന്നില്ല** (does not go);\n**വരുന്നു** → **വരുന്നില്ല**; **അറിയാം** (know) → **അറിയില്ല**.\n\nFuture: **പോകും** (will go) → **പോകില്ല** (won't go).\nPast: **പോയി** (went) → **പോയില്ല** (didn't go).\n\n| Positive | Negative | Meaning |\n|---|---|---|\n| ഉണ്ട് | ഇല്ല | there is / there isn't |\n| വേണം | വേണ്ട | want / don't want |\n| കഴിഞ്ഞു | കഴിഞ്ഞില്ല | finished / not finished |\n| കഴിയും | കഴിയില്ല | can be done / can't |\n\n> **വേണ്ട** doubles as the polite refusal at a shop — **വേണ്ട, നന്ദി**\n> (\"no, thank you\") with a smile closes any upsell in Kerala kindly.\n## Mini-practice\n\nPick the right no: this is not tea? → ഇത് ചായ അല്ല. No money? →\nപണം ഇല്ല. Doesn't come? → വരുന്നില്ല. Don't want? → വേണ്ട. Four\nno's, four jobs — അല്ല identity, ഇല്ല existence, -ില്ല verb\nnegation, വേണ്ട refusal. Say each once and the system locks in.\n"
+        },
+        {
+          "id": "ml_daily_routine",
+          "chapterId": "ch_ml_daily",
+          "title": "ദിനചര്യ · Daily Routine",
+          "subtitle": "Clocks, meals, and the verbs of an ordinary Kerala day",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# ദിനചര്യ (Daily Routine)\n\n## Asking and telling time\n\n- **എത്ര മണിയായി?** — What time is it? (how-much hour became)\n- **ആറ് മണിയായി.** — It is six o'clock.\n- **രാവിലെ** (morning), **ഉച്ചയ്ക്ക്** (afternoon), **വൈകുന്നേരം**\n  (evening), **രാത്രി** (night).\n\n## A narrated day\n\n- **ഞാൻ രാവിലെ ആറരയ്ക്ക് എഴുന്നേൽക്കുന്നു.** — I wake at six-thirty.\n- **ചായ കുടിക്കുന്നു.** — I drink tea.\n- **എട്ടിന് ജോലിക്ക് പോകുന്നു.** — At eight I go to work.\n- **രാത്രി പത്തിന് ഉറങ്ങുന്നു.** — At ten at night I sleep.\n\nNote the time endings: **-യ്ക്ക് / -ിന്** attach to times\n(ആറരയ്ക്ക്, എട്ടിന്) — small but everywhere.\n\n## Meals, Kerala schedule\n\n- **കാപ്പ് / ചായ** — coffee / tea (the day runs on both)\n- **രാവിലത്തെ ഭക്ഷണം** — breakfast (puttu, appam…)\n- **ഉച്ചഭക്ഷണം** — lunch (the ചോറ് rice meal)\n- **അരി** rice, **മീൻ** fish, **കറി** curry.\n\n**ഭക്ഷണം റെഡി ആണോ?** — Is food ready? **വളരെ സ്വാദിഷ്ടം!** — Very\ntasty!\n## Mini-practice\n\nNarrate YOUR day in five sentences: ഞാൻ രാവിലെ ___ മണിക്ക്\nഎഴുന്നേൽക്കുന്നു. ചായ കുടിക്കുന്നു. ___ മണിക്ക് ജോലിക്ക് പോകുന്നു.\nവൈകുന്നേരം വീട്ടിലേക്ക് വരുന്നു. രാത്രി ___ മണിക്ക് ഉറങ്ങുന്നു.\nTime + verb at the end — five sentences and your routine is fully\nspoken Malayalam.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_ml_grammar",
+      "title": "വ്യാകരണം · Grammar",
+      "subtitle": "Level 3 — Pronouns, tenses, cases, politeness",
+      "order": 3,
+      "lessons": [
+        {
+          "id": "ml_grammar_pronouns",
+          "chapterId": "ch_ml_grammar",
+          "title": "സർവനാമങ്ങൾ · Pronouns",
+          "subtitle": "The pronoun set and the inclusive we that Malayalam treasures",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# സർവനാമങ്ങൾ (Pronouns)\n\n## The set\n\n| Malayalam | Transliteration | Meaning |\n|---|---|---|\n| ഞാൻ | ñān | I |\n| നീ | nī | you (intimate) |\n| നിങ്ങൾ | niṅṅaḷ | you (respectful/plural) |\n| അവൻ | avan | he |\n| അവൾ | avaḷ | she |\n| അത് | atu | it |\n| നമ്മൾ | nammaḷ | we (inclusive — you too) |\n| ഞങ്ങൾ | ñaṅṅaḷ | we (exclusive — not you) |\n| അവർ | avar | they / respected he-she |\n\n## The two we's\n\nMalayalam — like Tamil — splits **we**: **നമ്മൾ** includes the listener\n(\"we, you and I\"), **ഞങ്ങൾ** excludes them (\"we, not you\"). Choosing\nwrong subtly re-draws who's inside the circle: inviting someone?\n**നമ്മൾ പോകാം** (\"shall *we* go?\" — you included).\n\n## Respect rules\n\nUse **നിങ്ങൾ** with everyone outside your closest circle. For a\nrespected third person use **അവർ** (they). Verb endings shift with\nrespect too: **വാ** (come! intimate) → **വരൂ** (polite) →\n**വരണം** (please come).\n\n## No grammatical gender for things\n\nBooks, places, ideas — all **അത്**. Only humans take അവൻ/അവൾ. Noun\ngender, the classic headache of European languages, simply does not\nexist here.\n## Mini-practice\n\nThe two we's in action: invite a friend → നമ്മൾ പോകാം (shall WE —\nyou included — go?). Say what your group did without them → ഞങ്ങൾ\nപോയി (WE — not you — went). Then conjugate വരിക: ഞാൻ വരുന്നു, നീ\nവരുന്നു, നിങ്ങൾ വരുന്നു, അവർ വരുന്നു — note how the verb barely\nchanges; the pronoun carries the weight.\n"
+        },
+        {
+          "id": "ml_grammar_tenses",
+          "chapterId": "ch_ml_grammar",
+          "title": "കാലങ്ങൾ · Tenses",
+          "subtitle": "Present -ുന്നു, past, future -ും — one verb as the map",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# കാലങ്ങൾ (Tenses)\n\n## The three-time map on വരുക (come)\n\n| Tense | Form | Meaning |\n|---|---|---|\n| Present | വരുന്നു | comes / is coming |\n| Past | വന്നു | came |\n| Future | വരും | will come |\n\n## The pattern, generalised\n\n- Present: stem + **-ുന്നു** → പഠിക്കുന്നു (studies), കുടിക്കുന്നു\n  (drinks), പോകുന്നു (goes)\n- Future: stem + **-ും** → പഠിക്കും, കുടിക്കും, പോകും\n- Past: irregular but short → പഠിച്ചു (studied), കുടിച്ചു (drank),\n  പോയി (went), വന്നു (came)\n\nLearn each verb's past as its own little word — the present/future are\nmechanical, the past is memory.\n\n## Sentences with time anchors\n\n- **ഞാൻ ദിവസവും വായിക്കുന്നു.** — I read every day.\n- **ഇന്നലെ ഞാൻ സിനിമ കണ്ടു.** — Yesterday I watched a film.\n  (കാണുക see → കണ്ടു saw)\n- **നാളെ ഞാൻ തൃശ്ശൂരിലേക്ക് പോകും.** — Tomorrow I will go to Thrissur.\n\nAnchors: **ഇന്ന്** (today), **ഇന്നലെ** (yesterday), **നാളെ**\n(tomorrow), **ദിവസവും** (every day), **പിന്നെ** (then/afterwards).\n## Mini-practice\n\nPast-form pairs to memorise: വരിക → വന്നു, പോകുക → പോയി, പഠിക്കുക →\nപഠിച്ചു, കുടിക്കുക → കുടിച്ചു, കാണുക → കണ്ടു. Build: ഇന്നലെ ഞാൻ\nസിനിമ കണ്ടു. നാളെ ഞാൻ കൊച്ചിയിലേക്ക് പോകും. Present is mechanical\n(-ുന്നു), future mechanical (-ും), past is memory — learn pairs.\n"
+        },
+        {
+          "id": "ml_grammar_cases",
+          "chapterId": "ch_ml_grammar",
+          "title": "വിഭക്തി · Case Endings",
+          "subtitle": "To, from, in, with — the suffixes that replace prepositions",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# വിഭക്തി (Case Endings)\n\n## The big six\n\n| Ending | Meaning | Example |\n|---|---|---|\n| -ിന് / -യ്ക്ക് | to (dative) | വീടിന് / അമ്മയ്ക്ക് |\n| -ിൽ നിന്ന് | from | കൊച്ചിയിൽ നിന്ന് |\n| -ിൽ | in/at | ക്ലാസ്സിൽ (in class) |\n| -ോട് / -ുമായി | with | സുഹൃത്തുമായി (with a friend) |\n| -ിന്റെ | 's (possessive) | രവിയുടെ പുസ്തകം (Ravi's book) |\n| -നെ | object marker | അരി വാങ്ങുക (buy rice) vs അരിയെ |\n\n## The dative -ിന് does surprising work\n\n**എനിക്ക്** (to me) covers \"I have\": **എനിക്ക് ബൈക്ക് ഉണ്ട്** — I have a\nbike (\"to-me bike is\"). It also marks wants: **എനിക്ക് വേണം** — I want\n(\"to-me is-wanted\"), and feelings: **എനിക്ക് ഇഷ്ടമാണ്** — I like it.\n\n## Fusion patterns\n\nVowel-final nouns add a glide: വീട് + ിൽ → **വീട്ടിൽ** (in the house);\nകൊച്ചി + ൽ → **കൊച്ചിയിൽ**. Consonant-final nouns mostly suffix straight:\nക്ലാസ് + ൽ → **ക്ലാസ്സിൽ**.\n\n## Sentences to steal\n\n- **ഞാൻ കടയ്ക്ക് പോകുന്നു.** — I'm going to the shop.\n- **അവർ ബാംഗ്ലൂരിൽ നിന്നാണ് വന്നത്.** — They came from Bengaluru.\n- **ഇത് അമ്മയുടെ പുസ്തകമാണ്.** — This is mother's book.\n- **ഞാൻ ചേട്ടനോട് പറഞ്ഞു.** — I told (elder) brother.\n## Mini-practice\n\nSlot the endings: വീട്___ പോകുന്നു (→ -ിലേക്ക് or -ിന്), കൊച്ചി___\nനിന്ന് (→ -യിൽ നിന്ന്), ക്ലാസ്___ ഇരിക്കുന്നു (→ -സ്സിൽ), രവി___\nപുസ്തകം (→ -യുടെ). Watch the glue യ/വ sounds appear — വീട്ടിൽ,\nകൊച്ചിയിൽ. Fusion is regular; expect it, don't fear it.\n"
+        },
+        {
+          "id": "ml_grammar_politeness",
+          "chapterId": "ch_ml_grammar",
+          "title": "മര്യാദ · Politeness",
+          "subtitle": "The -ർ respect rule, soft imperatives, and Kerala address words",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# മര്യാദ (Politeness & Honorifics)\n\n## The -ർ rule\n\nRespect in Malayalam is the ending **-ർ**: respected people take the\nplural-style **അവർ** (they) and plural verbs — **അദ്ധ്യാപകർ വന്നു**\n(the teacher, honored, came). For direct address, names take respectful\nvocatives: **രവി സാർ** (Mr. Ravi) or **രവേട്ടാ** (affectionate-respect).\nAnnouncements use full formal forms: **ദയവായി ഇരിക്കുക** (kindly be\nseated).\n\n## Soft imperative ladder\n\n| Command | To whom |\n|---|---|\n| വാ (come) | children, close friends |\n| വരൂ (please come) | general polite |\n| വരിക (kindly come) | very formal, invitations |\n\nSame ladder on sit: **ഇരി** (intimate) → **ഇരിക്കൂ** (please sit) →\n**ഇരിക്കുക** (formal). A shop line: **വരൂ, ഇരിക്കൂ, എന്ത് വേണം?** —\nCome, sit, what do you need?\n\n## Softeners\n\n- **പതുക്കെ** — slowly: **പതുക്കെ പറയൂ** — please speak slowly.\n- **ഒരു നിമിഷം** — one moment.\n- **ദയവായി** — please (formal; noticeboards use it).\n- **സ്വല്പം** — a little: **സ്വല്പം കുറച്ചു തരൂ** — give (it) a little\n  cheaper.\n\n## Titles you'll hear\n\n**ചേട്ടാ** (elder brother), **ചേച്ചീ** (elder sister), **അമ്മായി/അമ്മാവൻ**\nfamily titles, **സാർ/മാഡം** offices. Kerala's service English + Malayalam\nmix (\"ഒരു ചായ് തരാമോ, ചേട്ടാ?\") is completely standard speech.\n## Mini-practice\n\nClimb the ladder: വാ → വരൂ → വരിക (come). ഇരി → ഇരിക്കൂ →\nഇരിക്കുക (sit). Soften a request: ചായ താ → ഒരു ചായ് തരൂ, ചേട്ടാ?\n(please give a tea, cheitta?). Then the universal slow-down:\nപതുക്കെ പറയൂ. Respect in Malayalam is mostly these small endings —\nyou already own them.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_ml_reading",
+      "title": "വായന · Reading",
+      "subtitle": "Level 4 — Conversations, paragraphs, proverbs, review",
+      "order": 4,
+      "lessons": [
+        {
+          "id": "ml_reading_conversation",
+          "chapterId": "ch_ml_reading",
+          "title": "സംഭാഷണങ്ങൾ · Conversations",
+          "subtitle": "At the tea shop and at a friend's gate — two real dialogues",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# സംഭാഷണങ്ങൾ (Conversations)\n\n## At the chayakkada (tea shop)\n\n> **ചേട്ടാ:** എന്ത് വേണം?\n> **നീ:** രണ്ട് ചായ, എത്ര?\n> **ചേട്ടാ:** പത്ത് രൂപ.\n> **നീ:** പത്തിന് തന്നെ തരൂ.\n> **ചേട്ടാ:** സരി, ഇരിക്കൂ.\n\nTranslation: \"What do you want?\" / \"Two teas — how much?\" / \"Ten rupees.\"\n/ \"Give it for ten itself.\" / \"Okay, sit down.\"\n\n## At the friend's gate\n\n> **നീ:** നമസ്കാരം! അമ്മ വീട്ടിലുണ്ടോ?\n> **അവൾ:** ഉണ്ട്. അകത്ത് വാ, ചേച്ചി.\n> **നീ:** പിന്നെ വരാം, ഇപ്പോൾ ജോലിക്ക് പോകണം.\n> **അവൾ:** ശരി. പോയി വരിക!\n\nTranslation: \"Hello! Is mother at home?\" / \"Yes. Come in, chechi.\" /\n\"I'll come later — I have to go to work now.\" / \"Okay. Go and come!\"\n\n## Notice\n\n- **-ണം** = must/have-to: **പോകണം** (must go).\n- **-ോ?** makes the yes/no question: **ഉണ്ടോ?** (is it there?).\n- **പോയി വരിക!** — the polite \"go and come back\" — Kerala's goodbye,\n  now yours too.\n## Mini-practice\n\nAct both roles of the tea-shop dialogue from memory, then change\nthe order: മൂന്ന് ചായ (three teas), ഒരു കാപ്പ് (one coffee). Change\nthe price too. The frames — എന്ത് വേണം? / എത്ര? / സരി — never\nchange; nouns and numbers rotate. You can now run a chayakkada\ntransaction entirely in Malayalam.\n"
+        },
+        {
+          "id": "ml_reading_paragraph",
+          "chapterId": "ch_ml_reading",
+          "title": "ഖണ്ഡിക വായന · Reading a Paragraph",
+          "subtitle": "A postcard from Kochi — real sentences, familiar words",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# ഖണ്ഡിക വായന (Reading a Paragraph)\n\n## The text\n\n**കൊച്ചി യാത്ര**\n\nകഴിഞ്ഞ വാരം ഞാൻ കൊച്ചിയിൽ ആയിരുന്നു. ബാംഗ്ലൂരിൽ നിന്ന് ട്രെയിനിൽ പത്ത്\nമണിക്കൂർ. രാവിലെ ഫോർട്ട് കൊച്ചിയിൽ നടന്നു — കടലും കപ്പലും കാറ്റും\nഅടിപൊളി! ഉച്ചയ്ക്ക് മീൻ ചോറ് കഴിച്ചു. വളരെ സ്വാദിഷ്ടം. വൈകുന്നേരം\nബീച്ചിൽ സൂര്യാസ്തമയം കണ്ടു.\n\n## Sentence by sentence\n\n1. **കഴിഞ്ഞ വാരം ഞാൻ കൊച്ചിയിൽ ആയിരുന്നു.** — Last week I was in Kochi.\n   (ആയിരുന്നു = was, the past of ആണ്)\n2. **ബാംഗ്ലൂരിൽ നിന്ന് ട്രെയിനിൽ പത്ത് മണിക്കൂർ.** — Ten hours by train\n   from Bengaluru.\n3. **രാവിലെ ഫോർട്ട് കൊച്ചിയിൽ നടന്നു.** — In the morning (we) walked in\n   Fort Kochi. (നടക്കുക = walk)\n4. **കടലും കപ്പലും കാറ്റും അടിപൊളി!** — The sea, the ships and the wind —\n   awesome! (-ഉം = and, three times)\n5. **ഉച്ചയ്ക്ക് മീൻ ചോറ് കഴിച്ചു.** — At noon (we) ate fish-rice.\n   (കഴിക്കുക = eat)\n6. **വൈകുന്നേരം ബീച്ചിൽ സൂര്യാസ്തമയം കണ്ടു.** — In the evening (we) watched\n   the sunset at the beach.\n\n## Comprehension check\n\n- How did they travel? **ട്രെയിനിൽ** (by train).\n- What was eaten? **മീൻ ചോറ്**.\n- Three \"and\"s appear as **-ഉം** — find all three: കടലും, കപ്പലും,\n  കാറ്റും.\n## Mini-practice\n\nRe-read the Kochi paragraph aloud twice, then rebuild from memory:\nlast-week / I / Kochi-in / was. Where does ആയിരുന്നു land? (At the\nend.) Then edit one detail and re-say: ട്രെയിനിൽ → ബസ്സിൽ (by\nbus). Editing your own sentences is the last skill before\nfluency.\n"
+        },
+        {
+          "id": "ml_reading_proverbs",
+          "chapterId": "ch_ml_reading",
+          "title": "പഴഞ്ചൊല്ലുകൾ · Proverbs",
+          "subtitle": "Four Malayalam proverbs and the culture inside them",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# പഴഞ്ചൊല്ലുകൾ (Proverbs & Culture)\n\nProverbs (**പഴഞ്ചൊല്ലുകൾ**) are grammar, vocabulary and worldview in one\nline. Four classics:\n\n## 1. കൈയിലുള്ളത് കൈമാറരുത്\n\n\"Don't hand over what is in your hand.\" — the bird-in-hand wisdom.\n**കൈ** (hand), **കൈയിലുള്ളത്** (that-which-is-in-hand). Notice the\nfusion: കൈ + ഇൽ + ഉള്ളത് glued into one written word.\n\n## 2. ആനയില്ലാത്ത ഊരിൽ എരുമ ആന\n\n\"Where there is no elephant, the buffalo is the elephant.\" — in the\nland of the blind, the one-eyed is king. **ആന** (elephant),\n**എരുമ** (buffalo), **ഇല്ലാത്ത** (not-having — the negative participle\nbuilt from ഇല്ല).\n\n## 3. കണ്ടത് പറഞ്ഞാൽ കേൾക്കാൻ ആരില്ല\n\n\"Tell what you saw, and there is no one to listen.\" — experience\nspeaks; nobody listens. **കണ്ടത്** (that-which-was-seen),\n**പറയുക** (say), **കേൾക്കുക** (hear). Note the conditional ending\n**-യാൽ** (if/when) on പറഞ്ഞാൽ.\n\n## 4. അടുക്കളയിൽ നിന്നാണ് സംസ്കാരം തുടങ്ങുന്നത്\n\n\"Culture begins from the kitchen.\" — a beloved modern Kerala saying.\n**അടുക്കള** (kitchen), **സംസ്കാരം** (culture/refinement),\n**തുടങ്ങുക** (begin). Kerala's food culture (sadya, the feast on a\nbanana leaf) makes this one literal.\n\n> Proverbs keep SOV order too — read each aloud twice; the rhythm is\n> half the memory.\n## Mini-practice\n\nMatch proverb to situation: you almost gave away your ticket (→\nകൈയിലുള്ളത് കൈമാറരുത്). Someone acts important in a small group (→\nആനയില്ലാത്ത ഊരിൽ എരുമ ആന). Say each proverb with its story —\nproverbs live as stories, not strings. Bonus: spot the SOV order\ninside each one.\n"
+        },
+        {
+          "id": "ml_reading_review",
+          "chapterId": "ch_ml_reading",
+          "title": "പുനരവലോകനം · Review",
+          "subtitle": "The whole beginner journey — അ to ഴ in one page",
+          "difficulty": "advanced",
+          "xpReward": 25,
+          "order": 3,
+          "content": "# പുനരവലോകനം (Review)\n\n## Script ladder\n\n- Vowels **സ്വരങ്ങൾ** (short/long pairs), consonant grid\n  **വ്യഞ്ജനങ്ങൾ**, vowel signs **ചിഹ്നങ്ങൾ**, chillu endings **ചില്ല്**.\n- The three-l drill: **ല** (dental), **ള** (retroflex), **ഴ** (the zh).\n- Sign-order trap: കി writes sign-first but reads ka-then-i.\n\n## Words banked\n\nനമസ്കാരം, സുഖമാണോ, നന്ദി, ക്ഷമിക്കണം, എന്റെ പേര്…, അമ്മ, അച്ഛൻ, ചേട്ടൻ,\nചേച്ചി, ഒന്ന്…പത്ത്, നൂറ്, എത്ര, രൂപ, വെള്ളം, ചായ, മീൻ, ചോറ്.\n\n## Structures banked\n\n- **ആണ്** identity / **ഉണ്ട്** existence / **ഇല്ല** negation of both.\n- Question words in place + **-ഓ** yes/no endings.\n- Tenses on any verb: -ുന്നു / past / -ും.\n- Cases: -ിന്, -ിൽ, -ിൽ നിന്ന്, -ോട്, -ിന്റെ.\n- Two we's: നമ്മൾ (inclusive) vs ഞങ്ങൾ (exclusive).\n\n## Self-check\n\n1. Introduce yourself in two sentences, then ask my name back.\n2. Order two teas and ask the price — chayakkada ready.\n3. Say one ഇല്ല-sentence and one അല്ല-sentence correctly.\n4. Read **മലയാളം**, **വഴി**, **പഴം** — nail the ഴ.\n\nAll four? The adaptive engine now schedules your reviews and pushes the\nnext rung. ശുഭയാത്ര! (Bon voyage!)\n## Mini-practice\n\nThe four self-checks — do them NOW, aloud: 1) introduce yourself +\nask back, 2) order two teas with price, 3) one ഇല്ല-sentence and\none അല്ല-sentence, 4) read മലയാളം, വഴി, പഴം (nail the ഴ). All\nsmooth? Your practice engine moves to maintenance mode — short,\nspaced reviews of exactly what dipped.\n"
+        }
+      ]
+    }
+  ],
+  "quizzes": [],
+  "vocabulary": [],
+  "notes": "Part I curriculum for Malayalam (M9). Native-script lessons grounded in beginner-accurate Malayalam; exercises live in lib/features/learn/data/malayalam_exercises.dart keyed by lesson id."
+}

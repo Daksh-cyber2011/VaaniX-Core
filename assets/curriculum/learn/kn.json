@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "language": {
+    "enum": "kannada",
+    "iso639_1": "kn",
+    "englishName": "Kannada",
+    "nativeName": "ಕನ್ನಡ",
+    "scriptName": "Kannada",
+    "scriptCode": "Knda",
+    "direction": "ltr"
+  },
+  "levels": [
+    {
+      "id": "lvl0",
+      "name": "Script Foundation",
+      "order": 0,
+      "chapters": [
+        "ch_kn_script"
+      ]
+    },
+    {
+      "id": "lvl1",
+      "name": "Beginner",
+      "order": 1,
+      "chapters": [
+        "ch_kn_greet"
+      ]
+    },
+    {
+      "id": "lvl2",
+      "name": "Elementary",
+      "order": 2,
+      "chapters": [
+        "ch_kn_daily"
+      ]
+    },
+    {
+      "id": "lvl3",
+      "name": "Intermediate",
+      "order": 3,
+      "chapters": [
+        "ch_kn_grammar"
+      ]
+    },
+    {
+      "id": "lvl4",
+      "name": "Advanced Beginner+",
+      "order": 4,
+      "chapters": [
+        "ch_kn_reading"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch_kn_script",
+      "title": "ಕನ್ನಡ ಲಿಪಿ · Kannada Script",
+      "subtitle": "Level 0 — Vowels, consonants, matras, conjuncts",
+      "order": 0,
+      "lessons": [
+        {
+          "id": "kn_script_vowels",
+          "chapterId": "ch_kn_script",
+          "title": "ಸ್ವರಗಳು · Vowels",
+          "subtitle": "Kannada vowels — the ಸ್ವರಗಳು, 14 in all",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ಸ್ವರಗಳು (Vowels)\n\nKannada uses the **Kannada script**. Its vowels are called **ಸ್ವರಗಳು** —\nliterally \"self-sounding\" letters. There are **14 of them**, and each one\ncan be short or long. Getting the short/long difference right early will\nmake every later word easier.\n\n## The 14 Vowels\n\n| Vowel | Roman | Example word | Meaning |\n|---|---|---|---|\n| ಅ | a | ಅಮ್ಮ | mother |\n| ಆ | ā | ಆಕಾಶ | sky |\n| ಇ | i | ಇಲ್ಲಿ | here |\n| ಈ | ī | ಈಗ | now |\n| ಉ | u | ಉಣ್ಣು | eat |\n| ಊ | ū | ಊಟ | meal |\n| ಋ | r̥ | ಋಷಿ | sage |\n| ಎ | e | ಎಲ್ಲೆ | boundary |\n| ಏ | ē | ಏಳು | seven / rise |\n| ಐ | ai | ಐದು | five |\n| ಒ | o | ಒಂದು | one |\n| ಓ | ō | ಓಡು | run |\n| ಔ | au | ಔಷಧ | medicine |\n| ಅಂ | aṃ | ಅಂದು | that day |\n\n> ಅಂ (anusvāra) and ಅಃ (visarga) appear at the end of the vowel list but\n> behave as nasal/final marks rather than full vowels.\n\n## Short vs long\n\nLength changes meaning, not just sound: **ಕವಿ** (kavi, poet) vs\n**ಕಾವಿ** (kāvi, ochre); **ಬೆಳೆ** (beḷe, crop) vs **ಬೇಳೆ** (bēḷe, lentils).\nListen for the *held* vowel — that is the long one.\n\n## Where you'll see them\n\nEvery Kannada letter hangs from a horizontal bar called the **ಶಿರೆ**\n(headstroke) — writing practice always starts at the top stroke and\nsweeps down. Vowels standing alone (as in the table) are used at the\nstart of words or after another vowel; inside words, vowels attach to\nconsonants as **matras** (next lessons).\n## Mini-practice\n\nCover the Roman column and read: ಅನ್ನ (anna, cooked rice), ಈಗ (īga,\nnow), ಐದು (aidu, five), ಓಡು (ōḍu, run), ಔಷಧ (auṣadha, medicine).\nThen reverse: say \"aa\" as in father → which letter? (ಆ). The nasal ಅಂ\nappears in ಅಂದು and ಸಂಗೀತ (saṃgīta, music). Five minutes now saves\nhours later.\n"
+        },
+        {
+          "id": "kn_script_consonants",
+          "chapterId": "ch_kn_script",
+          "title": "ವ್ಯಂಜನಗಳು · Consonants",
+          "subtitle": "The structured consonant grid and the sounds Kannada is known for",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ವ್ಯಂಜನಗಳು (Consonants)\n\nKannada consonants (**ವ್ಯಂಜನಗಳು**) are arranged in a tidy grid by\n*where* the tongue is and *how* much air flows. Every consonant here\ncarries a built-in **ಅ** sound unless marked otherwise: **ಕ** is read\n\"ka\", **ಗ** is \"ga\".\n\n## The velar to labial grid\n\n| | Voiceless | Voiceless aspirated | Voiced | Voiced aspirated | Nasal |\n|---|---|---|---|---|---|\n| Velar | ಕ ka | ಖ kha | ಗ ga | ಘ gha | ಙ ṅa |\n| Palatal | ಚ ca | ಛ cha | ಜ ja | ಝ jha | ಞ nya |\n| Retroflex | ಟ ṭa | ಠ ṭha | ಡ ḍa | ಢ ḍha | ಣ ṇa |\n| Dental | ತ ta | ಥ tha | ದ da | ಧ dha | ನ na |\n| Labial | ಪ pa | ಫ pha | ಬ ba | ಭ bha | ಮ ma |\n\n## The \"others\" row\n\n| Letter | Roman | Note |\n|---|---|---|\n| ಯ | ya | glide, very common |\n| ರ | ra | often curls below in combos |\n| ಱ | ṟa | old alveolar r (rare today) |\n| ಲ | la | dental l |\n| ಳ | ḷa | retroflex l — Kannada loves this sound |\n| ವ | va | v/w |\n| ಶ ಷ ಸ | śa ṣa sa | three s-like letters |\n| ಹ | ha | h |\n\n## Retroflex vs dental\n\n**ಟ** (ṭa) is made with the tongue *curled back*; **ತ** (ta) with the\ntongue *at the teeth*. Words borrow the difference to mean different\nthings: **ಕಣ್ಣು** (kaṇṇu, eye) vs **ಕನ್ನಡ** (kannaḍa, the language\nitself!). Train your ear on that curl — it is the signature sound of\nDravidian languages.\n## Mini-practice\n\nRead aloud: ಕಮಲ (kamala, lotus), ಗಜ (gaja, elephant), ಮಳೆ (maḷe,\nrain), ಹಳ್ಳಿ (haḷḷi, village), ವಾರ (vāra, week), ಸರ (sara, flow).\nSpot the retroflex: ಳ in ಮಳೆ and ಹಳ್ಳಿ is the curled one — it\ncontrasts with dental ಲ (hear ಕಮಲ vs ಮಳೆ). Say both back to back and\nfeel the tongue jump.\n"
+        },
+        {
+          "id": "kn_script_matras",
+          "chapterId": "ch_kn_script",
+          "title": "ಮಾತ್ರೆಗಳು · Vowel Signs",
+          "subtitle": "How vowels attach to consonants as live signs (ಗುಣಿತಾಕ್ಷರ)",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ಮಾತ್ರೆಗಳು (Vowel Signs)\n\nA bare consonant like **ಕ** says \"ka\". To change that vowel, Kannada\nattaches a **vowel sign** (ಮಾತ್ರೆ). The consonant + sign unit is called a\n**ಗುಣಿತಾಕ್ಷರ** — a \"developed letter\".\n\n## The pattern, using ಕ\n\n| Sign | Result | Sound |\n|---|---|---|\n| (none) | ಕ | ka |\n| ಾ | ಕಾ | kā |\n| ಿ | ಕಿ | ki |\n| ೀ | ಕೀ | kī |\n| ು | ಕು | ku |\n| ೂ | ಕೂ | kū |\n| ೆ | ಕೆ | ke |\n| ೇ | ಕೇ | kē |\n| ೈ | ಕೈ | kai |\n| ೊ | ಕೊ | ko |\n| ೋ | ಕೋ | kō |\n| ೌ | ಕೌ | kau |\n\n## The two sides matter\n\nNotice that **ಿ** attaches on the *left* of the consonant even though it\nis spoken *after* it: **ಕಿ** = ಕ + ಿ, read \"ki\". This is the single most\nconfusing thing for new readers — the sign order and the reading order\ndisagree. Practise reading **ಕಿವಿ** (kivi, ear) and **ನದಿ** (nadi, river)\nslowly.\n\n## The killer u\n\nThe vowels ಉ/ಊ often appear as **alternate forms** that hook *below* the\nletter (e.g. **ಕು** has a rounded under-hook). Same sound, different\nshape — learn each high-frequency consonant's forms by sight.\n\n> Reading strategy: find the headstroke first, count the verticals, then\n> read left → right. Word: **ಗುಡಿ** (guḍi, hut), **ಕೋಣೆ** (kōṇe, room).\n## Mini-practice\n\nRead: ಕಿವಿ (kivi, ear), ಗುಡಿ (guḍi, hut), ಕೋಣೆ (kōṇe, room), ನದಿ\n(nadi, river), ಮೂರು (mūru, three). Then write ಹೆಸರು (hesaru, name)\nletter by letter: ಹೆ-ಸ-ರು — three consonants, three different matras\n(ೆ, none, ು). If you can do ಹೆಸರು you can do half of Kannada.\n"
+        },
+        {
+          "id": "kn_script_vattakshara",
+          "chapterId": "ch_kn_script",
+          "title": "ವಟ್ಟಕ್ಷರ · Conjuncts",
+          "subtitle": "Subjoined letters (vattakshara) — two consonants, one cluster",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# ವಟ್ಟಕ್ಷರ (Conjunct Consonants)\n\nWhen two consonants meet with no vowel between them, Kannada usually\nshows the second one **dwarfed and pushed below** the first. That\nsubjoined letter is **ವಟ್ಟಕ್ಷರ** (vattakshara). The cluster **ನ್ನ** in\n**ಕನ್ನಡ** (kannaḍa) is exactly this: ನ + ನ with the second ನ tucked\nbelow.\n\n## Common subjoined forms\n\n| Cluster | Word | Meaning |\n|---|---|---|\n| ನ್ನ | ಕನ್ನಡ | Kannada |\n| ಮ್ಮ | ಅಮ್ಮ | mother |\n| ಲ್ಲ | ಬೆಳ್ಳಿ | silver |\n| ರ್ವ | ಸರ್ವ | all |\n| ರ್ಯ | ಧೈರ್ಯ | courage |\n| ತ್ರ | ಮಂತ್ರ | chant |\n| ಕ್ಕ | ಹಕ್ಕ | right (claim) |\n| ಟ್ಟ | ಕಟ್ಟು | to build/tie |\n\n## Half-forms with the pullika\n\nThe little diagonal **ಪುಳ್ಳಿ (pulli-like virama)** written as **್**\nkills a consonant's vowel: **ಕ್** is just \"k\". So **ಉತ್ತರ** (uttara,\nnorth) = ಉ + ತ್ + ತ + ರ. If you see **್**, the vowel is gone.\n\n## Reading drill\n\nTry these, top to bottom: **ಸ್ವಾಗತ** (svāgata, welcome),\n**ಗ್ರಂಥ** (grantha, book), **ಪ್ರೀತಿ** (prīti, love),\n**ಸಂಸ್ಕೃತಿ** (saṃskṛti, culture).\n\n> Speed tip: you do NOT parse every dwarf letter consciously. Frequent\n> clusters (ನ್ನ, ಮ್ಮ, ಲ್ಲ, ಟ್ಟ) become single sight-shapes — exactly like\n> English \"th\". practise ten minutes a day and they fuse.\n## Mini-practice\n\nRead: ಕನ್ನಡ, ಅಮ್ಮ, ಧೈರ್ಯ, ಸ್ವಾಗತ, ಪ್ರೀತಿ, ಬೆಳ್ಳಿ. Then split them:\nಕ+ನ್+ನ+ಡ, ಅ+ಮ್+ಮ, ಧ+ಯ (long) + ರ್+ಯ. Count how many dwarf letters you\nfound (five across all six words). Sight-shapes achieved — this is the\nlesson where Kannada starts looking like words, not puzzles.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_kn_greet",
+      "title": "ಶುಭಾಶಯಗಳು · Greetings & Introductions",
+      "subtitle": "Level 1 — Namaskāra, names, family, numbers",
+      "order": 1,
+      "lessons": [
+        {
+          "id": "kn_greet_namaskara",
+          "chapterId": "ch_kn_greet",
+          "title": "ನಮಸ್ಕಾರ · Greetings",
+          "subtitle": "Namaskāra and the everyday hello in Karnataka",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ನಮಸ್ಕಾರ (Greetings)\n\nThe all-purpose Kannada greeting is **ನಮಸ್ಕಾರ** (namaskāra) — polite,\nsafe, correct at any time of day, with anyone. Folded hands optional but\ncommon. A warmer rural hello is **ಯಾಕೋ** (a friendly \"hey, what's up\")\namong close friends only.\n\n## Core greeting set\n\n| Kannada | Transliteration | Meaning |\n|---|---|---|\n| ನಮಸ್ಕಾರ | namaskāra | hello / greetings |\n| ಶುಭೋದಯ | śubhōdaya | good morning |\n| ಶುಭ ರಾತ್ರಿ | śubha rātri | good night |\n| ಹೋಗಿ ಬರುತ್ತೇನೆ | hōgi baruttēne | \"I'll go and come back\" (goodbye) |\n| ಧನ್ಯವಾದಗಳು | dhanyavādagaḷu | thank you |\n| ಕ್ಷಮಿಸಿ | kṣamisi | sorry / excuse me |\n\n## Asking how someone is\n\n- **ಹೇಗಿದ್ದೀರಾ?** (hēgiddīrā?) — How are you? (respectful plural)\n- **ಹೇಗಿದ್ದೀಯ?** (hēgiddīya?) — How are you? (to a friend/child)\n- Answer: **ಚೆನ್ನಾಗಿದ್ದೇನೆ** (cennāgiddēne) — I'm well.\n- Or **ಸರಿಯಾಗಿದ್ದೇನೆ** (sariyāgiddēne) — I'm fine/okay.\n\n## The goodbye that means \"see you\"\n\nKannada speakers rarely say a final \"goodbye\". **ಹೋಗಿ ಬರುತ್ತೇನೆ**\nliterally means \"I will go and come back\" — leaving is always framed as\nreturning. Reply with **ಬನ್ನಿ ಬನ್ನಿ** (come, come) or simply\n**ಸರಿ** (sari, okay).\n\n> Culture note: elders are addressed with the plural/respect forms\n> throughout — **ನೀವು** (you-respectful), never **ನೀನು** (you-intimate),\n> unless family or very close friends.\n## Mini-practice\n\nBuild the greeting exchange out loud: ನಮಸ್ಕಾರ! → ಹೇಗಿದ್ದೀರಾ? →\nಚೆನ್ನಾಗಿದ್ದೇನೆ, ನೀವು? → ಸರಿ, ಧನ್ಯವಾದಗಳು! That is a complete,\npolite, natural opening — memorise it as one breath. Then the closer:\nಹೋಗಿ ಬರುತ್ತೇನೆ. Six sentences; you can already greet the whole\nstate.\n"
+        },
+        {
+          "id": "kn_greet_intro",
+          "chapterId": "ch_kn_greet",
+          "title": "ನನ್ನ ಹೆಸರು · Introductions",
+          "subtitle": "Saying who you are and asking someone's name",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ನನ್ನ ಹೆಸರು (Introductions)\n\n## Saying your name\n\n**ನನ್ನ ಹೆಸರು ರವಿ.** (Nanna hesaru Ravi.) — My name is Ravi.\n\nBreak it down: **ನನ್ನ** (my) + **ಹೆಸರು** (name). To ask someone else:\n**ನಿಮ್ಮ ಹೆಸರು ಏನು?** (Nimma hesaru ēnu?) — What is your name? (respectful)\nor **ನಿನ್ನ ಹೆಸರು ಏನು?** (Ninna hesaru ēnu?) — to a friend.\n\n## Where you're from\n\n- **ನಾನು ಭಾರತದಿಂದ ಬಂದವನು.** — I come from India. (said by a man)\n- **ನಾನು ಬೆಂಗಳೂರಿನವಳು.** — I'm from Bengaluru. (said by a woman)\n- Pattern: **ನಾನು ___ ನವನು / ನವಳು** (I am from ___ / native of ___).\n  The ending marks gender: **-ನವನು** masculine, **-ನವಳು** feminine.\n\n## Handy intro lines\n\n| Kannada | Transliteration | Meaning |\n|---|---|---|\n| ನನ್ನ ಪರಿಚಯ | nanna paricaya | my introduction |\n| ನನಗೆ ಸಂತೋಷ | nanage santōṣa | nice to meet (lit. joy to me) |\n| ನೀವು ಎಲ್ಲಿಂದ? | nīvu elliṃda? | where are you from? |\n| ನಾನು ಕನ್ನಡ ಕಲಿಯುತ್ತಿದ್ದೇನೆ | nānu kannaḍa kaliyuttiddēne | I am learning Kannada |\n\n## The magic phrase\n\n**ನನ್ನ ಕನ್ನಡ ಸ್ವಲ್ಪ ಸರಿ ಇಲ್ಲ** (Nanna kannaḍa svalpa sari illa) —\n\"My Kannada isn't quite right.\" People instantly slow down, smile, and\nhelp. Then: **ನಿಧಾನವಾಗಿ ಮಾತನಾಡಿ** (nidhānavāgi mātanāḍi) —\n\"please speak slowly\". These two sentences open more doors than perfect\ngrammar ever will.\n## Mini-practice\n\nFill in and say: ನನ್ನ ಹೆಸರು ___. ನಾನು ___ ನವನು/ನವಳು. ನನಗೆ ಸಂತೋಷ!\nThen ask: ನಿಮ್ಮ ಹೆಸರು ಏನು? ನೀವು ಎಲ್ಲಿಂದ? Keep the respect endings\n(-ನವರು for a respected person: ಅವರು ಭಾರತದವರು — they are from India).\nPractise with a mirror; introduce yourself three times.\n"
+        },
+        {
+          "id": "kn_greet_family",
+          "chapterId": "ch_kn_greet",
+          "title": "ಕುಟುಂಬ · Family",
+          "subtitle": "The age-marked kinship words Kannada families run on",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ಕುಟುಂಬ (Family)\n\nKannada kinship words encode **relative age**, not just relation. A\nbrother is one of two words depending on whether he is older or younger\nthan you. There is no single neutral \"brother\".\n\n## The core family\n\n| Kannada | Transliteration | Meaning |\n|---|---|---|\n| ಅಮ್ಮ | amma | mother |\n| ಅಪ್ಪ | appa | father |\n| ಅಣ್ಣ | aṇṇa | elder brother |\n| ತಮ್ಮ | tamma | younger brother |\n| ಅಕ್ಕ | akka | elder sister |\n| ತಂಗಿ | taṅgi | younger sister |\n| ಅಜ್ಜ | ajja | grandfather |\n| ಅಜ್ಜಿ | ajji | grandmother |\n| ಮಗ | maga | son |\n| ಮಗಳು | magaḷu | daughter |\n\n## Using them as address\n\nThese words double as **forms of address** — you call your elder brother\n**ಅಣ್ಣ** to his face, and a friendly shopkeeper's wife **ಅಕ್ಕ**. Even\nstrangers: an auto driver may be **ಅಣ್ಣ**, a vegetable seller\n**ಅಕ್ಕ/ಅಮ್ಮ** depending on age.\n\n## Sentences\n\n- **ಇದು ನನ್ನ ಅಣ್ಣ.** — This is my elder brother.\n- **ನನ್ನ ಅಕ್ಕ ಶಿಕ್ಷಕಿ.** — My elder sister is a teacher.\n- **ನನ್ನ ಕುಟುಂಬ ದೊಡ್ಡದು.** — My family is big.\n- **ನನಗೆ ಒಬ್ಬ ತಮ್ಮ ಇದ್ದಾನೆ.** — I have one younger brother.\n\n> Note the respect order at the dinner table too — elders are served\n> first, and the words for aunt/uncle (ಚಿಕ್ಕಪ್ಪ, ದೊಡ್ಡಮ್ಮ…) keep the same\n> older/younger logic on the parent's side.\n## Mini-practice\n\nMap YOUR family: ಅಮ್ಮ, ಅಪ್ಪ, elder/younger brothers and sisters with\nಅಣ್ಣ/ತಮ್ಮ/ಅಕ್ಕ/ತಂಗಿ, then grandparents ಅಜ್ಜ/ಅಜ್ಜಿ. Say two sentences:\nಇದು ನನ್ನ ___. ನನಗೆ ___ ಇದ್ದಾನೆ/ಇದ್ದಾಳೆ (I have a brother/sister).\nNotice how the kinship word itself tells the listener who is older —\nno pronoun needed.\n"
+        },
+        {
+          "id": "kn_greet_numbers",
+          "chapterId": "ch_kn_greet",
+          "title": "ಎಣಿಕೆ · Numbers",
+          "subtitle": "Kannada numerals ೦–೯ and counting to one hundred",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# ಎಣಿಕೆ (Numbers)\n\n## The numerals\n\n| Digit | Kannada | Name | Digit | Kannada | Name |\n|---|---|---|---|---|---|\n| 0 | ೦ | ಶೂನ್ಯ | 5 | ೫ | ಐದು |\n| 1 | ೧ | ಒಂದು | 6 | ೬ | ಆರು |\n| 2 | ೨ | ಎರಡು | 7 | ೭ | ಏಳು |\n| 3 | ೩ | ಮೂರು | 8 | ೮ | ಎಂಟು |\n| 4 | ೪ | ನಾಲ್ಕು | 9 | ೯ | ಒಂಬತ್ತು |\n\nBus boards and old shop bills use these digits; phones and new signage\noften use 0–9. Learn both shapes together.\n\n## 11 to 100\n\n- 11 **ಹನ್ನೊಂದು** (hannond), 12 **ಹನ್ನೆರಡು**, 20 **ಇಪ್ಪತ್ತು** (ippattu),\n  30 **ಮೂವತ್ತು** (mūvattu), 40 **ನಲವತ್ತು** (nalavattu),\n  50 **ಐವತ್ತು** (aivattu), 100 **ನೂರು** (nūru).\n- Pattern for 21+: **ಇಪ್ಪತ್ತ್ ಒಂದು** → written **ಇಪ್ಪತ್ತೊಂದು**\n  (ippattoṃda) — twenty-one, literally \"twenty-one\".\n\n## Money and age\n\n- **ಎಷ್ಟು?** (eṣṭu?) — how much? The first market word you need.\n- **ಐವತ್ತು ರೂಪಾಯಿ** — fifty rupees.\n- Age: **ನನಗೆ ಇಪ್ಪತ್ತು ವರ್ಷ ವಯಸ್ಸಾಗಿದೆ** — I am twenty years old.\n  (Lit. \"to me twenty years of age have happened.\")\n\n> Kannada counting is a *systems* language: 10 **ಹತ್ತು**, and the tens\n> words carry old forms (ippattu, mūvattu…) that just need memorising —\n> they are irregular the way English \"eleven, twelve\" are.\n## Mini-practice\n\nCount aloud ೧→೧೦, then jump the tens: ಇಪ್ಪತ್ತು, ಮೂವತ್ತು, ನಲವತ್ತು,\nಐವತ್ತು, ನೂರು. Market drill: ಎಷ್ಟು? → ಐವತ್ತು ರೂಪಾಯಿ → ಸ್ವಲ್ಪ ಕಡಿಮೆ\nಮಾಡಿ! (reduce a little!) → ಸರಿ. You have just haggled in Kannada —\nthe national sport of every Bengaluru market.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_kn_daily",
+      "title": "ದೈನಂದಿನ ಜೀವನ · Daily Life",
+      "subtitle": "Level 2 — Sentences, questions, negation, routine",
+      "order": 2,
+      "lessons": [
+        {
+          "id": "kn_daily_sentences",
+          "chapterId": "ch_kn_daily",
+          "title": "ಸರಳ ವಾಕ್ಯಗಳು · Simple Sentences",
+          "subtitle": "SOV word order and the verb 'to be' — your first real sentences",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 0,
+          "content": "# ಸರಳ ವಾಕ್ಯಗಳು (Simple Sentences)\n\nKannada is **SOV**: Subject → Object → Verb. The verb parks at the end,\nalways. English \"I eat rice\" becomes \"I rice eat\".\n\n## Word order\n\n- **ನಾನು ಅನ್ನ ತಿನ್ನುತ್ತೇನೆ.** — I eat rice. (I rice eat)\n- **ಅವನು ಪುಸ್ತಕ ಓದುತ್ತಾನೆ.** — He reads a book.\n- **ಮಗು ಹಾಲು ಕುಡಿಯುತ್ತದೆ.** — The child drinks milk.\n\n## The \"to be\" verb\n\n**ಇರು** (to be) appears as **ಇದ್ದೇನೆ / ಇದ್ದಾನೆ / ಇದ್ದಾಳೆ / ಇದೆ**:\n\n- **ನಾನು ಮನೆಯಲ್ಲಿದ್ದೇನೆ.** — I am at home.\n- **ಅವನು ಶಾಲೆಯಲ್ಲಿದ್ದಾನೆ.** — He is at school.\n- **ಪುಸ್ತಕ ಮೇಜಿನ ಮೇಲೆ ಇದೆ.** — The book is on the table.\n\n## Location glue: -ಅಲ್ಲಿ\n\n**ಮನೆ + ಅಲ್ಲಿ → ಮನೆಯಲ್ಲಿ** (in the house); **ಊರಲ್ಲಿ** (in town);\n**ಬೀದಿಯಲ್ಲಿ** (on the street). \"On/above\" is **ಮೇಲೆ**, \"under\" is\n**ಕೆಳಗೆ**, \"near\" is **ಹತ್ತಿರ**.\n\n## Three more everyday verbs\n\n| Kannada | Transliteration | Meaning |\n|---|---|---|\n| ಹೋಗು | hōgu | go |\n| ಬಾ | bā | come |\n| ಕುಳಿತುಕೊಳ್ಳು | kuḷitukoḷḷu | sit (down) |\n\n**ನಾನು ಊರಿಗೆ ಹೋಗುತ್ತೇನೆ** — I am going to town. (**-ಗೆ** = \"to\".)\n## Mini-practice\n\nSwap nouns in the frames: ನಾನು ___ ತಿನ್ನುತ್ತೇನೆ (ಊಟ/ಹಣ್ಣು/ದೋಸೆ).\nಅವನು ___ ಓದುತ್ತಾನೆ (ಪುಸ್ತಕ/ಪತ್ರಿಕೆ). ಪುಸ್ತಕ ___ ಇದೆ (ಮೇಜಿನ ಮೇಲೆ/ಮಣೆಯ\nಮೇಲೆ). Remember the ending changes with the pronoun — ತಿನ್ನುತ್ತೇನೆ\n(I), ತಿನ್ನುತ್ತಾನೆ (he), ತಿನ್ನುತ್ತಾಳೆ (she), ತಿನ್ನುತ್ತಾರೆ (they/resp).\n"
+        },
+        {
+          "id": "kn_daily_questions",
+          "chapterId": "ch_kn_daily",
+          "title": "ಪ್ರಶ್ನೆಗಳು · Questions",
+          "subtitle": "What, who, where, when — the four question words that unlock talk",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 1,
+          "content": "# ಪ್ರಶ್ನೆಗಳು (Questions)\n\nKannada question words stay **in place** — no word shuffling. \"You are\ngoing where?\" is exactly how it works.\n\n## The question words\n\n| Kannada | Transliteration | Meaning | Example |\n|---|---|---|---|\n| ಏನು | ēnu | what | ಇದು ಏನು? — What is this? |\n| ಯಾರು | yāru | who | ಅವರು ಯಾರು? — Who is that? |\n| ಎಲ್ಲಿ | elli | where | ಬಸ್ ಎಲ್ಲಿ? — Where is the bus? |\n| ಯಾವಾಗ | yāvāga | when | ಬರುವಿರಾ? ಯಾವಾಗ? — When are you coming? |\n| ಎಷ್ಟು | eṣṭu | how much | ಎಷ್ಟು ಬೆಲೆ? — How much is it? |\n| ಯಾವ | yāva | which | ಯಾವ ಊರು? — Which town? |\n\n## Yes / no questions\n\nAdd **-ಆ?** to the last word and raise the tone:\n**ನೀವು ಬರುವಿರಾ?** (nīvu baruvirā?) — Are you coming?\n**ಸರಿಯಾ?** (sariyā?) — Is it okay?\n\n## The all-purpose answers\n\n- **ಹೌದು** (haudu) — yes. **ಅಲ್ಲ / ಇಲ್ಲ** (alla / illa) — no / not.\n- **ಸರಿ** (sari) — okay/fine — the most used word in Karnataka, honestly.\n- **ಗೊತ್ತಿಲ್ಲ** (gottilla) — I don't know. Save this one; you'll use it.\n\n## Politeness tap\n\nSoften a question with **ಪ್ಲೀಸ್**-free Kannada: **ಒಂದು ನಿಮಿಷ** (one\nmoment), **ಕ್ಷಮಿಸಿ** (excuse me) before asking a stranger. A question\nwrapped in ಕ್ಷಮಿಸಿ never sounds rude.\n## Mini-practice\n\nAnswer, don't just ask: ಇದು ಏನು? → ಇದು ಪುಸ್ತಕ. ಬಸ್ ಎಲ್ಲಿ? → ಅಲ್ಲಿ!\nಯಾವಾಗ ಬರುವಿರಾ? → ಈಗಲೇ (right now). ಎಷ್ಟು ಬೆಲೆ? → ನಲವತ್ತು ರೂಪಾಯಿ.\nQuestion words stay put, answers slot into the same hole — practise\nthe pair, not just the question.\n"
+        },
+        {
+          "id": "kn_daily_negation",
+          "chapterId": "ch_kn_daily",
+          "title": "ನಿಷೇಧ · Negation",
+          "subtitle": "ಇಲ್ಲ, ಅಲ್ಲ, -ಅಲ್ಲ — the three no's and when each applies",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 2,
+          "content": "# ನಿಷೇಧ (Negation)\n\nKannada splits \"no\" into jobs. Pick the right one and sentences click.\n\n## 1. ಇಲ್ಲ — \"there isn't / I don't have\"\n\n- **ಹಣ ಇಲ್ಲ.** — There is no money.\n- **ನನಗೆ ಸಮಯ ಇಲ್ಲ.** — I have no time. (Lit. \"to me time is-not\")\n- **ಇಲ್ಲ, ಬೇಡ.** — No, (I) don't want.\n\n## 2. ಅಲ್ಲ — \"it is not\" (identity)\n\n- **ಇದು ಹಾಲು ಅಲ್ಲ, ನೀರು.** — This is not milk, (it is) water.\n- **ನಾನು ಡಾಕ್ಟರ್ ಅಲ್ಲ.** — I am not a doctor.\n\n## 3. Verb negation — the -ಅಲ್ಲ / -ಇಲ್ಲ endings\n\nVerbs negate by suffix: **ಹೋಗುತ್ತೇನೆ** (I go) → **ಹೋಗುವುದಿಲ್ಲ**\n(I won't go) / habitual **ಹೋಗುವುದಿಲ್ಲ**; simple past negative uses\n**-ಅಲ್ಲಿಲ್ಲ**: **ಹೋಗಲಿಲ್ಲ** (did not go).\n\n| Positive | Negative | Meaning |\n|---|---|---|\n| ಗೊತ್ತು | ಗೊತ್ತಿಲ್ಲ | know / don't know |\n| ಇಷ್ಟ | ಇಷ್ಟವಿಲ್ಲ | like / don't like |\n| ಬೇಕು | ಬೇಡ | want / don't want |\n| ಆಗುತ್ತದೆ | ಆಗುವುದಿಲ್ಲ | can be done / can't be done |\n\n> **ಬೇಡ** (bēḍa) is the polite \"no thank you\" — at a shop, **ಬೇಡ ಸಾರ್**\n> (\"no, thanks\") with a small head shake closes any sales pitch kindly.\n## Mini-practice\n\nPick the right no: water absent? → ನೀರು ಇಲ್ಲ. Not a doctor? → ನಾನು\nಡಾಕ್ಟರ್ ಅಲ್ಲ. Don't know? → ಗೊತ್ತಿಲ್ಲ. Don't want? → ಬೇಡ. Four no's\nwith four jobs — ಇಲ್ಲ for absence, ಅಲ್ಲ for identity, ಬೇಡ for\nrefusal, ಗೊತ್ತಿಲ್ಲ for knowledge. Zero confusion now.\n"
+        },
+        {
+          "id": "kn_daily_routine",
+          "chapterId": "ch_kn_daily",
+          "title": "ದಿನಚರಿ · Daily Routine",
+          "subtitle": "Telling what you do every day — clocks, meals, and the work verb",
+          "difficulty": "beginner",
+          "xpReward": 15,
+          "order": 3,
+          "content": "# ದಿನಚರಿ (Daily Routine)\n\n## Clock times\n\n- **ಈಗ ಎಷ್ಟು ಗಂಟೆ?** — What time is it now?\n- **ಆರು ಗಂಟೆಯಾಗಿದೆ.** — It is six o'clock.\n- Morning **ಬೆಳಿಗ್ಗೆ**, afternoon **ಮಧ್ಯಾಹ್ನ**, evening **ಸಂಜೆ**,\n  night **ರಾತ್ರಿ**. **ಬೆಳಿಗ್ಗೆ ಏಳು ಗಂಟೆ** — seven in the morning.\n\n## A day, narrated\n\n- **ನಾನು ಬೆಳಿಗ್ಗೆ ಆರು ಗಂಟೆಗೆ ಏಳುತ್ತೇನೆ.** — I wake at six in the morning.\n- **ಕಾಫಿ ಕುಡಿಯುತ್ತೇನೆ.** — I drink coffee. (Bengaluru approves.)\n- **ಎಂಟರಿಗೆ ಕೆಲಸಕ್ಕೆ ಹೋಗುತ್ತೇನೆ.** — At eight I go to work.\n- **ರಾತ್ರಿ ಹತ್ತರಿಗೆ ಮಲಗುತ್ತೇನೆ.** — At ten at night I sleep.\n\n## Meal words\n\n| Kannada | Transliteration | Meal |\n|---|---|---|\n| ತಿಂಡಿ | tiṃdi | breakfast/snack |\n| ಊಟ | ūṭa | lunch/full meal |\n| ತಿಂಡಿ (evening) | — | tiffin, evening snack |\n| ಅಹಾರ | ahāra | food (formal) |\n\n**ಊಟ ಆಯಿತಾ?** — Is lunch done/ready? **ರುಚಿಯಾಗಿದೆ!** — It's tasty!\n\n## Every-day verbs to chain\n\nಏಳು (wake) → ಕುಡಿ (drink) → ಹೋಗು (go) → ಕೆಲಸ ಮಾಡು (work) →\nಬಾ (come back) → ತಿನ್ನು (eat) → ಮಲಗು (sleep). String five of them with\ntimes and you have a full minute of natural Kannada.\n## Mini-practice\n\nNarrate YOUR day in five sentences: ಬೆಳಿಗ್ಗೆ ___ ಗಂಟೆಗೆ ಏಳುತ್ತೇನೆ.\nಚಹಾ/ಕಾಫಿ ಕುಡಿಯುತ್ತೇನೆ. ___ ಗಂಟೆಗೆ ಕೆಲಸಕ್ಕೆ ಹೋಗುತ್ತೇನೆ. ಸಂಜೆ ___ ಇರುತ್ತೇನೆ.\nರಾತ್ರಿ ___ ಗಂಟೆಗೆ ಮಲಗುತ್ತೇನೆ. Time words + verbs = a full spoken\nroutine. Record yourself once; listen for the verb at the end.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_kn_grammar",
+      "title": "ವ್ಯಾಕರಣ · Grammar",
+      "subtitle": "Level 3 — Pronouns, tenses, cases, politeness",
+      "order": 3,
+      "lessons": [
+        {
+          "id": "kn_grammar_pronouns",
+          "chapterId": "ch_kn_grammar",
+          "title": "ಸರ್ವನಾಮಗಳು · Pronouns",
+          "subtitle": "The nine pronouns and the respect line you must not cross",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# ಸರ್ವನಾಮಗಳು (Pronouns)\n\n## The set\n\n| Kannada | Transliteration | Meaning |\n|---|---|---|\n| ನಾನು | nānu | I |\n| ನೀನು | nīnu | you (intimate) |\n| ನೀವು | nīvu | you (respectful/plural) |\n| ಅವನು | avanu | he (close) |\n| ಅವಳು | avaḷu | she (close) |\n| ಅದು | adu | it |\n| ನಾವು | nāvu | we |\n| ಅವರು | avaru | they / he-she (respectful) |\n| ಅವು | avu | they (things) |\n\n## The respect line\n\nUse **ನೀವು** with strangers, elders, teachers, customers — everyone\noutside your closest circle. **ನೀನು** is for children, younger siblings,\nclose friends. Referring *about* a respected person? Use **ಅವರು**\n(\"they\") — the respectful plural doubles as honorific \"he/she\".\n\n## Gender is natural, not grammatical\n\nTables, books, cities are all **ಅದು/ಅವು** (it/they) — Kannada has no\nmasculine-feminine *grammar* for objects. Only people take ಅವನು/ಅವಳು.\nThis makes noun gender — the nightmare of Hindi learners — a non-issue\nhere.\n\n## Verb agreement preview\n\nThe pronoun picks the verb ending:\nನಾನು ಮಾಡುತ್ತೇನೆ (I do) / ನೀನು ಮಾಡುತ್ತೀಯ / ಅವನು ಮಾಡುತ್ತಾನೆ /\nಅವಳು ಮಾಡುತ್ತಾಳೆ / ನಾವು ಮಾಡುತ್ತೇವೆ / ನೀವು ಮಾಡುತ್ತೀರಿ / ಅವರು ಮಾಡುತ್ತಾರೆ.\nOne verb, seven endings — you already know the pattern words.\n## Mini-practice\n\nConjugate ಓದು (read) across the set: ನಾನು ಓದುತ್ತೇನೆ, ನೀನು ಓದುತ್ತೀಯ,\nಅವನು ಓದುತ್ತಾನೆ, ಅವಳು ಓದುತ್ತಾಳೆ, ನಾವು ಓದುತ್ತೇವೆ, ನೀವು ಓದುತ್ತೀರಿ,\nಅವರು ಓದುತ್ತಾರೆ. Say it as a rhythm chant — the endings are a song.\nThen swap the verb to ಬರು (come): ಬರುತ್ತೇನೆ… same endings.\n"
+        },
+        {
+          "id": "kn_grammar_tenses",
+          "chapterId": "ch_kn_grammar",
+          "title": "ಕಾಲಗಳು · Tenses",
+          "subtitle": "Present, past, future with one verb — ಮಾಡು (do) as the pattern",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# ಕಾಲಗಳು (Tenses)\n\n## The three-time map, using ಮಾಡು (do)\n\n| Tense | I-form | Meaning |\n|---|---|---|\n| Present | ಮಾಡುತ್ತಿದ್ದೇನೆ / ಮಾಡುತ್ತೇನೆ | I am doing / I do |\n| Past | ಮಾಡಿದೆನು / ಮಾಡಿದೆ | I did |\n| Future | ಮಾಡುವೆನು / ಮಾಡುತ್ತೇನೆ (fut.) | I will do |\n\nPresent takes **-ಉತ್ತ-**, past takes **-ಇದ್-**, future takes **-ಉವ-**,\nthen the person ending slots in. Watch it with ಹೋಗು (go):\nಹೋಗುತ್ತೇನೆ / ಹೋದೆನು / ಹೋಗುವೆನು.\n\n## Past forms twist\n\nStrong verbs often change inside the past: **ಕೊಡು** (give) →\n**ಕೊಟ್ಟೆನು** (gave); **ತಗೊಳ್ಳು** (take) → **ತೆಗೆದುಕೊಂಡೆನು** (took);\n**ಬಾ** (come) → **ಬಂದೆನು** (came); **ಹೋಗು** → **ಹೋದೆನು** (went).\nLearn the past form *with* the verb, like a second word.\n\n## Daily three\n\n- **ನಾನು ಪ್ರತಿದಿನ ಓದುತ್ತೇನೆ.** — I read every day.\n- **ನಿನ್ನೆ ನಾನು ಚಿತ್ರ ನೋಡಿದೆನು.** — Yesterday I watched a movie.\n- **ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುವೆನು.** — Tomorrow I will go to Mysuru.\n\nTime words do half the tense work: **ಇಂದು** (today), **ನಿನ್ನೆ**\n(yesterday), **ನಾಳೆ** (tomorrow), **ಪ್ರತಿದಿನ** (every day).\n## Mini-practice\n\nPast-form pairs to memorise as words: ಹೋಗು→ಹೋದೆನು, ಬಾ→ಬಂದೆನು,\nಕೊಡು→ಕೊಟ್ಟೆನು, ತಿನ್ನು→ತಿಂದೆನು, ನೋಡು→ನೋಡಿದೆನು. Build: ನಿನ್ನೆ ನಾನು\nಊರಿಗೆ ಹೋದೆನು. ನಾಳೆ ನಾನು ಪುಸ್ತಕ ಕೊಡುವೆನು. Three tenses, one verb at a\ntime — the pattern does the rest.\n"
+        },
+        {
+          "id": "kn_grammar_cases",
+          "chapterId": "ch_kn_grammar",
+          "title": "ವಿಭಕ್ತಿ · Case Endings",
+          "subtitle": "To, from, with, in — the suffixes that do prepositions' job",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# ವಿಭಕ್ತಿ (Case Endings)\n\nKannada has no prepositions. Instead, the noun wears a **case ending**\nat its end. Learn six endings and you can build location, direction and\ncompanionship sentences all day.\n\n## The big six\n\n| Ending | Meaning | Example |\n|---|---|---|\n| -ಗೆ | to | ಮನೆಗೆ (home-to) |\n| -ಇಂದ | from | ಊರಿಂದ (town-from) |\n| -ಅಲ್ಲಿ | in/at | ಶಾಲೆಯಲ್ಲಿ (in school) |\n| -ಜೊತೆ | with | ಸ್ನೇಹಿತರ ಜೊತೆ (with friends) |\n| -ನ / -ಅವರ | 's (possessive) | ರವಿಯ ಪುಸ್ತಕ (Ravi's book) |\n| -ಅನ್ನು | object marker | ಅನ್ನವನ್ನು ತಿನ್ನು (eat the rice) |\n\n## Sandhi glue\n\nEndings fuse with the noun: ಮನೆ + ಅಲ್ಲಿ → **ಮನೆಯಲ್ಲಿ** (a -ಯ- slips\nin); ಶಾಲೆ + ಗೆ → **ಶಾಲೆಗೆ**. Expect a connective ಯ/ವ sound with\nvowel-ending nouns — it is regular, not chaos.\n\n## Sentences to steal\n\n- **ನಾನು ಬೆಂಗಳೂರಿಗೆ ಹೋಗುತ್ತೇನೆ.** — I'm going to Bengaluru.\n- **ಅವರು ದೆಹಲಿಯಿಂದ ಬಂದರು.** — They came from Delhi.\n- **ನಾನು ಅಪ್ಪನ ಜೊತೆ ಊರಲ್ಲಿ ಇದ್ದೆ.** — I was in town with dad.\n- **ಇದು ಅಜ್ಜಿಯ ಮನೆ.** — This is grandmother's house.\n\n> The object marker **-ಅನ್ನು** is optional with indefinite things\n> (ಪುಸ್ತಕ ಓದು) but expected with definite ones (ಪುಸ್ತಕವನ್ನು ಓದು).\n## Mini-practice\n\nSlot the endings: ಬೆಂಗಳೂರು___ ಹೋಗು (→ -ಗೆ), ದೆಹಲಿ___ ಬಾ (→ -ಇಂದ),\nಶಾಲೆ___ ಇರು (→ -ಅಲ್ಲಿ), ಗೆಳೆಯ___ ಒಟ್ಟಿಗೆ? — ಸ್ನೇಹಿತರ ಜೊತೆ (with\nfriends, → -ಜೊತೆ), ರವಿ___ ಪುಸ್ತಕ (→ -ಯ: ರವಿಯ ಪುಸ್ತಕ). Watch the glue\nಯ/ವ appear with vowel-ending nouns.\n"
+        },
+        {
+          "id": "kn_grammar_politeness",
+          "chapterId": "ch_kn_grammar",
+          "title": "ಗೌರವ · Politeness",
+          "subtitle": "Plurals of respect, the -ರು rule, and softening words",
+          "difficulty": "intermediate",
+          "xpReward": 20,
+          "order": 3,
+          "content": "# ಗೌರವ (Politeness & Honorifics)\n\n## The -ರು respect rule\n\nTo respect a person, Kannada adds **-ರು** (or swaps in the plural verb):\n**ರವಿ ಬಂದಾನೆ** (Ravi came) → **ರವಿಗಳು ಬಂದರು** or better **ರವಿ ಅವರು\nಬಂದರು**. The **-ಅವರು** attach (as in **ರವಿಯವರು**) is the classic\npolite style — you will hear it in every announcement and speech.\n\n## Respect in verbs\n\n| Intimate | Respectful | Meaning |\n|---|---|---|\n| ಬಾ | ಬನ್ನಿ | come |\n| ಕೂರು | ಕೂರಿ / ಕುಳಿತುಕೊಳ್ಳಿ | sit |\n| ಹೇಳು | ಹೇಳಿ | say/tell |\n| ಇರು | ಇರಿ | stay/be |\n\nA shop line: **ಬನ್ನಿ, ಕೂರಿ, ಏನು ಬೇಕು?** — Come, sit, what do you need?\n\n## Softeners\n\n- **ಒಂದು ನಿಮಿಷ** — one moment (please wait a bit)\n- **ದಯವಿಟ್ಟು** — please (formal, announcements)\n- **ಸ್ವಲ್ಪ** — a little (a little slowly, a little less)\n- **ನಿಧಾನ** — slowly/patiently — **ನಿಧಾನವಾಗಿ ಮಾತನಾಡಿ** = speak slowly\n\n## Address titles\n\n**ಅಣ್ಣ/ಅಕ್ಕ** (elder brother/sister) for peers; **ಅಂಕಲ್/ಆಂಟಿ** (from\nEnglish) are completely natural in cities; **ಸಾರ್/ಮೇಡಂ** in offices.\n**ಅವರು** always for third-person respect. Mixing one ಅಕ್ಕ into a\nsentence instantly warms it up.\n## Mini-practice\n\nConvert to respectful: ಬಾ → ಬನ್ನಿ. ಕುಳಿತುಕೋ → ಕುಳಿತುಕೊಳ್ಳಿ. ಹೇಳು →\nಹೇಳಿ. ತಿನ್ನು → ತಿನ್ನಿ. Then soften a demand: ನೀರು ಕೊಡು → ಒಂದು ನಿಮಿಷ,\nನೀರು ಕೊಡಿ? Same sentence, new warmth. End with the universal\nsoother: ನಿಧಾನವಾಗಿ — there is no rush in Karnataka.\n"
+        }
+      ]
+    },
+    {
+      "id": "ch_kn_reading",
+      "title": "ಓದು · Reading",
+      "subtitle": "Level 4 — Conversations, paragraphs, proverbs, review",
+      "order": 4,
+      "lessons": [
+        {
+          "id": "kn_reading_conversation",
+          "chapterId": "ch_kn_reading",
+          "title": "ಸಂಭಾಷಣೆ · Conversations",
+          "subtitle": "Two full dialogues — at the market and meeting a friend",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 0,
+          "content": "# ಸಂಭಾಷಣೆ (Conversations)\n\n## At the vegetable market\n\n> **ಅಂಗಡಿಯವರು:** ಬನ್ನಿ ಬನ್ನಿ, ಏನು ಬೇಕು?\n> **ನೀವು:** ಟೊಮ್ಯಾಟೊ ಎಷ್ಟು?\n> **ಅಂಗಡಿಯವರು:** ಕೆಜಿ ನಲವತ್ತು ರೂಪಾಯಿ.\n> **ನೀವು:** ಸ್ವಲ್ಪ ಕಡಿಮೆ ಮಾಡಿ!\n> **ಅಂಗಡಿಯವರು:** ಸರಿ, ಮೂವತ್ತೈದು ಕೊಡುತ್ತೇನೆ.\n> **ನೀವು:** ಸರಿ, ಎರಡು ಕೆಜಿ ಕೊಡಿ.\n\nTranslation: \"Come! What do you need?\" / \"How much are tomatoes?\" /\n\"Forty rupees a kilo.\" / \"Make it a little less!\" / \"Okay, I'll give\nthirty-five.\" / \"Fine, give me two kilos.\"\n\n## Meeting a friend\n\n> **ನೀವು:** ಹಾಯ್ ವಿಜಯ್! ಹೇಗಿದ್ದೀಯ?\n> **ವಿಜಯ್:** ಚೆನ್ನಾಗಿದ್ದೇನೆ. ನೀನು ಎಲ್ಲಿ ಹೋಗುತ್ತಿದ್ದೀಯ?\n> **ನೀವು:** ಪುಸ್ತಕದ ಅಂಗಡಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.\n> **ವಿಜಯ್:** ಸರಿ. ನಾನೂ ಬರುತ್ತೇನೆ!\n> **ನೀವು:** ಬಾ ಬಾ, ನಡೆಯೋಣ.\n\nTranslation: \"Hi Vijay! How are you?\" / \"I'm well. Where are you\ngoing?\" / \"To the bookshop.\" / \"Okay, I'll come too!\" / \"Come on, let's\nwalk.\"\n\n## Notice\n\n- **-ತ್ತಿದ್ದೇನೆ** marks the \"right now\" continuous — ಹೋಗುತ್ತಿದ್ದೇನೆ = am\n  going (right now).\n- **ನೂ** = \"also/too\", tagged on: ನಾನೂ = me too.\n- **ಬಾ ಬಾ / ನಡೆಯೋಣ** — friendly come-on / let's-go lines, used constantly.\n## Mini-practice\n\nAct both roles of the market dialogue from memory, then change the\nitem: ದ್ರಾಕ್ಷಿ (grapes), ಬಾಳೆಹಣ್ಣು (banana), ಹಾಲು (milk). Change the\nnumbers too. The frames — ಎಷ್ಟು? / ಸ್ವಲ್ಪ ಕಡಿಮೆ ಮಾಡಿ! / ಸರಿ — never\nchange; only nouns and numerals rotate.\n"
+        },
+        {
+          "id": "kn_reading_paragraph",
+          "chapterId": "ch_kn_reading",
+          "title": "ಪ್ಯಾರಾ ಓದು · Reading Paragraphs",
+          "subtitle": "A short postcard from Mysuru — comprehension without fear",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 1,
+          "content": "# ಪ್ಯಾರಾ ಓದು (Reading a Paragraph)\n\n## The text\n\n**ನನ್ನ ಮೈಸೂರು ಪ್ರವಾಸ**\n\nಕಳೆದ ವಾರ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗಿದ್ದೆ. ಬೆಂಗಳೂರಿನಿಂದ ಬಸ್ಸಿನಲ್ಲಿ ಮೂರು ಗಂಟೆ.\nಅಲ್ಲಿ ಅರಮನೆ ನೋಡಿದೆ — ಬಹಳ ದೊಡ್ಡದು, ಬಹಳ ಸುಂದರ! ಸಂಜೆ ಚಾಮುಂಡಿ ಬೆಟ್ಟಕ್ಕೆ\nಹೋಗಿ ಊರನ್ನು ನೋಡಿದೆ. ರಸ್ತೆಯಲ್ಲಿ ಮೈಸೂರು ಪಾಕ್ ತಿಂದೆ — ರುಚಿ!\n\n## Sentence by sentence\n\n1. **ಕಳೆದ ವಾರ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗಿದ್ದೆ.** — Last week I went to Mysuru.\n   (ಕಳೆದ = last/past; -ಗೆ = to; ಹೋಗಿದ್ದೆ = went)\n2. **ಬೆಂಗಳೂರಿನಿಂದ ಬಸ್ಸಿನಲ್ಲಿ ಮೂರು ಗಂಟೆ.** — Three hours by bus from\n   Bengaluru. (-ಇಂದ = from; -ಅಲ್ಲಿ = in)\n3. **ಅರಮನೆ ನೋಡಿದೆ — ಬಹಳ ದೊಡ್ಡದು, ಸುಂದರ!** — Saw the palace — very big,\n   beautiful! (ಬಹಳ = very; ದೊಡ್ಡ = big)\n4. **ಚಾಮುಂಡಿ ಬೆಟ್ಟಕ್ಕೆ ಹೋಗಿ ಊರನ್ನು ನೋಡಿದೆ.** — Went up Chamundi Hill and\n   saw the town. (ಬೆಟ್ಟ = hill)\n5. **ಮೈಸೂರು ಪಾಕ್ ತಿಂದೆ — ರುಚಿ!** — Ate Mysore pak — delicious!\n\n## Comprehension check\n\n- How long is the bus ride? **ಮೂರು ಗಂಟೆ** (three hours).\n- What did the writer eat? **ಮೈಸೂರು ಪಾಕ್**.\n- Two places visited: **ಅರಮನೆ** and **ಚಾಮುಂಡಿ ಬೆಟ್ಟ**.\n\nYou just read a real paragraph. Every word in it came from lessons you\nhave already done — that is the whole point of the ladder.\n## Mini-practice\n\nRe-read the Mysuru paragraph aloud twice, then rebuild it from memory\nin English→Kannada order: last-week / I / Mysuru-to / went. Where\ndoes the verb land? (At the end — every sentence.) Then change one\ndetail and re-say it: ಬಸ್ಸಿನಲ್ಲಿ → ರೈಲಿನಲ್ಲಿ (by train). You are now\nediting Kannada, not just reading it.\n"
+        },
+        {
+          "id": "kn_reading_proverbs",
+          "chapterId": "ch_kn_reading",
+          "title": "ಗಾದೆಗಳು · Proverbs",
+          "subtitle": "Four Kannada proverbs and the culture inside them",
+          "difficulty": "advanced",
+          "xpReward": 20,
+          "order": 2,
+          "content": "# ಗಾದೆಗಳು (Proverbs & Culture)\n\nProverbs (**ಗಾದೆಗಳು**) are grammar, vocabulary and worldview in one\nline. Four classics:\n\n## 1. ಮಾತು ಬೆಳ್ಳಿ, ಮೌನ ಬಂಗಾರ\n\n\"Speech is silver, silence is gold.\" — **ಮಾತು** (speech), **ಬೆಳ್ಳಿ**\n(silver), **ಮೌನ** (silence), **ಬಂಗಾರ** (gold). Used when someone wisely\nholds their tongue.\n\n## 2. ಬಿತ್ತಿದ ಬೀಜ ಮೊಳಕೆಯೊಡೆಯುತ್ತದೆ\n\n\"The sown seed sprouts.\" — effort shows its result in time. **ಬಿತ್ತು**\n(sow), **ಬೀಜ** (seed), **ಮೊಳಕೆ** (sprout). A farmer's proverb from an\nagricultural land — say it to a learner; it applies to you.\n\n## 3. ಇಲ್ಲದ ಮನೆಗೆ ಇರುಳೆ ಸೇರಿದಂತೆ\n\n\"Like an owl arriving at a house that has nothing.\" — arriving empty-\nhanded where nothing exists. **ಇಲ್ಲದ** (not-having), **ಇರುಳೆ** (owl —\nಗೂಬೆ in modern speech). Teaches the classic negative participle **ಇಲ್ಲ+ದ**.\n\n## 4. ಅಪ್ಪ ಹೇಳಿದ್ದು ಅಕ್ಷರ, ಅಮ್ಮ ಹೇಳಿದ್ದು ಅನ್ನ\n\n\"What father says is a letter, what mother says is food.\" — both\nparents' words nourish differently. Notice **ಅಕ್ಷರ** (letter/learning)\nand **ಅನ್ನ** (cooked rice/food) — two of Kannada's most culture-loaded\nwords.\n\n> Proverbs respect word order too — SOV holds inside them. Read each\n> one aloud twice; rhythm is half the memory.\n## Mini-practice\n\nMatch proverb to situation: your friend keeps talking over everyone\n(→ ಮಾತು ಬೆಳ್ಳಿ, ಮೌನ ಬಂಗಾರ). You feel your daily practice is slow\n(→ ಬಿತ್ತಿದ ಬೀಜ ಮೊಳಕೆಯೊಡೆಯುತ್ತದೆ). Say each proverb with the story —\nproverbs live as stories, not strings.\n"
+        },
+        {
+          "id": "kn_reading_review",
+          "chapterId": "ch_kn_reading",
+          "title": "ಪುನರ್ವಿಮರ್ಶೆ · Review",
+          "subtitle": "Everything from ಅ to ಹ — the full beginner journey in one page",
+          "difficulty": "advanced",
+          "xpReward": 25,
+          "order": 3,
+          "content": "# ಪುನರ್ವಿಮರ್ಶೆ (Review)\n\n## Script ladder (chapters 1)\n\n- 14 vowels **ಸ್ವರಗಳು**, the consonant grid **ವ್ಯಂಜನಗಳು**, vowel signs\n  **ಮಾತ್ರೆಗಳು**, subjoined clusters **ವಟ್ಟಕ್ಷರ**.\n- Reading strategy: headstroke → verticals → left-to-right.\n- Sight-clusters to own: ನ್ನ, ಮ್ಮ, ಲ್ಲ, ಟ್ಟ, ರ್ಯ.\n\n## Words you now have (chapter 2)\n\nನಮಸ್ಕಾರ, ಧನ್ಯವಾದಗಳು, ಕ್ಷಮಿಸಿ, ಹೇಗಿದ್ದೀರಾ, ಚೆನ್ನಾಗಿದ್ದೇನೆ,\nನನ್ನ ಹೆಸರು…, ಅಮ್ಮ, ಅಪ್ಪ, ಅಣ್ಣ, ಅಕ್ಕ, ತಮ್ಮ, ತಂಗಿ, ಒಂದು…ಹತ್ತು, ನೂರು,\nಎಷ್ಟು, ರೂಪಾಯಿ.\n\n## Sentences you can build (chapters 3–4)\n\n- SOV with ಇರು: **ನಾನು ಮನೆಯಲ್ಲಿದ್ದೇನೆ.**\n- Questions: **ಇದು ಏನು?** **ಬಸ್ ಎಲ್ಲಿ?** **ಎಷ್ಟು ಬೆಲೆ?**\n- Negatives: **ಗೊತ್ತಿಲ್ಲ**, **ಇದು ಅಲ್ಲ**, **ಬೇಡ**.\n- Times: **ಬೆಳಿಗ್ಗೆ ಏಳು ಗಂಟೆಗೆ ಏಳುತ್ತೇನೆ.**\n- Pronouns + endings: ಮಾಡುತ್ತೇನೆ / -ತ್ತೀಯ / -ತ್ತಾನೆ / -ತ್ತಾಳೆ / -ತ್ತೇವೆ /\n  -ತ್ತೀರಿ / -ತ್ತಾರೆ.\n- Cases: -ಗೆ, -ಇಂದ, -ಅಲ್ಲಿ, -ಜೊತೆ, -ನ, -ಅನ್ನು.\n\n## Self-check questions\n\n1. Write **ನನ್ನ ಹೆಸರು ___** and finish it with your name.\n2. Ask the price of anything: **___ ಎಷ್ಟು?**\n3. Say one past-tense sentence with **ಹೋಗು**.\n4. Read **ಸಂಸ್ಕೃತಿ**, **ಧೈರ್ಯ**, **ಸ್ವಾಗತ** aloud.\n\nIf all four feel easy, you are no longer a beginner in the beginner\nchapter sense — the adaptive engine will now push you toward review of\nwhatever dipped. ಶುಭ! (Good luck!)\n## Mini-practice\n\nThe four self-check sentences — do them NOW, aloud: 1) ನನ್ನ ಹೆಸರು\n___, 2) ___ ಎಷ್ಟು?, 3) one ಹೋದೆನು-sentence, 4) read ಸಂಸ್ಕೃತಿ, ಧೈರ್ಯ,\nಸ್ವಾಗತ. All smooth? Your practice engine moves to maintenance mode —\nshort, spaced reviews of exactly what you dipped on.\n"
+        }
+      ]
+    }
+  ],
+  "quizzes": [],
+  "vocabulary": [],
+  "notes": "Part H curriculum for Kannada (M9). Native-script lessons grounded in beginner-accurate Kannada; exercises live in lib/features/learn/data/kannada_exercises.dart keyed by lesson id."
+}

@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "id": "cbse_9_hindi_r1",
+  "board": {
+    "id": "cbse",
+    "name": "Central Board of Secondary Education",
+    "nameHi": "केन्द्रीय माध्यमिक शिक्षा बोर्ड"
+  },
+  "class": 9,
+  "subject": {
+    "id": "hindi",
+    "name": "हिन्दी"
+  },
+  "course": {
+    "id": "cbse_9_hindi_r1",
+    "name": "हिन्दी आर-1",
+    "nameEn": "Hindi R-1 (First Language)"
+  },
+  "syllabusVersion": "2026-27",
+  "source": {
+    "authority": "Official CBSE curriculum document",
+    "pdf": "Hindi_SecP1IX_2026-27.pdf",
+    "extraction": "text-layer + OCR dual verification (see docs/Syllabus/INGESTION_REPORT.md)"
+  },
+  "assessment": {
+    "boardExam": {
+      "totalMarks": 80,
+      "durationHours": 3
+    },
+    "internalAssessment": {
+      "totalMarks": 20,
+      "components": null,
+      "note": "PDF specifies 20 marks आंतरिक परीक्षा without a published component breakdown for 2026-27."
+    }
+  },
+  "sections": [
+    {
+      "id": "cbse_9_hindi_r1_unread",
+      "stableKey": "unread",
+      "title": "अपठित बोध",
+      "titleEn": "Unseen Comprehension",
+      "marks": 14,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_9_hindi_r1_unread_prose",
+          "title": "अपठित गद्यांश (लगभग 200 शब्द)",
+          "titleEn": "Unseen prose passage (~200 words)",
+          "sectionId": "cbse_9_hindi_r1_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 7,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय (MCQ) 1×3",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            },
+            {
+              "pattern": "अतिलघूत्तरात्मक / लघूत्तरात्मक 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              3,
+              4
+            ]
+          },
+          "contentTags": [
+            "reading"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_unread_poetry",
+          "title": "अपठित काव्यांश (लगभग 80–100 शब्द)",
+          "titleEn": "Unseen poetry passage (~80–100 words)",
+          "sectionId": "cbse_9_hindi_r1_unread",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 7,
+          "questionPatterns": [
+            {
+              "pattern": "बहुविकल्पीय (MCQ) 1×3",
+              "marksEach": 1,
+              "count": 3,
+              "totalMarks": 3
+            },
+            {
+              "pattern": "अतिलघूत्तरात्मक / लघूत्तरात्मक 2×2",
+              "marksEach": 2,
+              "count": 2,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              4
+            ]
+          },
+          "contentTags": [
+            "reading",
+            "poetry"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_9_hindi_r1_grammar",
+      "stableKey": "grammar",
+      "title": "व्यावहारिक व्याकरण",
+      "titleEn": "Applied Grammar",
+      "marks": 16,
+      "assessmentType": "board",
+      "note": "कुल 20 प्रश्न पूछे जाएँगे; केवल 16 के उत्तर देने होंगे (1×16)।",
+      "items": [
+        {
+          "id": "cbse_9_hindi_r1_grammar_word_formation",
+          "title": "शब्द-निर्माण — उपसर्ग (2 अंक) एवं प्रत्यय (2 अंक)",
+          "titleEn": "Word formation — prefixes & suffixes",
+          "sectionId": "cbse_9_hindi_r1_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "उपसर्ग": "2 अंक",
+            "प्रत्यय": "2 अंक"
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              4
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_grammar_parts_of_speech",
+          "title": "संज्ञा, सर्वनाम, विशेषण, क्रिया",
+          "titleEn": "Noun, pronoun, adjective, verb",
+          "sectionId": "cbse_9_hindi_r1_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              4
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_grammar_sentence_types_meaning",
+          "title": "अर्थ की दृष्टि से वाक्य-भेद",
+          "titleEn": "Sentence types by meaning",
+          "sectionId": "cbse_9_hindi_r1_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              4,
+              5
+            ]
+          },
+          "contentTags": [
+            "grammar"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_grammar_alankar",
+          "title": "अलंकार — शब्दालंकार: अनुप्रास, यमक, श्लेष",
+          "titleEn": "Figures of speech — word-level: anupras, yamak, shlesh",
+          "sectionId": "cbse_9_hindi_r1_grammar",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 4,
+          "questionPatterns": [
+            {
+              "pattern": "5 में से 4 प्रश्न",
+              "marksEach": 1,
+              "count": 4,
+              "totalMarks": 4
+            }
+          ],
+          "details": {
+            "शब्दालंकार": [
+              "अनुप्रास",
+              "यमक",
+              "श्लेष"
+            ]
+          },
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              5
+            ]
+          },
+          "contentTags": [
+            "grammar",
+            "poetics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cbse_9_hindi_r1_literature",
+      "stableKey": "literature",
+      "title": "पाठ्यपुस्तक",
+      "titleEn": "Prescribed Textbook",
+      "marks": 30,
+      "assessmentType": "board",
+      "note": "NCERT पाठ्यपुस्तक (राष्ट्रीय पाठ्यचया रूपरेखा 2023 आधारित) — अध्याय सूची PDF में जारी नहीं है।",
+      "items": []
+    },
+    {
+      "id": "cbse_9_hindi_r1_writing",
+      "stableKey": "writing",
+      "title": "रचनात्मक लेखन",
+      "titleEn": "Creative Writing",
+      "marks": 20,
+      "assessmentType": "board",
+      "items": [
+        {
+          "id": "cbse_9_hindi_r1_writing_paragraph",
+          "title": "अनुच्छेद लेखन (लगभग 120 शब्द)",
+          "titleEn": "Paragraph writing (~120 words)",
+          "sectionId": "cbse_9_hindi_r1_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              5
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_writing_letter_informal",
+          "title": "पत्र लेखन — अनौपचारिक (लगभग 100 शब्द, विकल्प सहित)",
+          "titleEn": "Informal letter (~100 words, with choice)",
+          "sectionId": "cbse_9_hindi_r1_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              5
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_writing_dialogue",
+          "title": "संवाद लेखन (लगभग 80 शब्द, विकल्प सहित)",
+          "titleEn": "Dialogue writing (~80 words, with choice)",
+          "sectionId": "cbse_9_hindi_r1_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              5
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        },
+        {
+          "id": "cbse_9_hindi_r1_writing_notice",
+          "title": "सूचना लेखन (लगभग 80 शब्द, विकल्प सहित)",
+          "titleEn": "Notice writing (~80 words, with choice)",
+          "sectionId": "cbse_9_hindi_r1_writing",
+          "assessmentType": "board",
+          "status": "published",
+          "marks": 5,
+          "sourceRef": {
+            "pdf": "cbse_9_hindi_r1",
+            "pages": [
+              5
+            ]
+          },
+          "contentTags": [
+            "writing"
+          ]
+        }
+      ]
+    }
+  ],
+  "pendingOfficialAnnouncement": {
+    "appliesTo": "literature",
+    "reason": "PDF (2026-27) prescribes the NCERT textbook issued under राष्ट्रीय पाठ्यचया रूपरेखा 2023 but does not publish book titles or chapter lists.",
+    "sourceQuote": "राष्ट्रीय शैक्षणिक अनुसंधान परिषद की ओर द्वारा राष्ट्रीय पाठ्यचया की रूपरेखा 2023 के आधार पर जारी की गई पाठ्यपुस्तक के आधार पर साहित्य से संबंधित अध्ययन किया जाए।",
+    "sourcePages": [
+      5,
+      10
+    ],
+    "action": "Chapter list must be ingested when CBSE/NCERT publishes it. Do NOT invent chapters."
+  },
+  "notes": [
+    "Class 9 Hindi (2026-27) is restructured under NCF-SE 2023 into आर-1 / आर-2 tracks; both come from the same official PDF."
+  ]
+}

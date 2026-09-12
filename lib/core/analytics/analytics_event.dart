@@ -57,6 +57,15 @@ enum AnalyticsEventName {
   /// An achievement was unlocked.
   achievementUnlocked,
 
+  /// A competency learning milestone was unlocked (Milestone 7).
+  milestoneUnlocked,
+
+  /// The learner's daily goal was reached (fires once per day).
+  dailyGoalReached,
+
+  /// The daily review challenge bonus was claimed (fires once per day).
+  reviewChallengeCompleted,
+
   /// The day streak extended.
   streakExtended,
 
