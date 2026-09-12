@@ -28,9 +28,18 @@ import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 
 class ExamPracticeScreen extends ConsumerStatefulWidget {
-  const ExamPracticeScreen({super.key, required this.trackId});
+  const ExamPracticeScreen({
+    super.key,
+    required this.trackId,
+    this.focusTopicId,
+  });
 
   final String trackId;
+  final String? focusTopicId;
+
+  String get providerKey => focusTopicId == null || focusTopicId!.isEmpty
+      ? trackId
+      : '$trackId::topic::$focusTopicId';
 
   @override
   ConsumerState<ExamPracticeScreen> createState() =>
@@ -51,7 +60,7 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final practiceAsync = ref.watch(examPracticeProvider(widget.trackId));
+    final practiceAsync = ref.watch(examPracticeProvider(widget.providerKey));
 
     return VaaniXScaffold(
       title: 'Practice',
@@ -101,14 +110,14 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
       _typedController.clear();
       _photoPreview = null;
     });
-    await ref.read(examPracticeProvider(widget.trackId).notifier).start();
+    await ref.read(examPracticeProvider(widget.providerKey).notifier).start();
   }
 
   Future<void> _onMcqSubmit() async {
     final sel = _mcqSelected;
     if (sel == null) return;
     await ref
-        .read(examPracticeProvider(widget.trackId).notifier)
+        .read(examPracticeProvider(widget.providerKey).notifier)
         .submitMcq(sel);
     if (mounted) setState(() => _mcqSelected = null);
   }
@@ -117,7 +126,7 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
     final text = _typedController.text;
     if (text.trim().isEmpty) return;
     await ref
-        .read(examPracticeProvider(widget.trackId).notifier)
+        .read(examPracticeProvider(widget.providerKey).notifier)
         .submitTyped(text);
     if (mounted) _typedController.clear();
   }
@@ -141,7 +150,7 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
         });
       }
       await ref
-          .read(examPracticeProvider(widget.trackId).notifier)
+          .read(examPracticeProvider(widget.providerKey).notifier)
           .submitPhoto(bytes: bytes, mime: 'image/jpeg');
     } catch (_) {
       // Picker cancelled / permission denied — a silent, safe return.
@@ -151,12 +160,12 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
   }
 
   Future<void> _onReveal() async {
-    await ref.read(examPracticeProvider(widget.trackId).notifier).reveal();
+    await ref.read(examPracticeProvider(widget.providerKey).notifier).reveal();
     if (mounted) setState(() => _photoPreview = null);
   }
 
   Future<void> _onRetry() async {
-    await ref.read(examPracticeProvider(widget.trackId).notifier).retryAttempt();
+    await ref.read(examPracticeProvider(widget.providerKey).notifier).retryAttempt();
     if (mounted) {
       setState(() {
         _mcqSelected = null;
@@ -167,7 +176,7 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
   }
 
   Future<void> _onAdvance() async {
-    await ref.read(examPracticeProvider(widget.trackId).notifier).advance();
+    await ref.read(examPracticeProvider(widget.providerKey).notifier).advance();
     if (mounted) {
       setState(() {
         _mcqSelected = null;

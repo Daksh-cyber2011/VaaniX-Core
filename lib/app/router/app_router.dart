@@ -24,6 +24,7 @@ import 'package:vaanix_app/features/exam/presentation/screens/exam_profile_scree
 import 'package:vaanix_app/features/exam/presentation/screens/exam_diagnostic_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_plan_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_hub_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_study_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_practice_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_pyq_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_mock_screen.dart';
@@ -354,10 +355,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     ),
                   ),
                   GoRoute(
+                    path: 'study/:trackId/:topicId',
+                    name: RouteNames.examStudyName,
+                    builder: (context, state) => ExamStudyScreen(
+                      trackId: state.pathParameters['trackId'] ?? '',
+                      topicId: state.pathParameters['topicId'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
                     path: 'practice/:trackId',
                     name: RouteNames.examPracticeName,
                     builder: (context, state) => ExamPracticeScreen(
                       trackId: state.pathParameters['trackId'] ?? '',
+                      focusTopicId: state.uri.queryParameters['topic'],
                     ),
                   ),
                   // Exam Mode 2.0 — M8: weak-area hub (report + revision

@@ -82,7 +82,8 @@ class ExamPracticeController
   /// Starts (or restarts) a practice session for the current scope.
   Future<void> start() async {
     ref.read(examGamificationProvider).clearLastOutcome();
-    final trackId = arg;
+    final request = _PracticeRequest.parse(arg);
+    final trackId = request.trackId;
     final scope = await ref.read(examScopeProvider(trackId).future);
     final syllabus = await ref.read(courseSyllabusProvider(trackId).future);
     if (syllabus == null || scope.selection.isEmpty || scope.view == null) {
@@ -103,6 +104,9 @@ class ExamPracticeController
       view: scope.view!,
       selection: scope.selection,
       weakTopicIds: weakIds,
+      topicFilter: request.focusTopicId == null
+          ? const {}
+          : {request.focusTopicId!},
     );
     if (questions.isEmpty) {
       state = AsyncError(
@@ -330,6 +334,28 @@ class ExamPracticeController
       // Analytics-style logging — best-effort only.
     }
   }
+}
+
+/// Keeps the established String-family provider API while allowing a
+/// route to request a single selected syllabus unit. The delimiter cannot
+/// occur in canonical stable IDs, so the focused session remains isolated.
+class _PracticeRequest {
+  const _PracticeRequest({required this.trackId, this.focusTopicId});
+
+  factory _PracticeRequest.parse(String value) {
+    const separator = '::topic::';
+    final index = value.indexOf(separator);
+    if (index < 0) return _PracticeRequest(trackId: value);
+    final trackId = value.substring(0, index);
+    final topicId = value.substring(index + separator.length);
+    return _PracticeRequest(
+      trackId: trackId,
+      focusTopicId: topicId.isEmpty ? null : topicId,
+    );
+  }
+
+  final String trackId;
+  final String? focusTopicId;
 }
 
 final examPracticeProvider = AsyncNotifierProvider.family<

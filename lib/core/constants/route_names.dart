@@ -26,6 +26,7 @@ abstract final class RouteNames {
   static const String examDiagnostic = '/exam/diagnostic/:trackId';
   static const String examPlan = '/exam/plan/:trackId';
   static const String examHub = '/exam/hub/:trackId';
+  static const String examStudy = '/exam/study/:trackId/:topicId';
   static const String examPractice = '/exam/practice/:trackId';
   static const String examWeakArea = '/exam/weakarea/:trackId';
   static const String examPyq = '/exam/pyq/:trackId';
@@ -57,6 +58,7 @@ abstract final class RouteNames {
   static const String examDiagnosticName = 'exam-diagnostic';
   static const String examPlanName = 'exam-plan';
   static const String examHubName = 'exam-hub';
+  static const String examStudyName = 'exam-study';
   static const String examPracticeName = 'exam-practice';
   static const String examWeakAreaName = 'exam-weak-area';
   static const String examPyqName = 'exam-pyq';
