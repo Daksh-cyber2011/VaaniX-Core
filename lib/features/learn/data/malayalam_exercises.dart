@@ -813,11 +813,8 @@ final Map<String, List<Exercise>> malayalamExercisesByLesson = {
       id: 'ex_ml_read2_3',
       lessonId: 'ml_reading_paragraph',
       type: ExerciseType.mcq,
-      /*
-      prompt: "'-ഉം' എത്ര തവണ? (How many "and"s (-ഉം) appear in കടലും കപ്പലും കാറ്റും?)",
-      */
       prompt:
-          'How many times does the Malayalam conjunction appear in the sentence?',
+          "'-\u0D09\u0D02' \u0D0E\u0D24\u0D4D\u0D30 \u0D24\u0D35\u0D23? (How many \"and\"s (-\u0D09\u0D02) appear in \u0D15\u0D1F\u0D32\u0D41\u0D02 \u0D15\u0D2A\u0D4D\u0D2A\u0D32\u0D41\u0D02 \u0D15\u0D3E\u0D31\u0D4D\u0D31\u0D41\u0D02?)",
       options: ['1', '2', '3', '0'],
       correctIndex: 2,
       explanation:

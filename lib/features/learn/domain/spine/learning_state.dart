@@ -152,19 +152,30 @@ class RecentPerformance extends Equatable {
     return firstTryCorrect / events.length;
   }
 
-  RecentPerformance add(PerformanceEvent event) => RecentPerformance(
-      events: [...events, event].toList()
-        ..sort((a, b) => a.at.compareTo(b.at)));
+  RecentPerformance add(PerformanceEvent event) {
+    final next = [...events, event]..sort((a, b) => a.at.compareTo(b.at));
+    return RecentPerformance(
+      events: next.length <= kMaxEvents
+          ? next
+          : next.sublist(next.length - kMaxEvents),
+    );
+  }
 
   List<Map<String, dynamic>> toRawJsonList() =>
       [for (final e in events) e.toJson()];
 
-  static RecentPerformance fromRawJsonList(List<dynamic>? raw) =>
-      RecentPerformance(events: [
-        if (raw != null)
-          for (final e in raw)
-            if (e is Map<String, dynamic>) PerformanceEvent.fromJson(e),
-      ]);
+  static RecentPerformance fromRawJsonList(List<dynamic>? raw) {
+    final events = [
+      if (raw != null)
+        for (final e in raw)
+          if (e is Map<String, dynamic>) PerformanceEvent.fromJson(e),
+    ]..sort((a, b) => a.at.compareTo(b.at));
+    return RecentPerformance(
+      events: events.length <= kMaxEvents
+          ? events
+          : events.sublist(events.length - kMaxEvents),
+    );
+  }
 
   @override
   List<Object?> get props => [events];

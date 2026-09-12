@@ -84,18 +84,12 @@ final Map<String, List<Exercise>> hindiExercisesByLesson = {
       id: 'ex_hi_consonants_2',
       lessonId: 'hi_script_consonants',
       type: ExerciseType.mcq,
-      /*
-      prompt: 'महाप्राण (aspirated) व्यंजन कौन सा है?',
-      options: ['क', 'ख', 'ग', 'घ'],
+      prompt:
+          '\u092E\u0939\u093E\u092A\u094D\u0930\u093E\u0923 (aspirated) \u0935\u094D\u092F\u0902\u091C\u0928 \u0915\u094C\u0928 \u0938\u093E \u0939\u0948?',
+      options: const ['\u0915', '\u0916', '\u0917', '\u0918'],
       correctIndex: 1,
       explanation:
-          'ख (kha) महाप्राण है — इसमें 'क' की ध्वनि के साथ हवा का झोंका होता है। कपड़े का टेस्ट: क से कपड़ा नहीं हिलता, ख से हिलता है।',
-      */
-      prompt: 'Which Hindi consonant is aspirated?',
-      options: ['ka', 'kha', 'ga', 'gha'],
-      correctIndex: 1,
-      explanation:
-          'The aspirated consonant kha is pronounced with an audible puff of air.',
+          "\u0916 (kha) \u092E\u0939\u093E\u092A\u094D\u0930\u093E\u0923 \u0939\u0948 — \u0907\u0938\u092E\u0947\u0902 '\u0915' \u0915\u0940 \u0927\u094D\u0935\u0928\u093F \u0915\u0947 \u0938\u093E\u0925 \u0939\u0935\u093E \u0915\u093E \u091D\u094B\u0902\u0915\u093E \u0939\u094B\u0924\u093E \u0939\u0948\u0964 \u0915\u092A\u0921\u093C\u0947 \u0915\u093E \u091F\u0947\u0938\u094D\u091F: \u0915 \u0938\u0947 \u0915\u092A\u0921\u093C\u093E \u0928\u0939\u0940\u0902 \u0939\u093F\u0932\u0924\u093E, \u0916 \u0938\u0947 \u0939\u093F\u0932\u0924\u093E \u0939\u0948\u0964",
     ),
     Exercise(
       id: 'ex_hi_consonants_3',

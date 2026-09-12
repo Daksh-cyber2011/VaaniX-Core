@@ -164,7 +164,7 @@ void main() {
     test('uplift raises the stage; counters accumulate with prior evidence',
         () {
       final prior = <String, ConceptMastery>{
-        'a': const ConceptMastery(
+          'a': ConceptMastery(
           conceptId: 'a',
           stage: MasteryStage.recalled,
           strength: 0.5,
@@ -188,7 +188,7 @@ void main() {
 
     test('no uplift keeps the prior evidence stage', () {
       final prior = <String, ConceptMastery>{
-        'a': const ConceptMastery(
+          'a': ConceptMastery(
           conceptId: 'a',
           stage: MasteryStage.understood,
           strength: 0.4,
@@ -394,7 +394,7 @@ void main() {
       final derived = LearningState(
         languageCode: 'hi',
         conceptMasteries: {
-          'a': const ConceptMastery(
+          'a': ConceptMastery(
             conceptId: 'a',
             stage: MasteryStage.understood,
             strength: 0.8,
@@ -406,7 +406,7 @@ void main() {
       final merged = applyMasteryEvidence(
         derived: derived,
         evidence: {
-          'a': const ConceptMastery(
+          'a': ConceptMastery(
             conceptId: 'a',
             stage: MasteryStage.understood,
             strength: 0.3, // weaker — keep derived

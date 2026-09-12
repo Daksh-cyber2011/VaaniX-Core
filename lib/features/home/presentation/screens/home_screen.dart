@@ -247,6 +247,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         showJourneyProgress ? completedSet.length / totalLessons : 0.0;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final greetingColor =
         isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
@@ -349,15 +350,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       dialogueText: nextAction.vanMessage,
                     ),
                     const Spacer(),
-                    _ContinueCard(
-                      action: nextAction,
-                      nextLesson: nextLesson,
-                      completedCount: completedSet.length,
-                      totalLessons: totalLessons,
-                      journeyProgress: journeyProgress,
-                      masteredCount: masteredIds.length,
-                      totalExercises: lessonExercises.length,
-                      onTap: () => _openAction(nextAction),
+                    AnimatedSwitcher(
+                      duration: reduceMotion ? Duration.zero : AppMotion.base,
+                      switchInCurve: AppMotion.enter,
+                      switchOutCurve: Curves.easeIn,
+                      transitionBuilder: (child, animation) {
+                        final offset = Tween<Offset>(
+                          begin: const Offset(0, 0.04),
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(
+                          parent: animation,
+                          curve: AppMotion.enter,
+                        ));
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(position: offset, child: child),
+                        );
+                      },
+                      child: _ContinueCard(
+                        key: ValueKey(
+                          '${nextAction.action.name}:${nextAction.lessonId ?? ''}',
+                        ),
+                        action: nextAction,
+                        nextLesson: nextLesson,
+                        completedCount: completedSet.length,
+                        totalLessons: totalLessons,
+                        journeyProgress: journeyProgress,
+                        masteredCount: masteredIds.length,
+                        totalExercises: lessonExercises.length,
+                        onTap: () => _openAction(nextAction),
+                      ),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -471,6 +493,7 @@ class _SecondaryCta extends StatelessWidget {
 /// duplicate "Go" affordance.
 class _ContinueCard extends StatelessWidget {
   const _ContinueCard({
+    super.key,
     required this.action,
     required this.nextLesson,
     required this.completedCount,
@@ -527,6 +550,8 @@ class _ContinueCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimens.radiusLg),
         child: Semantics(
           button: true,
+          label: 'Recommended next step: ${action.title}',
+          hint: 'Open ${action.label}',
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppDimens.radiusLg),

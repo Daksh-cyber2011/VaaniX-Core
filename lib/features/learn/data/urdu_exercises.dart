@@ -549,10 +549,8 @@ final Map<String, List<Exercise>> urduExercisesByLesson = {
       id: 'ex_ur_pronouns_2',
       lessonId: 'ur_grammar_pronouns',
       type: ExerciseType.mcq,
-      /*
-      prompt: 'اردو میں 'you' کے کتنے درجے ہیں؟ (How many levels of 'you' does Urdu have?)',
-      */
-      prompt: 'How many levels of "you" does Urdu have?',
+      prompt:
+          "\u0627\u0631\u062F\u0648 \u0645\u06CC\u06BA 'you' \u06A9\u06D2 \u06A9\u062A\u0646\u06D2 \u062F\u0631\u062C\u06D2 \u06C1\u06CC\u06BA\u061F (How many levels of 'you' does Urdu have?)",
       options: ['1', '2', '3', '4'],
       correctIndex: 2,
       explanation:
