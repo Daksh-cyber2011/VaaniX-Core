@@ -28,21 +28,21 @@ the table below is the human-readable digest.
 | **Final plan scope revision** | 1 | 1 | 1 | 1 | 2 | 1 | 1 | 1 | 1 |
 | **Plans built (replans)** | 4 | 4 | 4 | 3 | 5 | 5 | 4 | 4 | 4 |
 | **Replan reasons** | — | — | — | — | day 7: scope edited | day 10: readiness target changed | — | — | — |
-| **Recovery days used** | 2 | 3 | 2 | 1 | 3 | 3 | 3 | 3 | 5 |
-| **Recovery outcomes** | plan-reserved, plan-reserved | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved | plan-reserved | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved, plan-reserved | stillNeedsWork, stillNeedsWork, stillNeedsWork | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved, plan-reserved, plan-reserved, plan-reserved |
-| **Revision sessions** | 38 | 36 | 38 | 24 | 34 | 36 | 42 | 36 | 32 |
-| **Strong topics** | 19 | 8 | 1 | 4 | 8 | 13 | 9 | 12 | 2 |
-| **Needs-attention topics** | 0 | 2 | 13 | 2 | 3 | 1 | 0 | 2 | 8 |
-| **PYQ attempted** | 6 | 6 | 6 | 6 | 18 | 6 | 132 | 6 | 12 |
-| **PYQ correct** | 6 | 5 | 3 | 4 | 10 | 6 | 98 | 4 | 4 |
+| **Recovery days used** | 2 | 3 | 2 | 1 | 3 | 3 | 3 | 3 | 2 |
+| **Recovery outcomes** | plan-reserved, plan-reserved | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved | plan-reserved | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved, plan-reserved | stillNeedsWork, stillNeedsWork, stillNeedsWork | plan-reserved, plan-reserved, plan-reserved | plan-reserved, plan-reserved |
+| **Revision sessions** | 38 | 36 | 38 | 24 | 34 | 36 | 42 | 36 | 38 |
+| **Strong topics** | 19 | 8 | 1 | 4 | 8 | 13 | 9 | 12 | 3 |
+| **Needs-attention topics** | 0 | 2 | 13 | 2 | 3 | 1 | 0 | 2 | 11 |
+| **PYQ attempted** | 6 | 6 | 6 | 6 | 18 | 6 | 132 | 6 | 6 |
+| **PYQ correct** | 6 | 5 | 3 | 4 | 10 | 6 | 98 | 4 | 3 |
 | **Last mock band** | strong | strong | needsAttention | learning | learning | strong | strong | needsAttention | strong |
 | **Mock weak sections** | — | — | अपठितावबोधनम् | — | — | — | — | अपठितावबोधनम् | — |
 | **Skipped days** | 0 | 0 | 0 | 8 | 0 | 0 | 0 | 0 | 0 |
-| **Sessions finished** | 63 | 62 | 63 | 40 | 61 | 62 | 68 | 62 | 58 |
-| **XP earned (M10)** | 440 | 373 | 293 | 268 | 318 | 389 | 714 | 356 | 284 |
+| **Sessions finished** | 63 | 62 | 63 | 40 | 61 | 62 | 68 | 62 | 63 |
+| **XP earned (M10)** | 440 | 373 | 293 | 268 | 318 | 389 | 714 | 356 | 292 |
 | **Readiness** | ready | ready | ready | ready | ready | ready | ready | ready | ready |
 | **Days to anchor** | 56 | 56 | 84 | 56 | 56 | 21 | 56 | 56 | 56 |
-| **Final weak findings** | cbse_10_sanskrit_ch_shemushi_1, cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_2 | cbse_10_sanskrit_ch_shemushi_5, cbse_10_sanskrit_ch_shemushi_6, cbse_10_sanskrit_ch_shemushi_7 | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_ch_shemushi_4 | cbse_10_sanskrit_ch_shemushi_6, cbse_10_sanskrit_ch_shemushi_8, cbse_10_sanskrit_grammar_avyayapadani | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_2, cbse_10_sanskrit_grammar_ashuddhi | cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_ch_shemushi_8, cbse_10_sanskrit_grammar_sandhi | cbse_10_sanskrit_grammar_ashuddhi, cbse_10_sanskrit_grammar_avyayapadani, cbse_10_sanskrit_grammar_samasa | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_grammar_samaya | cbse_10_hindi_a_grammar_vachya, cbse_10_hindi_a_grammar_vakya_bhed, cbse_10_hindi_a_literature_kshitij_prose |
+| **Final weak findings** | cbse_10_sanskrit_ch_shemushi_1, cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_2 | cbse_10_sanskrit_ch_shemushi_5, cbse_10_sanskrit_ch_shemushi_6, cbse_10_sanskrit_ch_shemushi_7 | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_ch_shemushi_4 | cbse_10_sanskrit_ch_shemushi_6, cbse_10_sanskrit_ch_shemushi_8, cbse_10_sanskrit_grammar_avyayapadani | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_2, cbse_10_sanskrit_grammar_ashuddhi | cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_ch_shemushi_8, cbse_10_sanskrit_grammar_sandhi | cbse_10_sanskrit_grammar_ashuddhi, cbse_10_sanskrit_grammar_avyayapadani, cbse_10_sanskrit_grammar_samasa | cbse_10_sanskrit_ch_shemushi_10, cbse_10_sanskrit_ch_shemushi_3, cbse_10_sanskrit_grammar_samaya | cbse_10_hindi_a_ch_kshitij_04, cbse_10_hindi_a_ch_kshitij_06, cbse_10_hindi_a_ch_kshitij_09 |
 
 ## How the paths differ (selected)
 

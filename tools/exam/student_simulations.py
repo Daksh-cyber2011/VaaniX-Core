@@ -38,6 +38,9 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import verify_exam_m3_m7 as m37  # diagnostic bank port (§60/§11)
 import verify_exam_m8 as m8      # practice/weak-area/planner ports
