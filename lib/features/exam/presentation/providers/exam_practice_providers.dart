@@ -70,9 +70,10 @@ class ExamPracticeController
   final PracticeSessionEngine _engine = const PracticeSessionEngine();
 
   @override
-  Future<PracticeStateData> build(String trackId) async {
+  Future<PracticeStateData> build(String requestKey) async {
+    final request = _PracticeRequest.parse(requestKey);
     return PracticeStateData(
-      trackId: trackId,
+      trackId: request.trackId,
       session: null,
       lastEvaluation: null,
       summary: null,
