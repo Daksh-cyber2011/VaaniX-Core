@@ -26,10 +26,9 @@ void main() {
   const engine = PracticeSessionEngine();
 
   setUpAll(() async {
-    final raw =
-        await rootBundle.loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
-    syllabus =
-        CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final raw = await rootBundle
+        .loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    syllabus = CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     view = ExamScopeView.fromSyllabus(syllabus);
     selection = ExamScopeSelection.empty(view.trackId)
         .selectAll(view.selectableUnitIds);
@@ -48,9 +47,34 @@ void main() {
     // The loop drives both MCQ and typed questions when the syllabus
     // provides sub-topic data (Class 10 Sanskrit does).
     expect(questions.any((q) => q.kind == PracticeQuestionKind.mcq), isTrue);
-    expect(
-        questions.any((q) => q.kind == PracticeQuestionKind.shortAnswer),
+    expect(questions.any((q) => q.kind == PracticeQuestionKind.shortAnswer),
         isTrue);
+  });
+
+  test('Hindi A/B literature practice remains on one selected NCERT lesson',
+      () async {
+    for (final entry in <(String, String)>[
+      ('cbse_10_hindi_a', 'cbse_10_hindi_a_ch_kshitij_01'),
+      ('cbse_10_hindi_b', 'cbse_10_hindi_b_ch_sanchayan_01'),
+    ]) {
+      final raw =
+          await rootBundle.loadString('assets/syllabus/cbse/${entry.$1}.json');
+      final hindi =
+          CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      final hindiView = ExamScopeView.fromSyllabus(hindi);
+      final hindiSelection =
+          ExamScopeSelection.empty(entry.$1).toggle(entry.$2)!;
+      final focused = PracticeContentBank.build(
+        syllabus: hindi,
+        view: hindiView,
+        selection: hindiSelection,
+        topicFilter: {entry.$2},
+      );
+      expect(focused, isNotEmpty, reason: entry.$1);
+      expect(focused.every((question) => question.topicId == entry.$2), isTrue,
+          reason: 'a focused Hindi study session cannot leave its lesson');
+      expect(focused.every((question) => question.isValid), isTrue);
+    }
   });
 
   test('loop: correct MCQ → feedback shown, then advance', () {
@@ -68,8 +92,7 @@ void main() {
     expect(s.index, 1);
   });
 
-  test('loop: wrong MCQ → one invited retry → budget spent → final reveal',
-      () {
+  test('loop: wrong MCQ → one invited retry → budget spent → final reveal', () {
     var s = engine.start(questions.take(1).toList());
     final q = s.current!;
     final wrong = (q.correctIndex! + 1) % q.options.length;
@@ -94,8 +117,8 @@ void main() {
   });
 
   test('loop: typed correct answer via M7 rubric (§27)', () {
-    final typed = questions
-        .firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
+    final typed =
+        questions.firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
     var s = engine.start([typed]);
     s = engine.submitTyped(s, typed.acceptedAnswers.first);
     expect(s.awaitingNext, isTrue);
@@ -103,8 +126,8 @@ void main() {
   });
 
   test('loop: typed empty answer → honest empty feedback (§26)', () {
-    final typed = questions
-        .firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
+    final typed =
+        questions.firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
     var s = engine.start([typed]);
     s = engine.submitTyped(s, '   ');
     expect(s.currentVerdictText, isNotNull);
@@ -112,8 +135,8 @@ void main() {
   });
 
   test('loop: typed devanagari-normalized match (M7 normalizer)', () {
-    final typed = questions
-        .firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
+    final typed =
+        questions.firstWhere((q) => q.kind == PracticeQuestionKind.shortAnswer);
     var s = engine.start([typed]);
     // Same answer with danda, extra spaces, danda punctuation.
     s = engine.submitTyped(s, ' ${typed.acceptedAnswers.first}।  ');
@@ -149,8 +172,7 @@ void main() {
   test('empty bank → immediately finished (honest empty state)', () {
     final s = engine.start(const []);
     expect(s.finished, isTrue);
-    expect(
-        PracticeSessionEngine.summary(s), contains('कोई प्रश्न हल नहीं'));
+    expect(PracticeSessionEngine.summary(s), contains('कोई प्रश्न हल नहीं'));
   });
 
   test('§30: summary is constructive and percentage-free', () {
