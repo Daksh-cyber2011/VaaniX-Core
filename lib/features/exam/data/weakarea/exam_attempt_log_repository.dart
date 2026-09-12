@@ -78,20 +78,22 @@ class ExamAttemptLogRepository {
         .where((a) => a.questionId.isNotEmpty && a.topicId.isNotEmpty)
         .toList();
     final all = await loadAll();
-    final list = [...(all[trackId] ?? const [])];
+    final list = <ErrorEvidence>[...(all[trackId] ?? const [])];
     if (filtered.isEmpty && list.isEmpty) return;
     list.addAll(filtered);
     final bounded = list.length > maxEntries
         ? list.sublist(list.length - maxEntries)
         : list;
     all[trackId] = bounded;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'entries': {
-        for (final e in all.entries)
-          e.key: [for (final r in e.value) r.toJson()],
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'entries': {
+            for (final e in all.entries)
+              e.key: [for (final r in e.value) r.toJson()],
+          },
+        }));
   }
 
   /// The wrong-question ids per topic (for mistake-retry phase and

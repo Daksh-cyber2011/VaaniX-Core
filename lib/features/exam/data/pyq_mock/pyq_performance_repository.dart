@@ -76,8 +76,7 @@ class PyqPerformanceRepository {
     for (final o in outcomes) {
       if (o.topicId.isEmpty) continue;
       final current = topics[o.topicId];
-      topics[o.topicId] =
-          current == null ? o : current.merge(o);
+      topics[o.topicId] = current == null ? o : current.merge(o);
     }
     // §56 bound: keep the topics with the most evidence.
     var bounded = topics.values.toList()
@@ -86,13 +85,15 @@ class PyqPerformanceRepository {
       for (final t in bounded.take(maxTopics)) t.topicId: t,
     };
     all[trackId] = kept;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'tracks': {
-        for (final e in all.entries)
-          e.key: {for (final t in e.value.entries) t.key: t.value.toJson()},
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'tracks': {
+            for (final e in all.entries)
+              e.key: {for (final t in e.value.entries) t.key: t.value.toJson()},
+          },
+        }));
   }
 
   @visibleForTesting
@@ -143,19 +144,21 @@ class MockResultRepository {
   Future<void> record(MockResult result) async {
     if (result.totalAttempted == 0) return;
     final all = await loadAll();
-    final list = [...(all[result.trackId] ?? const [])];
+    final list = <MockResult>[...(all[result.trackId] ?? const [])];
     list.add(result);
     final bounded = list.length > maxResults
         ? list.sublist(list.length - maxResults)
         : list;
     all[result.trackId] = bounded;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'tracks': {
-        for (final e in all.entries)
-          e.key: [for (final r in e.value) r.toJson()],
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'tracks': {
+            for (final e in all.entries)
+              e.key: [for (final r in e.value) r.toJson()],
+          },
+        }));
   }
 
   @visibleForTesting

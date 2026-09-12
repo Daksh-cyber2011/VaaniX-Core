@@ -214,7 +214,11 @@ Map<String, ConceptMastery> buildEvidenceMasteries({
           : sessionEvidence.correctCount / sessionEvidence.attempts,
       correctCount: sessionEvidence.correctCount,
       attemptCount: sessionEvidence.attempts,
-      lastPracticedAt: sessionEvidence.lastPracticedAt,
+      // The completed session timestamp is authoritative. Individual answer
+      // records may carry an earlier timestamp when they are batched or
+      // replayed; letting one of those win would make a fresh session look
+      // stale and could schedule an unnecessary review.
+      lastPracticedAt: at,
     );
 
     merged[conceptId] = prior == null

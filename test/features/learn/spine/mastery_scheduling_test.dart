@@ -164,7 +164,7 @@ void main() {
     test('uplift raises the stage; counters accumulate with prior evidence',
         () {
       final prior = <String, ConceptMastery>{
-          'a': ConceptMastery(
+        'a': ConceptMastery(
           conceptId: 'a',
           stage: MasteryStage.recalled,
           strength: 0.5,
@@ -188,7 +188,7 @@ void main() {
 
     test('no uplift keeps the prior evidence stage', () {
       final prior = <String, ConceptMastery>{
-          'a': ConceptMastery(
+        'a': ConceptMastery(
           conceptId: 'a',
           stage: MasteryStage.understood,
           strength: 0.4,

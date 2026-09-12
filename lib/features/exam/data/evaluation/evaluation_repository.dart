@@ -93,7 +93,7 @@ class EvaluationRepository {
     required String verdict,
   }) async {
     final all = await loadAll();
-    final list = [...(all[trackId] ?? const [])];
+    final list = <EvaluationRecord>[...(all[trackId] ?? const [])];
     list.add(EvaluationRecord(
       questionId: questionId,
       topicId: topicId,
@@ -102,15 +102,19 @@ class EvaluationRepository {
       atIso: DateTime.now().toIso8601String(),
     ));
     // §56 bound: keep the newest [maxRecords].
-    final bounded =
-        list.length > maxRecords ? list.sublist(list.length - maxRecords) : list;
+    final bounded = list.length > maxRecords
+        ? list.sublist(list.length - maxRecords)
+        : list;
     all[trackId] = bounded;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'records': {
-        for (final e in all.entries) e.key: [for (final r in e.value) r.toJson()],
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'records': {
+            for (final e in all.entries)
+              e.key: [for (final r in e.value) r.toJson()],
+          },
+        }));
   }
 
   @visibleForTesting
