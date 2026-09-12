@@ -527,14 +527,156 @@
     {
       "id": "cbse_10_hindi_b_book_sparsh",
       "title": "स्पर्श, भाग–2",
-      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
-      "status": "published"
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27",
+      "status": "published",
+      "chapters": [
+        {
+          "number": 1,
+          "id": "cbse_10_hindi_b_ch_sparsh_01",
+          "title": "साखी",
+          "author": "कबीर",
+          "type": "poetry",
+          "sourceFile": "jhsp101.pdf"
+        },
+        {
+          "number": 2,
+          "id": "cbse_10_hindi_b_ch_sparsh_02",
+          "title": "पद",
+          "author": "मीरा",
+          "type": "poetry",
+          "sourceFile": "jhsp102.pdf"
+        },
+        {
+          "number": 3,
+          "id": "cbse_10_hindi_b_ch_sparsh_03",
+          "title": "मनुष्यता",
+          "author": "मैथिलीशरण गुप्त",
+          "type": "poetry",
+          "sourceFile": "jhsp103.pdf"
+        },
+        {
+          "number": 4,
+          "id": "cbse_10_hindi_b_ch_sparsh_04",
+          "title": "पर्वत प्रदेश में पावस",
+          "author": "सुमित्रानंदन पंत",
+          "type": "poetry",
+          "sourceFile": "jhsp104.pdf"
+        },
+        {
+          "number": 5,
+          "id": "cbse_10_hindi_b_ch_sparsh_05",
+          "title": "तोप",
+          "author": "वीरेन डंगवाल",
+          "type": "poetry",
+          "sourceFile": "jhsp105.pdf"
+        },
+        {
+          "number": 6,
+          "id": "cbse_10_hindi_b_ch_sparsh_06",
+          "title": "कर चले हम फ़िदा",
+          "author": "कैफ़ी आज़मी",
+          "type": "poetry",
+          "sourceFile": "jhsp106.pdf"
+        },
+        {
+          "number": 7,
+          "id": "cbse_10_hindi_b_ch_sparsh_07",
+          "title": "आत्मत्राण",
+          "author": "रवीन्द्रनाथ ठाकुर",
+          "type": "poetry",
+          "sourceFile": "jhsp107.pdf"
+        },
+        {
+          "number": 8,
+          "id": "cbse_10_hindi_b_ch_sparsh_08",
+          "title": "बड़े भाई साहब",
+          "author": "प्रेमचंद",
+          "type": "prose",
+          "sourceFile": "jhsp108.pdf"
+        },
+        {
+          "number": 9,
+          "id": "cbse_10_hindi_b_ch_sparsh_09",
+          "title": "डायरी का एक पन्ना",
+          "author": "सीताराम सेकसरिया",
+          "type": "prose",
+          "sourceFile": "jhsp109.pdf"
+        },
+        {
+          "number": 10,
+          "id": "cbse_10_hindi_b_ch_sparsh_10",
+          "title": "तताँरा-वामीरो कथा",
+          "author": "लीलाधर मंडलोई",
+          "type": "prose",
+          "sourceFile": "jhsp110.pdf"
+        },
+        {
+          "number": 11,
+          "id": "cbse_10_hindi_b_ch_sparsh_11",
+          "title": "तीसरी कसम के शिल्पकार शैलेंद्र",
+          "author": "प्रह्लाद अग्रवाल",
+          "type": "prose",
+          "sourceFile": "jhsp111.pdf"
+        },
+        {
+          "number": 12,
+          "id": "cbse_10_hindi_b_ch_sparsh_12",
+          "title": "अब कहाँ दूसरे के दुख से दुखी होने वाले",
+          "author": "निदा फ़ाज़ली",
+          "type": "prose",
+          "sourceFile": "jhsp112.pdf"
+        },
+        {
+          "number": 13,
+          "id": "cbse_10_hindi_b_ch_sparsh_13",
+          "title": "पतझर में टूटी पत्तियाँ",
+          "author": "रवींद्र केलेकर",
+          "type": "prose",
+          "sourceFile": "jhsp113.pdf"
+        },
+        {
+          "number": 14,
+          "id": "cbse_10_hindi_b_ch_sparsh_14",
+          "title": "कारतूस",
+          "author": "हबीब तनवीर",
+          "type": "prose",
+          "sourceFile": "jhsp114.pdf"
+        }
+      ],
+      "note": "NCERT स्पर्श भाग–2 पुनर्मुद्रण 2026–27 (jhsp1dd.zip) में उपलब्ध 14 in-scope अध्याय। CBSE द्वारा छोड़े गए बिहारी-दोहे, मधुर-मधुर मेरे दीपक जल और गिरगिट शामिल नहीं किए गए हैं।"
     },
     {
       "id": "cbse_10_hindi_b_book_sanchayan",
       "title": "संचयन, भाग–2",
-      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
-      "status": "published"
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27",
+      "status": "published",
+      "chapters": [
+        {
+          "number": 1,
+          "id": "cbse_10_hindi_b_ch_sanchayan_01",
+          "title": "हरिहर काका",
+          "author": "मिथिलेश्वर",
+          "type": "prose",
+          "sourceFile": "jhsy101.pdf"
+        },
+        {
+          "number": 2,
+          "id": "cbse_10_hindi_b_ch_sanchayan_02",
+          "title": "सपनों के-से दिन",
+          "author": "गुरदयाल सिंह",
+          "type": "prose",
+          "sourceFile": "jhsy102.pdf"
+        },
+        {
+          "number": 3,
+          "id": "cbse_10_hindi_b_ch_sanchayan_03",
+          "title": "टोपी शुक्ला",
+          "author": "राही मासूम रज़ा",
+          "type": "prose",
+          "sourceFile": "jhsy103.pdf"
+        }
+      ],
+      "note": "NCERT संचयन भाग–2 पुनर्मुद्रण 2026–27 (jhsy1dd.zip) में उपलब्ध सभी तीन अध्याय। CBSE की आधिकारिक सूची में इस पुस्तक से कोई पाठ नहीं हटाया गया है।"
     }
   ],
   "notes": [

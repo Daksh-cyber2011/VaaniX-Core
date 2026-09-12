@@ -75,7 +75,7 @@ class _PlanBody extends ConsumerWidget {
     final plan = state.plan;
     final scope = ref.watch(examScopeProvider(trackId)).valueOrNull;
     final selectedUnits = <ScopeUnit>[
-      for (final section in scope?.view?.sections ?? const [])
+      for (final section in scope?.view?.sections ?? const <ScopeSection>[])
         for (final unit in section.selectableUnits)
           if (scope!.selection.isSelected(unit.id)) unit,
     ];

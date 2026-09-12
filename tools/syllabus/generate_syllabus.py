@@ -18,6 +18,9 @@ index, into the Flutter project's assets directory:
 
 RULES ENCODED HERE (from the master plan):
   * The official PDF is the ONLY authority. Nothing is invented.
+  * Where an official course PDF prescribes a book at book level, the
+    accompanying NCERT textbook package is the authoritative source for its
+    in-scope chapter structure. It is not used to reproduce textbook prose.
   * Every item has a stable ID; display names are never used as IDs.
   * Items the PDF has not published (Class 9 literature chapters) are
     flagged `pendingOfficialAnnouncement` — never fabricated.
@@ -481,8 +484,29 @@ hi10a = course(
         ]),
     ],
     books=[
-        {"id": f"{T}_book_kshitij", "title": "क्षितिज, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण", "status": "published"},
-        {"id": f"{T}_book_kritika", "title": "कृतिका, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण", "status": "published"},
+        {"id": f"{T}_book_kshitij", "title": "क्षितिज, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27", "status": "published",
+         "chapters": [
+             {"number": 1, "id": f"{T}_ch_kshitij_01", "title": "सूरदास के पद", "author": "सूरदास", "type": "poetry", "sourceFile": "jhks101.pdf"},
+             {"number": 2, "id": f"{T}_ch_kshitij_02", "title": "राम-लक्ष्मण-परशुराम संवाद", "author": "तुलसीदास", "type": "poetry", "sourceFile": "jhks102.pdf"},
+             {"number": 3, "id": f"{T}_ch_kshitij_03", "title": "आत्मकथ्य", "author": "जयशंकर प्रसाद", "type": "poetry", "sourceFile": "jhks103.pdf"},
+             {"number": 4, "id": f"{T}_ch_kshitij_04", "title": "उत्साह और अट नहीं रही है", "author": "सूर्यकांत त्रिपाठी ‘निराला’", "type": "poetry", "sourceFile": "jhks104.pdf"},
+             {"number": 5, "id": f"{T}_ch_kshitij_05", "title": "यह दंतुरित मुसकान / फसल", "author": "नागार्जुन", "type": "poetry", "sourceFile": "jhks105.pdf"},
+             {"number": 6, "id": f"{T}_ch_kshitij_06", "title": "संगतकार", "author": "मंगलेश डबराल", "type": "poetry", "sourceFile": "jhks106.pdf"},
+             {"number": 7, "id": f"{T}_ch_kshitij_07", "title": "नेताजी का चश्मा", "author": "स्वयं प्रकाश", "type": "prose", "sourceFile": "jhks107.pdf"},
+             {"number": 8, "id": f"{T}_ch_kshitij_08", "title": "बालगोबिन भगत", "author": "रामवृक्ष बेनीपुरी", "type": "prose", "sourceFile": "jhks108.pdf"},
+             {"number": 9, "id": f"{T}_ch_kshitij_09", "title": "लखनवी अंदाज़", "author": "यशपाल", "type": "prose", "sourceFile": "jhks109.pdf"},
+             {"number": 10, "id": f"{T}_ch_kshitij_10", "title": "एक कहानी यह भी", "author": "मन्नू भंडारी", "type": "prose", "sourceFile": "jhks110.pdf"},
+             {"number": 11, "id": f"{T}_ch_kshitij_11", "title": "नौबतखाने में इबादत", "author": "यतीन्द्र मिश्र", "type": "prose", "sourceFile": "jhks111.pdf"},
+             {"number": 12, "id": f"{T}_ch_kshitij_12", "title": "संस्कृति", "author": "भदंत आनंद कौसल्यायन", "type": "prose", "sourceFile": "jhks112.pdf"},
+         ],
+         "note": "NCERT क्षितिज भाग–2 पुनर्मुद्रण 2026–27 (jhks1dd.zip) में उपलब्ध 12 in-scope अध्याय। CBSE द्वारा छोड़े गए पाँच पाठ सूचीबद्ध साहित्य आइटम में excluded हैं।"},
+        {"id": f"{T}_book_kritika", "title": "कृतिका, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27", "status": "published",
+         "chapters": [
+             {"number": 1, "id": f"{T}_ch_kritika_01", "title": "माता का अँचल", "author": "शिवपूजन सहाय", "type": "prose", "sourceFile": "jhkr101.pdf"},
+             {"number": 2, "id": f"{T}_ch_kritika_02", "title": "साना-साना हाथ जोड़ि...", "author": "मधु कांकरिया", "type": "prose", "sourceFile": "jhkr102.pdf"},
+             {"number": 3, "id": f"{T}_ch_kritika_03", "title": "मैं क्यों लिखता हूँ", "author": "अज्ञेय", "type": "prose", "sourceFile": "jhkr103.pdf"},
+         ],
+         "note": "NCERT कृतिका भाग–2 पुनर्मुद्रण 2026–27 (jhkr1dd.zip) में उपलब्ध तीन in-scope अध्याय। CBSE द्वारा छोड़े गए जॉर्ज पंचम की नाक और एही ठैयाँ झुलनी हेरानी हो रामा! शामिल नहीं किए गए हैं।"},
     ],
     notes=[
         "विस्तृत प्रश्न-पत्र प्रारूप हेतु बोर्ड की वेबसाइट पर जारी आदर्श प्रश्न-पत्र देखें (PDF नोट)।",
@@ -560,8 +584,31 @@ hi10b = course(
         ]),
     ],
     books=[
-        {"id": f"{T}_book_sparsh", "title": "स्पर्श, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण", "status": "published"},
-        {"id": f"{T}_book_sanchayan", "title": "संचयन, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण", "status": "published"},
+        {"id": f"{T}_book_sparsh", "title": "स्पर्श, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27", "status": "published",
+         "chapters": [
+             {"number": 1, "id": f"{T}_ch_sparsh_01", "title": "साखी", "author": "कबीर", "type": "poetry", "sourceFile": "jhsp101.pdf"},
+             {"number": 2, "id": f"{T}_ch_sparsh_02", "title": "पद", "author": "मीरा", "type": "poetry", "sourceFile": "jhsp102.pdf"},
+             {"number": 3, "id": f"{T}_ch_sparsh_03", "title": "मनुष्यता", "author": "मैथिलीशरण गुप्त", "type": "poetry", "sourceFile": "jhsp103.pdf"},
+             {"number": 4, "id": f"{T}_ch_sparsh_04", "title": "पर्वत प्रदेश में पावस", "author": "सुमित्रानंदन पंत", "type": "poetry", "sourceFile": "jhsp104.pdf"},
+             {"number": 5, "id": f"{T}_ch_sparsh_05", "title": "तोप", "author": "वीरेन डंगवाल", "type": "poetry", "sourceFile": "jhsp105.pdf"},
+             {"number": 6, "id": f"{T}_ch_sparsh_06", "title": "कर चले हम फ़िदा", "author": "कैफ़ी आज़मी", "type": "poetry", "sourceFile": "jhsp106.pdf"},
+             {"number": 7, "id": f"{T}_ch_sparsh_07", "title": "आत्मत्राण", "author": "रवीन्द्रनाथ ठाकुर", "type": "poetry", "sourceFile": "jhsp107.pdf"},
+             {"number": 8, "id": f"{T}_ch_sparsh_08", "title": "बड़े भाई साहब", "author": "प्रेमचंद", "type": "prose", "sourceFile": "jhsp108.pdf"},
+             {"number": 9, "id": f"{T}_ch_sparsh_09", "title": "डायरी का एक पन्ना", "author": "सीताराम सेकसरिया", "type": "prose", "sourceFile": "jhsp109.pdf"},
+             {"number": 10, "id": f"{T}_ch_sparsh_10", "title": "तताँरा-वामीरो कथा", "author": "लीलाधर मंडलोई", "type": "prose", "sourceFile": "jhsp110.pdf"},
+             {"number": 11, "id": f"{T}_ch_sparsh_11", "title": "तीसरी कसम के शिल्पकार शैलेंद्र", "author": "प्रह्लाद अग्रवाल", "type": "prose", "sourceFile": "jhsp111.pdf"},
+             {"number": 12, "id": f"{T}_ch_sparsh_12", "title": "अब कहाँ दूसरे के दुख से दुखी होने वाले", "author": "निदा फ़ाज़ली", "type": "prose", "sourceFile": "jhsp112.pdf"},
+             {"number": 13, "id": f"{T}_ch_sparsh_13", "title": "पतझर में टूटी पत्तियाँ", "author": "रवींद्र केलेकर", "type": "prose", "sourceFile": "jhsp113.pdf"},
+             {"number": 14, "id": f"{T}_ch_sparsh_14", "title": "कारतूस", "author": "हबीब तनवीर", "type": "prose", "sourceFile": "jhsp114.pdf"},
+         ],
+         "note": "NCERT स्पर्श भाग–2 पुनर्मुद्रण 2026–27 (jhsp1dd.zip) में उपलब्ध 14 in-scope अध्याय। CBSE द्वारा छोड़े गए बिहारी-दोहे, मधुर-मधुर मेरे दीपक जल और गिरगिट शामिल नहीं किए गए हैं।"},
+        {"id": f"{T}_book_sanchayan", "title": "संचयन, भाग–2", "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27", "status": "published",
+         "chapters": [
+             {"number": 1, "id": f"{T}_ch_sanchayan_01", "title": "हरिहर काका", "author": "मिथिलेश्वर", "type": "prose", "sourceFile": "jhsy101.pdf"},
+             {"number": 2, "id": f"{T}_ch_sanchayan_02", "title": "सपनों के-से दिन", "author": "गुरदयाल सिंह", "type": "prose", "sourceFile": "jhsy102.pdf"},
+             {"number": 3, "id": f"{T}_ch_sanchayan_03", "title": "टोपी शुक्ला", "author": "राही मासूम रज़ा", "type": "prose", "sourceFile": "jhsy103.pdf"},
+         ],
+         "note": "NCERT संचयन भाग–2 पुनर्मुद्रण 2026–27 (jhsy1dd.zip) में उपलब्ध सभी तीन अध्याय। CBSE की आधिकारिक सूची में इस पुस्तक से कोई पाठ नहीं हटाया गया है।"},
     ],
     notes=[
         "विस्तृत प्रश्न-पत्र प्रारूप हेतु बोर्ड की वेबसाइट पर जारी आदर्श प्रश्न-पत्र देखें (PDF नोट)।",

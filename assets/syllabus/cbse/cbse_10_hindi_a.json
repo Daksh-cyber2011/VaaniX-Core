@@ -533,14 +533,140 @@
     {
       "id": "cbse_10_hindi_a_book_kshitij",
       "title": "क्षितिज, भाग–2",
-      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
-      "status": "published"
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27",
+      "status": "published",
+      "chapters": [
+        {
+          "number": 1,
+          "id": "cbse_10_hindi_a_ch_kshitij_01",
+          "title": "सूरदास के पद",
+          "author": "सूरदास",
+          "type": "poetry",
+          "sourceFile": "jhks101.pdf"
+        },
+        {
+          "number": 2,
+          "id": "cbse_10_hindi_a_ch_kshitij_02",
+          "title": "राम-लक्ष्मण-परशुराम संवाद",
+          "author": "तुलसीदास",
+          "type": "poetry",
+          "sourceFile": "jhks102.pdf"
+        },
+        {
+          "number": 3,
+          "id": "cbse_10_hindi_a_ch_kshitij_03",
+          "title": "आत्मकथ्य",
+          "author": "जयशंकर प्रसाद",
+          "type": "poetry",
+          "sourceFile": "jhks103.pdf"
+        },
+        {
+          "number": 4,
+          "id": "cbse_10_hindi_a_ch_kshitij_04",
+          "title": "उत्साह और अट नहीं रही है",
+          "author": "सूर्यकांत त्रिपाठी ‘निराला’",
+          "type": "poetry",
+          "sourceFile": "jhks104.pdf"
+        },
+        {
+          "number": 5,
+          "id": "cbse_10_hindi_a_ch_kshitij_05",
+          "title": "यह दंतुरित मुसकान / फसल",
+          "author": "नागार्जुन",
+          "type": "poetry",
+          "sourceFile": "jhks105.pdf"
+        },
+        {
+          "number": 6,
+          "id": "cbse_10_hindi_a_ch_kshitij_06",
+          "title": "संगतकार",
+          "author": "मंगलेश डबराल",
+          "type": "poetry",
+          "sourceFile": "jhks106.pdf"
+        },
+        {
+          "number": 7,
+          "id": "cbse_10_hindi_a_ch_kshitij_07",
+          "title": "नेताजी का चश्मा",
+          "author": "स्वयं प्रकाश",
+          "type": "prose",
+          "sourceFile": "jhks107.pdf"
+        },
+        {
+          "number": 8,
+          "id": "cbse_10_hindi_a_ch_kshitij_08",
+          "title": "बालगोबिन भगत",
+          "author": "रामवृक्ष बेनीपुरी",
+          "type": "prose",
+          "sourceFile": "jhks108.pdf"
+        },
+        {
+          "number": 9,
+          "id": "cbse_10_hindi_a_ch_kshitij_09",
+          "title": "लखनवी अंदाज़",
+          "author": "यशपाल",
+          "type": "prose",
+          "sourceFile": "jhks109.pdf"
+        },
+        {
+          "number": 10,
+          "id": "cbse_10_hindi_a_ch_kshitij_10",
+          "title": "एक कहानी यह भी",
+          "author": "मन्नू भंडारी",
+          "type": "prose",
+          "sourceFile": "jhks110.pdf"
+        },
+        {
+          "number": 11,
+          "id": "cbse_10_hindi_a_ch_kshitij_11",
+          "title": "नौबतखाने में इबादत",
+          "author": "यतीन्द्र मिश्र",
+          "type": "prose",
+          "sourceFile": "jhks111.pdf"
+        },
+        {
+          "number": 12,
+          "id": "cbse_10_hindi_a_ch_kshitij_12",
+          "title": "संस्कृति",
+          "author": "भदंत आनंद कौसल्यायन",
+          "type": "prose",
+          "sourceFile": "jhks112.pdf"
+        }
+      ],
+      "note": "NCERT क्षितिज भाग–2 पुनर्मुद्रण 2026–27 (jhks1dd.zip) में उपलब्ध 12 in-scope अध्याय। CBSE द्वारा छोड़े गए पाँच पाठ सूचीबद्ध साहित्य आइटम में excluded हैं।"
     },
     {
       "id": "cbse_10_hindi_a_book_kritika",
       "title": "कृतिका, भाग–2",
-      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — नवीनतम संस्करण",
-      "status": "published"
+      "publisher": "एन.सी.ई.आर.टी. (NCERT), नई दिल्ली — पुनर्मुद्रण 2026–27",
+      "status": "published",
+      "chapters": [
+        {
+          "number": 1,
+          "id": "cbse_10_hindi_a_ch_kritika_01",
+          "title": "माता का अँचल",
+          "author": "शिवपूजन सहाय",
+          "type": "prose",
+          "sourceFile": "jhkr101.pdf"
+        },
+        {
+          "number": 2,
+          "id": "cbse_10_hindi_a_ch_kritika_02",
+          "title": "साना-साना हाथ जोड़ि...",
+          "author": "मधु कांकरिया",
+          "type": "prose",
+          "sourceFile": "jhkr102.pdf"
+        },
+        {
+          "number": 3,
+          "id": "cbse_10_hindi_a_ch_kritika_03",
+          "title": "मैं क्यों लिखता हूँ",
+          "author": "अज्ञेय",
+          "type": "prose",
+          "sourceFile": "jhkr103.pdf"
+        }
+      ],
+      "note": "NCERT कृतिका भाग–2 पुनर्मुद्रण 2026–27 (jhkr1dd.zip) में उपलब्ध तीन in-scope अध्याय। CBSE द्वारा छोड़े गए जॉर्ज पंचम की नाक और एही ठैयाँ झुलनी हेरानी हो रामा! शामिल नहीं किए गए हैं।"
     }
   ],
   "notes": [

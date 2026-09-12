@@ -24,7 +24,6 @@ import 'package:vaanix_app/features/exam/data/planner/deterministic_exam_planner
 import 'package:vaanix_app/features/exam/data/planner/exam_plan_repository.dart';
 import 'package:vaanix_app/features/exam/data/planner/gemini_exam_planner.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
-import 'package:vaanix_app/features/exam/domain/exam_profile.dart';
 import 'package:vaanix_app/features/exam/domain/planner/exam_plan_models.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart'
     show examLearnerProfileProvider;

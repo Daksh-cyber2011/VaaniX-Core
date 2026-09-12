@@ -15,6 +15,7 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/ai/domain/learning_context.dart';
+import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_profile_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
@@ -53,7 +54,7 @@ final learningContextProvider = Provider<LearningContext>((ref) {
       : ref.watch(examLearnerProfileProvider(activeExamTrack)).valueOrNull;
 
   final examTitleById = <String, String>{
-    for (final section in examScope?.view?.sections ?? const [])
+    for (final section in examScope?.view?.sections ?? const <ScopeSection>[])
       for (final unit in section.selectableUnits) unit.id: unit.title,
   };
   final examScopeTitles = <String>[
