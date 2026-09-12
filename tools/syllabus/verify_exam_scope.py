@@ -148,11 +148,18 @@ check("9h1 selectable nonempty", len(v.selectable_unit_ids) > 0)
 
 v = VIEWS["cbse_10_hindi_a"]
 lit = next(s for s in v.sections if s.stable_key == "literature")
-check("A lit 3 book-section units", len(lit.units) == 3)
-check("A lit no chapters", all(not u.is_chapter for u in lit.units))
+check("A lit 15 verified NCERT chapters", len(lit.units) == 15)
+check("A lit chapters", all(u.is_chapter for u in lit.units))
 check("A lit all selectable", all(u.selectable for u in lit.units))
-check("A excluded info on units", all(u.info and "छोड़े गए" in u.info for u in lit.units))
-check("A selectable total 13", len(v.selectable_unit_ids) == 13)
+check("A first chapter", lit.units[0].title == "सूरदास के पद")
+check("A selectable total 25", len(v.selectable_unit_ids) == 25)
+
+v = VIEWS["cbse_10_hindi_b"]
+lit = next(s for s in v.sections if s.stable_key == "literature")
+check("B lit 17 verified NCERT chapters", len(lit.units) == 17)
+check("B lit chapters", all(u.is_chapter for u in lit.units))
+check("B first chapter", lit.units[0].title == "साखी")
+check("B selectable total 28", len(v.selectable_unit_ids) == 28)
 
 for t in TRACKS:
     v = VIEWS[t]
@@ -231,7 +238,7 @@ check("selectAll count", len(sa.ids) == len(view.selectable_unit_ids))
 check("selectAll covered 50", sa.covered(view) == 50)
 
 sa_hb = Sel("cbse_10_hindi_b", []).select_all(VIEWS["cbse_10_hindi_b"].selectable_unit_ids)
-check("hindiB selectAll covered 80", sa_hb.covered(VIEWS["cbse_10_hindi_b"]) == 80)
+check("hindiB selectAll covered marks-bearing 52", sa_hb.covered(VIEWS["cbse_10_hindi_b"]) == 52)
 
 saf = s.select_all(list(view.selectable_unit_ids) + ["cbse_10_hindi_a_grammar_vachya"])
 check("selectAll ignores foreign", len(saf.ids) == len(view.selectable_unit_ids))
@@ -244,8 +251,8 @@ check("toggleSection deselects", not (set(gram_ids) & ss2.ids))
 check("toggleSection foreign noop", Sel(track, []).toggle_section(["cbse_10_hindi_a_grammar_vachya"]).rev == 0)
 
 print("== marksCoverageExact / engaged ==")
-check("hindi_b exact", VIEWS["cbse_10_hindi_b"].marks_coverage_exact)
-check("hindi_a exact", VIEWS["cbse_10_hindi_a"].marks_coverage_exact)
+check("hindi_b not exact (chapter marks not published)", not VIEWS["cbse_10_hindi_b"].marks_coverage_exact)
+check("hindi_a not exact (chapter marks not published)", not VIEWS["cbse_10_hindi_a"].marks_coverage_exact)
 check("122 not exact", not VIEWS["cbse_10_sanskrit"].marks_coverage_exact)
 check("119 not exact", not VIEWS["cbse_10_sanskrit_communicative"].marks_coverage_exact)
 check("9s not exact (pending)", not VIEWS["cbse_9_sanskrit"].marks_coverage_exact)

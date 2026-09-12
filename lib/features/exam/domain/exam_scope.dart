@@ -132,12 +132,10 @@ class ExamScopeView extends Equatable {
           for (final book in syllabus.books)
             for (final chapter in book.chapters) (book: book, chapter: chapter),
         ];
-        final internalOnly = chapters
-            .where((entry) => entry.chapter.isInternalOnly)
-            .toList();
-        final boardChapters = chapters
-            .where((entry) => !entry.chapter.isInternalOnly)
-            .toList();
+        final internalOnly =
+            chapters.where((entry) => entry.chapter.isInternalOnly).toList();
+        final boardChapters =
+            chapters.where((entry) => !entry.chapter.isInternalOnly).toList();
 
         if (boardChapters.isNotEmpty || internalOnly.isNotEmpty) {
           chaptersAdded = true;
@@ -183,8 +181,8 @@ class ExamScopeView extends Equatable {
         if (section.stableKey == 'literature' && chaptersAdded) {
           continue;
         }
-        final selectable = item.isSelectable &&
-            item.assessmentType == AssessmentType.board;
+        final selectable =
+            item.isSelectable && item.assessmentType == AssessmentType.board;
         units.add(ScopeUnit(
           id: item.id,
           title: item.title,
@@ -241,9 +239,7 @@ class ExamScopeView extends Equatable {
       final m = (e as Map).cast<String, dynamic>();
       final author = m['author'] as String?;
       final chapter = m['chapter'] as String? ?? '';
-      return author == null || author.isEmpty
-          ? chapter
-          : '$author — $chapter';
+      return author == null || author.isEmpty ? chapter : '$author — $chapter';
     }).join('; ');
     return 'छोड़े गए पाठ (इनसे प्रश्न नहीं): $names';
   }
@@ -295,8 +291,7 @@ class ExamScopeView extends Equatable {
 
   /// Sections with at least one selected unit (engagement count).
   int engagedSections(ExamScopeSelection selection) => sections
-      .where((s) => s.selectableUnits
-          .any((u) => selection.isSelected(u.id)))
+      .where((s) => s.selectableUnits.any((u) => selection.isSelected(u.id)))
       .length;
 
   @override

@@ -157,6 +157,23 @@ sanchayan = next(i for i in lit_items if i["id"].endswith("sanchayan"))
 check("B poetry exclusions", len(poetry["details"]["excludedChapters"]) == 2)
 check("B sanchayan note", "note" in sanchayan["details"])
 
+print("== Hindi A/B supplied NCERT chapter packages ==")
+d = data["cbse_10_hindi_a"]
+kshitij = next(b for b in d["prescribedBooks"] if b["id"].endswith("book_kshitij"))
+kritika = next(b for b in d["prescribedBooks"] if b["id"].endswith("book_kritika"))
+check("A kshitij 12 in-scope chapters", len(kshitij["chapters"]) == 12)
+check("A kritika 3 in-scope chapters", len(kritika["chapters"]) == 3)
+check("A first chapter", kshitij["chapters"][0]["title"] == "सूरदास के पद")
+check("A source package metadata", all("sourceFile" in c for c in kshitij["chapters"] + kritika["chapters"]))
+
+d = data["cbse_10_hindi_b"]
+sparsh = next(b for b in d["prescribedBooks"] if b["id"].endswith("book_sparsh"))
+sanchayan_book = next(b for b in d["prescribedBooks"] if b["id"].endswith("book_sanchayan"))
+check("B sparsh 14 in-scope chapters", len(sparsh["chapters"]) == 14)
+check("B sanchayan 3 in-scope chapters", len(sanchayan_book["chapters"]) == 3)
+check("B sanchayan first chapter", sanchayan_book["chapters"][0]["title"] == "हरिहर काका")
+check("B source package metadata", all("sourceFile" in c for c in sparsh["chapters"] + sanchayan_book["chapters"]))
+
 print("== grammar spot checks ==")
 d = data["cbse_10_sanskrit"]
 g = next(s for s in d["sections"] if s["stableKey"] == "grammar")

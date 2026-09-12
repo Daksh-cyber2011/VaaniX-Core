@@ -291,6 +291,7 @@ class _TaskRow extends StatelessWidget {
     // review → the M8 weak-area hub; pyq → the M9 PYQ track; mock →
     // the M9 mock ladder.
     final routeName = switch (task.type) {
+      ExamTaskType.learn => RouteNames.examStudyName,
       ExamTaskType.practice => RouteNames.examPracticeName,
       ExamTaskType.weakArea => RouteNames.examWeakAreaName,
       ExamTaskType.review => RouteNames.examWeakAreaName,
@@ -307,7 +308,9 @@ class _TaskRow extends StatelessWidget {
         onTap: isActionable
             ? () => GoRouter.of(context).pushNamed(
                   routeName!,
-                  pathParameters: {'trackId': trackId},
+                  pathParameters: task.type == ExamTaskType.learn
+                      ? {'trackId': trackId, 'topicId': task.topicId}
+                      : {'trackId': trackId},
                 )
             : null,
         borderRadius: BorderRadius.circular(10),

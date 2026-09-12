@@ -168,8 +168,8 @@ class _ReadinessCard extends StatelessWidget {
               ),
               IconButton(
                 tooltip: 'Edit profile',
-                icon: const Icon(Icons.tune,
-                    size: 18, color: AppColors.primary),
+                icon:
+                    const Icon(Icons.tune, size: 18, color: AppColors.primary),
                 onPressed: () => GoRouter.of(context).pushNamed(
                   RouteNames.examProfileName,
                   pathParameters: {'trackId': trackId},
@@ -183,9 +183,8 @@ class _ReadinessCard extends StatelessWidget {
               '${profile.dailyStudyMinutes} मिनट/दिन · '
               'हफ़्ते में ${profile.studyDaysPerWeek} दिन',
               style: AppTextStyles.bodySmall(
-                  color: isDark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight),
+                  color:
+                      isDark ? AppColors.subtextDark : AppColors.subtextLight),
             ),
           ],
         ],
@@ -284,6 +283,7 @@ class _TodayTaskRow extends StatelessWidget {
       ExamTaskType.mock => (Icons.timer, AppColors.streak),
     };
     final routeName = switch (task.type) {
+      ExamTaskType.learn => RouteNames.examStudyName,
       ExamTaskType.practice => RouteNames.examPracticeName,
       ExamTaskType.weakArea => RouteNames.examWeakAreaName,
       ExamTaskType.review => RouteNames.examWeakAreaName,
@@ -301,7 +301,9 @@ class _TodayTaskRow extends StatelessWidget {
             ? null
             : () => GoRouter.of(context).pushNamed(
                   routeName,
-                  pathParameters: {'trackId': trackId},
+                  pathParameters: task.type == ExamTaskType.learn
+                      ? {'trackId': trackId, 'topicId': task.topicId}
+                      : {'trackId': trackId},
                 ),
         borderRadius: BorderRadius.circular(10),
         child: Padding(
@@ -325,10 +327,9 @@ class _TodayTaskRow extends StatelessWidget {
               ),
               Text('${task.minutes}m',
                   style: AppTextStyles.labelSmall(
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? AppColors.subtextDark
-                              : AppColors.subtextLight)),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight)),
               const SizedBox(width: 6),
               Icon(
                 task.done ? Icons.check_circle : Icons.circle_outlined,
@@ -364,8 +365,7 @@ class _ContinueSection extends StatelessWidget {
         return _Card(
           child: Row(
             children: [
-              const Icon(Icons.celebration,
-                  size: 20, color: AppColors.success),
+              const Icon(Icons.celebration, size: 20, color: AppColors.success),
               const SizedBox(width: 10),
               Expanded(
                 child: Text('आज का plan पूरा हुआ — बेहतरीन!',
@@ -386,6 +386,7 @@ class _ContinueSection extends StatelessWidget {
       ExamTaskType.mock => (Icons.timer, AppColors.streak),
     };
     final routeName = switch (task.type) {
+      ExamTaskType.learn => RouteNames.examStudyName,
       ExamTaskType.practice => RouteNames.examPracticeName,
       ExamTaskType.weakArea => RouteNames.examWeakAreaName,
       ExamTaskType.review => RouteNames.examWeakAreaName,
@@ -402,8 +403,8 @@ class _ContinueSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('जारी रखें', style: AppTextStyles.labelMedium(
-                    color: AppColors.primary)),
+                Text('जारी रखें',
+                    style: AppTextStyles.labelMedium(color: AppColors.primary)),
                 const SizedBox(height: 2),
                 Text('${task.title} · ${task.minutes} मिनट',
                     style: AppTextStyles.bodyMedium()),
@@ -416,7 +417,9 @@ class _ContinueSection extends StatelessWidget {
               icon: const Icon(Icons.play_arrow, color: AppColors.primary),
               onPressed: () => GoRouter.of(context).pushNamed(
                 routeName,
-                pathParameters: {'trackId': trackId},
+                pathParameters: task.type == ExamTaskType.learn
+                    ? {'trackId': trackId, 'topicId': task.topicId}
+                    : {'trackId': trackId},
               ),
             ),
         ],
@@ -441,9 +444,8 @@ class _QuickGrid extends StatelessWidget {
             Expanded(
               child: _StateCard(
                 icon: Icons.healing,
-                color: snapshot.recoveryToday
-                    ? AppColors.warning
-                    : AppColors.info,
+                color:
+                    snapshot.recoveryToday ? AppColors.warning : AppColors.info,
                 title: snapshot.recoveryToday ? 'आज recovery दिन' : 'Weak area',
                 line: snapshot.recoveryToday
                     ? snapshot.weakAreaLine
@@ -490,9 +492,8 @@ class _QuickGrid extends StatelessWidget {
             Expanded(
               child: _StateCard(
                 icon: Icons.timer,
-                color: snapshot.mockCount > 0
-                    ? AppColors.streak
-                    : AppColors.info,
+                color:
+                    snapshot.mockCount > 0 ? AppColors.streak : AppColors.info,
                 title: 'Mock',
                 line: snapshot.mockLine,
                 onTap: () => GoRouter.of(context).pushNamed(
@@ -595,16 +596,15 @@ class _GamificationCard extends ConsumerWidget {
               XpBadge(xpTotal: xp),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   'Lv ${levelFromXp(xp)}',
-                  style: AppTextStyles.labelMedium(
-                      color: AppColors.primary),
+                  style: AppTextStyles.labelMedium(color: AppColors.primary),
                 ),
               ),
               const Spacer(),
@@ -615,9 +615,7 @@ class _GamificationCard extends ConsumerWidget {
           Text(
             'अगले level तक ${xpForNextLevel(levelFromXp(xp)) - xpIntoLevel(xp)} XP बाक़ी',
             style: AppTextStyles.bodySmall(
-                color: isDark
-                    ? AppColors.subtextDark
-                    : AppColors.subtextLight),
+                color: isDark ? AppColors.subtextDark : AppColors.subtextLight),
           ),
         ],
       ),

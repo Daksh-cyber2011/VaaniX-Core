@@ -82,8 +82,7 @@ const protectedRoutes = <String>{
 @visibleForTesting
 bool isProtectedLocation(String location) {
   if (protectedRoutes.contains(location)) return true;
-  return protectedRoutes
-      .any((route) => location.startsWith('$route/'));
+  return protectedRoutes.any((route) => location.startsWith('$route/'));
 }
 
 /// The redirect decision, extracted as a pure function so the gate
@@ -106,9 +105,7 @@ String? guardRedirect({
   if (!onboardingComplete && !_publicRoutes.contains(location)) {
     return RouteNames.onboarding;
   }
-  if (supabaseConfigured &&
-      isProtectedLocation(location) &&
-      !isAuthenticated) {
+  if (supabaseConfigured && isProtectedLocation(location) && !isAuthenticated) {
     return RouteNames.auth;
   }
   return null;
@@ -213,8 +210,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'profile',
                     name: RouteNames.learnProfileName,
-                    builder: (context, state) =>
-                        const LearnProfileScreen(),
+                    builder: (context, state) => const LearnProfileScreen(),
                   ),
                   // M3: VAN-led adaptive placement game (Discover your
                   // level). Nested under /learn so back-nav returns to
@@ -223,8 +219,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'diagnostic',
                     name: RouteNames.learnDiagnosticName,
-                    builder: (context, state) =>
-                        const DiagnosticScreen(),
+                    builder: (context, state) => const DiagnosticScreen(),
                   ),
                   // M5: Smart Practice — trusted-first content resolution
                   // for today's plan step, with learner-triggered AI
@@ -233,8 +228,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'smart',
                     name: RouteNames.learnSmartPracticeName,
-                    builder: (context, state) =>
-                        const SmartPracticeScreen(),
+                    builder: (context, state) => const SmartPracticeScreen(),
                   ),
                   // M6: Guided session — the adaptive exercise engine
                   // (Master Brief §18): any of the six activity kinds,
@@ -252,8 +246,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       return SessionScreen(
                         kind: kind,
                         conceptId: query['concept'] ?? '',
-                        difficultyKnob:
-                            int.tryParse(query['knob'] ?? ''),
+                        difficultyKnob: int.tryParse(query['knob'] ?? ''),
                       );
                     },
                   ),
@@ -301,19 +294,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                       GoRoute(
                         path: 'scope/:trackId',
                         name: RouteNames.examScopeName,
-                        builder: (context, state) =>
-                            ExamScopeSelectionScreen(
-                          trackId:
-                              state.pathParameters['trackId'] ?? '',
+                        builder: (context, state) => ExamScopeSelectionScreen(
+                          trackId: state.pathParameters['trackId'] ?? '',
                         ),
                       ),
                       GoRoute(
                         path: 'summary/:trackId',
                         name: RouteNames.examScopeSummaryName,
-                        builder: (context, state) =>
-                            ExamScopeSummaryScreen(
-                          trackId:
-                              state.pathParameters['trackId'] ?? '',
+                        builder: (context, state) => ExamScopeSummaryScreen(
+                          trackId: state.pathParameters['trackId'] ?? '',
                         ),
                       ),
                     ],
@@ -470,8 +459,7 @@ class _NotFoundScreen extends StatelessWidget {
       body: EmptyStateWidget(
         icon: Icons.explore_off_rounded,
         title: 'This page does not exist',
-        description:
-            'The path "$location" is not part of VaaniX. '
+        description: 'The path "$location" is not part of VaaniX. '
             'Head back to the Nest to keep learning.',
         actionLabel: 'Back to Home',
         onActionPressed: () => context.go(RouteNames.home),

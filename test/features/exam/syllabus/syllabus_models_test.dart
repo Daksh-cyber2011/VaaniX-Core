@@ -102,8 +102,7 @@ void main() {
             reason: '$trackId failed mark validation');
 
         // JSON round-trip preserves structure.
-        final roundTrip =
-            CourseSyllabus.fromJson(syllabus.toJson());
+        final roundTrip = CourseSyllabus.fromJson(syllabus.toJson());
         expect(roundTrip.id.value, trackId);
         expect(roundTrip.computedBoardMarks, syllabus.computedBoardMarks);
         expect(roundTrip.sections.length, syllabus.sections.length);
@@ -204,8 +203,8 @@ void main() {
         expect(s.pending!.sourceQuote, isNotEmpty);
         // Literature section exists structurally but has no published,
         // selectable chapters — content must never be invented.
-        final lit = s.sections.firstWhere(
-            (sec) => sec.stableKey == 'literature');
+        final lit =
+            s.sections.firstWhere((sec) => sec.stableKey == 'literature');
         expect(lit.selectableItems, isEmpty,
             reason: '$trackId literature must have no selectable items yet');
       }
@@ -247,22 +246,20 @@ void main() {
   group('Class 10 Sanskrit prescribed chapters (122)', () {
     test('शेमुषी भाग-2 lists exactly the PDF table chapters (1-8, 10)', () {
       final s = loadCourse('cbse_10_sanskrit');
-      final shemushi = s.books.firstWhere((b) =>
-          b.id == 'cbse_10_sanskrit_book_shemushi');
+      final shemushi =
+          s.books.firstWhere((b) => b.id == 'cbse_10_sanskrit_book_shemushi');
       final numbers = shemushi.chapters.map((c) => c.number).toList();
       // Chapter 9 is NOT listed by the official PDF table — never invent.
       expect(numbers, [1, 2, 3, 4, 5, 6, 7, 8, 10]);
       expect(shemushi.chapters.length, 9);
       expect(shemushi.chapters.first.title, 'शुचिपर्यावरणम्');
-      expect(shemushi.chapters
-          .firstWhere((c) => c.number == 10)
-          .title, 'अन्योक्तयः');
+      expect(shemushi.chapters.firstWhere((c) => c.number == 10).title,
+          'अन्योक्तयः');
     });
 
     test('grammar books are also prescribed (अभ्यासवान् भव, व्याकरणवीथिः)', () {
       final s = loadCourse('cbse_10_sanskrit');
-      expect(
-          s.books.any((b) => b.title.contains('अभ्यासवान् भव')), isTrue);
+      expect(s.books.any((b) => b.title.contains('अभ्यासवान् भव')), isTrue);
       expect(s.books.any((b) => b.title.contains('व्याकरणवीथि')), isTrue);
     });
   });
@@ -278,13 +275,34 @@ void main() {
       final ch11 = manika.chapters.firstWhere((c) => c.number == 11);
       expect(ch10.isInternalOnly, isTrue);
       expect(ch11.isInternalOnly, isTrue);
-      expect(manika.chapters
-          .firstWhere((c) => c.number == 9)
-          .isInternalOnly, isFalse);
+      expect(manika.chapters.firstWhere((c) => c.number == 9).isInternalOnly,
+          isFalse);
     });
   });
 
   group('Hindi A/B exclusion lists (official छूट पाठ)', () {
+    test('Hindi A/B publish the supplied NCERT in-scope chapter lists', () {
+      final hindiA = loadCourse('cbse_10_hindi_a');
+      final kshitij = hindiA.books
+          .firstWhere((b) => b.id == 'cbse_10_hindi_a_book_kshitij');
+      final kritika = hindiA.books
+          .firstWhere((b) => b.id == 'cbse_10_hindi_a_book_kritika');
+      expect(kshitij.chapters.length, 12);
+      expect(kritika.chapters.length, 3);
+      expect(kshitij.chapters.first.title, 'सूरदास के पद');
+      expect(kritika.chapters.last.author, 'अज्ञेय');
+
+      final hindiB = loadCourse('cbse_10_hindi_b');
+      final sparsh =
+          hindiB.books.firstWhere((b) => b.id == 'cbse_10_hindi_b_book_sparsh');
+      final sanchayan = hindiB.books
+          .firstWhere((b) => b.id == 'cbse_10_hindi_b_book_sanchayan');
+      expect(sparsh.chapters.length, 14);
+      expect(sanchayan.chapters.length, 3);
+      expect(sanchayan.chapters.first.title, 'हरिहर काका');
+      expect(sanchayan.chapters.first.sourceFile, 'jhsy101.pdf');
+    });
+
     test('Hindi A records the exact excluded chapters', () {
       final s = loadCourse('cbse_10_hindi_a');
       final prose = s.sections
@@ -305,16 +323,15 @@ void main() {
       expect((kritika.details!['excludedChapters'] as List).length, 2);
     });
 
-    test('Hindi B records the exact excluded chapters + संचयन untouched',
-        () {
+    test('Hindi B records the exact excluded chapters + संचयन untouched', () {
       final s = loadCourse('cbse_10_hindi_b');
-      final literature = s.sections
-          .firstWhere((sec) => sec.stableKey == 'literature');
-      final poetry = literature.items
-          .firstWhere((i) => i.id.endsWith('sparsh_poetry'));
+      final literature =
+          s.sections.firstWhere((sec) => sec.stableKey == 'literature');
+      final poetry =
+          literature.items.firstWhere((i) => i.id.endsWith('sparsh_poetry'));
       expect((poetry.details!['excludedChapters'] as List).length, 2);
-      final sanchayan = literature.items
-          .firstWhere((i) => i.id.endsWith('sanchayan'));
+      final sanchayan =
+          literature.items.firstWhere((i) => i.id.endsWith('sanchayan'));
       expect(sanchayan.details!.containsKey('note'), isTrue);
     });
   });
@@ -322,12 +339,12 @@ void main() {
   group('grammar section fidelity (spot checks)', () {
     test('Class 10 Sanskrit has 7 applied-grammar items summing to 25', () {
       final s = loadCourse('cbse_10_sanskrit');
-      final grammar = s.sections
-          .firstWhere((sec) => sec.stableKey == 'grammar');
+      final grammar =
+          s.sections.firstWhere((sec) => sec.stableKey == 'grammar');
       expect(grammar.marks, 25);
       expect(grammar.items.length, 7);
-      final sandhi = grammar.items.firstWhere(
-          (i) => i.id.endsWith('grammar_sandhi'));
+      final sandhi =
+          grammar.items.firstWhere((i) => i.id.endsWith('grammar_sandhi'));
       expect(sandhi.title, contains('सन्धि'));
       expect(sandhi.details!.keys.toSet(),
           containsAll(['स्वरसन्धिः', 'व्यञ्जनसन्धिः', 'विसर्गसन्धिः']));
@@ -335,8 +352,8 @@ void main() {
 
     test('Class 9 Hindi आर-1 has the four official grammar topics', () {
       final s = loadCourse('cbse_9_hindi_r1');
-      final grammar = s.sections
-          .firstWhere((sec) => sec.stableKey == 'grammar');
+      final grammar =
+          s.sections.firstWhere((sec) => sec.stableKey == 'grammar');
       expect(grammar.marks, 16);
       expect(grammar.items.length, 4);
       expect(grammar.items.map((i) => i.id).toList(), [
@@ -349,8 +366,8 @@ void main() {
 
     test('Class 9 Hindi आर-2 grammar marks sum (4+4+2+6)', () {
       final s = loadCourse('cbse_9_hindi_r2');
-      final grammar = s.sections
-          .firstWhere((sec) => sec.stableKey == 'grammar');
+      final grammar =
+          s.sections.firstWhere((sec) => sec.stableKey == 'grammar');
       expect(grammar.marks, 16);
       final marks = grammar.items.map((i) => i.marks).toList();
       expect(marks, [4, 4, 2, 6]);
@@ -370,8 +387,7 @@ void main() {
         total += s.uncertainItems.length;
       }
       // The Sanskrit tracks genuinely carry flagged items (Class 9 lists).
-      expect(
-          loadCourse('cbse_9_sanskrit').uncertainItems, isNotEmpty);
+      expect(loadCourse('cbse_9_sanskrit').uncertainItems, isNotEmpty);
       expect(loadCourse('cbse_10_sanskrit').uncertainItems, isNotEmpty);
       // Sanity: not everything is flagged.
       expect(total, lessThan(50));
@@ -391,8 +407,17 @@ void main() {
 
     test('tags come from the closed vocabulary', () {
       const allowed = {
-        'reading', 'poetry', 'grammar', 'poetics', 'writing', 'vocabulary',
-        'orthography', 'literature', 'prose', 'drama', 'translation',
+        'reading',
+        'poetry',
+        'grammar',
+        'poetics',
+        'writing',
+        'vocabulary',
+        'orthography',
+        'literature',
+        'prose',
+        'drama',
+        'translation',
       };
       for (final trackId in kTrackIds) {
         final s = loadCourse(trackId);

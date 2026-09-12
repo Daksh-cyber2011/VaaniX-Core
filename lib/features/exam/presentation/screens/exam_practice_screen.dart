@@ -42,8 +42,7 @@ class ExamPracticeScreen extends ConsumerStatefulWidget {
       : '$trackId::topic::$focusTopicId';
 
   @override
-  ConsumerState<ExamPracticeScreen> createState() =>
-      _ExamPracticeScreenState();
+  ConsumerState<ExamPracticeScreen> createState() => _ExamPracticeScreenState();
 }
 
 class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
@@ -66,12 +65,12 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
       title: 'Practice',
       body: practiceAsync.when(
         loading: () => const Center(
-          child:
-              CircularProgressIndicator(semanticsLabel: 'Loading practice'),
+          child: CircularProgressIndicator(semanticsLabel: 'Loading practice'),
         ),
         error: (e, _) => _PracticeUnavailable(
           onStart: _start,
-          message: 'अभ्यास शुरू नहीं हो सका — क्या आपने syllabus का दायरा चुना है?',
+          message:
+              'अभ्यास शुरू नहीं हो सका — क्या आपने syllabus का दायरा चुना है?',
         ),
         data: (data) {
           if (data.isFinished) {
@@ -165,7 +164,9 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
   }
 
   Future<void> _onRetry() async {
-    await ref.read(examPracticeProvider(widget.providerKey).notifier).retryAttempt();
+    await ref
+        .read(examPracticeProvider(widget.providerKey).notifier)
+        .retryAttempt();
     if (mounted) {
       setState(() {
         _mcqSelected = null;
@@ -456,8 +457,8 @@ class _FeedbackPanel extends StatelessWidget {
                   color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(label,
-                    style: AppTextStyles.labelSmall(color: color)),
+                child:
+                    Text(label, style: AppTextStyles.labelSmall(color: color)),
               ),
               const Spacer(),
               if (eval != null && bandLabel.isNotEmpty)
@@ -486,8 +487,8 @@ class _FeedbackPanel extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Expanded(
-                    child: Text(p.requirement,
-                        style: AppTextStyles.bodySmall()),
+                    child:
+                        Text(p.requirement, style: AppTextStyles.bodySmall()),
                   ),
                 ],
               ),
@@ -630,8 +631,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

@@ -94,7 +94,8 @@ class ExamPracticeController
       return;
     }
     final learner = await ref.read(examLearnerProfileProvider(trackId).future);
-    final weakIds = learner.weakTopicsFirst(limit: 30)
+    final weakIds = learner
+        .weakTopicsFirst(limit: 30)
         .map((t) => t.topicId)
         .where((id) => scope.selection.isSelected(id))
         .toSet();
@@ -104,9 +105,8 @@ class ExamPracticeController
       view: scope.view!,
       selection: scope.selection,
       weakTopicIds: weakIds,
-      topicFilter: request.focusTopicId == null
-          ? const {}
-          : {request.focusTopicId!},
+      topicFilter:
+          request.focusTopicId == null ? const {} : {request.focusTopicId!},
     );
     if (questions.isEmpty) {
       state = AsyncError(
@@ -270,9 +270,8 @@ class ExamPracticeController
       await gamification.sessionFinished(ExamSessionRecord(
         kind: ExamSessionKind.practice,
         trackId: trackId,
-        correctCount: session.attempts
-            .where((a) => a.verdict == 'correct')
-            .length,
+        correctCount:
+            session.attempts.where((a) => a.verdict == 'correct').length,
         totalCount: session.attempts.length,
         questionFingerprint: examSessionFingerprintOf(
           [for (final a in session.attempts) a.questionId],

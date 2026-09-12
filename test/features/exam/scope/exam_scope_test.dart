@@ -70,13 +70,15 @@ void main() {
       expect(view.selectableUnitIds, isNotEmpty);
     });
 
-    test('Hindi A literature units are the book-section items', () {
+    test('Hindi A literature units are the verified NCERT chapters', () {
       final view = ExamScopeView.fromSyllabus(loadCourse('cbse_10_hindi_a'));
       final lit = view.sections.firstWhere((s) => s.stableKey == 'literature');
-      // 3 book-section units: क्षितिज गद्य, क्षितिज काव्य, कृतिका.
-      expect(lit.units.length, 3);
-      expect(lit.units.every((u) => !u.isChapter), isTrue);
+      // 12 क्षितिज + 3 कृतिका, from the supplied 2026-27 NCERT packages.
+      expect(lit.units.length, 15);
+      expect(lit.units.every((u) => u.isChapter), isTrue);
       expect(lit.units.every((u) => u.selectable), isTrue);
+      expect(lit.units.first.title, 'सूरदास के पद');
+      expect(lit.units.last.title, 'मैं क्यों लिखता हूँ');
     });
 
     test('every section of every track renders units or a pending state', () {
@@ -154,9 +156,7 @@ void main() {
     test('course isolation: foreign ids are rejected (null result)', () {
       final selection = ExamScopeSelection.empty(track);
       expect(selection.toggle('cbse_10_hindi_a_grammar_vachya'), isNull);
-      expect(
-          selection
-              .toggle('cbse_10_sanskrit_communicative_grammar_sandhi'),
+      expect(selection.toggle('cbse_10_sanskrit_communicative_grammar_sandhi'),
           isNull);
       expect(selection.revision, 0, reason: 'no change, no revision bump');
       expect(selection.isEmpty, isTrue);
@@ -172,12 +172,19 @@ void main() {
       expect(selection.coveredMarks(view), 50);
     });
 
-    test('selectAll on a fully item-marks track covers all 80', () {
+    test('Hindi B chapter scope preserves exact units without fake marks', () {
       const hindiB = 'cbse_10_hindi_b';
       final hindiView = ExamScopeView.fromSyllabus(loadCourse(hindiB));
-      final selection =
-          ExamScopeSelection.empty(hindiB).selectAll(hindiView.selectableUnitIds);
-      expect(selection.coveredMarks(hindiView), 80);
+      final selection = ExamScopeSelection.empty(hindiB)
+          .selectAll(hindiView.selectableUnitIds);
+      final literature =
+          hindiView.sections.firstWhere((s) => s.stableKey == 'literature');
+      expect(literature.selectableUnits.length, 17);
+      expect(literature.selectableUnits.every((u) => u.isChapter), isTrue);
+      // The official PDF allocates literature marks at section level, not
+      // per chapter. Showing 80/80 would therefore be false precision.
+      expect(selection.coveredMarks(hindiView), 52);
+      expect(hindiView.marksCoverageExact, isFalse);
     });
 
     test('selectAll ignores foreign ids (isolation)', () {
@@ -187,8 +194,7 @@ void main() {
       ]);
       expect(selection.selectedUnitIds.length, view.selectableUnitIds.length);
       expect(
-          selection.selectedUnitIds
-              .every((id) => id.startsWith('${track}_')),
+          selection.selectedUnitIds.every((id) => id.startsWith('${track}_')),
           isTrue);
     });
 

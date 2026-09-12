@@ -217,8 +217,8 @@ class SyllabusItem extends Equatable {
         questionPatterns: (json['questionPatterns'] as List<dynamic>? ?? [])
             .map((e) => QuestionPattern.fromJson(e as Map<String, dynamic>))
             .toList(),
-        details: (json['details'] as Map<String, dynamic>?)
-            ?.cast<String, dynamic>(),
+        details:
+            (json['details'] as Map<String, dynamic>?)?.cast<String, dynamic>(),
         ocrUncertain: json['ocrUncertain'] as bool? ?? false,
         note: json['note'] as String?,
         sourceRef: json['sourceRef'] == null
@@ -259,7 +259,8 @@ class SyllabusItem extends Equatable {
   final SourceReference? sourceRef;
   final List<String> contentTags;
 
-  bool get isPending => status == SyllabusItemStatus.pendingOfficialAnnouncement;
+  bool get isPending =>
+      status == SyllabusItemStatus.pendingOfficialAnnouncement;
 
   /// Selectable as exam scope only when officially published.
   bool get isSelectable => status == SyllabusItemStatus.published;
@@ -359,8 +360,7 @@ class PrescribedBook extends Equatable {
     this.note,
   });
 
-  factory PrescribedBook.fromJson(Map<String, dynamic> json) =>
-      PrescribedBook(
+  factory PrescribedBook.fromJson(Map<String, dynamic> json) => PrescribedBook(
         id: json['id'] as String,
         title: json['title'] as String,
         publisher: json['publisher'] as String? ?? '',
@@ -378,7 +378,8 @@ class PrescribedBook extends Equatable {
   final List<SyllabusChapter> chapters;
   final String? note;
 
-  bool get isPending => status == SyllabusItemStatus.pendingOfficialAnnouncement;
+  bool get isPending =>
+      status == SyllabusItemStatus.pendingOfficialAnnouncement;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -573,8 +574,8 @@ class CourseSyllabus extends Equatable {
         (json['subject'] as Map<String, dynamic>).cast<String, dynamic>();
     final assessment =
         (json['assessment'] as Map<String, dynamic>).cast<String, dynamic>();
-    final boardExam =
-        (assessment['boardExam'] as Map<String, dynamic>).cast<String, dynamic>();
+    final boardExam = (assessment['boardExam'] as Map<String, dynamic>)
+        .cast<String, dynamic>();
     final internal = (assessment['internalAssessment'] as Map<String, dynamic>)
         .cast<String, dynamic>();
     final source =
@@ -638,9 +639,8 @@ class CourseSyllabus extends Equatable {
   final PendingAnnouncement? pending;
 
   /// Board-exam sections only (Class 10 planning priority — §7).
-  List<SyllabusSection> get boardSections => sections
-      .where((s) => s.assessmentType == AssessmentType.board)
-      .toList();
+  List<SyllabusSection> get boardSections =>
+      sections.where((s) => s.assessmentType == AssessmentType.board).toList();
 
   /// Sum of board-section marks; must equal [boardExamTotalMarks].
   double get computedBoardMarks =>
@@ -653,8 +653,7 @@ class CourseSyllabus extends Equatable {
       books.any((b) => b.isPending);
 
   /// Flat view of all published items (for scope selection, M2).
-  List<SyllabusItem> get allItems =>
-      sections.expand((s) => s.items).toList();
+  List<SyllabusItem> get allItems => sections.expand((s) => s.items).toList();
 
   /// All chapters across prescribed books (Class 10 Sanskrit tracks).
   List<SyllabusChapter> get allChapters =>
@@ -669,8 +668,8 @@ class CourseSyllabus extends Equatable {
   List<String> validate() {
     final errors = <String>[];
     if (computedBoardMarks != boardExamTotalMarks) {
-      errors
-          .add('board sections sum $computedBoardMarks != $boardExamTotalMarks');
+      errors.add(
+          'board sections sum $computedBoardMarks != $boardExamTotalMarks');
     }
     for (final s in sections) {
       final withMarks = s.items.where((i) => i.marks != null).toList();
@@ -684,8 +683,7 @@ class CourseSyllabus extends Equatable {
     if (internalComponents.isNotEmpty) {
       final csum = internalComponents.fold(0.0, (sum, c) => sum + c.marks);
       if (csum != internalAssessmentMarks) {
-        errors
-            .add('internal components sum $csum != $internalAssessmentMarks');
+        errors.add('internal components sum $csum != $internalAssessmentMarks');
       }
     }
     return errors;
