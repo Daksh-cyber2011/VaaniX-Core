@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/features/exam/data/exam_scope_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
@@ -60,7 +61,7 @@ void main() {
 
     setUp(() async {
       prefs = await freshPrefs();
-      repo = ExamScopeRepository(prefs);
+      repo = ExamScopeRepository(LocalStorageService(prefs));
     });
 
     test('empty store loads as null active / no scopes', () async {
@@ -101,7 +102,8 @@ void main() {
 
     test('corrupt JSON degrades to an empty store, never crashes', () async {
       final corruptPrefs = await freshPrefs({'exam_scope_v1': '{not json'});
-      final store = await ExamScopeRepository(corruptPrefs).load();
+      final store =
+          await ExamScopeRepository(LocalStorageService(corruptPrefs)).load();
       expect(store.activeTrackId, isNull);
       expect(store.scopes, isEmpty);
     });
@@ -121,7 +123,8 @@ void main() {
         },
       });
       final mixedPrefs = await freshPrefs({'exam_scope_v1': json});
-      final store = await ExamScopeRepository(mixedPrefs).load();
+      final store =
+          await ExamScopeRepository(LocalStorageService(mixedPrefs)).load();
       expect(store.activeTrackId, 'cbse_10_sanskrit');
       expect(store.scopes.containsKey('cbse_10_sanskrit'), isTrue);
       expect(store.scopes.containsKey('cbse_9_sanskrit'), isFalse);
@@ -139,11 +142,9 @@ void main() {
         'updatedAtIso': '',
       }));
 
-      final view =
-          ExamScopeView.fromSyllabus(courseFromDisk(track));
+      final view = ExamScopeView.fromSyllabus(courseFromDisk(track));
       final store = await repo.loadAndPrune({track: view});
-      expect(store.scopes[track]!.selectedUnitIds,
-          {'${track}_grammar_sandhi'});
+      expect(store.scopes[track]!.selectedUnitIds, {'${track}_grammar_sandhi'});
       // Repair persisted.
       final reloaded = await repo.loadSelection(track);
       expect(reloaded.selectedUnitIds, {'${track}_grammar_sandhi'});
@@ -167,8 +168,7 @@ void main() {
       return container;
     }
 
-    test('builds with the validated syllabus view and empty scope',
-        () async {
+    test('builds with the validated syllabus view and empty scope', () async {
       const track = 'cbse_10_sanskrit';
       final container = await makeContainer();
       final state = await container.read(examScopeProvider(track).future);
@@ -180,8 +180,7 @@ void main() {
 
     test('unknown track fails instead of faking a syllabus', () async {
       final container = await makeContainer();
-      expect(
-          () => container.read(examScopeProvider('cbse_99_physics').future),
+      expect(() => container.read(examScopeProvider('cbse_99_physics').future),
           throwsA(isA<StateError>()));
     });
 
@@ -265,8 +264,7 @@ void main() {
       ]);
       addTearDown(container.dispose);
       final state = await container.read(examScopeProvider(track).future);
-      expect(
-          state.selection.selectedUnitIds, {'${track}_grammar_sandhi'});
+      expect(state.selection.selectedUnitIds, {'${track}_grammar_sandhi'});
       expect(state.selection.revision, 9,
           reason: 'prune is a repair, not a user action');
     });
@@ -280,7 +278,8 @@ void main() {
       await controller.confirmSelection();
 
       expect(
-          await ExamScopeRepository(prefs).activeTrackId(), track);
+          await ExamScopeRepository(LocalStorageService(prefs)).activeTrackId(),
+          track);
     });
   });
 }

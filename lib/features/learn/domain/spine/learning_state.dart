@@ -174,7 +174,7 @@ class RecentPerformance extends Equatable {
 class LearningState extends Equatable {
   const LearningState({
     required this.languageCode,
-    required this.conceptMasteries,
+    this.conceptMasteries = const <String, ConceptMastery>{},
     this.reviewQueue = const <ReviewEntry>[],
     this.recentPerformance = const RecentPerformance(),
   });

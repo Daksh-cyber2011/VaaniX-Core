@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/bengali_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadBengaliJson() {
   final file = File('assets/curriculum/learn/bn.json');
@@ -103,7 +104,8 @@ void main() {
     test('all lesson IDs are prefixed with bn_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('bn_'),
-            reason: 'Bengali lesson IDs must use bn_ prefix for global uniqueness');
+            reason:
+                'Bengali lesson IDs must use bn_ prefix for global uniqueness');
       }
     });
 
@@ -116,7 +118,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -129,7 +132,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -233,8 +237,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in bengaliExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -253,7 +256,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in bengaliExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);
@@ -359,15 +363,16 @@ void main() {
       // - Inherent vowel /o/ not /a/
       // - না after verb (not before)
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      
-      expect(allContent.contains('gender') || allContent.contains('লিঙ্গ'), isTrue,
+
+      expect(
+          allContent.contains('gender') || allContent.contains('লিঙ্গ'), isTrue,
           reason: 'Bengali curriculum must teach the no-gender feature');
     });
 
     test('curriculum uses Bengali numerals (০-৯) not Devanagari (०-९)', () {
       final bengaliNumeralRegex = RegExp(r'[০-৯]');
       final devanagariNumeralRegex = RegExp(r'[०-९]');
-      
+
       for (final l in lessons) {
         final content = l['content'] as String;
         // If content has numerals at all, they should be Bengali not Devanagari
@@ -384,7 +389,7 @@ void main() {
       // Bengali uses জল (jol) for water, ভাত (bhat) for cooked rice —
       // different from Hindi पानी and चावल
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      
+
       expect(allContent.contains('ভাত'), isTrue,
           reason: 'Bengali curriculum must teach ভাত (cooked rice) — '
               'a Bengali-specific word distinct from Hindi');

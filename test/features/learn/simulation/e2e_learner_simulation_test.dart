@@ -67,6 +67,7 @@ import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery_scheduling.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 import 'package:vaanix_app/features/learn/domain/spine/session_engine.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 // ─── Simulation world (real data, built once per group) ─────────────────────
 
@@ -127,8 +128,7 @@ class SimLearner {
     RecentPerformance recentPerformance = const RecentPerformance(),
   })  : completedLessons = Set.of(completedLessons),
         masteredByLesson = {
-          for (final e in masteredByLesson.entries)
-            e.key: Set.of(e.value),
+          for (final e in masteredByLesson.entries) e.key: Set.of(e.value),
         },
         evidenceMasteries = Map.of(evidenceMasteries),
         reviewQueue = List.of(reviewQueue),
@@ -553,7 +553,8 @@ void main() {
           result.dimensionScores.values.fold<int>(0, (s, d) => s + d.asked));
     });
 
-    test('plan → lesson → mistakes → replan turns newLearning into '
+    test(
+        'plan → lesson → mistakes → replan turns newLearning into '
         'weakRepair (the path changed)', () async {
       final learner = SimLearner(
         name: 'A',
@@ -578,8 +579,8 @@ void main() {
       );
 
       // With no mastery at all, the journey starts at the FIRST concept.
-      final firstNew =
-          planBefore.activities.firstWhere((a) => a.kind == ActivityKind.newLearning);
+      final firstNew = planBefore.activities
+          .firstWhere((a) => a.kind == ActivityKind.newLearning);
       expect(firstNew.conceptId, world.graph.concepts.first.id,
           reason: 'a beginner starts at the very beginning');
 
@@ -728,7 +729,8 @@ void main() {
           reason: 'placement must separate C from a complete beginner');
     });
 
-    test('correct-heavy sessions TRIM repetition and earn mastery; '
+    test(
+        'correct-heavy sessions TRIM repetition and earn mastery; '
         'the replanned path moves FORWARD, not sideways', () async {
       final learner = SimLearner(
         name: 'C',
@@ -825,7 +827,8 @@ void main() {
     test('SKIPS mastered material and repairs the weak skill', () async {
       // D arrives with the whole SCRIPT chapter mastered (a learner who
       // can already read Devanagari) but a half-done grammar chapter.
-      final ch1 = world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
+      final ch1 =
+          world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
       final grammarChapter =
           world.graph.concepts.where((c) => chapterOf(world, c.id) == 3);
       final partialGrammar = grammarChapter.take(2).toList();
@@ -906,14 +909,16 @@ void main() {
   });
 
   group('LEARNER E — returning after a break (§91)', () {
-    test('the plan front-loads REVIEWS and the review session keeps '
+    test(
+        'the plan front-loads REVIEWS and the review session keeps '
         'mastered material MAINTAINED', () async {
       // E's persisted pocket: solid progress from ~10 days ago (the
       // script AND greetings chapters behind them), one half-done daily-
       // life lesson, and a stale review queue.
       final now = DateTime.now();
       final daysAgo = now.subtract(const Duration(days: 10));
-      final ch1 = world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
+      final ch1 =
+          world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
       final greetings =
           world.graph.concepts.where((c) => chapterOf(world, c.id) == 1);
       final daily =
@@ -1106,8 +1111,7 @@ void main() {
           reason: '§18: do not merely repeat the same question');
       // The wrong streak scheduled a SOON review.
       expect(
-        outcome.queueUpdates
-            .any((e) => e.reason == ReviewReason.recentlyWeak),
+        outcome.queueUpdates.any((e) => e.reason == ReviewReason.recentlyWeak),
         isTrue,
       );
     });
@@ -1153,7 +1157,8 @@ void main() {
         diagnosticAnswers: (_) => false,
         seed: 11,
       );
-      final ch1 = world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
+      final ch1 =
+          world.graph.concepts.where((c) => chapterOf(world, c.id) == 0);
       final grammar =
           world.graph.concepts.where((c) => chapterOf(world, c.id) == 3);
       final planD = await planFor(
@@ -1189,10 +1194,10 @@ void main() {
           reason: '§92: two learners on the SAME language must receive '
               'DIFFERENT learning paths');
 
-      final newA =
-          planA.activities.firstWhere((a) => a.kind == ActivityKind.newLearning);
-      final newD =
-          planD.activities.firstWhere((a) => a.kind == ActivityKind.newLearning);
+      final newA = planA.activities
+          .firstWhere((a) => a.kind == ActivityKind.newLearning);
+      final newD = planD.activities
+          .firstWhere((a) => a.kind == ActivityKind.newLearning);
       expect(newA.conceptId, isNot(newD.conceptId),
           reason: 'their next NEW concept differs: A starts at zero, '
               'D resumes past the mastered script chapter');

@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/urdu_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadUrduJson() {
   final file = File('assets/curriculum/learn/ur.json');
@@ -110,7 +111,8 @@ void main() {
     test('all lesson IDs are prefixed with ur_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('ur_'),
-            reason: 'Urdu lesson IDs must use ur_ prefix for global uniqueness');
+            reason:
+                'Urdu lesson IDs must use ur_ prefix for global uniqueness');
       }
     });
 
@@ -123,7 +125,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -136,7 +139,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -206,7 +210,8 @@ void main() {
   });
 
   group('Urdu curriculum — Urdu-specific content', () {
-    test('curriculum teaches Urdu-specific vocabulary (Persian/Arabic loans)', () {
+    test('curriculum teaches Urdu-specific vocabulary (Persian/Arabic loans)',
+        () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Urdu uses پانی (water), روٹی (bread), سلام (greeting) — Persian/Arabic loans
       expect(allContent.contains('پانی'), isTrue,
@@ -220,7 +225,8 @@ void main() {
     test('curriculum teaches distinct Urdu kinship (امّاں/ابو)', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Urdu uses امّاں (mother), ابو (father) — distinct from Hindi माँ/बाप
-      expect(allContent.contains('امّاں') || allContent.contains('اماں'), isTrue,
+      expect(
+          allContent.contains('امّاں') || allContent.contains('اماں'), isTrue,
           reason: 'Urdu curriculum must teach امّاں (mother)');
       expect(allContent.contains('ابو'), isTrue,
           reason: 'Urdu curriculum must teach ابو (father)');
@@ -248,17 +254,15 @@ void main() {
 
     test('curriculum teaches Urdu-specific postpositions', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.contains('میں') || allContent.contains('گھر میں'),
-          isTrue,
+      expect(
+          allContent.contains('میں') || allContent.contains('گھر میں'), isTrue,
           reason: 'Urdu curriculum must teach میں (in) postposition');
-      expect(allContent.contains('پر'),
-          isTrue,
+      expect(allContent.contains('پر'), isTrue,
           reason: 'Urdu curriculum must teach پر (on) postposition');
-      expect(allContent.contains('سے') || allContent.contains('لاہور سے'),
-          isTrue,
+      expect(
+          allContent.contains('سے') || allContent.contains('لاہور سے'), isTrue,
           reason: 'Urdu curriculum must teach سے (from) postposition');
-      expect(allContent.contains('کو'),
-          isTrue,
+      expect(allContent.contains('کو'), isTrue,
           reason: 'Urdu curriculum must teach کو (to) postposition');
     });
 
@@ -268,21 +272,26 @@ void main() {
           reason: 'Urdu curriculum must teach نے (past agent marker)');
     });
 
-    test('curriculum mentions Urdu cultural context (Pakistan, Ghalib, Iqbal)', () {
+    test('curriculum mentions Urdu cultural context (Pakistan, Ghalib, Iqbal)',
+        () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Should mention Pakistan, Ghalib, Iqbal, or ghazals
-      expect(allContent.contains('پاکستان') ||
-             allContent.contains('غالب') ||
-             allContent.contains('اقبال') ||
-             allContent.contains('غزل'), isTrue,
+      expect(
+          allContent.contains('پاکستان') ||
+              allContent.contains('غالب') ||
+              allContent.contains('اقبال') ||
+              allContent.contains('غزل'),
+          isTrue,
           reason: 'Urdu curriculum should reference Urdu cultural context');
     });
 
     test('curriculum mentions RTL direction', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.toLowerCase().contains('right-to-left') ||
-             allContent.toLowerCase().contains('right to left') ||
-             allContent.toLowerCase().contains('rtl'), isTrue,
+      expect(
+          allContent.toLowerCase().contains('right-to-left') ||
+              allContent.toLowerCase().contains('right to left') ||
+              allContent.toLowerCase().contains('rtl'),
+          isTrue,
           reason: 'Urdu curriculum must teach the RTL reading direction');
     });
 
@@ -328,9 +337,7 @@ void main() {
     });
 
     test('total exercise count is at least 60', () {
-      final count = urduExercisesByLesson.values
-          .expand((list) => list)
-          .length;
+      final count = urduExercisesByLesson.values.expand((list) => list).length;
       expect(count, greaterThanOrEqualTo(60),
           reason: 'Part G: Urdu must ship at least 60 exercises');
     });
@@ -338,8 +345,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in urduExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -358,7 +364,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in urduExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);

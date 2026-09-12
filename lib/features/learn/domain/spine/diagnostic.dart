@@ -152,6 +152,10 @@ class DiagnosticResult extends Equatable {
   final Duration duration;
   final DateTime completedAt;
 
+  /// Number of probes that supplied real diagnostic evidence.
+  int get askedCount =>
+      dimensionScores.values.fold(0, (total, score) => total + score.asked);
+
   /// The weakest scored dimension with meaningful data (the "biggest
   /// opportunity" line), or `null` when nothing was measured.
   DiagnosticDimension? get weakestDimension {
@@ -217,9 +221,8 @@ class DiagnosticResult extends Equatable {
     }
     return DiagnosticResult(
       language: language,
-      overallLevel: ((json['overallLevel'] as num?)?.toInt() ?? 0)
-          .clamp(0, 4)
-          .toInt(),
+      overallLevel:
+          ((json['overallLevel'] as num?)?.toInt() ?? 0).clamp(0, 4).toInt(),
       dimensionScores: scores,
       confidence: DimensionScore.clamp01(
         (json['confidence'] as num?)?.toDouble() ?? 0,
@@ -287,7 +290,12 @@ class DiagnosticResult extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [language, overallLevel, dimensionScores, confidence, duration,
-       completedAt];
+  List<Object?> get props => [
+        language,
+        overallLevel,
+        dimensionScores,
+        confidence,
+        duration,
+        completedAt
+      ];
 }

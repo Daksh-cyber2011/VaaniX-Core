@@ -124,8 +124,7 @@ void main() {
   });
 
   group('pattern mapping (§21/§47)', () {
-    test('misconception pattern → repeatedMisconception + needsAttention',
-        () {
+    test('misconception pattern → repeatedMisconception + needsAttention', () {
       final report = WeakAreaEngine.build(
         learner: ExamLearnerProfile(trackId: 'x', topics: const {}),
         patterns: [pattern(ErrorCategory.misconception, 't1', 3)],
@@ -202,8 +201,8 @@ void main() {
     test('max 5 findings, severity desc', () {
       final topics = <String, TopicMastery>{};
       for (var i = 0; i < 8; i++) {
-        topics['t$i'] = mastery('t$i', TopicStage.needsAttention,
-            strength: 0.1 + i * 0.01);
+        topics['t$i'] =
+            mastery('t$i', TopicStage.needsAttention, strength: 0.1 + i * 0.01);
       }
       final report = WeakAreaEngine.build(
         learner: ExamLearnerProfile(trackId: 'x', topics: topics),
@@ -254,8 +253,8 @@ void main() {
         learner: ExamLearnerProfile(
           trackId: 'x',
           topics: {
-            't1': mastery('t1', TopicStage.strong, strength: 0.9,
-                correct: 9, attempts: 10),
+            't1': mastery('t1', TopicStage.strong,
+                strength: 0.9, correct: 9, attempts: 10),
           },
         ),
         patterns: const [],
@@ -266,8 +265,7 @@ void main() {
       expect(report.insufficientEvidence, isFalse);
     });
 
-    test('M8 report NEVER contains PYQ/mock signals (M9 data required)',
-        () {
+    test('M8 report NEVER contains PYQ/mock signals (M9 data required)', () {
       final report = WeakAreaEngine.build(
         learner: ExamLearnerProfile(
           trackId: 'x',
@@ -345,12 +343,11 @@ void main() {
       expect(report.findings, isEmpty);
     });
 
-    test('too-few PYQ attempts are not evidence (never a lucky guess)',
-        () {
+    test('too-few PYQ attempts are not evidence (never a lucky guess)', () {
       final report = WeakAreaEngine.build(
         learner: ExamLearnerProfile(trackId: 'x', topics: const {}),
         patterns: const [],
-        revisionItems: const {},
+        revisionItems: const [],
         pyqPerformance: const {
           't1': PyqTopicPerformance(topicId: 't1', attempted: 1, correct: 0),
         },
@@ -373,8 +370,7 @@ void main() {
       expect(report.findings, hasLength(1));
       expect(report.findings.first.topicId, 'sec_c');
       expect(report.findings.first.signals, {WeakSignal.weakMock});
-      expect(report.findings.first.evidenceSentence.contains('खंड स'),
-          isTrue);
+      expect(report.findings.first.evidenceSentence.contains('खंड स'), isTrue);
       expect(report.findings.first.evidenceSentence.contains('%'), isFalse);
     });
 
@@ -392,8 +388,7 @@ void main() {
       expect(report.findings, isEmpty);
     });
 
-    test('PYQ + mock + mastery evidence compound to focus/needsAttention',
-        () {
+    test('PYQ + mock + mastery evidence compound to focus/needsAttention', () {
       final report = WeakAreaEngine.build(
         learner: ExamLearnerProfile(
           trackId: 'x',
@@ -413,11 +408,12 @@ void main() {
         now: t,
       );
       final t1 = report.findings.firstWhere((f) => f.topicId == 't1');
-      expect(t1.signals, containsAll({WeakSignal.lowMastery,
-          WeakSignal.weakPyq}));
+      expect(
+          t1.signals, containsAll({WeakSignal.lowMastery, WeakSignal.weakPyq}));
       expect(t1.severity, WeakSeverity.needsAttention);
-      expect(report.findings.any((f) => f.signals
-          .contains(WeakSignal.weakMock)), isTrue);
+      expect(
+          report.findings.any((f) => f.signals.contains(WeakSignal.weakMock)),
+          isTrue);
     });
   });
 }

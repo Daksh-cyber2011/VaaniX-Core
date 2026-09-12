@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/features/exam/data/exam_scope_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
@@ -113,11 +114,9 @@ void main() {
     expect(find.textContaining('Subject code 122'), findsOneWidget);
 
     // Continue disabled until a course is picked.
-    ElevatedButton buttonOf(String label) => tester.widget<ElevatedButton>(
-        find
-            .ancestor(
-                of: find.text(label), matching: find.byType(ElevatedButton))
-            .first);
+    ElevatedButton buttonOf(String label) => tester.widget<ElevatedButton>(find
+        .ancestor(of: find.text(label), matching: find.byType(ElevatedButton))
+        .first);
 
     expect(buttonOf('View official syllabus').onPressed, isNull);
 
@@ -133,8 +132,7 @@ void main() {
   testWidgets('track selection: continue-editing card for saved scope',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
-    await tester.pumpWidget(
-        host(prefs, const ExamTrackSelectionScreen()));
+    await tester.pumpWidget(host(prefs, const ExamTrackSelectionScreen()));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Continue:'), findsOneWidget);
@@ -200,10 +198,9 @@ void main() {
         reason: 'internal-only chapters must never enter board scope');
 
     // Their checkboxes are disabled.
-    final ch10Checkbox = tester
-        .widget<Checkbox>(find
-            .ancestor(of: find.text('कालोऽहम्'), matching: find.byType(Checkbox))
-            .first);
+    final ch10Checkbox = tester.widget<Checkbox>(find
+        .ancestor(of: find.text('कालोऽहम्'), matching: find.byType(Checkbox))
+        .first);
     expect(ch10Checkbox.onChanged, isNull);
   });
 
@@ -240,8 +237,8 @@ void main() {
   testWidgets('summary: identity, totals, confirm persists active track',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
-    await tester.pumpWidget(host(
-        prefs, const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit')));
+    await tester.pumpWidget(
+        host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit')));
     await tester.pumpAndSettle();
 
     // Identity rows (§49).
@@ -259,15 +256,15 @@ void main() {
     expect(find.text('दायरा सहेज दिया गया'), findsOneWidget);
 
     // Persisted as the ACTIVE track.
-    final store = await ExamScopeRepository(prefs).load();
+    final store = await ExamScopeRepository(LocalStorageService(prefs)).load();
     expect(store.activeTrackId, 'cbse_10_sanskrit');
   });
 
   testWidgets('summary (Class 9): pending literature note shown honestly',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_9_sanskrit');
-    await tester.pumpWidget(host(
-        prefs, const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit')));
+    await tester.pumpWidget(
+        host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit')));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी'),

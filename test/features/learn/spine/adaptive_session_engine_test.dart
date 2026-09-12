@@ -19,8 +19,7 @@ import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/spine/session_engine.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 
-Exercise _mcq(String id, String lessonId,
-    {String? hint, String? explanation}) {
+Exercise _mcq(String id, String lessonId, {String? hint, String? explanation}) {
   return Exercise(
     id: id,
     lessonId: lessonId,
@@ -32,6 +31,8 @@ Exercise _mcq(String id, String lessonId,
     hint: hint,
   );
 }
+
+Exercise mk(int n) => _mcq('ex-a$n', 'lesson-a');
 
 SessionExercisePool _pool(
   String conceptId,
@@ -55,7 +56,9 @@ void main() {
         config: AdaptiveSessionConfig(
           kind: ActivityKind.practice,
           languageCode: 'hi',
-          pools: [_pool('a', [mk(1), mk(2), mk(3)])],
+          pools: [
+            _pool('a', [mk(1), mk(2), mk(3)])
+          ],
         ),
       );
       expect(engine.maxSteps >= 2, isTrue);
@@ -67,7 +70,9 @@ void main() {
         config: AdaptiveSessionConfig(
           kind: ActivityKind.newLearning,
           languageCode: 'hi',
-          pools: [_pool('a', [mk(1), mk(2), mk(3)])],
+          pools: [
+            _pool('a', [mk(1), mk(2), mk(3)])
+          ],
         ),
       );
       // The only concept contributes exactly one queued exercise.
@@ -85,7 +90,9 @@ void main() {
         config: AdaptiveSessionConfig(
           kind: ActivityKind.masteryCheck,
           languageCode: 'hi',
-          pools: [_pool('a', [mk(1), mk(2), mk(3)])],
+          pools: [
+            _pool('a', [mk(1), mk(2), mk(3)])
+          ],
         ),
       );
       // Answer everything wrong — no ladder may appear in a check.
@@ -93,8 +100,8 @@ void main() {
       var checksSeen = 0;
       while (!engine.isFinished) {
         if (engine.currentIsExercise) {
-          expect(engine.currentStep!.presentation,
-              StepPresentation.masteryCheck);
+          expect(
+              engine.currentStep!.presentation, StepPresentation.masteryCheck);
           checksSeen++;
           engine.submitAnswer(correct: false, firstTry: true);
         }
@@ -232,15 +239,12 @@ void main() {
           explanations: withExplanation
               ? const {'a': 'Refresher text for concept a.'}
               : const {},
-          prerequisiteOf: withPrereq
-              ? const {'a': 'p'}
-              : const {'a': null},
+          prerequisiteOf: withPrereq ? const {'a': 'p'} : const {'a': null},
         ),
       );
     }
 
-    test('2 wrongs → prerequisite, explanation, easier, guided — in order',
-        () {
+    test('2 wrongs → prerequisite, explanation, easier, guided — in order', () {
       final engine = buildEngine(
         generatedVariants: const [],
       );
@@ -254,8 +258,7 @@ void main() {
       engine.advance();
 
       // The ladder replaces the rest of 'a'.
-      expect(engine.currentStep!.presentation,
-          StepPresentation.prerequisite);
+      expect(engine.currentStep!.presentation, StepPresentation.prerequisite);
       expect(engine.currentStep!.conceptId, 'p');
       expect(engine.currentStep!.exercise!.id, 'ex-p1');
       engine.submitAnswer(correct: true, firstTry: true);
@@ -287,8 +290,7 @@ void main() {
       }
     });
 
-    test('generated variant is adopted as the easier rung (and flagged)',
-        () {
+    test('generated variant is adopted as the easier rung (and flagged)', () {
       final generated = Exercise(
         id: 'gen-a-practice-1',
         lessonId: 'lesson-a',

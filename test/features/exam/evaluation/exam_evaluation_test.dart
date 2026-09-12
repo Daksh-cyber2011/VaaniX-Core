@@ -157,8 +157,7 @@ void main() {
     });
 
     test('missing dimensions rejected', () {
-      expect(
-          PhotoQualityGate.check(bytes: big, width: 0, height: 0),
+      expect(PhotoQualityGate.check(bytes: big, width: 0, height: 0),
           EvaluationIssue.tooSmallPhoto);
     });
   });
@@ -176,9 +175,13 @@ void main() {
 
     test('unreadable photo → uncertain + retake advice, never a guess',
         () async {
-      final r = await evaluatorFor(
-              _FakeVision(const VisionExtraction(readable: false, confident: false)))
-          .evaluate(photoBytes: big, mime: 'image/jpeg', width: 800, height: 600);
+      final r = await evaluatorFor(_FakeVision(
+              const VisionExtraction(readable: false, confident: false)))
+          .evaluate(
+              photoBytes: big,
+              mime: 'image/jpeg',
+              photoWidth: 800,
+              photoHeight: 600);
       expect(r.verdict, EvaluationVerdict.uncertain);
       expect(r.issues, contains(EvaluationIssue.unreadablePhoto));
       expect(r.retryAdvice, contains('दोबारा'));
@@ -189,7 +192,11 @@ void main() {
         readable: true,
         confident: false,
         text: 'सन्धि क...',
-      ))).evaluate(photoBytes: big, mime: 'image/jpeg', width: 800, height: 600);
+      ))).evaluate(
+          photoBytes: big,
+          mime: 'image/jpeg',
+          photoWidth: 800,
+          photoHeight: 600);
       expect(r.verdict, EvaluationVerdict.uncertain);
       expect(r.issues, contains(EvaluationIssue.ambiguousExtraction));
       expect(r.extractedText, 'सन्धि क...');
@@ -201,34 +208,47 @@ void main() {
         readable: true,
         confident: true,
         text: 'सन्धिकार्यम् — स्वरसन्धिः',
-      ))).evaluate(photoBytes: big, mime: 'image/jpeg', width: 800, height: 600);
+      ))).evaluate(
+          photoBytes: big,
+          mime: 'image/jpeg',
+          photoWidth: 800,
+          photoHeight: 600);
       expect(r.verdict, EvaluationVerdict.correct);
       expect(r.extractedText, contains('सन्धिकार्यम्'));
     });
 
-    test('offline → typed-first guidance, never "app broken" (§17)',
-        () async {
-      final r = await evaluatorFor(_FakeVision(null, offline: true))
-          .evaluate(photoBytes: big, mime: 'image/jpeg', width: 800, height: 600);
+    test('offline → typed-first guidance, never "app broken" (§17)', () async {
+      final r = await evaluatorFor(_FakeVision(null, offline: true)).evaluate(
+          photoBytes: big,
+          mime: 'image/jpeg',
+          photoWidth: 800,
+          photoHeight: 600);
       expect(r.verdict, EvaluationVerdict.uncertain);
       expect(r.issues, contains(EvaluationIssue.offlinePhoto));
       expect(r.retryAdvice, contains('टाइप'));
     });
 
     test('timeout → uncertain with typed advice (§26)', () async {
-      final r = await evaluatorFor(_FakeVision(null, timeout: true))
-          .evaluate(photoBytes: big, mime: 'image/jpeg', width: 800, height: 600);
+      final r = await evaluatorFor(_FakeVision(null, timeout: true)).evaluate(
+          photoBytes: big,
+          mime: 'image/jpeg',
+          photoWidth: 800,
+          photoHeight: 600);
       expect(r.verdict, EvaluationVerdict.uncertain);
       expect(r.retryAdvice, contains('टाइप'));
     });
 
     test('poor-quality photo rejected before ANY network call', () async {
       var called = false;
-      final vision = _FakeVision(const VisionExtraction(
-          readable: true, confident: true, text: 'anything'),
+      final vision = _FakeVision(
+          const VisionExtraction(
+              readable: true, confident: true, text: 'anything'),
           onCall: () => called = true);
       await evaluatorFor(vision).evaluate(
-          photoBytes: [1, 2, 3], mime: 'image/jpeg', width: 100, height: 100);
+          photoBytes: [1, 2, 3],
+          mime: 'image/jpeg',
+          photoWidth: 100,
+          photoHeight: 100);
       expect(called, isFalse,
           reason: '§18: garbage input must never cost a Gemini call');
     });
@@ -236,7 +256,8 @@ void main() {
 }
 
 class _FakeVision implements ExamVisionClient {
-  _FakeVision(this.extraction, {this.offline = false, this.timeout = false, this.onCall});
+  _FakeVision(this.extraction,
+      {this.offline = false, this.timeout = false, this.onCall});
 
   final VisionExtraction? extraction;
   final bool offline;

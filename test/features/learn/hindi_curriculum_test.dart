@@ -19,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/hindi_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 /// Loads the Hindi curriculum JSON from disk.
 Map<String, dynamic> _loadHindiJson() {
@@ -77,8 +78,7 @@ void main() {
 
     test('chapter IDs are unique', () {
       final ids = chapters.map((c) => c['id'] as String).toSet();
-      expect(ids.length, chapters.length,
-          reason: 'duplicate chapter IDs');
+      expect(ids.length, chapters.length, reason: 'duplicate chapter IDs');
     });
 
     test('chapters are ordered 0..4', () {
@@ -115,21 +115,22 @@ void main() {
     test('all lesson IDs are prefixed with hi_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('hi_'),
-            reason: 'Hindi lesson IDs must use hi_ prefix for global uniqueness');
+            reason:
+                'Hindi lesson IDs must use hi_ prefix for global uniqueness');
       }
     });
 
     test('lesson IDs are globally unique', () {
       final ids = lessons.map((l) => l['id'] as String).toSet();
-      expect(ids.length, lessons.length,
-          reason: 'duplicate lesson IDs');
+      expect(ids.length, lessons.length, reason: 'duplicate lesson IDs');
     });
 
     test('every lesson references a valid chapterId', () {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -143,7 +144,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -261,7 +263,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in hindiExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull,

@@ -35,6 +35,7 @@ import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 import 'package:vaanix_app/features/exam/domain/pyq_mock/mock_engine.dart';
 import 'package:vaanix_app/features/exam/domain/pyq_mock/mock_models.dart';
 import 'package:vaanix_app/features/exam/domain/pyq_mock/pyq_bank.dart';
+import 'package:vaanix_app/features/exam/domain/pyq_mock/pyq_models.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/error_intelligence.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/revision_schedule.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/weak_area_day.dart';
@@ -62,14 +63,24 @@ void main() {
       'A': _PersonaSpec(id: 'A', name: 'Strong student', percent: 100),
       'B': _PersonaSpec(id: 'B', name: 'Average student', percent: 55),
       'C': _PersonaSpec(id: 'C', name: 'Weak student', percent: 25),
-      'D': _PersonaSpec(id: 'D', name: 'Skips sessions', percent: 60,
-          skipDays: const {2, 3}),
-      'E': _PersonaSpec(id: 'E', name: 'Changes syllabus scope',
-          percent: 60, editScopeDay: 4),
-      'F': _PersonaSpec(id: 'F', name: 'Changes readiness target',
-          percent: 60, retargetWeeks: 3, retargetDay: 4),
-      'G': _PersonaSpec(id: 'G', name: 'Chooses different tasks',
-          percent: 60, preferPyqOverPractice: true),
+      'D': _PersonaSpec(
+          id: 'D', name: 'Skips sessions', percent: 60, skipDays: const {2, 3}),
+      'E': _PersonaSpec(
+          id: 'E',
+          name: 'Changes syllabus scope',
+          percent: 60,
+          editScopeDay: 4),
+      'F': _PersonaSpec(
+          id: 'F',
+          name: 'Changes readiness target',
+          percent: 60,
+          retargetWeeks: 3,
+          retargetDay: 4),
+      'G': _PersonaSpec(
+          id: 'G',
+          name: 'Chooses different tasks',
+          percent: 60,
+          preferPyqOverPractice: true),
     };
 
     final results = <String, _JourneyDigest>{};
@@ -83,11 +94,11 @@ void main() {
       final d = entry.value;
       expect(d.diagnosticResponses, greaterThanOrEqualTo(5),
           reason: '${entry.key} diagnostic too short (§10)');
-      expect(d.plan.days, isNotEmpty, reason: '${entry.key} got no plan');
+      expect(d.finalPlanTasks, isNotEmpty,
+          reason: '${entry.key} got no plan tasks');
       expect(d.sessions, greaterThanOrEqualTo(3),
           reason: '${entry.key} finished too few sessions');
-      expect(d.mockResult, isNotNull,
-          reason: '${entry.key} never sat a mock');
+      expect(d.mockResult, isNotNull, reason: '${entry.key} never sat a mock');
       expect(d.xp, greaterThan(0), reason: '${entry.key} earned no XP');
       expect(d.pyqAttempts, greaterThan(0),
           reason: '${entry.key} did no PYQ work');
@@ -163,8 +174,7 @@ void main() {
     // reaches it first, so the topic is guaranteed practice evidence.
     final failTopic = view.sections
         .expand((s) => s.selectableUnits)
-        .reduce((a, b) =>
-            (b.marks ?? 0) > (a.marks ?? 0) ? b : a)
+        .reduce((a, b) => (b.marks ?? 0) > (a.marks ?? 0) ? b : a)
         .id;
 
     final h = await _runJourney(
@@ -180,10 +190,10 @@ void main() {
     );
     final baseline = await _runJourney(
         _PersonaSpec(id: 'B', name: 'Average student', percent: 55),
-        chance, now);
+        chance,
+        now);
     final c = await _runJourney(
-        _PersonaSpec(id: 'C', name: 'Weak student', percent: 25),
-        chance, now);
+        _PersonaSpec(id: 'C', name: 'Weak student', percent: 25), chance, now);
 
     expect(h.diagnosticResponses, greaterThanOrEqualTo(5));
     expect(h.mockResult, isNotNull);
@@ -199,13 +209,14 @@ void main() {
     // One-topic failure is NOT global weakness (vs the weak student).
     expect(h.weakFindings.length, lessThan(c.weakFindings.length),
         reason: 'one-topic failure ≠ failing everything');
-    expect(h.mockResult!.overallBand == 'needsAttention' ||
-        h.mockResult!.overallBand == 'learning', isTrue,
+    expect(
+        h.mockResult!.overallBand == 'needsAttention' ||
+            h.mockResult!.overallBand == 'learning',
+        isTrue,
         reason: 'H cannot end in the strong band after 90% topic failure');
   });
 
-  test('I: strong in one section, weak in another (Hindi A course)',
-      () async {
+  test('I: strong in one section, weak in another (Hindi A course)', () async {
     final syllabus = await _loadSyllabus('cbse_10_hindi_a');
     final view = ExamScopeView.fromSyllabus(syllabus);
     final sections = view.sections
@@ -234,8 +245,7 @@ void main() {
 
     expect(i.mockResult, isNotNull);
     // Mastery splits by section: strong section topics hold up.
-    final strongIds =
-        strongSection.selectableUnits.map((u) => u.id).toSet();
+    final strongIds = strongSection.selectableUnits.map((u) => u.id).toSet();
     final weakIds = weakSection.selectableUnits.map((u) => u.id).toSet();
     double avgStrength(Set<String> ids) {
       final ms = i.learner.topics.values
@@ -354,8 +364,8 @@ class _JourneyDigest {
   });
 
   int get strongTopicCount => learner.topics.values
-      .where((t) =>
-          t.stage == TopicStage.mastered || t.stage == TopicStage.strong)
+      .where(
+          (t) => t.stage == TopicStage.mastered || t.stage == TopicStage.strong)
       .length;
 }
 
@@ -367,11 +377,10 @@ Future<_JourneyDigest> _runJourney(
   ExamScopeView? viewOverride,
   String? mockFocusSectionId,
 }) async {
-  final syllabus =
-      syllabusOverride ?? await _loadSyllabus('cbse_10_sanskrit');
+  final syllabus = syllabusOverride ?? await _loadSyllabus('cbse_10_sanskrit');
   var view = viewOverride ?? ExamScopeView.fromSyllabus(syllabus);
-  var selection = ExamScopeSelection.empty(view.trackId)
-      .selectAll(view.selectableUnitIds);
+  var selection =
+      ExamScopeSelection.empty(view.trackId).selectAll(view.selectableUnitIds);
 
   var profile = ExamProfile(
     trackId: view.trackId,
@@ -405,8 +414,7 @@ Future<_JourneyDigest> _runJourney(
       return chance('${spec.id}-fail-$salt', 100 - spec.failPercent);
     }
     final section = sectionOfTopic[topicId] ?? '';
-    if (spec.weakSectionTitle != null &&
-        section == spec.weakSectionTitle) {
+    if (spec.weakSectionTitle != null && section == spec.weakSectionTitle) {
       return chance('${spec.id}-weaksec-$salt', spec.weakSectionPercent);
     }
     return chance('${spec.id}-$salt', spec.percent);
@@ -414,8 +422,11 @@ Future<_JourneyDigest> _runJourney(
 
   // -- helpers ----------------------------------------------------------
 
-  ({WeakAreaReport report, WeakAreaDayDecision decision,
-      List<RevisionItem> revision}) runEngines() {
+  ({
+    WeakAreaReport report,
+    WeakAreaDayDecision decision,
+    List<RevisionItem> revision
+  }) runEngines() {
     final patterns = ErrorIntelligence.analyze(evidence);
     final revisionItems = RevisionEngine.schedule(
       learner: learner,
@@ -483,8 +494,7 @@ Future<_JourneyDigest> _runJourney(
 
   MockResult runMiniMock(DateTime t) {
     final boardSections = syllabus.sections
-        .where((s) =>
-            s.assessmentType == AssessmentType.board && s.marks > 0)
+        .where((s) => s.assessmentType == AssessmentType.board && s.marks > 0)
         .map((s) => (id: s.id, title: s.title, marks: s.marks))
         .toList(growable: false);
     final sectionOfUnit = <String, String>{};
@@ -493,8 +503,8 @@ Future<_JourneyDigest> _runJourney(
         sectionOfUnit[unit.id] = sec.id;
       }
     }
-    final pyq = PyqBank.build(
-        syllabus: syllabus, view: view, selection: selection);
+    final pyq =
+        PyqBank.build(syllabus: syllabus, view: view, selection: selection);
     final bySection = <String, List<PyqQuestion>>{};
     for (final q in pyq) {
       bySection
@@ -502,7 +512,7 @@ Future<_JourneyDigest> _runJourney(
           .add(q);
     }
     final paper = MockEngine.build(
-      trackId: syllabus.id,
+      trackId: view.trackId,
       kind: MockKind.mini,
       boardSections: boardSections,
       boardTotalMarks: syllabus.boardExamTotalMarks,
@@ -577,8 +587,8 @@ Future<_JourneyDigest> _runJourney(
   // -- 2. First plan ----------------------------------------------------
 
   var weak = runEngines();
-  var plan = DeterministicExamPlanner.build(buildContext(
-      weak.report, weak.decision, weak.revision));
+  var plan = DeterministicExamPlanner.build(
+      buildContext(weak.report, weak.decision, weak.revision));
   planCount++;
 
   // -- 3. Daily loop (7 days) -------------------------------------------
@@ -596,8 +606,8 @@ Future<_JourneyDigest> _runJourney(
       selection = ExamScopeSelection.empty(view.trackId).selectAll(keep);
       scopeRevision++;
       weak = runEngines();
-      plan = DeterministicExamPlanner.build(buildContext(
-          weak.report, weak.decision, weak.revision));
+      plan = DeterministicExamPlanner.build(
+          buildContext(weak.report, weak.decision, weak.revision));
       planCount++;
     }
 
@@ -607,12 +617,11 @@ Future<_JourneyDigest> _runJourney(
         trackId: profile.trackId,
         dailyStudyMinutes: profile.dailyStudyMinutes,
         studyDaysPerWeek: profile.studyDaysPerWeek,
-        readinessTargetDate:
-            now.add(Duration(days: 7 * spec.retargetWeeks!)),
+        readinessTargetDate: now.add(Duration(days: 7 * spec.retargetWeeks!)),
       );
       weak = runEngines();
-      plan = DeterministicExamPlanner.build(buildContext(
-          weak.report, weak.decision, weak.revision));
+      plan = DeterministicExamPlanner.build(
+          buildContext(weak.report, weak.decision, weak.revision));
       planCount++;
     }
 
@@ -620,13 +629,12 @@ Future<_JourneyDigest> _runJourney(
 
     for (final task in dayPlan.tasks) {
       // Persona G: student freedom — PYQ instead of practice (§20).
-      if (spec.preferPyqOverPractice &&
-          task.type == ExamTaskType.practice) {
-        final pool = PyqBank.build(
-                syllabus: syllabus, view: view, selection: selection)
-            .take(6)
-            .map((p) => p.question)
-            .toList(growable: false);
+      if (spec.preferPyqOverPractice && task.type == ExamTaskType.practice) {
+        final pool =
+            PyqBank.build(syllabus: syllabus, view: view, selection: selection)
+                .take(6)
+                .map((p) => p.question)
+                .toList(growable: false);
         runPool(pool, ExamSessionKind.pyq);
         pyqAttempts += pool.length;
         continue;
@@ -671,11 +679,11 @@ Future<_JourneyDigest> _runJourney(
 
   // -- 4. Final PYQ + mock regardless of plan shape ---------------------
 
-  final pyqPool = PyqBank.build(
-          syllabus: syllabus, view: view, selection: selection)
-      .take(6)
-      .map((p) => p.question)
-      .toList(growable: false);
+  final pyqPool =
+      PyqBank.build(syllabus: syllabus, view: view, selection: selection)
+          .take(6)
+          .map((p) => p.question)
+          .toList(growable: false);
   runPool(pyqPool, ExamSessionKind.pyq);
   pyqAttempts += pyqPool.length;
   mockResult = runMiniMock(now.add(const Duration(days: 7)));

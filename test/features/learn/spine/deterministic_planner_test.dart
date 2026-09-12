@@ -6,6 +6,7 @@
 /// ungrounded delegate plan from ever reaching the learner.
 library;
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/core/errors/failures.dart';
@@ -163,7 +164,8 @@ void main() {
 
     test('every emitted activity is grounded in the graph', () async {
       final plan = await const DeterministicPlanner()
-          .buildPlan(_context(state: _state({
+          .buildPlan(_context(
+              state: _state({
             'hi_ls_1': MasteryStage.understood,
           })))
           .then((r) => r.fold((f) => throw StateError(f.message), (p) => p));
@@ -214,8 +216,7 @@ void main() {
       expect(plan.source, PlanSource.deterministic);
     });
 
-    test('empty delegate plan falls back instead of blank-screening',
-        () async {
+    test('empty delegate plan falls back instead of blank-screening', () async {
       final facade = ValidatingPlanner(
         delegate: _EmptyPlanner(),
         fallback: const DeterministicPlanner(),

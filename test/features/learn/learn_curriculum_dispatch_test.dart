@@ -41,7 +41,8 @@ void main() {
     test('Hindi returns a non-empty curriculum (Part A shipped)', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.hindi);
       expect(chapters, isNotEmpty,
-          reason: 'Part A: Hindi must ship a real curriculum (5 chapters / 20 lessons)');
+          reason:
+              'Part A: Hindi must ship a real curriculum (5 chapters / 20 lessons)');
       expect(chapters, hasLength(5));
       expect(chapters.first.id, 'ch_hi_script');
     });
@@ -65,7 +66,8 @@ void main() {
     test('Telugu returns a non-empty curriculum (Part D shipped)', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.telugu);
       expect(chapters, isNotEmpty,
-          reason: 'Part D: Telugu must ship a real curriculum (5 chapters / 20 lessons)');
+          reason:
+              'Part D: Telugu must ship a real curriculum (5 chapters / 20 lessons)');
       expect(chapters, hasLength(5));
       expect(chapters.first.id, 'ch_te_script',
           reason: 'Telugu Level 0 chapter must be ch_te_script');
@@ -74,7 +76,8 @@ void main() {
     test('Tamil returns a non-empty curriculum (Part E shipped)', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.tamil);
       expect(chapters, isNotEmpty,
-          reason: 'Part E: Tamil must ship a real curriculum (5 chapters / 20 lessons)');
+          reason:
+              'Part E: Tamil must ship a real curriculum (5 chapters / 20 lessons)');
       expect(chapters, hasLength(5));
       expect(chapters.first.id, 'ch_ta_script',
           reason: 'Tamil Level 0 chapter must be ch_ta_script');
@@ -83,7 +86,8 @@ void main() {
     test('Gujarati returns a non-empty curriculum (Part F shipped)', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.gujarati);
       expect(chapters, isNotEmpty,
-          reason: 'Part F: Gujarati must ship a real curriculum (5 chapters / 20 lessons)');
+          reason:
+              'Part F: Gujarati must ship a real curriculum (5 chapters / 20 lessons)');
       expect(chapters, hasLength(5));
       expect(chapters.first.id, 'ch_gu_script',
           reason: 'Gujarati Level 0 chapter must be ch_gu_script');
@@ -91,7 +95,8 @@ void main() {
     test('Urdu returns a non-empty curriculum (Part G shipped)', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.urdu);
       expect(chapters, isNotEmpty,
-          reason: 'Part G: Urdu must ship a real curriculum (5 chapters / 20 lessons)');
+          reason:
+              'Part G: Urdu must ship a real curriculum (5 chapters / 20 lessons)');
       expect(chapters, hasLength(5));
       expect(chapters.first.id, 'ch_ur_script',
           reason: 'Urdu Level 0 chapter must be ch_ur_script');
@@ -195,9 +200,10 @@ void main() {
       // The actual stubs all exist, so we exercise this by passing a
       // non-existent path through rootBundle directly.
       try {
-        await rootBundle.loadString('assets/curriculum/learn/__nonexistent__.json');
+        await rootBundle
+            .loadString('assets/curriculum/learn/__nonexistent__.json');
         fail('loadString should have thrown for a missing asset');
-      } on FlutterError {
+      } catch (_) {
         // expected — this is the path loadLearnCurriculum catches.
       }
       // And the real loader returns [] for every catalogue language

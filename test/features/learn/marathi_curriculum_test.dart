@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/marathi_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadMarathiJson() {
   final file = File('assets/curriculum/learn/mr.json');
@@ -103,7 +104,8 @@ void main() {
     test('all lesson IDs are prefixed with mr_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('mr_'),
-            reason: 'Marathi lesson IDs must use mr_ prefix for global uniqueness');
+            reason:
+                'Marathi lesson IDs must use mr_ prefix for global uniqueness');
       }
     });
 
@@ -116,7 +118,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -129,7 +132,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -197,9 +201,11 @@ void main() {
     test('curriculum mentions the three-gender system', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Look for mentions of neuter gender (Marathi's distinctive feature)
-      expect(allContent.toLowerCase().contains('neuter') ||
-             allContent.contains('नपुंसकलिंग') ||
-             allContent.contains(' neuter'), isTrue,
+      expect(
+          allContent.toLowerCase().contains('neuter') ||
+              allContent.contains('नपुंसकलिंग') ||
+              allContent.contains(' neuter'),
+          isTrue,
           reason: 'Marathi curriculum must teach the neuter gender — '
               'Marathi has 3 genders, Hindi has only 2');
     });
@@ -238,10 +244,12 @@ void main() {
     test('curriculum mentions Marathi cultural context', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Should mention Maharashtra, Ganesh festival, or Marathi cities
-      expect(allContent.contains('महाराष्ट्र') ||
-             allContent.contains('गणेशोत्सव') ||
-             allContent.contains('मुंबई') ||
-             allContent.contains('पुणे'), isTrue,
+      expect(
+          allContent.contains('महाराष्ट्र') ||
+              allContent.contains('गणेशोत्सव') ||
+              allContent.contains('मुंबई') ||
+              allContent.contains('पुणे'),
+          isTrue,
           reason: 'Marathi curriculum should reference Maharashtra / '
               'Marathi cultural context');
     });
@@ -282,8 +290,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in marathiExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -302,7 +309,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in marathiExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);
@@ -313,8 +321,7 @@ void main() {
       }
     });
 
-    test('exercise explanations contain Devanagari (Marathi explanations)',
-        () {
+    test('exercise explanations contain Devanagari (Marathi explanations)', () {
       final devanagariRegex = RegExp(r'[\u0900-\u097F]');
       var marathiExplanationCount = 0;
       for (final entry in marathiExercisesByLesson.entries) {
@@ -330,7 +337,8 @@ void main() {
   });
 
   group('Marathi curriculum — isolation from other languages', () {
-    test('Marathi lesson IDs do not collide with Hindi, Bengali, or Sanskrit', () {
+    test('Marathi lesson IDs do not collide with Hindi, Bengali, or Sanskrit',
+        () {
       final marathiIds = lessons.map((l) => l['id'] as String).toSet();
       for (final id in marathiIds) {
         expect(id.startsWith('mr_'), isTrue,

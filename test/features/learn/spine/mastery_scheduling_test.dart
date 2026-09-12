@@ -238,7 +238,7 @@ void main() {
           ),
         },
         currentStages: const {'a': MasteryStage.understood},
-        lastPracticedByConcept: const {'a': now},
+        lastPracticedByConcept: {'a': now},
         now: now,
       );
       expect(updates, hasLength(1));
@@ -354,7 +354,7 @@ void main() {
       final derived = LearningState(
         languageCode: 'hi',
         conceptMasteries: {
-          'a': const ConceptMastery(
+          'a': ConceptMastery(
             conceptId: 'a',
             stage: MasteryStage.understood,
             strength: 0.8,
@@ -371,7 +371,7 @@ void main() {
       final merged = applyMasteryEvidence(
         derived: derived,
         evidence: {
-          'a': const ConceptMastery(
+          'a': ConceptMastery(
             conceptId: 'a',
             stage: MasteryStage.recalled,
             strength: 0.4,
@@ -423,8 +423,7 @@ void main() {
       expect(record.lastPracticedAt, DateTime(2026, 1, 3));
     });
 
-    test('evidence for a lesson-not-completed concept is kept honestly',
-        () {
+    test('evidence for a lesson-not-completed concept is kept honestly', () {
       final derived = LearningState(languageCode: 'hi');
       final merged = applyMasteryEvidence(
         derived: derived,

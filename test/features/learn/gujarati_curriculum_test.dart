@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/gujarati_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadGujaratiJson() {
   final file = File('assets/curriculum/learn/gu.json');
@@ -104,7 +105,8 @@ void main() {
     test('all lesson IDs are prefixed with gu_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('gu_'),
-            reason: 'Gujarati lesson IDs must use gu_ prefix for global uniqueness');
+            reason:
+                'Gujarati lesson IDs must use gu_ prefix for global uniqueness');
       }
     });
 
@@ -117,7 +119,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -130,7 +133,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -216,41 +220,43 @@ void main() {
     test('curriculum mentions the older/younger sibling distinction', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Gujarati distinguishes ભાઈ (older brother) from બહેન (younger)
-      expect(allContent.contains('ભાઈ') && allContent.contains('બહેન'),
-          isTrue,
+      expect(allContent.contains('ભાઈ') && allContent.contains('બહેન'), isTrue,
           reason: 'Gujarati curriculum must teach older/younger brother '
               'distinction (ભાઈ/બહેન)');
     });
 
     test('curriculum mentions the no-gender feature (Dravidian)', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.toLowerCase().contains('gender') ||
-             allContent.contains('లింగం'), isTrue,
+      expect(
+          allContent.toLowerCase().contains('gender') ||
+              allContent.contains('లింగం'),
+          isTrue,
           reason: 'Gujarati curriculum must teach the no-gender feature '
               '(Dravidian)');
     });
 
     test('curriculum mentions Gujarati-specific postpositions', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.contains('-ને') || allContent.contains('મને'),
-          isTrue,
+      expect(allContent.contains('-ને') || allContent.contains('મને'), isTrue,
           reason: 'Gujarati curriculum must teach -ને postposition');
-      expect(allContent.contains('-થી') || allContent.contains('થી'),
-          isTrue,
+      expect(allContent.contains('-થી') || allContent.contains('થી'), isTrue,
           reason: 'Gujarati curriculum must teach -થી postposition');
-      expect(allContent.contains('-માં') || allContent.contains('ઘરમાં'),
-          isTrue,
+      expect(
+          allContent.contains('-માં') || allContent.contains('ઘરમાં'), isTrue,
           reason: 'Gujarati curriculum must teach -માં postposition');
     });
 
     test('curriculum mentions Gujarati cultural context', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Should mention Gujarati states or cultural references
-      expect(allContent.contains('અમદાવાદ') ||
-             allContent.contains('ગુજરાત') ||
-             allContent.contains('ગુજરાત') ||
-             allContent.contains('மகாபலிபுரம்'), isTrue,
-          reason: 'Gujarati curriculum should reference Gujarati cultural context');
+      expect(
+          allContent.contains('અમદાવાદ') ||
+              allContent.contains('ગુજરાત') ||
+              allContent.contains('ગુજરાત') ||
+              allContent.contains('மகாபலிபுரம்'),
+          isTrue,
+          reason:
+              'Gujarati curriculum should reference Gujarati cultural context');
     });
   });
 
@@ -289,8 +295,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in gujaratiExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -309,7 +314,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in gujaratiExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);
@@ -320,7 +326,8 @@ void main() {
       }
     });
 
-    test('exercise explanations contain Gujarati script (Gujarati explanations)',
+    test(
+        'exercise explanations contain Gujarati script (Gujarati explanations)',
         () {
       final gujaratiRegex = RegExp(r'[\u0A80-\u0AFF]');
       var gujaratiExplanationCount = 0;

@@ -23,6 +23,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
+import 'package:vaanix_app/features/learn/data/learn_plan_repository.dart';
+import 'package:vaanix_app/features/learn/data/personalized_content_generator.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
@@ -31,9 +33,11 @@ import 'package:vaanix_app/features/learn/domain/spine/deterministic_planner.dar
 import 'package:vaanix_app/features/learn/domain/spine/generated_content.dart';
 import 'package:vaanix_app/features/learn/domain/spine/generated_content_parser.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
+import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner_output.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner_prompt.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 // ─── Fakes ───────────────────────────────────────────────────────────
 
@@ -234,7 +238,8 @@ void main() {
         freshId: () => 'gen-x',
       );
       expect(v.isValid, isFalse);
-      expect(v.rejections, contains(GeneratedRejection.unsupportedExerciseType));
+      expect(
+          v.rejections, contains(GeneratedRejection.unsupportedExerciseType));
     });
 
     test('mcq without a correct index is rejected', () {
@@ -577,7 +582,8 @@ void main() {
       );
     });
 
-    test('declined generation falls back to trusted content (Left, no '
+    test(
+        'declined generation falls back to trusted content (Left, no '
         'broken UI state)', () async {
       final gen = PersonalizedContentGenerator(
         textClient: AdversarialTextClient(reply: '{"kind": "none"}'),

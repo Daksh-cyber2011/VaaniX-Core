@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/domain/spine/diagnostic.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 DiagnosticResult _result({
   Map<DiagnosticDimension, DimensionScore> scores = const {},
@@ -140,8 +141,12 @@ void main() {
         'confidence': 5,
         'dimensionScores': {
           'telepathy': {'score': 1, 'confidence': 1},
-          'vocabulary': {'score': 0.5, 'confidence': 0.5, 'asked': 2,
-              'correct': 1},
+          'vocabulary': {
+            'score': 0.5,
+            'confidence': 0.5,
+            'asked': 2,
+            'correct': 1
+          },
         },
       });
       expect(parsed.language, LearnLanguage.hindi); // fallback

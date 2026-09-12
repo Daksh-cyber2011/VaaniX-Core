@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
+import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/session_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/session_screen.dart';
 
@@ -75,7 +76,8 @@ void _useTallSurface(WidgetTester tester) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('a correct run: real exercises → feedback beats → friendly '
+  testWidgets(
+      'a correct run: real exercises → feedback beats → friendly '
       'finish', (tester) async {
     _useTallSurface(tester);
     final container = await _container(prefs: {'learn_language': 'hindi'});

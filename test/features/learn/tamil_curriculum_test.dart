@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/tamil_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadTamilJson() {
   final file = File('assets/curriculum/learn/ta.json');
@@ -104,7 +105,8 @@ void main() {
     test('all lesson IDs are prefixed with ta_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('ta_'),
-            reason: 'Tamil lesson IDs must use ta_ prefix for global uniqueness');
+            reason:
+                'Tamil lesson IDs must use ta_ prefix for global uniqueness');
       }
     });
 
@@ -117,7 +119,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -130,7 +133,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -216,24 +220,26 @@ void main() {
     test('curriculum mentions the older/younger sibling distinction', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Tamil distinguishes அண்ணன் (older brother) from தம்பி (younger)
-      expect(allContent.contains('அண்ணன்') && allContent.contains('தம்பி'),
-          isTrue,
+      expect(
+          allContent.contains('அண்ணன்') && allContent.contains('தம்பி'), isTrue,
           reason: 'Tamil curriculum must teach older/younger brother '
               'distinction (அண்ணன்/தம்பி)');
     });
 
     test('curriculum mentions the no-gender feature (Dravidian)', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.toLowerCase().contains('gender') ||
-             allContent.contains('లింగం'), isTrue,
+      expect(
+          allContent.toLowerCase().contains('gender') ||
+              allContent.contains('లింగం'),
+          isTrue,
           reason: 'Tamil curriculum must teach the no-gender feature '
               '(Dravidian)');
     });
 
     test('curriculum mentions Tamil-specific postpositions', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.contains('-க்கு') || allContent.contains('எனக்கு'),
-          isTrue,
+      expect(
+          allContent.contains('-க்கு') || allContent.contains('எனக்கு'), isTrue,
           reason: 'Tamil curriculum must teach -க்கு postposition');
       expect(allContent.contains('-இருந்து') || allContent.contains('இருந்து'),
           isTrue,
@@ -246,10 +252,12 @@ void main() {
     test('curriculum mentions Tamil cultural context', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Should mention Tamil states or cultural references
-      expect(allContent.contains('சென்னை') ||
-             allContent.contains('தமிழ்நாடு') ||
-             allContent.contains('தமிழ்நாடு') ||
-             allContent.contains('மகாபலிபுரம்'), isTrue,
+      expect(
+          allContent.contains('சென்னை') ||
+              allContent.contains('தமிழ்நாடு') ||
+              allContent.contains('தமிழ்நாடு') ||
+              allContent.contains('மகாபலிபுரம்'),
+          isTrue,
           reason: 'Tamil curriculum should reference Tamil cultural context');
     });
   });
@@ -289,8 +297,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in tamilExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -309,7 +316,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in tamilExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);
@@ -320,8 +328,7 @@ void main() {
       }
     });
 
-    test('exercise explanations contain Tamil script (Tamil explanations)',
-        () {
+    test('exercise explanations contain Tamil script (Tamil explanations)', () {
       final tamilRegex = RegExp(r'[\u0B80-\u0BFF]');
       var tamilExplanationCount = 0;
       for (final entry in tamilExercisesByLesson.entries) {

@@ -17,11 +17,13 @@ import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
 import 'package:vaanix_app/features/learn/data/learn_plan_repository.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
 import 'package:vaanix_app/features/learn/domain/spine/deterministic_planner.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 const String _validPlanJson = '''
 {"focusSummary": "Repair greetings, then learn family words.",
@@ -39,7 +41,7 @@ class FakePlannerTextClient implements PlannerTextClient {
     this.available = true,
     this.reply,
     Object? throwOnCall,
-  })  : _throwOnCall = throwOnCall;
+  }) : _throwOnCall = throwOnCall;
 
   bool available;
   String? reply;
@@ -93,7 +95,8 @@ PlannerContext _context() => PlannerContext(
       supportedActivityTypes: kDeterministicPlannerActivityKinds,
     );
 
-Future<({LearnPlanRepository repo, ILocalStorageService storage})> _repo() async {
+Future<({LearnPlanRepository repo, ILocalStorageService storage})>
+    _repo() async {
   SharedPreferences.setMockInitialValues(const {});
   final prefs = await SharedPreferences.getInstance();
   final storage = LocalStorageService(prefs);
@@ -117,8 +120,7 @@ void main() {
       final client =
           FakePlannerTextClient(available: true, reply: _validPlanJson);
       final m = await _repo();
-      final planner =
-          GeminiPlanner(textClient: client, planCache: m.repo);
+      final planner = GeminiPlanner(textClient: client, planCache: m.repo);
 
       final result = await planner.buildPlan(_context());
 
@@ -136,8 +138,7 @@ void main() {
     test('prompts are the structured §62 pair (system + user)', () async {
       final client =
           FakePlannerTextClient(available: true, reply: _validPlanJson);
-      final planner =
-          GeminiPlanner(textClient: client, planCache: null);
+      final planner = GeminiPlanner(textClient: client, planCache: null);
 
       await planner.buildPlan(_context());
 

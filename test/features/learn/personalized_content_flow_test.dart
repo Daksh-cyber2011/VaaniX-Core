@@ -62,8 +62,7 @@ class _DiskFullStorage implements ILocalStorageService {
   }
 
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      _invokedDelegate(invocation);
+  dynamic noSuchMethod(Invocation invocation) => _invokedDelegate(invocation);
 
   dynamic _invokedDelegate(Invocation invocation) {
     // Delegate the remaining interface members to the real storage so
@@ -154,12 +153,11 @@ GeneratedContent _seedItem({
 
 void main() {
   group('§34 ladder — cache → AI → write-through', () {
-    test('hop 2: a cache hit is served with ZERO network calls',
-        () async {
+    test('hop 2: a cache hit is served with ZERO network calls', () async {
       final repo = await _newRepo();
       const key = 'hi_c1|explanation|2';
       await repo.save(
-        learnLanguageSpec(LearnLanguage.hindi),
+        LearnLanguage.hindi,
         key,
         _seedItem(id: 'gen-seeded-1'),
       );
@@ -172,8 +170,7 @@ void main() {
       expect(client.completeCalls, 0);
     });
 
-    test('hop 3: a cache miss makes ONE call and writes through',
-        () async {
+    test('hop 3: a cache miss makes ONE call and writes through', () async {
       final repo = await _newRepo();
       final client = _CountingClient(response: _validExplanation);
 
@@ -188,7 +185,7 @@ void main() {
       expect(client.completeCalls, 1);
       expect(
         repo.get(
-          learnLanguageSpec(LearnLanguage.hindi),
+          LearnLanguage.hindi,
           'hi_c1|explanation|2',
         ),
         isNotNull,
@@ -231,7 +228,7 @@ void main() {
       await _captureLeft(client: client, cache: repo);
       expect(
         repo.get(
-          learnLanguageSpec(LearnLanguage.hindi),
+          LearnLanguage.hindi,
           'hi_c1|explanation|2',
         ),
         isNull,
@@ -243,7 +240,8 @@ void main() {
       await _captureLeft(client: client);
     });
 
-    test('disk-full never fails good material (write-through is '
+    test(
+        'disk-full never fails good material (write-through is '
         'best-effort)', () async {
       SharedPreferences.setMockInitialValues(const {});
       final prefs = await SharedPreferences.getInstance();
@@ -261,13 +259,14 @@ void main() {
     test('useCache=false always goes to the model', () async {
       final repo = await _newRepo();
       await repo.save(
-        learnLanguageSpec(LearnLanguage.hindi),
+        LearnLanguage.hindi,
         'hi_c1|explanation|2',
         _seedItem(id: 'gen-seeded-2'),
       );
 
       final client = _CountingClient(response: _validExplanation);
-      final material = await _unwrapRight(client: client, cache: repo, useCache: false);
+      final material =
+          await _unwrapRight(client: client, cache: repo, useCache: false);
 
       expect(material.fromCache, isFalse);
       expect(client.completeCalls, 1);
@@ -276,7 +275,7 @@ void main() {
     test('a STALE cached item is not served; the model runs', () async {
       final repo = await _newRepo();
       await repo.save(
-        learnLanguageSpec(LearnLanguage.hindi),
+        LearnLanguage.hindi,
         'hi_c1|explanation|2',
         _seedItem(
           id: 'gen-stale-1',
@@ -294,12 +293,13 @@ void main() {
       expect(client.completeCalls, 1);
     });
 
-    test('a stored item that no longer validates is discarded, not '
+    test(
+        'a stored item that no longer validates is discarded, not '
         'served', () async {
       final repo = await _newRepo();
       // Grounding-broken stored item (no trusted token in the body).
       await repo.save(
-        learnLanguageSpec(LearnLanguage.hindi),
+        LearnLanguage.hindi,
         'hi_c1|explanation|2',
         _seedItem(
           id: 'gen-corrupt-1',

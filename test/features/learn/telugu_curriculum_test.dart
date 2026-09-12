@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/telugu_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
+import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadTeluguJson() {
   final file = File('assets/curriculum/learn/te.json');
@@ -104,7 +105,8 @@ void main() {
     test('all lesson IDs are prefixed with te_', () {
       for (final l in lessons) {
         expect(l['id'] as String, startsWith('te_'),
-            reason: 'Telugu lesson IDs must use te_ prefix for global uniqueness');
+            reason:
+                'Telugu lesson IDs must use te_ prefix for global uniqueness');
       }
     });
 
@@ -117,7 +119,8 @@ void main() {
       final chapterIds = chapters.map((c) => c['id'] as String).toSet();
       for (final l in lessons) {
         expect(chapterIds.contains(l['chapterId']), isTrue,
-            reason: 'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
+            reason:
+                'lesson ${l['id']} references unknown chapter ${l['chapterId']}');
       }
     });
 
@@ -130,7 +133,8 @@ void main() {
     test('lessons within each chapter are ordered 0..n', () {
       for (final ch in chapters) {
         final chLessons = (ch['lessons'] as List).cast<Map<String, dynamic>>();
-        final orders = chLessons.map((l) => (l['order'] as num).toInt()).toList();
+        final orders =
+            chLessons.map((l) => (l['order'] as num).toInt()).toList();
         final expected = List<int>.generate(orders.length, (i) => i);
         expect(orders, expected,
             reason: 'chapter ${ch['id']} lessons must be ordered 0..n');
@@ -216,40 +220,43 @@ void main() {
     test('curriculum mentions the older/younger sibling distinction', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Telugu distinguishes అన్న (older brother) from తమ్ముడు (younger)
-      expect(allContent.contains('అన్న') && allContent.contains('తమ్ముడు'),
-          isTrue,
+      expect(
+          allContent.contains('అన్న') && allContent.contains('తమ్ముడు'), isTrue,
           reason: 'Telugu curriculum must teach older/younger brother '
               'distinction (అన్న/తమ్ముడు)');
     });
 
     test('curriculum mentions the no-gender feature (Dravidian)', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.toLowerCase().contains('gender') ||
-             allContent.contains('లింగం'), isTrue,
+      expect(
+          allContent.toLowerCase().contains('gender') ||
+              allContent.contains('లింగం'),
+          isTrue,
           reason: 'Telugu curriculum must teach the no-gender feature '
               '(Dravidian)');
     });
 
     test('curriculum mentions Telugu-specific postpositions', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
-      expect(allContent.contains('-కి') || allContent.contains('నాకు'),
-          isTrue,
+      expect(allContent.contains('-కి') || allContent.contains('నాకు'), isTrue,
           reason: 'Telugu curriculum must teach -కి postposition');
-      expect(allContent.contains('-నుండి') || allContent.contains('నుండి'),
-          isTrue,
+      expect(
+          allContent.contains('-నుండి') || allContent.contains('నుండి'), isTrue,
           reason: 'Telugu curriculum must teach -నుండి postposition');
-      expect(allContent.contains('-లో') || allContent.contains('ఇంట్లో'),
-          isTrue,
+      expect(
+          allContent.contains('-లో') || allContent.contains('ఇంట్లో'), isTrue,
           reason: 'Telugu curriculum must teach -లో postposition');
     });
 
     test('curriculum mentions Telugu cultural context', () {
       final allContent = lessons.map((l) => l['content'] as String).join('\n');
       // Should mention Telugu states or cultural references
-      expect(allContent.contains('హైదరాబాద్') ||
-             allContent.contains('తెలంగాణ') ||
-             allContent.contains('ఆంధ్రప్రదేశ్') ||
-             allContent.contains('తిరుపతి'), isTrue,
+      expect(
+          allContent.contains('హైదరాబాద్') ||
+              allContent.contains('తెలంగాణ') ||
+              allContent.contains('ఆంధ్రప్రదేశ్') ||
+              allContent.contains('తిరుపతి'),
+          isTrue,
           reason: 'Telugu curriculum should reference Telugu cultural context');
     });
   });
@@ -289,8 +296,7 @@ void main() {
     test('every exercise is well-formed (isValid)', () {
       for (final entry in teluguExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          expect(ex.isValid, isTrue,
-              reason: 'exercise ${ex.id} is not valid');
+          expect(ex.isValid, isTrue, reason: 'exercise ${ex.id} is not valid');
         }
       }
     });
@@ -309,7 +315,8 @@ void main() {
     test('MCQ exercises have >= 2 options and valid correctIndex', () {
       for (final entry in teluguExercisesByLesson.entries) {
         for (final ex in entry.value) {
-          if (ex.type == ExerciseType.mcq || ex.type == ExerciseType.fillBlank) {
+          if (ex.type == ExerciseType.mcq ||
+              ex.type == ExerciseType.fillBlank) {
             expect(ex.options.length, greaterThanOrEqualTo(2),
                 reason: '${ex.id}: MCQ needs >= 2 options');
             expect(ex.correctIndex, isNotNull);

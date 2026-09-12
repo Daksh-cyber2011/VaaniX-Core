@@ -17,6 +17,7 @@ import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_content_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/smart_practice_screen.dart';
 
 /// Fake raw-text boundary that switches behaviour by prompt shape:
@@ -51,8 +52,7 @@ class _ObeyingFakeClient implements PlannerTextClient {
 
   /// Parses the trusted vocabulary line out of the user prompt.
   static List<String> _vocabFromPrompt(String user) {
-    const marker =
-        'TRUSTED VOCABULARY (the only words you may rely on):';
+    const marker = 'TRUSTED VOCABULARY (the only words you may rely on):';
     final start = user.indexOf(marker);
     if (start < 0) return const [];
     final rest = user.substring(start + marker.length);
@@ -91,8 +91,7 @@ Future<ProviderContainer> _container({
   return ProviderContainer(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(instance),
-      if (client != null)
-        plannerTextClientProvider.overrideWithValue(client),
+      if (client != null) plannerTextClientProvider.overrideWithValue(client),
     ],
   );
 }
@@ -112,8 +111,7 @@ Widget _wrap(ProviderContainer container) {
       ),
       GoRoute(
         path: '/learn/lesson/:lessonId',
-        builder: (_, __) =>
-            const Scaffold(body: Center(child: Text('Lesson'))),
+        builder: (_, __) => const Scaffold(body: Center(child: Text('Lesson'))),
       ),
       GoRoute(
         path: '/learn/lesson/:lessonId/practice',
@@ -163,8 +161,7 @@ void main() {
     expect(find.textContaining('trusted material'), findsOneWidget);
   });
 
-  testWidgets('ready view is trusted-first with honest labels',
-      (tester) async {
+  testWidgets('ready view is trusted-first with honest labels', (tester) async {
     _useTallSurface(tester);
     final client = _ObeyingFakeClient();
     final container = await _container(
@@ -193,7 +190,8 @@ void main() {
     expect(client.calls, isEmpty);
   });
 
-  testWidgets('personalization generates grounded material and labels it '
+  testWidgets(
+      'personalization generates grounded material and labels it '
       '"Made for you"', (tester) async {
     _useTallSurface(tester);
     final client = _ObeyingFakeClient();
