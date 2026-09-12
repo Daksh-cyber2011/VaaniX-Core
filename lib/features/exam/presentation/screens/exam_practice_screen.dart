@@ -198,7 +198,7 @@ class _IntroCard extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
       children: [
-        VanSpeechStrip(
+        const VanSpeechStrip(
           message: 'अभ्यास का समय! जवाब टाइप करें या उत्तरपुस्तिका की फ़ोटो '
               'लगाएँ — Van दोनों पढ़ेगा।',
           state: VanState.happy,
