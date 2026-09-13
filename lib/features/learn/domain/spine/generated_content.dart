@@ -156,21 +156,35 @@ class GeneratedContent extends Equatable {
         .where((k) => k.name == json['kind'])
         .firstOrNull;
     if (kind == null) return null;
+    String? requiredString(String key) {
+      final value = json[key];
+      return value is String && value.trim().isNotEmpty ? value.trim() : null;
+    }
+
+    final id = requiredString('id');
+    final languageCode = requiredString('languageCode');
+    final conceptId = requiredString('conceptId');
+    final lessonId = requiredString('lessonId');
+    final title = requiredString('title');
     final createdAt = DateTime.tryParse(json['createdAt'] as String? ?? '');
+    if (id == null ||
+        languageCode == null ||
+        conceptId == null ||
+        lessonId == null ||
+        title == null ||
+        createdAt == null) {
+      return null;
+    }
     final exerciseJson = json['exercise'];
     return GeneratedContent(
-      id: json['id'] is String ? json['id'] as String : '',
+      id: id,
       kind: kind,
-      languageCode: json['languageCode'] is String
-          ? json['languageCode'] as String
-          : '',
-      conceptId:
-          json['conceptId'] is String ? json['conceptId'] as String : '',
-      lessonId: json['lessonId'] is String ? json['lessonId'] as String : '',
-      difficultyKnob: ((json['difficultyKnob'] as num?)?.toInt() ?? 0)
-          .clamp(1, 5)
-          .toInt(),
-      title: json['title'] is String ? json['title'] as String : '',
+      languageCode: languageCode,
+      conceptId: conceptId,
+      lessonId: lessonId,
+      difficultyKnob:
+          ((json['difficultyKnob'] as num?)?.toInt() ?? 0).clamp(1, 5).toInt(),
+      title: title,
       body: json['body'] is String ? json['body'] as String : null,
       lines: (json['lines'] as List<dynamic>? ?? const [])
           .map(GeneratedExampleLine.fromJson)
@@ -179,14 +193,23 @@ class GeneratedContent extends Equatable {
       exercise: exerciseJson is Map<String, dynamic>
           ? _exerciseFromJson(exerciseJson)
           : null,
-      createdAt: createdAt ?? DateTime.now(),
+      createdAt: createdAt,
     );
   }
 
   @override
   List<Object?> get props => [
-        id, kind, languageCode, conceptId, lessonId, difficultyKnob, title,
-        body, lines, exercise, createdAt,
+        id,
+        kind,
+        languageCode,
+        conceptId,
+        lessonId,
+        difficultyKnob,
+        title,
+        body,
+        lines,
+        exercise,
+        createdAt,
       ];
 }
 
@@ -421,8 +444,7 @@ abstract final class GeneratedContentValidator {
         body = _stringOf(raw['body']);
         if (body.isEmpty) {
           rejections.add(GeneratedRejection.missingFields);
-        } else if (body.length < kMinBodyChars ||
-            body.length > kMaxBodyChars) {
+        } else if (body.length < kMinBodyChars || body.length > kMaxBodyChars) {
           rejections.add(GeneratedRejection.oversized);
         } else if (_containsUnsafeCharacters(body)) {
           rejections.add(GeneratedRejection.unsafeCharacters);
@@ -514,9 +536,8 @@ abstract final class GeneratedContentValidator {
     final rejections = <GeneratedRejection>[];
 
     final typeName = _stringOf(rawExercise['type']);
-    final type = ExerciseType.values
-        .where((t) => t.name == typeName)
-        .firstOrNull;
+    final type =
+        ExerciseType.values.where((t) => t.name == typeName).firstOrNull;
     if (type == null || !kGeneratableExerciseTypes.contains(type)) {
       return (null, [GeneratedRejection.unsupportedExerciseType]);
     }
@@ -537,8 +558,7 @@ abstract final class GeneratedContentValidator {
     }
 
     // §45: expected answer must exist and be checkable.
-    if (type == ExerciseType.translation &&
-        exercise.acceptedAnswers.isEmpty) {
+    if (type == ExerciseType.translation && exercise.acceptedAnswers.isEmpty) {
       rejections.add(GeneratedRejection.missingFields);
     }
     if ((type == ExerciseType.mcq || type == ExerciseType.fillBlank) &&
@@ -613,8 +633,7 @@ abstract final class GeneratedContentValidator {
     final tokens = TrustedContentRegistry.tokenizeTrustedText(text)
         .map((t) => t.toLowerCase())
         .toSet();
-    return tokens
-        .any(excerpt.vocabulary.map((v) => v.toLowerCase()).contains);
+    return tokens.any(excerpt.vocabulary.map((v) => v.toLowerCase()).contains);
   }
 
   static bool _anyLineGrounded(
@@ -673,8 +692,7 @@ abstract final class GeneratedContentValidator {
     return rune >= start && rune <= end;
   }
 
-  static String _stringOf(Object? value) =>
-      value is String ? value.trim() : '';
+  static String _stringOf(Object? value) => value is String ? value.trim() : '';
 
   /// M10 (§90 "unexpected Unicode"): true when [text] contains
   /// characters that render invisibly or manipulate display order —

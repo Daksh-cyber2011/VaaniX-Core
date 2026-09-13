@@ -485,7 +485,10 @@ class TrustedContentRegistry extends Equatable {
 
   /// Unicode-aware letter-run tokenizer used by both the excerpt builder
   /// and the generated-content grounding check (same rules both sides).
-  static final RegExp _tokenPattern = RegExp(r'\p{L}+', unicode: true);
+  // Indic scripts use combining vowel signs and viramas.  Treating only
+  // letters as a token splits words such as नमस्ते into fragments, which in
+  // turn makes valid grounded material look ungrounded to the validator.
+  static final RegExp _tokenPattern = RegExp(r'[\p{L}\p{M}]+', unicode: true);
 
   static List<String> tokenizeTrustedText(String text) {
     final tokens = <String>[];

@@ -16,7 +16,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/features/exam/data/exam_scope_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
-import 'package:vaanix_app/core/providers/app_providers.dart' show localStorageServiceProvider;
+import 'package:vaanix_app/core/providers/app_providers.dart'
+    show localStorageServiceProvider;
 
 /// Repository singleton (tests override SharedPreferences initial values).
 final examScopeRepositoryProvider = Provider<ExamScopeRepository>((ref) {
@@ -46,21 +47,18 @@ class ExamScopeState {
 
   int get totalSelectable => view?.selectableUnitIds.length ?? 0;
 
-  double get coveredMarks =>
-      view == null ? 0 : selection.coveredMarks(view!);
+  double get coveredMarks => view == null ? 0 : selection.coveredMarks(view!);
 
   double get boardMarks => view?.boardMarks ?? 0;
 }
 
-class ExamScopeController
-    extends FamilyAsyncNotifier<ExamScopeState, String> {
+class ExamScopeController extends FamilyAsyncNotifier<ExamScopeState, String> {
   late ExamScopeRepository _repo;
 
   @override
   Future<ExamScopeState> build(String trackId) async {
     _repo = ref.watch(examScopeRepositoryProvider);
-    final syllabus = await ref.watch(
-        courseSyllabusProvider(trackId).future);
+    final syllabus = await ref.watch(courseSyllabusProvider(trackId).future);
 
     // Invalid/missing course data must not produce a fake selection UI.
     if (syllabus == null) {
@@ -79,7 +77,8 @@ class ExamScopeController
   /// this course's view (isolation gate; the domain check is the second
   /// line of defense).
   Future<void> toggleUnit(String unitId) async {
-    final view = state.value?.view;
+    final current = await future;
+    final view = current.view;
     if (view == null) return;
     if (view.unitById(unitId)?.selectable != true) return;
     await _mutate((s) => s.toggle(unitId));
@@ -87,7 +86,8 @@ class ExamScopeController
 
   /// SELECT ALL (every published board unit of this course).
   Future<void> selectAll() async {
-    await _mutate((s) => s.selectAll(state.value!.view!.selectableUnitIds));
+    final current = await future;
+    await _mutate((s) => s.selectAll(current.view!.selectableUnitIds));
   }
 
   /// CLEAR ALL.
@@ -97,9 +97,8 @@ class ExamScopeController
 
   /// Selects/deselects an entire section's selectable units.
   Future<void> toggleSection(String sectionId) async {
-    final view = state.value!.view!;
-    final section =
-        view.sections.firstWhere((s) => s.id == sectionId);
+    final view = (await future).view!;
+    final section = view.sections.firstWhere((s) => s.id == sectionId);
     await _mutate((s) => s.toggleSection(
           section.selectableUnits.map((u) => u.id),
         ));
@@ -107,8 +106,7 @@ class ExamScopeController
 
   /// Confirms the current selection as the active track + persists it.
   Future<void> confirmSelection() async {
-    final current = state.value;
-    if (current == null) return;
+    final current = await future;
     await _repo.saveSelection(current.selection);
   }
 
@@ -131,8 +129,8 @@ final examScopeProvider =
 );
 
 /// Whether the stored active track matches [trackId] (edit-later entry).
-final isActiveTrackProvider = FutureProvider.family<bool, String>(
-    (ref, trackId) async {
+final isActiveTrackProvider =
+    FutureProvider.family<bool, String>((ref, trackId) async {
   final active = await ref.watch(examScopeStoreProvider.future);
   return active.activeTrackId == trackId;
 });

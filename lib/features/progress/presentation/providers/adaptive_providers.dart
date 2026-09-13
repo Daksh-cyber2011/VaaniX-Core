@@ -22,6 +22,7 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/quiz_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_repository.dart';
@@ -109,8 +110,14 @@ typedef AdaptiveInputs = ({
 AdaptiveInputs _adaptiveInputs(Ref ref) {
   // M1 (G7): ACTIVE curriculum — the selected Learn Mode language, or the
   // legacy Sanskrit curriculum when nothing is selected (fallback path).
-  final curriculum =
-      ref.watch(activeCurriculumProvider).valueOrNull ?? const <Chapter>[];
+  // Keep the pre-Learn-selection journey synchronous.  The legacy
+  // curriculum is already the dependency used by that path; going through
+  // the dispatching FutureProvider here introduced a transient empty
+  // curriculum on the first read, which could hide real persisted progress.
+  final selectedLanguage = ref.watch(selectedLearnLanguageProvider);
+  final curriculum = selectedLanguage == null
+      ? ref.watch(curriculumProvider).valueOrNull ?? const <Chapter>[]
+      : ref.watch(activeCurriculumProvider).valueOrNull ?? const <Chapter>[];
   final completed = ref.watch(completedLessonIdsProvider).toSet();
   final attemptsIndex = ref.watch(quizAttemptsIndexProvider);
 
@@ -180,8 +187,8 @@ final chapterBestFractionProvider = Provider<Map<String, double>>((ref) {
     final attempted =
         ids.any((id) => (i.attemptsIndex[id] ?? const []).isNotEmpty);
     if (!attempted) continue;
-    result[chapter.id] =
-        bestExamFractionForChapter(chapter.id, i.quizIdsByChapter, i.attemptsIndex);
+    result[chapter.id] = bestExamFractionForChapter(
+        chapter.id, i.quizIdsByChapter, i.attemptsIndex);
   }
   return result;
 });

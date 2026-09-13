@@ -60,7 +60,8 @@ class FirstWordsCriterion extends MilestoneCriterion {
 
   @override
   bool isSatisfiedBy(MilestoneEvidence evidence) =>
-      evidence.completedLessonCount >= 1 && evidence.totalMasteredExercises >= 1;
+      evidence.completedLessonCount >= 1 &&
+      evidence.totalMasteredExercises >= 1;
 
   @override
   double progressOf(MilestoneEvidence evidence) {
@@ -107,6 +108,11 @@ class ChapterCompetencyCriterion extends MilestoneCriterion {
   @override
   double progressOf(MilestoneEvidence evidence) {
     final lessons = evidence.chapterCompletionFraction(chapterOrdinal);
+    // A chapter with no authored exercises or quiz has satisfied gates only
+    // after the learner has actually completed some of its lessons.  Do not
+    // render two-thirds progress for a completely untouched chapter merely
+    // because those gates are not applicable.
+    if (lessons == 0) return 0;
     final mastery = evidence.chapterMasteryFraction(chapterOrdinal);
     final exam = evidence.chapterExamFraction(chapterOrdinal);
     return (lessons + mastery + exam) / 3;
@@ -142,8 +148,8 @@ class JourneyCompleteCriterion extends MilestoneCriterion {
   @override
   double progressOf(MilestoneEvidence evidence) =>
       (evidence.overallLessonFraction +
-              evidence.overallMasteryFraction +
-              evidence.overallExamFraction) /
+          evidence.overallMasteryFraction +
+          evidence.overallExamFraction) /
       3;
 
   @override
@@ -164,8 +170,7 @@ class StreakCriterion extends MilestoneCriterion {
   final int days;
 
   @override
-  bool isSatisfiedBy(MilestoneEvidence evidence) =>
-      evidence.streakDays >= days;
+  bool isSatisfiedBy(MilestoneEvidence evidence) => evidence.streakDays >= days;
 
   @override
   double progressOf(MilestoneEvidence evidence) =>
@@ -370,7 +375,9 @@ class MilestoneEvidence {
   int lessonsCompletedInChapter(int ordinal) {
     final chapter = chapterAt(ordinal);
     if (chapter == null) return 0;
-    return chapter.lessons.where((l) => completedLessonIds.contains(l.id)).length;
+    return chapter.lessons
+        .where((l) => completedLessonIds.contains(l.id))
+        .length;
   }
 
   double chapterCompletionFraction(int ordinal) {
@@ -403,6 +410,7 @@ class MilestoneEvidence {
   /// exercises counts as fully mastered (nothing to demonstrate; lesson
   /// completion is the evidence) so milestones never dead-lock on stubs.
   double chapterMasteryFraction(int ordinal) {
+    if (chapterAt(ordinal) == null) return 0;
     final total = exerciseCountInChapter(ordinal);
     if (total == 0) return 1;
     return (masteredExercisesInChapter(ordinal) / total).clamp(0.0, 1.0);
@@ -427,7 +435,8 @@ class MilestoneEvidence {
 
   // ─── Derived: journey-wide figures ─────────────────────────────────────
 
-  int get totalLessons => curriculum.fold<int>(0, (s, c) => s + c.lessons.length);
+  int get totalLessons =>
+      curriculum.fold<int>(0, (s, c) => s + c.lessons.length);
 
   int get completedLessonCount => completedLessonIds.length;
 
@@ -439,12 +448,17 @@ class MilestoneEvidence {
     return sum;
   }
 
-  double get overallLessonFraction =>
-      totalLessons == 0 ? 0 : (completedLessonCount / totalLessons).clamp(0.0, 1.0);
+  double get overallLessonFraction => totalLessons == 0
+      ? 0
+      : (completedLessonCount / totalLessons).clamp(0.0, 1.0);
 
   double get overallMasteryFraction {
     final total = curriculum.fold<int>(
-        0, (s, c) => s + c.lessons.fold<int>(0, (s, l) => s + (exerciseCountByLesson[l.id] ?? 0)));
+        0,
+        (s, c) =>
+            s +
+            c.lessons.fold<int>(
+                0, (s, l) => s + (exerciseCountByLesson[l.id] ?? 0)));
     if (total == 0) return 1;
     return (totalMasteredExercises / total).clamp(0.0, 1.0);
   }

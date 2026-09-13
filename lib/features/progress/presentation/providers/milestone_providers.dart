@@ -21,6 +21,7 @@ import 'package:vaanix_app/core/providers/app_providers.dart';
 
 import 'package:vaanix_app/features/learn/data/bengali_exercises.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/data/gujarati_exercises.dart';
 import 'package:vaanix_app/features/learn/data/hindi_exercises.dart';
 import 'package:vaanix_app/features/learn/data/marathi_exercises.dart';
@@ -71,8 +72,10 @@ int _authoredExerciseCount(String lessonId) {
 final milestoneEvidenceProvider = Provider<MilestoneEvidence>((ref) {
   // The ACTIVE curriculum (selected Learn language; legacy Sanskrit when
   // none selected) — the journey the learner is actually on.
-  final curriculum =
-      ref.watch(activeCurriculumProvider).valueOrNull ?? const <Chapter>[];
+  final selectedLanguage = ref.watch(selectedLearnLanguageProvider);
+  final curriculum = selectedLanguage == null
+      ? ref.watch(curriculumProvider).valueOrNull ?? const <Chapter>[]
+      : ref.watch(activeCurriculumProvider).valueOrNull ?? const <Chapter>[];
 
   final completed = ref.watch(completedLessonIdsProvider).toSet();
   final attemptsIndex = ref.watch(quizAttemptsIndexProvider);
@@ -101,8 +104,7 @@ final milestoneEvidenceProvider = Provider<MilestoneEvidence>((ref) {
 
 /// Engine output for the UI: every milestone with its satisfied state,
 /// persisted-unlock state, honest progress fraction and evidence line.
-final milestoneEvaluationsProvider =
-    Provider<List<MilestoneEvaluation>>((ref) {
+final milestoneEvaluationsProvider = Provider<List<MilestoneEvaluation>>((ref) {
   final evidence = ref.watch(milestoneEvidenceProvider);
   final unlockedAsync = ref.watch(unlockedMilestonesProvider);
   final unlocked = unlockedAsync.valueOrNull?.keys.toSet() ?? const <String>{};
@@ -167,12 +169,11 @@ class MilestoneChecker {
       ));
 
       if (definition.xpReward > 0) {
-        final xpResult = await _ref
-            .read(progressRepositoryProvider)
-            .awardBonusXp(
-              sourceId: 'ms_${definition.id}',
-              amount: definition.xpReward,
-            );
+        final xpResult =
+            await _ref.read(progressRepositoryProvider).awardBonusXp(
+                  sourceId: 'ms_${definition.id}',
+                  amount: definition.xpReward,
+                );
         xpResult.fold(
           (_) {},
           (_) => _ref.invalidate(xpTotalProvider),

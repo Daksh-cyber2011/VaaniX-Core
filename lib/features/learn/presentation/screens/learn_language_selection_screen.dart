@@ -50,56 +50,59 @@ class LearnLanguageSelectionScreen extends ConsumerWidget {
 
     return VaaniXScaffold(
       title: 'Choose a language',
-      body: ListView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        children: [
-          // Intro banner: explains what this screen does and that more
-          // languages are not on the roadmap (catalogue is locked).
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const VanWidget(
-                  state: VanState.happy,
-                  size: 84,
-                  showSpeechBubble: false,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Which language would you like to learn?',
-                        style: AppTextStyles.titleMedium(),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Pick one to start your journey. You can switch '
-                        'anytime from the Learn screen.',
-                        style: AppTextStyles.bodyMedium(color: subtext),
-                      ),
-                    ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Intro banner: explains what this screen does and that more
+            // languages are not on the roadmap (catalogue is locked).
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const VanWidget(
+                    state: VanState.happy,
+                    size: 84,
+                    showSpeechBubble: false,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Which language would you like to learn?',
+                          style: AppTextStyles.titleMedium(),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Pick one to start your journey. You can switch '
+                          'anytime from the Learn screen.',
+                          style: AppTextStyles.bodyMedium(color: subtext),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          for (final spec in catalogue)
-            _LanguageTile(
-              spec: spec,
-              isSelected: selected == spec.language,
-              onTap: () => _onTap(context, ref, spec.language),
+            for (final spec in catalogue)
+              _LanguageTile(
+                spec: spec,
+                isSelected: selected == spec.language,
+                onTap: () => _onTap(context, ref, spec.language),
+              ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                '${catalogue.length} languages · VaaniX Learn Mode',
+                style: AppTextStyles.labelSmall(color: subtext),
+              ),
             ),
-          const SizedBox(height: 16),
-          Center(
-            child: Text(
-              '${catalogue.length} languages · VaaniX Learn Mode',
-              style: AppTextStyles.labelSmall(color: subtext),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -206,9 +209,7 @@ class _LanguageTile extends StatelessWidget {
                     isSelected
                         ? Icons.check_circle_rounded
                         : Icons.radio_button_unchecked_rounded,
-                    color: isSelected
-                        ? AppColors.primary
-                        : subtext,
+                    color: isSelected ? AppColors.primary : subtext,
                     size: 24,
                   ),
                 ],

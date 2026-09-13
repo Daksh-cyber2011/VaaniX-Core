@@ -21,7 +21,8 @@ Future<SharedPreferences> _freshPrefs() async {
   return SharedPreferences.getInstance();
 }
 
-Future<ProviderContainer> _container({Map<String, Object> prefs = const {}}) async {
+Future<ProviderContainer> _container(
+    {Map<String, Object> prefs = const {}}) async {
   SharedPreferences.setMockInitialValues(prefs);
   final prefsInstance = await SharedPreferences.getInstance();
   return ProviderContainer(
@@ -125,14 +126,23 @@ void main() {
       await container
           .read(selectedLearnLanguageProvider.notifier)
           .select(LearnLanguage.kannada);
-      expect(container.read(selectedLearnLanguageProvider),
-          LearnLanguage.kannada);
+      expect(
+          container.read(selectedLearnLanguageProvider), LearnLanguage.kannada);
 
       // Re-read from a fresh container to confirm it was persisted.
-      final container2 = await _container();
+      // Reuse the same in-memory preferences store. Calling
+      // setMockInitialValues here would deliberately replace it and test the
+      // mock reset rather than persistence across provider disposal.
+      final container2 = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(
+            await SharedPreferences.getInstance(),
+          )
+        ],
+      );
       addTearDown(container2.dispose);
-      expect(container2.read(selectedLearnLanguageProvider),
-          LearnLanguage.kannada,
+      expect(
+          container2.read(selectedLearnLanguageProvider), LearnLanguage.kannada,
           reason: 'selection must survive provider disposal');
     });
 
@@ -144,8 +154,7 @@ void main() {
       await container
           .read(selectedLearnLanguageProvider.notifier)
           .select(LearnLanguage.odia);
-      expect(container.read(selectedLearnLanguageProvider),
-          LearnLanguage.odia);
+      expect(container.read(selectedLearnLanguageProvider), LearnLanguage.odia);
     });
 
     test('clear() removes the selection', () async {

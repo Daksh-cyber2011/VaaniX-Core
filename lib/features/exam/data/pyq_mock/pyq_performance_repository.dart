@@ -79,10 +79,16 @@ class PyqPerformanceRepository {
       topics[o.topicId] = current == null ? o : current.merge(o);
     }
     // §56 bound: keep the topics with the most evidence.
-    var bounded = topics.values.toList()
-      ..sort((a, b) => b.attempted.compareTo(a.attempted));
+    // Keep equal-evidence topics in their established insertion order.
+    // `List.sort` is not stable, so add the position as an explicit
+    // deterministic tie-breaker.
+    final indexed = topics.values.indexed.toList()
+      ..sort((a, b) {
+        final evidence = b.$2.attempted.compareTo(a.$2.attempted);
+        return evidence != 0 ? evidence : a.$1.compareTo(b.$1);
+      });
     final kept = {
-      for (final t in bounded.take(maxTopics)) t.topicId: t,
+      for (final entry in indexed.take(maxTopics)) entry.$2.topicId: entry.$2,
     };
     all[trackId] = kept;
     await _storage.setString(
