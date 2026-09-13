@@ -92,7 +92,7 @@ class _VanSpeechStripState extends State<VanSpeechStrip>
     final isDark = theme.brightness == Brightness.dark;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    Widget stripContent = Padding(
+    final Widget stripContent = Padding(
       padding: widget.margin,
       child: Semantics(
         label: 'Van says: ${widget.message}',

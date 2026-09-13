@@ -21,7 +21,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
-import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/achievements/presentation/providers/achievement_checker.dart';
 import 'package:vaanix_app/features/learn/presentation/widgets/lesson_content_view.dart';

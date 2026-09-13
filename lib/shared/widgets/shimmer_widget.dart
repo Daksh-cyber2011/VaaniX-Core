@@ -61,6 +61,18 @@ class _VaaniXShimmerState extends State<VaaniXShimmer>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Pause animation when the OS "reduce motion" setting is active.
+    // The placeholder shapes remain visible as static content.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _ctrl.stop();
+    } else if (!_ctrl.isAnimating) {
+      _ctrl.repeat();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (!widget.enabled) return widget.child;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -68,6 +80,17 @@ class _VaaniXShimmerState extends State<VaaniXShimmer>
     final highlight = isDark
         ? AppColors.surfaceVariantDark
         : Colors.white.withValues(alpha: 0.9);
+
+    // Static fallback for reduced-motion users: show base colour only.
+    if (MediaQuery.disableAnimationsOf(context)) {
+      return ShaderMask(
+        blendMode: BlendMode.srcATop,
+        shaderCallback: (bounds) => LinearGradient(
+          colors: [base, base],
+        ).createShader(bounds),
+        child: widget.child,
+      );
+    }
 
     return AnimatedBuilder(
       animation: _shimmer,

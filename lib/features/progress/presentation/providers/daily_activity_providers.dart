@@ -14,7 +14,6 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/analytics/analytics_client.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';

@@ -96,7 +96,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
     final subtext =
         theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
 
-    Widget content = Center(
+    final Widget content = Center(
       child: Padding(
         padding: const EdgeInsets.all(AppDimens.space6),
         child: Column(

@@ -346,10 +346,13 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           // gated (challenge match + full mastery + once per day) inside
           // the provider; it returns 0 when nothing was paid.
           try {
+            // Capture messenger BEFORE the async gap so the lint
+            // use_build_context_synchronously is satisfied.
+            final messenger = ScaffoldMessenger.of(context);
             final paid = await ref
                 .read(claimReviewChallengeProvider)(widget.lesson.id);
             if (mounted && paid > 0) {
-              ScaffoldMessenger.of(context).showSnackBar(
+              messenger.showSnackBar(
                 SnackBar(
                   content: Text(
                     'Review challenge complete! +$paid XP earned.',
