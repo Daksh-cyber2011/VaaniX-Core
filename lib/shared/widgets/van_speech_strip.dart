@@ -7,9 +7,13 @@
 ///
 /// The avatar is rendered through [VanWidget] at strip size so the visual
 /// stays replaceable when final VAN artwork lands.
+///
+/// The strip animates in on first render (subtle fade + slide-up). Set
+/// [animate] to [false] for list items that rebuild frequently.
 library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
@@ -23,7 +27,7 @@ import 'package:vaanix_app/shared/widgets/van_widget.dart';
 // every VanSpeechStrip consumer compile as written.
 export 'package:vaanix_app/features/van/domain/van_state.dart';
 
-class VanSpeechStrip extends StatelessWidget {
+class VanSpeechStrip extends StatefulWidget {
   const VanSpeechStrip({
     super.key,
     required this.message,
@@ -31,6 +35,7 @@ class VanSpeechStrip extends StatelessWidget {
     this.isLoading = false,
     this.onTap,
     this.margin = const EdgeInsets.symmetric(vertical: 8),
+    this.animate = true,
   });
 
   final String message;
@@ -39,15 +44,58 @@ class VanSpeechStrip extends StatelessWidget {
   final VoidCallback? onTap;
   final EdgeInsetsGeometry margin;
 
+  /// Whether to animate the strip's entrance. Set to [false] when embedded
+  /// in a list that rebuilds frequently (e.g., live typing feedback).
+  final bool animate;
+
+  @override
+  State<VanSpeechStrip> createState() => _VanSpeechStripState();
+}
+
+class _VanSpeechStripState extends State<VanSpeechStrip>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _fade;
+  late Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: AppMotion.slow,
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.12),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
+
+    if (widget.animate) {
+      Future.microtask(() {
+        if (mounted) _ctrl.forward();
+      });
+    } else {
+      _ctrl.value = 1.0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
-    return Padding(
-      padding: margin,
+    Widget stripContent = Padding(
+      padding: widget.margin,
       child: Semantics(
-        label: 'Van says: $message',
+        label: 'Van says: ${widget.message}',
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -56,10 +104,10 @@ class VanSpeechStrip extends StatelessWidget {
             // "Van is …" label would be announced a second time.
             ExcludeSemantics(
               child: VanWidget(
-                size: 44,
-                state: state,
-                isLoading: isLoading,
-                onTap: onTap,
+                size: AppDimens.vanSizeStrip,
+                state: widget.state,
+                isLoading: widget.isLoading,
+                onTap: widget.onTap,
               ),
             ),
             const SizedBox(width: 8),
@@ -79,7 +127,7 @@ class VanSpeechStrip extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  message,
+                  widget.message,
                   style: AppTextStyles.vanDialogue(
                     color: theme.colorScheme.onSurface,
                   ),
@@ -89,6 +137,13 @@ class VanSpeechStrip extends StatelessWidget {
           ],
         ),
       ),
+    );
+
+    if (reduceMotion || !widget.animate) return stripContent;
+
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(position: _slide, child: stripContent),
     );
   }
 }

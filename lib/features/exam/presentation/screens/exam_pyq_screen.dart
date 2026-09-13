@@ -19,6 +19,7 @@ import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_provi
     show examScopeProvider;
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/presentation/widgets/exam_xp_strip.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -56,7 +57,7 @@ class _ExamPyqScreenState extends ConsumerState<ExamPyqScreen> {
       title: 'PYQ Practice',
       body: pyqAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading PYQs'),
+          child: VaaniXLoadingIndicator(message: 'Loading PYQ practice…'),
         ),
         error: (e, _) => _Unavailable(trackId: widget.trackId),
         data: (data) => _PyqBody(

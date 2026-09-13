@@ -19,6 +19,8 @@ import 'package:vaanix_app/features/exam/domain/planner/exam_plan_models.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_plan_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -36,14 +38,12 @@ class ExamPlanScreen extends ConsumerWidget {
       title: 'Your Plan',
       body: planAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading plan'),
+          child: VaaniXLoadingIndicator(message: 'Loading your plan…'),
         ),
-        error: (e, _) => Center(
-          child: Text('Plan unavailable. Try rebuilding.',
-              style: AppTextStyles.bodyMedium(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight)),
+        error: (e, _) => ErrorStateWidget(
+          message: 'Your plan couldn\'t be loaded right now.\nTry rebuilding it.',
+          onRetry: () => ref.invalidate(examPlanProvider(trackId)),
+          retryLabel: 'Rebuild Plan',
         ),
         data: (state) => _PlanBody(state: state, trackId: trackId),
       ),
@@ -61,13 +61,9 @@ class _PlanBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (state.building) {
       return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(semanticsLabel: 'Building plan'),
-            SizedBox(height: 16),
-            Text('योजना बन रही है…'),
-          ],
+        child: VanLoadingState(
+          message: 'Building your personalised plan…',
+          vanMessage: 'I\'m working out the best plan for you!',
         ),
       );
     }

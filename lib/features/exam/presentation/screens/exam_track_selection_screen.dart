@@ -20,6 +20,8 @@ import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/data/exam_scope_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
@@ -46,7 +48,7 @@ class _ExamTrackSelectionScreenState
       title: 'Board Exam Prep',
       body: index.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading syllabus catalog'),
+          child: VaaniXLoadingIndicator(message: 'Loading exam catalog…'),
         ),
         error: (e, _) => const _CatalogError(),
         data: (catalog) => _buildCatalog(context, catalog),
@@ -340,29 +342,11 @@ class _CatalogError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.school_outlined, size: 48),
-            const SizedBox(height: 16),
-            Text('Syllabus catalog unavailable', style: AppTextStyles.titleMedium()),
-            const SizedBox(height: 8),
-            Text(
-              'The official syllabus data could not be read. '
-              'Please try again.',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppColors.subtextDark
-                    : AppColors.subtextLight,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return const ErrorStateWidget(
+      title: 'Syllabus catalog unavailable',
+      message:
+          'The official syllabus data couldn\'t be read.\n'
+          'Please go back and try again.',
     );
   }
 }

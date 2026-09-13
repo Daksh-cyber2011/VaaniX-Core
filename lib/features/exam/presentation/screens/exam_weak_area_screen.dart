@@ -28,6 +28,7 @@ import 'package:vaanix_app/features/exam/domain/weakarea/weak_area_day.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/weak_topic_engine.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_weakarea_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/widgets/exam_xp_strip.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -60,14 +61,12 @@ class _ExamWeakAreaScreenState extends ConsumerState<ExamWeakAreaScreen> {
       title: 'Weak Areas',
       body: sessionAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(
-              semanticsLabel: 'Loading weak areas'),
+          child: VaaniXLoadingIndicator(message: 'Analysing your weak areas…'),
         ),
         error: (e, _) => _SessionUnavailable(trackId: widget.trackId),
         data: (session) => overviewAsync.when(
           loading: () => const Center(
-            child: CircularProgressIndicator(
-                semanticsLabel: 'Loading weak-area report'),
+            child: VaaniXLoadingIndicator(message: 'Loading your report…'),
           ),
           error: (e, _) => _SessionUnavailable(trackId: widget.trackId),
           data: (overview) => _WeakAreaBody(
@@ -405,7 +404,9 @@ class _SessionViewState extends ConsumerState<_SessionView> {
       case WeakSessionPhase.recheck:
         final q = s.session?.current;
         if (q == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: VaaniXLoadingIndicator(message: 'Getting ready…'),
+          );
         }
         return _QuestionCard(
           session: s,
@@ -472,7 +473,9 @@ class _SessionViewState extends ConsumerState<_SessionView> {
         );
 
       case WeakSessionPhase.intro:
-        return const Center(child: CircularProgressIndicator());
+        return const Center(
+          child: VaaniXLoadingIndicator(message: 'Starting session…'),
+        );
     }
   }
 

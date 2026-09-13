@@ -36,6 +36,7 @@ import 'package:vaanix_app/features/progress/presentation/providers/daily_activi
 import 'package:vaanix_app/features/progress/presentation/providers/milestone_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/van.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
@@ -325,7 +326,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
       return const VaaniXScaffold(
         title: 'Exam',
         body: Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading exam'),
+          child: VaaniXLoadingIndicator(message: 'Loading exam questions…'),
         ),
       );
     }
@@ -539,7 +540,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           TextButton(onPressed: _backToSetup, child: const Text('Change')),
         ],
         body: const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading exam'),
+          child: VaaniXLoadingIndicator(message: 'Loading exam…'),
         ),
       ),
       error: (_, __) => VaaniXScaffold(

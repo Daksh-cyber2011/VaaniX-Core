@@ -288,13 +288,18 @@ abstract final class AppTheme {
         ),
 
         // --- Snack Bar ---
+        // Floating snackbars with rounded corners (16dp) and enough bottom
+        // margin to clear the nav bar. Premium apps don't use anchored snackbars.
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.onBackgroundLight,
           contentTextStyle: AppTextStyles.bodyMedium(color: Colors.white),
+          actionTextColor: AppColors.vanYellow,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           behavior: SnackBarBehavior.floating,
+          elevation: 6,
+          insetPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         ),
 
         // --- Divider ---
@@ -490,10 +495,13 @@ abstract final class AppTheme {
           contentTextStyle: AppTextStyles.bodyMedium(
             color: AppColors.onSurfaceDark,
           ),
+          actionTextColor: AppColors.vanYellow,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
           behavior: SnackBarBehavior.floating,
+          elevation: 8,
+          insetPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         ),
         dividerTheme: const DividerThemeData(
           color: AppColors.borderDark,

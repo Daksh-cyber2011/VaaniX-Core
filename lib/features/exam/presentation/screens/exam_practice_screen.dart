@@ -23,6 +23,7 @@ import 'package:vaanix_app/features/exam/domain/evaluation/answer_models.dart';
 import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_practice_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/widgets/exam_xp_strip.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -65,12 +66,12 @@ class _ExamPracticeScreenState extends ConsumerState<ExamPracticeScreen> {
       title: 'Practice',
       body: practiceAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading practice'),
+          child: VaaniXLoadingIndicator(message: 'Loading practice…'),
         ),
         error: (e, _) => _PracticeUnavailable(
           onStart: _start,
           message:
-              'अभ्यास शुरू नहीं हो सका — क्या आपने syllabus का दायरा चुना है?',
+              'Couldn\'t start practice.\nMake sure you\'ve selected your syllabus.',
         ),
         data: (data) {
           if (data.isFinished) {
@@ -321,15 +322,19 @@ class _QuestionFlow extends ConsumerWidget {
                 ),
                 if (evaluatingPhoto) ...[
                   const SizedBox(height: 8),
-                  const Row(
+                  Row(
                     children: [
                       SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          // Inline micro-spinner: keep theme color here
+                          // since it's too small for a contextual label.
+                        ),
                       ),
-                      SizedBox(width: 8),
-                      Text('फ़ोटो पढ़ी जा रही है…'),
+                      const SizedBox(width: 8),
+                      const Text('Reading your photo…'),
                     ],
                   ),
                 ],

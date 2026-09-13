@@ -19,6 +19,7 @@ import 'package:vaanix_app/features/exam/domain/diagnostic/exam_diagnostic_engin
     show DiagnosticSessionState;
 import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/widgets/exam_xp_strip.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -44,12 +45,11 @@ class _ExamDiagnosticScreenState extends ConsumerState<ExamDiagnosticScreen> {
       title: 'Diagnostic Challenge',
       body: diagAsync.when(
         loading: () => const Center(
-          child:
-              CircularProgressIndicator(semanticsLabel: 'Loading diagnostic'),
+          child: VaaniXLoadingIndicator(message: 'Setting up your diagnostic…'),
         ),
         error: (e, _) => _DiagnosticUnavailable(
           onStart: _start,
-          message: 'Diagnostic शुरू नहीं हो सका — क्या आपने syllabus चुना है?',
+          message: 'Couldn\'t start the diagnostic.\nPlease make sure you\'ve selected a syllabus.',
         ),
         data: (data) {
           if (data.isFinished && data.report != null) {

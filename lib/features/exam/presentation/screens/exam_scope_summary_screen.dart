@@ -20,6 +20,7 @@ import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
@@ -47,7 +48,7 @@ class _ExamScopeSummaryScreenState
       title: 'Selection Summary',
       body: scopeAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading summary'),
+          child: VaaniXLoadingIndicator(message: 'Loading your selection…'),
         ),
         error: (e, _) => _SummaryUnavailable(trackId: widget.trackId),
         data: (state) => syllabusAsync.maybeWhen(
@@ -61,8 +62,7 @@ class _ExamScopeSummaryScreenState
                       onEdit: _onEdit,
                     ),
               orElse: () => const Center(
-                child: CircularProgressIndicator(
-                    semanticsLabel: 'Loading course'),
+                child: VaaniXLoadingIndicator(message: 'Loading course…'),
               ),
             ),
       ),

@@ -17,6 +17,7 @@ import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_gamification_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 
@@ -38,10 +39,14 @@ class ExamStudyScreen extends ConsumerWidget {
     return VaaniXScaffold(
       title: 'Study',
       body: scopeAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: VaaniXLoadingIndicator(message: 'Loading your study plan…'),
+        ),
         error: (_, __) => const _StudyUnavailable(),
         data: (scope) => syllabusAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(
+            child: VaaniXLoadingIndicator(message: 'Loading syllabus…'),
+          ),
           error: (_, __) => const _StudyUnavailable(),
           data: (syllabus) {
             final unit = scope.view?.unitById(topicId);

@@ -25,6 +25,8 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/domain/exam_profile.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_profile_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -54,14 +56,11 @@ class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
       title: 'Exam Profile',
       body: profileAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading profile'),
+          child: VaaniXLoadingIndicator(message: 'Loading your profile…'),
         ),
-        error: (e, _) => Center(
-          child: Text('Profile unavailable. Go back and try again.',
-              style: AppTextStyles.bodyMedium(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight)),
+        error: (e, _) => ErrorStateWidget(
+          message: 'Your profile couldn\'t be loaded.\nGo back and try again.',
+          onRetry: () => ref.invalidate(examProfileProvider(widget.trackId)),
         ),
         data: (profile) => _ProfileForm(
           profile: profile,

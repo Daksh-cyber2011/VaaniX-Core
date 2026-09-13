@@ -18,6 +18,7 @@ import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 import 'package:vaanix_app/features/exam/domain/pyq_mock/mock_models.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/pyq_mock_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/widgets/exam_xp_strip.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -73,7 +74,7 @@ class _ExamMockScreenState extends ConsumerState<ExamMockScreen> {
       title: 'Mocks',
       body: mockAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading mocks'),
+          child: VaaniXLoadingIndicator(message: 'Loading mock tests…'),
         ),
         error: (e, _) => _Unavailable(trackId: widget.trackId),
         data: (data) => _MockBody(

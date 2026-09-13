@@ -18,6 +18,8 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
@@ -35,7 +37,7 @@ class ExamScopeSelectionScreen extends ConsumerWidget {
       title: 'Select Your Scope',
       body: scopeAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading syllabus'),
+          child: VaaniXLoadingIndicator(message: 'Loading syllabus…'),
         ),
         error: (e, _) => _ScopeUnavailable(trackId: trackId),
         data: (state) => _ScopeBody(trackId: trackId, state: state),
@@ -471,30 +473,11 @@ class _ScopeUnavailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.menu_book_outlined, size: 48),
-            const SizedBox(height: 16),
-            Text('Syllabus unavailable for this course',
-                style: AppTextStyles.titleMedium()),
-            const SizedBox(height: 8),
-            Text(
-              'The official data for $trackId could not be loaded. '
-              'Go back and pick the course again.',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? AppColors.subtextDark
-                    : AppColors.subtextLight,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ErrorStateWidget(
+      title: 'Syllabus unavailable',
+      message:
+          'The syllabus for this course couldn\'t be loaded.\n'
+          'Go back and pick the course again.',
     );
   }
 }
