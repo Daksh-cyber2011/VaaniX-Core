@@ -50,6 +50,7 @@ void main() {
   }
 
   setUp(() {
+    SharedPreferences.resetStatic();
     SharedPreferences.setMockInitialValues(<String, Object>{});
     mockRealAssets();
   });
@@ -77,19 +78,49 @@ void main() {
     return SharedPreferences.getInstance();
   }
 
-  Widget host(SharedPreferences prefs, Widget child) =>
+  ProviderContainer containerFor(SharedPreferences prefs) {
+    final container = ProviderContainer(overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ]);
+    addTearDown(container.dispose);
+    return container;
+  }
+
+  Widget host(ProviderContainer container, Widget child) =>
       UncontrolledProviderScope(
-        container: ProviderContainer(overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ]),
+        container: container,
         child: MaterialApp(home: child),
       );
+
+  Future<void> pumpScreen(
+    WidgetTester tester,
+    ProviderContainer container,
+    Widget child, {
+    String? trackId,
+  }) async {
+    await tester.pumpWidget(host(container, child));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump();
+  }
+
+  Future<void> scrollTo(WidgetTester tester, Finder finder) {
+    return tester.scrollUntilVisible(finder, 200);
+  }
 
   testWidgets('track selection: catalog renders and full pick flow works',
       (tester) async {
     final prefs = await SharedPreferences.getInstance();
-    await tester.pumpWidget(host(prefs, const ExamTrackSelectionScreen()));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(tester, container, const ExamTrackSelectionScreen());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    for (var frame = 0;
+        frame < 3 && find.textContaining('Continue:').evaluate().isEmpty;
+        frame++) {
+      await tester.pump();
+    }
 
     // Board step: CBSE selected, ICSE explicitly not built.
     expect(find.text('CBSE'), findsOneWidget);
@@ -100,13 +131,25 @@ void main() {
     expect(find.text('Class 9'), findsOneWidget);
     expect(find.text('Class 10'), findsOneWidget);
     await tester.tap(find.text('Class 10'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.scrollUntilVisible(
+      find.text('हिन्दी', skipOffstage: false),
+      200,
+    );
+    await tester.pump();
 
     // Subject step.
     expect(find.text('हिन्दी'), findsOneWidget);
     expect(find.text('संस्कृतम्'), findsOneWidget);
     await tester.tap(find.text('संस्कृतम्'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.scrollUntilVisible(
+      find.text('संस्कृतम् (संप्रेषणात्मकम्)', skipOffstage: false),
+      200,
+    );
+    await tester.pump();
 
     // Course step: both Sanskrit variants with subject codes.
     expect(find.text('संस्कृतम् (संप्रेषणात्मकम्)'), findsOneWidget);
@@ -123,7 +166,8 @@ void main() {
     // Pick the plain संस्कृतम् course card (last occurrence after the
     // subject card with the same title).
     await tester.tap(find.text('संस्कृतम्').last);
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(buttonOf('View official syllabus').onPressed, isNotNull,
         reason: 'course picked → continue enabled');
@@ -132,8 +176,10 @@ void main() {
   testWidgets('track selection: continue-editing card for saved scope',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
-    await tester.pumpWidget(host(prefs, const ExamTrackSelectionScreen()));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(tester, container, const ExamTrackSelectionScreen());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.textContaining('Continue:'), findsOneWidget);
     expect(find.textContaining('इकाइयाँ चयनित'), findsOneWidget);
@@ -143,9 +189,15 @@ void main() {
       'scope selection: sections render, select all works, pending Class 9 shown',
       (tester) async {
     final prefs = await SharedPreferences.getInstance();
-    await tester.pumpWidget(host(
-        prefs, const ExamScopeSelectionScreen(trackId: 'cbse_9_sanskrit')));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSelectionScreen(trackId: 'cbse_9_sanskrit'),
+      trackId: 'cbse_9_sanskrit',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // All four official sections render.
     expect(find.text('अपठितावबोधनम्'), findsOneWidget);
@@ -162,7 +214,8 @@ void main() {
 
     // Select All → the summary bar count updates.
     await tester.tap(find.text('Select All'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(
         find
             .textContaining(RegExp(r'^\d+ / \d+ इकाइयाँ'))
@@ -173,18 +226,24 @@ void main() {
     // Clear All → back to zero (9 Sanskrit grammar items with शब्दरूपाणि etc.
     // minus literature: 1 + 3 + 9 = 13 selectable units).
     await tester.tap(find.text('Clear All'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('0 / 13 इकाइयाँ'), findsOneWidget);
   });
 
   testWidgets('scope selection (119): internal-only chapters not selectable',
       (tester) async {
     final prefs = await SharedPreferences.getInstance();
-    await tester.pumpWidget(host(
-        prefs,
-        const ExamScopeSelectionScreen(
-            trackId: 'cbse_10_sanskrit_communicative')));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSelectionScreen(
+          trackId: 'cbse_10_sanskrit_communicative'),
+      trackId: 'cbse_10_sanskrit_communicative',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('कालोऽहम्'), findsOneWidget);
     expect(find.text('किं किम् उपादेयम्'), findsOneWidget);
@@ -193,7 +252,8 @@ void main() {
     // Behavioral guarantee: tapping an internal-only chapter changes
     // nothing (0 selected before and after).
     await tester.tap(find.text('कालोऽहम्'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('0 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'internal-only chapters must never enter board scope');
 
@@ -207,9 +267,15 @@ void main() {
   testWidgets('scope selection: individual + section toggles persist',
       (tester) async {
     final prefs = await SharedPreferences.getInstance();
-    await tester.pumpWidget(host(
-        prefs, const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit'),
+      trackId: 'cbse_10_sanskrit',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // 20 selectable units: 1 (unread) + 3 (writing) + 7 (grammar)
     // + 9 (chapters).
@@ -217,19 +283,26 @@ void main() {
 
     // Individual: tap the सन्धि tile.
     await tester.tap(find.text('सन्धिः'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1 / 20 इकाइयाँ'), findsOneWidget);
 
     // Section: tap the grammar section header (tristate checkbox row).
     await tester.tap(find.text('अनुप्रयुक्तव्याकरणम्'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'grammar section adds its 7 units to the 1 selected');
 
     // Write-through persistence: a fresh screen instance sees the scope.
-    await tester.pumpWidget(host(
-        prefs, const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pump(const Duration(seconds: 1));
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit'),
+      trackId: 'cbse_10_sanskrit',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'selection persisted across instances');
   });
@@ -237,9 +310,15 @@ void main() {
   testWidgets('summary: identity, totals, confirm persists active track',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
-    await tester.pumpWidget(
-        host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit'),
+      trackId: 'cbse_10_sanskrit',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Identity rows (§49).
     expect(find.text('CBSE'), findsOneWidget);
@@ -252,7 +331,8 @@ void main() {
 
     // Confirm → success card.
     await tester.tap(find.text('Confirm Scope'));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('दायरा सहेज दिया गया'), findsOneWidget);
 
     // Persisted as the ACTIVE track.
@@ -263,9 +343,15 @@ void main() {
   testWidgets('summary (Class 9): pending literature note shown honestly',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_9_sanskrit');
-    await tester.pumpWidget(
-        host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit')));
-    await tester.pump(const Duration(seconds: 1));
+    final container = containerFor(prefs);
+    await pumpScreen(
+      tester,
+      container,
+      const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit'),
+      trackId: 'cbse_9_sanskrit',
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी'),
         findsOneWidget);

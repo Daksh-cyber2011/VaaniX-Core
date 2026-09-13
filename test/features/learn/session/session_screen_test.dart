@@ -84,7 +84,8 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Active phase: the first trusted exercise of the bank.
     expect(find.text('Guided session'), findsOneWidget);
@@ -101,7 +102,8 @@ void main() {
         final step = state.currentStep!;
         if (step.isSupport) {
           await tester.tap(find.text('Got it — continue'));
-          await tester.pump(const Duration(seconds: 1));
+          await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
           continue;
         }
         // Answer through the REAL UI (same display prep as the screen).
@@ -125,12 +127,14 @@ void main() {
           );
           await tester.tap(find.text('Check'));
         }
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
       } else {
         // Feedback beat — encourage-first copy from VAN.
         expect(find.text('Correct!'), findsOneWidget);
         await tester.tap(find.text('Continue'));
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
       }
       guard++;
       expect(guard, lessThan(40), reason: 'the flow must terminate');
@@ -153,7 +157,8 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Nothing to practise yet.'), findsOneWidget);
     expect(find.text('Back to Learn'), findsOneWidget);

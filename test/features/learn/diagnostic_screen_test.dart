@@ -79,13 +79,15 @@ Future<void> _answerCurrentProbe(
           ? display.correctIndex
           : (display.correctIndex + 1) % display.options.length;
       await tester.tap(find.text(display.options[index]).first);
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     case ExerciseType.translation:
       await tester.enterText(
         find.byType(TextField),
         correctly ? exercise.acceptedAnswers.first : 'definitely wrong',
       );
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     case ExerciseType.matching:
       for (var left = 0; left < exercise.pairs.length; left++) {
         final slot = correctly
@@ -93,9 +95,11 @@ Future<void> _answerCurrentProbe(
             : display.pairIndexByDisplay
                 .indexOf((left + 1) % exercise.pairs.length);
         await tester.tap(find.text(exercise.pairs[left].left).first);
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
         await tester.tap(find.text(display.options[slot]).first);
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
       }
     case ExerciseType.ordering:
       final order = correctly
@@ -103,12 +107,14 @@ Future<void> _answerCurrentProbe(
           : exercise.items.reversed.toList();
       for (final label in order) {
         await tester.tap(find.text(label).first);
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
       }
   }
 
   await tester.tap(find.text('Check'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 }
 
 void main() {
@@ -121,7 +127,8 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Choose a language first'), findsOneWidget);
     expect(find.text('Choose a language'), findsOneWidget);
@@ -133,7 +140,8 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text("Let's see what you already know!"), findsOneWidget);
     expect(find.text("Let's play"), findsOneWidget);
@@ -154,10 +162,12 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     await tester.tap(find.text("Let's play"));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Drive every adaptive round through real interactions.
     var guard = 0;
@@ -170,12 +180,14 @@ void main() {
         // Encourage-first feedback is visible before continuing.
         expect(find.text('Continue'), findsOneWidget);
         await tester.tap(find.text('Continue'));
-        await tester.pump(const Duration(seconds: 1));
+        await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
       }
       guard++;
       expect(guard, lessThan(60), reason: 'the flow must terminate');
     }
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Friendly result — the summary lines, never raw numbers.
     expect(find.text('See my path'), findsOneWidget);
@@ -201,9 +213,11 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text("Let's play"));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Answer the FIRST probe deliberately wrong.
     await _answerCurrentProbe(tester, container, correctly: false);
@@ -224,13 +238,15 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Intro renders (a language IS selected)…
     expect(find.text("Let's play"), findsOneWidget);
     // …but starting honestly reports there is nothing to probe yet.
     await tester.tap(find.text("Let's play"));
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Not ready yet'), findsOneWidget);
     expect(find.textContaining('placement game unlocks'), findsOneWidget);
