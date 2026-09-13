@@ -103,11 +103,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : '';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Achievement Unlocked: ${first.title}!'
-              '${first.xpReward > 0 ? ' (+${first.xpReward} XP)' : ''}$extra',
+            content: Row(
+              children: [
+                const Icon(Icons.emoji_events_rounded,
+                    color: Color(0xFFFFD700), size: 20),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Text(
+                    'Achievement: ${first.title}!'
+                    '${first.xpReward > 0 ? ' (+${first.xpReward} XP)' : ''}$extra',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
+            backgroundColor:
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.95),
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             duration: const Duration(seconds: 4),
           ),
         );
@@ -136,11 +152,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Milestone Unlocked: ${first.emoji} ${first.title}'
-            ' (+${first.xpReward} XP)$extra',
+          content: Row(
+            children: [
+              Text(first.emoji, style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  'Milestone: ${first.title} (+${first.xpReward} XP)$extra',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
+          backgroundColor:
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.95),
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
           duration: const Duration(seconds: 4),
         ),
       );
@@ -212,11 +242,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final companionName = profile.resolvedCompanionName;
     final streak = profile.currentStreak;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12
-        ? '\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D' // suprabhatam
+    // Bilingual greeting: Devanagari script + English label so every student
+    // understands it immediately. The Devanagari stays as the premium moment;
+    // the English label serves as a readable anchor.
+    final (greetingDevanagari, greetingEnglish) = hour < 12
+        ? ('\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D',
+            'Good morning, $companionName!')
         : (hour < 17
-            ? '\u0936\u0941\u092D \u0938\u093E\u092F\u092E\u094D' // shubha sayam
-            : '\u0936\u0941\u092D\u0930\u093E\u0924\u094D\u0930\u093F\u0903'); // shubharatrih
+            ? ('\u0936\u0941\u092D \u0938\u093E\u092F\u092E\u094D',
+                'Good afternoon, $companionName!')
+            : ('\u0936\u0941\u092D\u0930\u093E\u0924\u094D\u0930\u093F\u0903',
+                'Good evening, $companionName!'));
 
     // Real learning state from live providers.
     final nextAction = ref.watch(adaptiveNextActionProvider);
@@ -334,10 +370,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    // Sanskrit greeting stays as the brand's warm eyebrow;
-                    // the actionable line lives in Van's speech bubble.
+                    // Bilingual greeting: Devanagari as warm cultural eyebrow,
+                    // English as the immediately-readable anchor line.
                     Text(
-                      greeting,
+                      greetingDevanagari,
+                      style: AppTextStyles.labelSmall(
+                        color: greetingColor,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      greetingEnglish,
                       style: AppTextStyles.titleSmall(
                         color: greetingColor,
                       ),
