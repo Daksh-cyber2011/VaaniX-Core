@@ -67,7 +67,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Choose a language first'), findsOneWidget);
     expect(find.text('Choose a language'), findsOneWidget,
@@ -80,7 +80,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     for (final report in SelfReport.values) {
       expect(find.text(report.label), findsOneWidget);
@@ -104,15 +104,15 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('Travel'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.text('Advanced'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('Save my profile'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Provider state updated...
     final profile =
@@ -152,7 +152,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // The saved options show the SELECTED affordance (check icon).
     final cultureTile = find.ancestor(

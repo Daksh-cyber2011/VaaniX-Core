@@ -142,7 +142,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Nothing to personalize yet.'), findsOneWidget);
     expect(find.text('Back to Learn'), findsOneWidget);
@@ -155,7 +155,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('Nothing to personalize yet.'), findsOneWidget);
     expect(find.textContaining('trusted material'), findsOneWidget);
@@ -171,7 +171,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Trusted section rendered — and resolving it made NO AI call.
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
@@ -202,10 +202,10 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     await tester.tap(find.text('Quick quiz'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Exactly one AI call (the material); the trusted view stays.
     expect(client.calls.length, 1);
@@ -219,7 +219,7 @@ void main() {
     final exercise = state.material!.content.exercise!;
     final display = prepareExerciseOptions(exercise, 0);
     await tester.tap(find.text(display.options[display.correctIndex]));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Correct!'), findsOneWidget);
     // The honesty footer for the preview.
     expect(find.textContaining('never counted towards'), findsOneWidget);
@@ -236,12 +236,12 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
 
     await tester.tap(find.text('Explain differently'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(client.calls, isEmpty);
     expect(

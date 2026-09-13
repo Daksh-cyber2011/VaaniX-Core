@@ -89,7 +89,7 @@ void main() {
       (tester) async {
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(host(prefs, const ExamTrackSelectionScreen()));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Board step: CBSE selected, ICSE explicitly not built.
     expect(find.text('CBSE'), findsOneWidget);
@@ -100,13 +100,13 @@ void main() {
     expect(find.text('Class 9'), findsOneWidget);
     expect(find.text('Class 10'), findsOneWidget);
     await tester.tap(find.text('Class 10'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Subject step.
     expect(find.text('हिन्दी'), findsOneWidget);
     expect(find.text('संस्कृतम्'), findsOneWidget);
     await tester.tap(find.text('संस्कृतम्'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Course step: both Sanskrit variants with subject codes.
     expect(find.text('संस्कृतम् (संप्रेषणात्मकम्)'), findsOneWidget);
@@ -123,7 +123,7 @@ void main() {
     // Pick the plain संस्कृतम् course card (last occurrence after the
     // subject card with the same title).
     await tester.tap(find.text('संस्कृतम्').last);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(buttonOf('View official syllabus').onPressed, isNotNull,
         reason: 'course picked → continue enabled');
@@ -133,7 +133,7 @@ void main() {
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
     await tester.pumpWidget(host(prefs, const ExamTrackSelectionScreen()));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.textContaining('Continue:'), findsOneWidget);
     expect(find.textContaining('इकाइयाँ चयनित'), findsOneWidget);
@@ -145,7 +145,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(host(
         prefs, const ExamScopeSelectionScreen(trackId: 'cbse_9_sanskrit')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // All four official sections render.
     expect(find.text('अपठितावबोधनम्'), findsOneWidget);
@@ -162,7 +162,7 @@ void main() {
 
     // Select All → the summary bar count updates.
     await tester.tap(find.text('Select All'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(
         find
             .textContaining(RegExp(r'^\d+ / \d+ इकाइयाँ'))
@@ -173,7 +173,7 @@ void main() {
     // Clear All → back to zero (9 Sanskrit grammar items with शब्दरूपाणि etc.
     // minus literature: 1 + 3 + 9 = 13 selectable units).
     await tester.tap(find.text('Clear All'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('0 / 13 इकाइयाँ'), findsOneWidget);
   });
 
@@ -184,7 +184,7 @@ void main() {
         prefs,
         const ExamScopeSelectionScreen(
             trackId: 'cbse_10_sanskrit_communicative')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.text('कालोऽहम्'), findsOneWidget);
     expect(find.text('किं किम् उपादेयम्'), findsOneWidget);
@@ -193,7 +193,7 @@ void main() {
     // Behavioral guarantee: tapping an internal-only chapter changes
     // nothing (0 selected before and after).
     await tester.tap(find.text('कालोऽहम्'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('0 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'internal-only chapters must never enter board scope');
 
@@ -209,7 +209,7 @@ void main() {
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(host(
         prefs, const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // 20 selectable units: 1 (unread) + 3 (writing) + 7 (grammar)
     // + 9 (chapters).
@@ -217,19 +217,19 @@ void main() {
 
     // Individual: tap the सन्धि tile.
     await tester.tap(find.text('सन्धिः'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('1 / 20 इकाइयाँ'), findsOneWidget);
 
     // Section: tap the grammar section header (tristate checkbox row).
     await tester.tap(find.text('अनुप्रयुक्तव्याकरणम्'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'grammar section adds its 7 units to the 1 selected');
 
     // Write-through persistence: a fresh screen instance sees the scope.
     await tester.pumpWidget(host(
         prefs, const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'selection persisted across instances');
   });
@@ -239,7 +239,7 @@ void main() {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
     await tester.pumpWidget(
         host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Identity rows (§49).
     expect(find.text('CBSE'), findsOneWidget);
@@ -252,7 +252,7 @@ void main() {
 
     // Confirm → success card.
     await tester.tap(find.text('Confirm Scope'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('दायरा सहेज दिया गया'), findsOneWidget);
 
     // Persisted as the ACTIVE track.
@@ -265,7 +265,7 @@ void main() {
     final prefs = await seedActiveSelection('cbse_9_sanskrit');
     await tester.pumpWidget(
         host(prefs, const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit')));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी'),
         findsOneWidget);

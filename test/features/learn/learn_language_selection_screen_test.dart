@@ -56,7 +56,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Every language's English name should appear in the tree.
     for (final spec in kLearnLanguageCatalogue) {
@@ -71,7 +71,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     for (final spec in kLearnLanguageCatalogue) {
       expect(find.text(spec.nativeName), findsOneWidget,
@@ -85,11 +85,11 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Tap the Hindi tile (find by its English name label).
     await tester.tap(find.text('Hindi'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Selection should now be persisted.
     expect(container.read(selectedLearnLanguageProvider),
@@ -109,7 +109,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // The Bengali tile should show a check_circle icon, the others
     // radio_button_unchecked. We verify by counting icon types.
@@ -127,7 +127,7 @@ void main() {
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Find the Urdu tile by its English name, then look for 'RTL'
     // in the subtitle text within that tile.
@@ -154,11 +154,11 @@ void main() {
         LearnLanguage.tamil);
 
     await tester.pumpWidget(_wrap(container));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // Tap Marathi.
     await tester.tap(find.text('Marathi'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     expect(container.read(selectedLearnLanguageProvider),
         LearnLanguage.marathi,
