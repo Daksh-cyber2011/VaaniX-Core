@@ -25,7 +25,7 @@ WeakAreaReport reportOf(WeakSeverity severity, {int count = 1}) =>
       ],
       insufficientEvidence: false,
       evidenceNote: 'note',
-);
+    );
 
 RevisionItem dueSoon(String topicId, DateTime now) => RevisionItem(
       topicId: topicId,
@@ -95,7 +95,11 @@ void main() {
       final d = WeakAreaDayEngine.decide(
         report: WeakAreaReport(
             findings: const [], insufficientEvidence: false, evidenceNote: ''),
-        revisionItems: [dueSoon('a', t)..copyWith(dueIso: t.add(const Duration(days: 2)).toIso8601String())],
+        revisionItems: [
+          dueSoon('a', t).copyWith(
+            dueIso: t.add(const Duration(days: 2)).toIso8601String(),
+          ),
+        ],
         dayCount: 7,
         now: t,
       );
@@ -176,8 +180,8 @@ void main() {
 
   group('blueprint (§22 structure)', () {
     test('four phases in the official order', () {
-      final b = WeakAreaDayEngine.blueprintFor('t1', 'Sandhi',
-          rationale: 'why');
+      final b =
+          WeakAreaDayEngine.blueprintFor('t1', 'Sandhi', rationale: 'why');
       expect(b.phases, [
         RecoveryPhase.recap,
         RecoveryPhase.mistakeRetry,
@@ -196,8 +200,7 @@ void main() {
       }
       expect(recoveryPhaseFromName('recap'), RecoveryPhase.recap);
       expect(recoveryPhaseFromName('bogus'), RecoveryPhase.recap);
-      expect(recoveryFrequencyFromName('frequent'),
-          RecoveryFrequency.frequent);
+      expect(recoveryFrequencyFromName('frequent'), RecoveryFrequency.frequent);
       expect(recoveryFrequencyFromName(null), RecoveryFrequency.none);
     });
   });
@@ -209,9 +212,7 @@ void main() {
         reportOf(WeakSeverity.focus),
         reportOf(WeakSeverity.watch),
         WeakAreaReport(
-            findings: const [],
-            insufficientEvidence: false,
-            evidenceNote: ''),
+            findings: const [], insufficientEvidence: false, evidenceNote: ''),
       ];
       for (final r in cases) {
         final d = WeakAreaDayEngine.decide(

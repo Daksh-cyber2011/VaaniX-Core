@@ -180,7 +180,10 @@ class AiPlanParser {
       conceptId: concept.id,
       lessonId: concept.lessonId,
       difficulty: difficultyFromKnob(knob),
-      estimatedMinutes: minutes.clamp(1, 30).toInt(),
+      // A one-minute activity is not a usable learning session. Keep AI
+      // estimates inside the same student-facing 5–30 minute range used
+      // by the deterministic planner and persisted plans.
+      estimatedMinutes: minutes.clamp(5, 30).toInt(),
     );
   }
 

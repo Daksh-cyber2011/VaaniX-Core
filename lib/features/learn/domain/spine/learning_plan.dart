@@ -133,7 +133,7 @@ class LearningActivity extends Equatable {
         orElse: () => Difficulty.beginner,
       ),
       estimatedMinutes:
-          (((json['estimatedMinutes'] as num?)?.toInt() ?? 5).clamp(1, 60))
+          (((json['estimatedMinutes'] as num?)?.toInt() ?? 5).clamp(5, 60))
               .toInt(),
     );
   }

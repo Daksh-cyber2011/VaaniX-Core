@@ -61,62 +61,64 @@ class _ScopeBody extends ConsumerWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
-            children: [
-              VanSpeechStrip(
-                message: state.selection.isEmpty
-                    ? 'यह आधिकारिक CBSE पाठ्यक्रम है। जो आप तैयार करना '
-                        'चाहते हैं, बस वही चुनें — बाद में कभी भी बदल सकते हैं।'
-                    : 'चयन बदलते ही स्वतः सहेज दिया जाता है। '
-                        '${state.selectedCount} इकाइयाँ चयनित।',
-                state: state.selection.isEmpty
-                    ? VanState.idle
-                    : VanState.achievement,
-              ),
-              const SizedBox(height: 8),
-
-              // SELECT ALL / CLEAR ALL (§5 required controls).
-              Semantics(
-                container: true,
-                label:
-                    'Selection actions. ${state.selectedCount} of ${state.totalSelectable} units selected.',
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: PrimaryButton.secondary(
-                        label: 'Select All',
-                        onPressed: state.selectedCount == state.totalSelectable
-                            ? null
-                            : controller.selectAll,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: PrimaryButton.secondary(
-                        label: 'Clear All',
-                        onPressed: state.selection.isEmpty
-                            ? null
-                            : controller.clearAll,
-                      ),
-                    ),
-                  ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                VanSpeechStrip(
+                  message: state.selection.isEmpty
+                      ? 'यह आधिकारिक CBSE पाठ्यक्रम है। जो आप तैयार करना '
+                          'चाहते हैं, बस वही चुनें — बाद में कभी भी बदल सकते हैं।'
+                      : 'चयन बदलते ही स्वतः सहेज दिया जाता है। '
+                          '${state.selectedCount} इकाइयाँ चयनित।',
+                  state: state.selection.isEmpty
+                      ? VanState.idle
+                      : VanState.achievement,
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-              for (final section in view.sections) ...[
-                _ScopeSectionCard(
-                  section: section,
-                  state: state,
-                  onToggleSection: () =>
-                      controller.toggleSection(section.id),
-                  onToggleUnit: (unitId) =>
-                      controller.toggleUnit(unitId),
+                // SELECT ALL / CLEAR ALL (§5 required controls).
+                Semantics(
+                  container: true,
+                  label:
+                      'Selection actions. ${state.selectedCount} of ${state.totalSelectable} units selected.',
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: PrimaryButton.secondary(
+                          label: 'Select All',
+                          onPressed:
+                              state.selectedCount == state.totalSelectable
+                                  ? null
+                                  : controller.selectAll,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: PrimaryButton.secondary(
+                          label: 'Clear All',
+                          onPressed: state.selection.isEmpty
+                              ? null
+                              : controller.clearAll,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
+
+                for (final section in view.sections) ...[
+                  _ScopeSectionCard(
+                    section: section,
+                    state: state,
+                    onToggleSection: () => controller.toggleSection(section.id),
+                    onToggleUnit: (unitId) => controller.toggleUnit(unitId),
+                  ),
+                  const SizedBox(height: 12),
+                ],
               ],
-            ],
+            ),
           ),
         ),
 
@@ -146,7 +148,8 @@ class _ScopeSectionCard extends StatelessWidget {
     final selectable = section.selectableUnits;
     final selectedCount =
         selectable.where((u) => state.selection.isSelected(u.id)).length;
-    final allSelected = selectable.isNotEmpty && selectedCount == selectable.length;
+    final allSelected =
+        selectable.isNotEmpty && selectedCount == selectable.length;
     final someSelected = selectedCount > 0 && !allSelected;
 
     final marksLabel = section.marks == section.marks.roundToDouble()
@@ -220,8 +223,7 @@ class _ScopeSectionCard extends StatelessWidget {
           ),
 
           // Pending literature: honest awaiting state (never fake chapters).
-          if (section.isPending)
-            _PendingBanner(note: section.pendingNote!),
+          if (section.isPending) _PendingBanner(note: section.pendingNote!),
 
           for (final unit in section.units) ...[
             _ScopeUnitTile(
@@ -304,8 +306,7 @@ class _ScopeUnitTile extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             unit.subtitle!,
-                            style:
-                                AppTextStyles.bodySmall(color: subtext),
+                            style: AppTextStyles.bodySmall(color: subtext),
                           ),
                         ],
                         if (unit.note != null) ...[
@@ -320,8 +321,7 @@ class _ScopeUnitTile extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             unit.info!,
-                            style: AppTextStyles.bodySmall(
-                                color: subtext),
+                            style: AppTextStyles.bodySmall(color: subtext),
                           ),
                         ],
                       ],
@@ -343,9 +343,8 @@ class _ScopeUnitTile extends StatelessWidget {
     );
   }
 
-  String _marksLabel(double m) => m == m.roundToDouble()
-      ? '${m.toInt()} अंक'
-      : '$m अंक';
+  String _marksLabel(double m) =>
+      m == m.roundToDouble() ? '${m.toInt()} अंक' : '$m अंक';
 }
 
 class _PendingBanner extends StatelessWidget {
@@ -367,7 +366,8 @@ class _PendingBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.hourglass_top,
-              size: 18, color: AppColors.warning,
+              size: 18,
+              color: AppColors.warning,
               semanticLabel: 'pending announcement'),
           const SizedBox(width: 8),
           Expanded(
@@ -475,8 +475,7 @@ class _ScopeUnavailable extends StatelessWidget {
   Widget build(BuildContext context) {
     return ErrorStateWidget(
       title: 'Syllabus unavailable',
-      message:
-          'The syllabus for this course couldn\'t be loaded.\n'
+      message: 'The syllabus for this course couldn\'t be loaded.\n'
           'Go back and pick the course again.',
     );
   }

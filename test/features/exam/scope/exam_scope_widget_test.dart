@@ -105,16 +105,22 @@ void main() {
     // without hanging on the infinite CircularProgressIndicator animation.
     for (var i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 300));
-      final isLoading = find
-          .byType(CircularProgressIndicator)
-          .evaluate()
-          .isNotEmpty;
+      final isLoading =
+          find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
       if (!isLoading) break;
     }
   }
 
   Future<void> scrollTo(WidgetTester tester, Finder finder) {
     return tester.scrollUntilVisible(finder, 200);
+  }
+
+  /// Wait for an async Riverpod value that does not render its own loader
+  /// (for example, the saved-scope card on the track-selection screen).
+  Future<void> waitForFinder(WidgetTester tester, Finder finder) async {
+    for (var frame = 0; frame < 10 && finder.evaluate().isEmpty; frame++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
   }
 
   testWidgets('track selection: catalog renders and full pick flow works',
@@ -185,10 +191,16 @@ void main() {
   testWidgets('track selection: continue-editing card for saved scope',
       (tester) async {
     final prefs = await seedActiveSelection('cbse_10_sanskrit');
+    expect(prefs.getString(ExamScopeRepository.storageKey), isNotNull,
+        reason: 'the fixture must seed SharedPreferences before the provider');
+    expect(
+      (await ExamScopeRepository(LocalStorageService(prefs)).load())
+          .activeTrackId,
+      'cbse_10_sanskrit',
+    );
     final container = containerFor(prefs);
     await pumpScreen(tester, container, const ExamTrackSelectionScreen());
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await waitForFinder(tester, find.textContaining('Continue:'));
 
     expect(find.textContaining('Continue:'), findsOneWidget);
     expect(find.textContaining('इकाइयाँ चयनित'), findsOneWidget);
@@ -212,7 +224,8 @@ void main() {
     // ListView may defer off-screen items).
     expect(find.text('अपठितावबोधनम्', skipOffstage: false), findsOneWidget);
     expect(find.text('रचनात्मककार्यम्', skipOffstage: false), findsOneWidget);
-    expect(find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false), findsOneWidget);
+    expect(
+        find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false), findsOneWidget);
     expect(find.text('पठितावबोधनम्', skipOffstage: false), findsOneWidget);
 
     // Pending literature: honest awaiting banner.
@@ -221,7 +234,8 @@ void main() {
 
     // Grammar topics render (Devanagari titles from canonical data).
     expect(find.text('सन्धिः', skipOffstage: false), findsOneWidget);
-    expect(find.text('कारक-उपपद-विभक्तयः', skipOffstage: false), findsOneWidget);
+    expect(
+        find.text('कारक-उपपद-विभक्तयः', skipOffstage: false), findsOneWidget);
 
     // Select All → the summary bar count updates.
     await tester.tap(find.text('Select All'));
@@ -249,8 +263,7 @@ void main() {
     await pumpScreen(
       tester,
       container,
-      const ExamScopeSelectionScreen(
-          trackId: 'cbse_10_sanskrit_communicative'),
+      const ExamScopeSelectionScreen(trackId: 'cbse_10_sanskrit_communicative'),
       trackId: 'cbse_10_sanskrit_communicative',
     );
     await tester.pump();
@@ -262,17 +275,18 @@ void main() {
 
     // Behavioral guarantee: tapping an internal-only chapter changes
     // nothing (0 selected before and after).
+    await scrollTo(tester, find.text('कालोऽहम्'));
     await tester.tap(find.text('कालोऽहम्'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('0 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'internal-only chapters must never enter board scope');
 
-    // Their checkboxes are disabled.
-    final ch10Checkbox = tester.widget<Checkbox>(find
-        .ancestor(of: find.text('कालोऽहम्'), matching: find.byType(Checkbox))
-        .first);
-    expect(ch10Checkbox.onChanged, isNull);
+    // The row reports its unavailable state to accessibility services.
+    expect(
+      find.bySemanticsLabel(RegExp('कालोऽहम्.*not available')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('scope selection: individual + section toggles persist',
@@ -292,18 +306,20 @@ void main() {
     // + 9 (chapters).
     expect(find.text('0 / 20 इकाइयाँ'), findsOneWidget);
 
-    // Individual: tap the सन्धि tile.
-    await tester.tap(find.text('सन्धिः'));
+    // Individual: tap the canonical सन्धिकार्यम् tile.
+    await scrollTo(tester, find.text('सन्धिकार्यम्'));
+    await tester.tap(find.text('सन्धिकार्यम्'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1 / 20 इकाइयाँ'), findsOneWidget);
 
     // Section: tap the grammar section header (tristate checkbox row).
+    await scrollTo(tester, find.text('अनुप्रयुक्तव्याकरणम्'));
     await tester.tap(find.text('अनुप्रयुक्तव्याकरणम्'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
-        reason: 'grammar section adds its 7 units to the 1 selected');
+    expect(find.text('7 / 20 इकाइयाँ'), findsOneWidget,
+        reason: 'section selection completes its seven grammar units');
 
     // Write-through persistence: a fresh screen instance sees the scope.
     await pumpScreen(
@@ -314,7 +330,7 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('8 / 20 इकाइयाँ'), findsOneWidget,
+    expect(find.text('7 / 20 इकाइयाँ'), findsOneWidget,
         reason: 'selection persisted across instances');
   });
 
@@ -328,8 +344,7 @@ void main() {
       const ExamScopeSummaryScreen(trackId: 'cbse_10_sanskrit'),
       trackId: 'cbse_10_sanskrit',
     );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await waitForFinder(tester, find.text('CBSE', skipOffstage: false));
 
     // Identity rows (§49) — may be off-screen in a ListView.
     expect(find.text('CBSE', skipOffstage: false), findsOneWidget);
@@ -339,10 +354,11 @@ void main() {
         findsOneWidget);
 
     // Per-section row present.
-    expect(find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false),
-        findsOneWidget);
+    expect(
+        find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false), findsOneWidget);
 
     // Confirm → success card.
+    await scrollTo(tester, find.text('Confirm Scope'));
     await tester.tap(find.text('Confirm Scope'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
@@ -363,8 +379,11 @@ void main() {
       const ExamScopeSummaryScreen(trackId: 'cbse_9_sanskrit'),
       trackId: 'cbse_9_sanskrit',
     );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await waitForFinder(
+      tester,
+      find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी',
+          skipOffstage: false),
+    );
 
     expect(
         find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी',

@@ -52,19 +52,19 @@ class _ExamScopeSummaryScreenState
         ),
         error: (e, _) => _SummaryUnavailable(trackId: widget.trackId),
         data: (state) => syllabusAsync.maybeWhen(
-              data: (syllabus) => syllabus == null
-                  ? _SummaryUnavailable(trackId: widget.trackId)
-                  : _SummaryBody(
-                      state: state,
-                      syllabus: syllabus,
-                      confirmed: _confirmed,
-                      onConfirm: _onConfirm,
-                      onEdit: _onEdit,
-                    ),
-              orElse: () => const Center(
-                child: VaaniXLoadingIndicator(message: 'Loading course…'),
-              ),
-            ),
+          data: (syllabus) => syllabus == null
+              ? _SummaryUnavailable(trackId: widget.trackId)
+              : _SummaryBody(
+                  state: state,
+                  syllabus: syllabus,
+                  confirmed: _confirmed,
+                  onConfirm: _onConfirm,
+                  onEdit: _onEdit,
+                ),
+          orElse: () => const Center(
+            child: VaaniXLoadingIndicator(message: 'Loading course…'),
+          ),
+        ),
       ),
     );
   }
@@ -107,101 +107,106 @@ class _SummaryBody extends StatelessWidget {
         ? covered.toInt().toString()
         : covered.toStringAsFixed(1);
 
-    return ListView(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
-      children: [
-        VanSpeechStrip(
-          message: confirmed
-              ? 'दायरा सहेज लिया गया। आप इसे कभी भी बदल सकते हैं।'
-              : 'एक बार देख लें — यही आपकी तैयारी की सीमा होगी।'
-                  ' चाहें तो अभी बदल लें।',
-          state: confirmed ? VanState.achievement : VanState.idle,
-        ),
-        const SizedBox(height: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          VanSpeechStrip(
+            message: confirmed
+                ? 'दायरा सहेज लिया गया। आप इसे कभी भी बदल सकते हैं।'
+                : 'एक बार देख लें — यही आपकी तैयारी की सीमा होगी।'
+                    ' चाहें तो अभी बदल लें।',
+            state: confirmed ? VanState.achievement : VanState.idle,
+          ),
+          const SizedBox(height: 8),
 
-        _IdentityCard(syllabus: syllabus),
-        const SizedBox(height: 12),
+          _IdentityCard(syllabus: syllabus),
+          const SizedBox(height: 12),
 
-        _SectionCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('चयनित पाठ्यक्रम दायरा', style: AppTextStyles.titleMedium()),
-              const SizedBox(height: 12),
-              for (final section in state.view!.sections) ...[
-                _ScopeRow(
-                  title: section.title,
-                  selectedCount: section.selectableUnits
-                      .where((u) => state.selection.isSelected(u.id))
-                      .length,
-                  totalCount: section.selectableUnits.length,
-                  marks: section.marks,
-                  isDark: isDark,
-                ),
-              ],
-              const Divider(height: 24),
-              Semantics(
-                label:
-                    'Total: ${state.selectedCount} units, ${state.view!.engagedSections(state.selection)} of ${state.view!.sections.length} sections engaged'
-                    '${state.view!.marksCoverageExact ? ", $coveredLabel of ${state.boardMarks.toInt()} marks" : ""}',
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('कुल', style: AppTextStyles.titleSmall()),
-                    Text(
-                      state.view!.marksCoverageExact
-                          ? '${state.selectedCount} इकाइयाँ · '
-                              '$coveredLabel / ${state.boardMarks.toInt()} अंक'
-                          : '${state.selectedCount} इकाइयाँ · '
-                              '${state.view!.engagedSections(state.selection)} / ${state.view!.sections.length} खंड',
-                      style: AppTextStyles.titleSmall(
-                          color: AppColors.primary),
-                    ),
-                  ],
-                ),
-              ),
-              if (state.view!.hasPendingSections) ...[
+          _SectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('चयनित पाठ्यक्रम दायरा',
+                    style: AppTextStyles.titleMedium()),
                 const SizedBox(height: 12),
-                _PendingNote(view: state.view!),
+                for (final section in state.view!.sections) ...[
+                  _ScopeRow(
+                    title: section.title,
+                    selectedCount: section.selectableUnits
+                        .where((u) => state.selection.isSelected(u.id))
+                        .length,
+                    totalCount: section.selectableUnits.length,
+                    marks: section.marks,
+                    isDark: isDark,
+                  ),
+                ],
+                const Divider(height: 24),
+                Semantics(
+                  label:
+                      'Total: ${state.selectedCount} units, ${state.view!.engagedSections(state.selection)} of ${state.view!.sections.length} sections engaged'
+                      '${state.view!.marksCoverageExact ? ", $coveredLabel of ${state.boardMarks.toInt()} marks" : ""}',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('कुल', style: AppTextStyles.titleSmall()),
+                      Text(
+                        state.view!.marksCoverageExact
+                            ? '${state.selectedCount} इकाइयाँ · '
+                                '$coveredLabel / ${state.boardMarks.toInt()} अंक'
+                            : '${state.selectedCount} इकाइयाँ · '
+                                '${state.view!.engagedSections(state.selection)} / ${state.view!.sections.length} खंड',
+                        style:
+                            AppTextStyles.titleSmall(color: AppColors.primary),
+                      ),
+                    ],
+                  ),
+                ),
+                if (state.view!.hasPendingSections) ...[
+                  const SizedBox(height: 12),
+                  _PendingNote(view: state.view!),
+                ],
               ],
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-
-        // Upcoming steps — honest placeholders, never fake features.
-        _SectionCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('आगे के कदम', style: AppTextStyles.titleMedium()),
-              const SizedBox(height: 8),
-              _UpcomingRow(label: 'Exam profile — readiness और समय (अगला कदम)'),
-              _UpcomingRow(label: 'Adaptive diagnostic + personalized plan'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        if (!confirmed) ...[
-          PrimaryButton(
-            label: 'Confirm Scope',
-            icon: const Icon(Icons.check),
-            onPressed: onConfirm,
+            ),
           ),
           const SizedBox(height: 12),
-          PrimaryButton.secondary(
-            label: 'Edit Selection',
-            icon: const Icon(Icons.edit_outlined),
-            onPressed: onEdit,
+
+          // Upcoming steps — honest placeholders, never fake features.
+          _SectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('आगे के कदम', style: AppTextStyles.titleMedium()),
+                const SizedBox(height: 8),
+                _UpcomingRow(
+                    label: 'Exam profile — readiness और समय (अगला कदम)'),
+                _UpcomingRow(label: 'Adaptive diagnostic + personalized plan'),
+              ],
+            ),
           ),
-        ] else ...[
-          _ConfirmedCard(
-            trackId: state.view!.trackId,
-            onDone: () => GoRouter.of(context).pop(),
-          ),
+          const SizedBox(height: 20),
+
+          if (!confirmed) ...[
+            PrimaryButton(
+              label: 'Confirm Scope',
+              icon: const Icon(Icons.check),
+              onPressed: onConfirm,
+            ),
+            const SizedBox(height: 12),
+            PrimaryButton.secondary(
+              label: 'Edit Selection',
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: onEdit,
+            ),
+          ] else ...[
+            _ConfirmedCard(
+              trackId: state.view!.trackId,
+              onDone: () => GoRouter.of(context).pop(),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -220,16 +225,11 @@ class _IdentityCard extends StatelessWidget {
         children: [
           Text('आपकी परीक्षा', style: AppTextStyles.titleMedium()),
           const SizedBox(height: 8),
+          _IdentityRow(label: 'Board', value: 'CBSE', isDark: isDark),
           _IdentityRow(
-              label: 'Board', value: 'CBSE', isDark: isDark),
+              label: 'Class', value: 'Class ${syllabus.klass}', isDark: isDark),
           _IdentityRow(
-              label: 'Class',
-              value: 'Class ${syllabus.klass}',
-              isDark: isDark),
-          _IdentityRow(
-              label: 'Subject',
-              value: syllabus.subjectName,
-              isDark: isDark),
+              label: 'Subject', value: syllabus.subjectName, isDark: isDark),
           _IdentityRow(
               label: 'Course',
               value: syllabus.courseName +
@@ -270,9 +270,8 @@ class _IdentityRow extends StatelessWidget {
             child: Text(
               label,
               style: AppTextStyles.bodySmall(
-                  color: isDark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight),
+                  color:
+                      isDark ? AppColors.subtextDark : AppColors.subtextLight),
             ),
           ),
           Expanded(
@@ -316,9 +315,8 @@ class _ScopeRow extends StatelessWidget {
                   ? '—'
                   : '$selectedCount / $totalCount चयनित · $marksLabel अंक',
               style: AppTextStyles.bodySmall(
-                  color: isDark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight),
+                  color:
+                      isDark ? AppColors.subtextDark : AppColors.subtextLight),
             ),
           ],
         ),
@@ -347,17 +345,14 @@ class _UpcomingRow extends StatelessWidget {
             child: Text(
               label,
               style: AppTextStyles.bodyMedium(
-                  color: isDark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight),
+                  color:
+                      isDark ? AppColors.subtextDark : AppColors.subtextLight),
             ),
           ),
           Text(
             'अगला चरण',
             style: AppTextStyles.labelSmall(
-                color: isDark
-                    ? AppColors.subtextDark
-                    : AppColors.subtextLight),
+                color: isDark ? AppColors.subtextDark : AppColors.subtextLight),
           ),
         ],
       ),
@@ -382,8 +377,7 @@ class _PendingNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.hourglass_top,
-              size: 18, color: AppColors.warning),
+          const Icon(Icons.hourglass_top, size: 18, color: AppColors.warning),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -414,8 +408,7 @@ class _ConfirmedCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(Icons.check_circle,
-              size: 40, color: AppColors.success,
-              semanticLabel: 'confirmed'),
+              size: 40, color: AppColors.success, semanticLabel: 'confirmed'),
           const SizedBox(height: 12),
           Text('दायरा सहेज दिया गया', style: AppTextStyles.titleMedium()),
           const SizedBox(height: 8),

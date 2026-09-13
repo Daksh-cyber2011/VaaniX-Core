@@ -238,7 +238,8 @@ void main() {
     expect(profile.currentLevel, 0);
   });
 
-  test('stub language surfaces the honest unavailable state', () async {
+  test('newly supported Kannada language builds a diagnostic session',
+      () async {
     final container =
         await _container(prefs: {'learn_language': 'kannada'});
     addTearDown(container.dispose);
@@ -247,8 +248,8 @@ void main() {
     await notifier.start(LearnLanguage.kannada);
 
     final state = container.read(diagnosticSessionProvider);
-    expect(state.phase, DiagnosticPhase.unavailable);
-    expect(state.unavailableReason, isNotNull);
+    expect(state.phase, DiagnosticPhase.active);
+    expect(state.currentItem, isNotNull);
   });
 
   test('submitAnswer is a no-op outside the active phase', () async {

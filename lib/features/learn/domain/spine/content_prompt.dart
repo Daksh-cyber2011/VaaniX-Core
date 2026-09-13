@@ -155,6 +155,7 @@ String buildContentUserPrompt({
   // ── Section 3: TASK ──────────────────────────────────────────────────
   buffer.writeln();
   buffer.writeln('=== TASK ===');
+  buffer.writeln('Requested JSON kind: "kind": "${kind.name}".');
   buffer.writeln(
       'Make ONE item of kind "${kind.name}" for the concept above, at '
       'difficulty $difficultyKnob (1 = brand new, 5 = very hard), '

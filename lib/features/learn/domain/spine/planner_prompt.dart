@@ -183,6 +183,11 @@ Map<String, dynamic>? extractPlanJson(String raw) {
 
   final text = raw.trim();
 
+  // The protocol permits exactly one JSON OBJECT. Do not rescue an object
+  // nested inside a top-level array: that would silently accept a response
+  // shape the caller never asked for.
+  if (text.startsWith('[')) return null;
+
   // Fast path: the whole text IS the object.
   final direct = _tryDecode(text);
   if (direct != null) return direct;

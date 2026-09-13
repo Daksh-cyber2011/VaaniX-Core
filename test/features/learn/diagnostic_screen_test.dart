@@ -63,6 +63,24 @@ void _useTallSurface(WidgetTester tester) {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
+Future<void> _waitForSessionToStart(
+  WidgetTester tester,
+  ProviderContainer container,
+) async {
+  for (var frame = 0;
+      frame < 20 &&
+          container.read(diagnosticSessionProvider).phase ==
+              DiagnosticPhase.idle;
+      frame++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  expect(
+    container.read(diagnosticSessionProvider).phase,
+    isNot(DiagnosticPhase.idle),
+    reason: 'starting a diagnostic must leave the intro state',
+  );
+}
+
 /// Answers the current probe correctly through REAL UI interactions.
 Future<void> _answerCurrentProbe(
   WidgetTester tester,
@@ -80,14 +98,14 @@ Future<void> _answerCurrentProbe(
           : (display.correctIndex + 1) % display.options.length;
       await tester.tap(find.text(display.options[index]).first);
       await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
     case ExerciseType.translation:
       await tester.enterText(
         find.byType(TextField),
         correctly ? exercise.acceptedAnswers.first : 'definitely wrong',
       );
       await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
     case ExerciseType.matching:
       for (var left = 0; left < exercise.pairs.length; left++) {
         final slot = correctly
@@ -96,25 +114,24 @@ Future<void> _answerCurrentProbe(
                 .indexOf((left + 1) % exercise.pairs.length);
         await tester.tap(find.text(exercise.pairs[left].left).first);
         await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+        await tester.pump(const Duration(milliseconds: 300));
         await tester.tap(find.text(display.options[slot]).first);
         await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+        await tester.pump(const Duration(milliseconds: 300));
       }
     case ExerciseType.ordering:
-      final order = correctly
-          ? exercise.items
-          : exercise.items.reversed.toList();
+      final order =
+          correctly ? exercise.items : exercise.items.reversed.toList();
       for (final label in order) {
         await tester.tap(find.text(label).first);
         await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+        await tester.pump(const Duration(milliseconds: 300));
       }
   }
 
   await tester.tap(find.text('Check'));
   await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+  await tester.pump(const Duration(milliseconds: 300));
 }
 
 void main() {
@@ -166,8 +183,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     await tester.tap(find.text("Let's play"));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitForSessionToStart(tester, container);
 
     // Drive every adaptive round through real interactions.
     var guard = 0;
@@ -181,7 +197,9 @@ void main() {
         expect(find.text('Continue'), findsOneWidget);
         await tester.tap(find.text('Continue'));
         await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+        await tester.pump(const Duration(milliseconds: 300));
+      } else {
+        fail('Unexpected diagnostic phase: $phase');
       }
       guard++;
       expect(guard, lessThan(60), reason: 'the flow must terminate');
@@ -216,8 +234,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text("Let's play"));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitForSessionToStart(tester, container);
 
     // Answer the FIRST probe deliberately wrong.
     await _answerCurrentProbe(tester, container, correctly: false);
@@ -230,11 +247,10 @@ void main() {
     );
   });
 
-  testWidgets('stub language surfaces the honest unavailable state',
+  testWidgets('newly supported Kannada language starts a diagnostic',
       (tester) async {
     _useTallSurface(tester);
-    final container =
-        await _container(prefs: {'learn_language': 'kannada'});
+    final container = await _container(prefs: {'learn_language': 'kannada'});
     addTearDown(container.dispose);
 
     await tester.pumpWidget(_wrap(container));
@@ -245,10 +261,9 @@ void main() {
     expect(find.text("Let's play"), findsOneWidget);
     // …but starting honestly reports there is nothing to probe yet.
     await tester.tap(find.text("Let's play"));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitForSessionToStart(tester, container);
 
-    expect(find.text('Not ready yet'), findsOneWidget);
-    expect(find.textContaining('placement game unlocks'), findsOneWidget);
+    expect(container.read(diagnosticSessionProvider).phase,
+        DiagnosticPhase.active);
   });
 }
