@@ -73,7 +73,7 @@ class VaaniXCard extends StatelessWidget {
 
     final tappable = onTap != null || onLongPress != null;
 
-    Widget result = tappable
+    final Widget result = tappable
         ? AnimatedPressWrapper(
             onTap: onTap,
             onLongPress: onLongPress,

@@ -23,7 +23,6 @@ import 'package:dartz/dartz.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
-import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 

@@ -121,7 +121,7 @@ class ConceptGraph extends Equatable {
     required this.languageCode,
     required this.skills,
     required this.concepts,
-  });
+  }) : _idIndex = {for (final c in concepts) c.id: c};
 
   /// ISO 639-1 code of the language this graph describes
   /// (`'sa'` for the legacy Sanskrit track — see [forCurriculum]).
@@ -251,13 +251,10 @@ class ConceptGraph extends Equatable {
     return closure;
   }
 
-  // Lazily-built lookup indexes (graph is immutable after construction).
-  Map<String, LearnConcept>? _idIndex;
+  // Eagerly-built lookup index (immutable after construction).
+  final Map<String, LearnConcept> _idIndex;
 
-  Map<String, LearnConcept> _byId() {
-    _idIndex ??= {for (final c in concepts) c.id: c};
-    return _idIndex!;
-  }
+  Map<String, LearnConcept> _byId() => _idIndex;
 
   @override
   List<Object?> get props => [languageCode, skills, concepts];

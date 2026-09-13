@@ -248,6 +248,8 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
   Future<void> _save(BuildContext context) async {
     final language = ref.read(selectedLearnLanguageProvider);
     if (language == null) return;
+    // Capture router BEFORE the async gap (satisfies use_build_context_synchronously).
+    final router = GoRouter.of(context);
     await ref.read(learnerProfileProvider(language).notifier).update(
           (p) => p.copyWith(
             selfReport: _selfReport,
@@ -259,7 +261,7 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
           ),
         );
     if (!mounted) return;
-    context.go(RouteNames.learn);
+    router.go(RouteNames.learn);
   }
 
   Future<void> _reset(BuildContext context) async {

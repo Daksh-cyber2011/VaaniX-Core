@@ -25,7 +25,6 @@ library;
 
 import 'package:equatable/equatable.dart';
 
-import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 
