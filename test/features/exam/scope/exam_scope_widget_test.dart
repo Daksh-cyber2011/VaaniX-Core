@@ -99,9 +99,18 @@ void main() {
     String? trackId,
   }) async {
     await tester.pumpWidget(host(container, child));
-    await tester.pump();
-    await tester.pump();
-    await tester.pump();
+    // Pump until the loading indicator disappears (provider data resolved)
+    // or for at most 10 × 300ms iterations. This handles multi-layer async
+    // chains (syllabusIndexProvider → ExamScopeController.build → prefs load)
+    // without hanging on the infinite CircularProgressIndicator animation.
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+      final isLoading = find
+          .byType(CircularProgressIndicator)
+          .evaluate()
+          .isNotEmpty;
+      if (!isLoading) break;
+    }
   }
 
   Future<void> scrollTo(WidgetTester tester, Finder finder) {
@@ -199,18 +208,20 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // All four official sections render.
-    expect(find.text('अपठितावबोधनम्'), findsOneWidget);
-    expect(find.text('रचनात्मककार्यम्'), findsOneWidget);
-    expect(find.text('अनुप्रयुक्तव्याकरणम्'), findsOneWidget);
-    expect(find.text('पठितावबोधनम्'), findsOneWidget);
+    // All four official sections render (use skipOffstage:false because the
+    // ListView may defer off-screen items).
+    expect(find.text('अपठितावबोधनम्', skipOffstage: false), findsOneWidget);
+    expect(find.text('रचनात्मककार्यम्', skipOffstage: false), findsOneWidget);
+    expect(find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false), findsOneWidget);
+    expect(find.text('पठितावबोधनम्', skipOffstage: false), findsOneWidget);
 
     // Pending literature: honest awaiting banner.
-    expect(find.textContaining('आधिकारिक अध्याय सूची'), findsOneWidget);
+    expect(find.textContaining('आधिकारिक अध्याय सूची', skipOffstage: false),
+        findsOneWidget);
 
     // Grammar topics render (Devanagari titles from canonical data).
-    expect(find.text('सन्धिः'), findsOneWidget);
-    expect(find.text('कारक-उपपद-विभक्तयः'), findsOneWidget);
+    expect(find.text('सन्धिः', skipOffstage: false), findsOneWidget);
+    expect(find.text('कारक-उपपद-विभक्तयः', skipOffstage: false), findsOneWidget);
 
     // Select All → the summary bar count updates.
     await tester.tap(find.text('Select All'));
@@ -320,14 +331,16 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // Identity rows (§49).
-    expect(find.text('CBSE'), findsOneWidget);
-    expect(find.text('Class 10'), findsOneWidget);
-    expect(find.text('संस्कृतम्'), findsWidgets);
-    expect(find.textContaining('Official CBSE 2026-27'), findsOneWidget);
+    // Identity rows (§49) — may be off-screen in a ListView.
+    expect(find.text('CBSE', skipOffstage: false), findsOneWidget);
+    expect(find.text('Class 10', skipOffstage: false), findsOneWidget);
+    expect(find.text('संस्कृतम्', skipOffstage: false), findsWidgets);
+    expect(find.textContaining('Official CBSE 2026-27', skipOffstage: false),
+        findsOneWidget);
 
     // Per-section row present.
-    expect(find.text('अनुप्रयुक्तव्याकरणम्'), findsOneWidget);
+    expect(find.text('अनुप्रयुक्तव्याकरणम्', skipOffstage: false),
+        findsOneWidget);
 
     // Confirm → success card.
     await tester.tap(find.text('Confirm Scope'));
@@ -353,7 +366,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी'),
+    expect(
+        find.textContaining('आधिकारिक अध्याय सूची जारी होने बाकी',
+            skipOffstage: false),
         findsOneWidget);
   });
 }

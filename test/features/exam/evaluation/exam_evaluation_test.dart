@@ -40,7 +40,7 @@ void main() {
     });
 
     test('zero-width OCR leftovers dropped', () {
-      expect(normalizeAnswer('स\u200Bन\u200Dधि'), 'सन्धि');
+      expect(normalizeAnswer('स\u200Bन्\u200Dधि'), 'सन्धि');
     });
 
     test('empty stays empty', () {

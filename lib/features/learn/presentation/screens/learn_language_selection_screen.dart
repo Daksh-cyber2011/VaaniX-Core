@@ -196,6 +196,10 @@ class _LanguageTile extends StatelessWidget {
                             style: AppTextStyles.headlineSmall(),
                           ),
                         ),
+                        Text(
+                          spec.englishName,
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
                         const SizedBox(height: 2),
                         Text(
                           '${spec.englishName} · ${spec.scriptName}'

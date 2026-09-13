@@ -16,7 +16,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 
-/// Product-level event vocabulary (V1 ships these 17).
+/// Product-level event vocabulary (V1 ships these 20).
 enum AnalyticsEventName {
   /// Cold start of the app finished.
   appOpened,

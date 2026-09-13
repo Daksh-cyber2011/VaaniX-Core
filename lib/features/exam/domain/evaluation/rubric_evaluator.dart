@@ -66,7 +66,8 @@ class RubricEvaluator {
   }) {
     final correct = selectedIndex == correctIndex;
     return EvaluationResult(
-      verdict: correct ? EvaluationVerdict.correct : EvaluationVerdict.incorrect,
+      verdict:
+          correct ? EvaluationVerdict.correct : EvaluationVerdict.incorrect,
       feedback: correct
           ? 'बिल्कुल सही — «$correctOptionText» सही उत्तर है।'
           : 'सही उत्तर «$correctOptionText» है। फ़र्क़ समझ आया? अगले '
@@ -79,7 +80,8 @@ class RubricEvaluator {
         ),
       ],
       confidenceBand: ConfidenceBand.high,
-      retryAdvice: correct ? null : 'आगे बढ़ें — यह पैटर्न दोहराव में फिर आएगा।',
+      retryAdvice:
+          correct ? null : 'आगे बढ़ें — यह पैटर्न दोहराव में फिर आएगा।',
     );
   }
 
@@ -113,7 +115,15 @@ class RubricEvaluator {
     // 1) Accepted-answer coverage (the correctness dimension).
     var bestCoverage = 0.0;
     for (final accepted in answerData.acceptedAnswers) {
-      final cov = tokenCoverage(tokenizeAnswer(accepted), studentTokens);
+      final acceptedTokens = tokenizeAnswer(accepted);
+      var cov = tokenCoverage(acceptedTokens, studentTokens);
+      // A meaningful stem inside a trusted compound answer is evidence of
+      // topical relevance, but never enough to mark an answer correct.
+      // Route that narrow case to the explicit uncertainty path instead of
+      // treating it as wholly unrelated.
+      if (cov == 0 && _hasCompoundStemOverlap(acceptedTokens, studentTokens)) {
+        cov = _Thresholds.grayZone;
+      }
       if (cov > bestCoverage) bestCoverage = cov;
     }
 
@@ -227,10 +237,16 @@ class RubricEvaluator {
 
   static String? _evidenceFor(String required, List<String> studentTokens) {
     final requiredTokens = tokenizeAnswer(required);
-    final hits = requiredTokens
-        .where(studentTokens.contains)
-        .take(4)
-        .toList();
+    final hits = requiredTokens.where(studentTokens.contains).take(4).toList();
     return hits.isEmpty ? null : hits.join(' ');
   }
+
+  static bool _hasCompoundStemOverlap(
+    List<String> expectedTokens,
+    List<String> studentTokens,
+  ) =>
+      expectedTokens.any((expected) => studentTokens.any((student) =>
+          expected.length >= 3 &&
+          student.length >= 3 &&
+          (expected.startsWith(student) || student.startsWith(expected))));
 }

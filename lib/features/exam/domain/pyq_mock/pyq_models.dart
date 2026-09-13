@@ -147,8 +147,8 @@ class PyqFilter extends Equatable {
   }
 
   @override
-  List<Object?> get props => [sectionIds, topicIds, minMarks, maxMarks,
-      patternKinds, limit];
+  List<Object?> get props =>
+      [sectionIds, topicIds, minMarks, maxMarks, patternKinds, limit];
 }
 
 /// Per-topic PYQ performance snapshot (§21 pyqPerformance evidence).
@@ -170,7 +170,7 @@ class PyqTopicPerformance extends Equatable {
     if (!hasEvidence) return 'learning';
     final accuracy = correct / attempted;
     if (accuracy < 0.4) return 'needsAttention';
-    if (accuracy >= 0.6) return 'strong';
+    if (accuracy >= 0.7) return 'strong';
     return 'learning';
   }
 
@@ -184,8 +184,7 @@ class PyqTopicPerformance extends Equatable {
   Map<String, dynamic> toJson() =>
       {'topicId': topicId, 'attempted': attempted, 'correct': correct};
 
-  PyqTopicPerformance merge(PyqTopicPerformance other) =>
-      PyqTopicPerformance(
+  PyqTopicPerformance merge(PyqTopicPerformance other) => PyqTopicPerformance(
         topicId: topicId,
         attempted: attempted + other.attempted,
         correct: correct + other.correct,

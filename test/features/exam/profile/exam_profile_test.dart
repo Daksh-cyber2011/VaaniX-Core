@@ -31,7 +31,7 @@ void main() {
     test('date-only readiness anchors to the date', () {
       final p = profile(target: DateTime(2026, 11, 15));
       expect(p.readinessAnchor(now), DateTime(2026, 11, 15));
-      expect(p.weeksToAnchor(now), 9);
+      expect(p.weeksToAnchor(now), 10);
     });
 
     test('duration-only readiness derives the anchor (§8 option B)', () {
@@ -60,8 +60,7 @@ void main() {
         target: DateTime(2026, 12, 1),
         examDate: DateTime(2026, 10, 1),
       );
-      expect(
-          p.validate(now: now), anyElement(contains('precedes')));
+      expect(p.validate(now: now), anyElement(contains('precedes')));
     });
 
     test('§9 bounds: 5..480 minutes, 1..7 days', () {

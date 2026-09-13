@@ -63,8 +63,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('AnalyticsEvent bounds', () {
-    test('event names are the closed V1 vocabulary (17 events)', () {
-      expect(AnalyticsEventName.values.length, 17);
+    test('event names are the closed V1 vocabulary (20 events)', () {
+      expect(AnalyticsEventName.values.length, 20);
       // Ids are stable lowercase strings.
       for (final name in AnalyticsEventName.values) {
         expect(name.id, name.name);
@@ -132,8 +132,7 @@ void main() {
       // ... but the ref.log extension swallows them: analytics must never
       // crash the app, no matter when it fires.
       expect(
-        () => captured!
-            .log(const AnalyticsEvent(AnalyticsEventName.appOpened)),
+        () => captured!.log(const AnalyticsEvent(AnalyticsEventName.appOpened)),
         returnsNormally,
       );
     });
@@ -199,7 +198,8 @@ void main() {
       expect(event.payload['mode'], 'dark');
     });
 
-    test('a chat send emits aiConversationStarted + aiMessageSent '
+    test(
+        'a chat send emits aiConversationStarted + aiMessageSent '
         '(stubbed pipeline so no real AI runs)', () async {
       final chatContainer = ProviderContainer(overrides: [
         sharedPreferencesProvider.overrideWithValue(
@@ -213,7 +213,8 @@ void main() {
       await chatContainer
           .read(chatControllerProvider.notifier)
           .sendMessage('namaste');
-      expect(client.events.map((e) => e.name),
+      expect(
+          client.events.map((e) => e.name),
           containsAll(<AnalyticsEventName>[
             AnalyticsEventName.aiMessageSent,
             AnalyticsEventName.aiConversationStarted,
