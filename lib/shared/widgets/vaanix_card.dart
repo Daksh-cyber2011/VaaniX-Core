@@ -2,32 +2,45 @@
 ///
 /// Standardized card component with custom surface colors, rounded borders,
 /// optional glassmorphism/gradient highlights, padding, and tap callbacks.
+///
+/// Tappable cards automatically get a scale micro-interaction (via
+/// [AnimatedPressWrapper]) and a semantic button annotation. The press
+/// animation respects [MediaQuery.disableAnimationsOf].
 library;
 
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
+import 'package:vaanix_app/core/theme/app_dimens.dart';
+import 'package:vaanix_app/shared/widgets/animated_press_wrapper.dart';
 
 class VaaniXCard extends StatelessWidget {
   const VaaniXCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(AppDimens.space5),
     this.margin,
     this.onTap,
+    this.onLongPress,
     this.backgroundColor,
     this.borderColor,
-    this.borderRadius = 20.0,
+    this.borderRadius = AppDimens.radiusLg,
     this.elevation = 0,
+    this.semanticLabel,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry? margin;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final Color? backgroundColor;
   final Color? borderColor;
   final double borderRadius;
   final double elevation;
+
+  /// Accessible label for screen readers. If null and [onTap] is set, the
+  /// card announces as a generic "button"; provide a label for clarity.
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -58,31 +71,24 @@ class VaaniXCard extends StatelessWidget {
       child: child,
     );
 
+    final tappable = onTap != null || onLongPress != null;
+
+    Widget result = tappable
+        ? AnimatedPressWrapper(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            semanticLabel: semanticLabel,
+            semanticButton: true,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(borderRadius),
+              child: cardChild,
+            ),
+          )
+        : cardChild;
+
     if (margin != null) {
-      return Padding(
-        padding: margin!,
-        child: onTap != null ? _tappable(cardChild) : cardChild,
-      );
+      return Padding(padding: margin!, child: result);
     }
-
-    if (onTap != null) {
-      return _tappable(cardChild);
-    }
-
-    return cardChild;
-  }
-
-  /// Tappable cards expose the button trait so screen readers announce the
-  /// control type instead of reading the card's text as plain content.
-  Widget _tappable(Widget cardChild) {
-    return Semantics(
-      button: true,
-      container: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: cardChild,
-      ),
-    );
+    return result;
   }
 }

@@ -34,6 +34,8 @@ import 'package:vaanix_app/features/exam/presentation/providers/exam_hub_provide
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/gamification.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/shared/widgets/error_state_widget.dart';
+import 'package:vaanix_app/shared/widgets/loading_indicator.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/streak_badge.dart';
 import 'package:vaanix_app/shared/widgets/van_speech_strip.dart';
@@ -73,14 +75,17 @@ class _ExamHubScreenState extends ConsumerState<ExamHubScreen> {
       title: 'Exam Home',
       body: snapshotAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(semanticsLabel: 'Loading hub'),
+          child: VaaniXLoadingIndicator(message: 'Loading your exam plan…'),
         ),
-        error: (e, _) => Center(
-          child: Text('Hub unavailable — try again.',
-              style: AppTextStyles.bodyMedium(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight)),
+        error: (e, _) => ErrorStateWidget(
+          title: 'Couldn\'t load your plan',
+          message:
+              'Something went wrong loading your exam home.\n'
+              'Your progress is safe — try again in a moment.',
+          onRetry: () => ref.invalidate(
+            examHubSnapshotProvider(widget.trackId),
+          ),
+          showVan: true,
         ),
         data: (snapshot) =>
             _HubBody(snapshot: snapshot, trackId: widget.trackId),

@@ -1,6 +1,7 @@
 /// VaaniX Shared Widgets Barrel Export
 library;
 
+export 'animated_press_wrapper.dart';
 export 'empty_state_widget.dart';
 export 'error_state_widget.dart';
 export 'loading_indicator.dart';
@@ -8,6 +9,7 @@ export 'offline_banner.dart';
 export 'primary_button.dart';
 export 'progress_meter.dart';
 export 'section_header.dart';
+export 'shimmer_widget.dart';
 export 'streak_badge.dart';
 export 'stat_tile.dart';
 export 'vaanix_bottom_sheet.dart';

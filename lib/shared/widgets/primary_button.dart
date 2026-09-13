@@ -5,8 +5,13 @@
 ///
 /// Supports loading state, disabled state, and secondary/text variants.
 /// The loading spinner color adapts to the variant so it is always visible.
+///
+/// All variants emit a light haptic impact on successful press — this is a
+/// standard premium mobile micro-interaction (iOS system buttons behave the
+/// same way). Haptic is suppressed while [isLoading] is true.
 library;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 
 enum _ButtonVariant { primary, secondary, text }
@@ -50,10 +55,18 @@ class PrimaryButton extends StatelessWidget {
 
   final _ButtonVariant _variant;
 
+  VoidCallback? _wrapWithHaptic(VoidCallback? callback) {
+    if (callback == null || isLoading) return null;
+    return () {
+      HapticFeedback.lightImpact();
+      callback();
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final effectiveOnPressed = isLoading ? null : onPressed;
+    final effectiveOnPressed = isLoading ? null : _wrapWithHaptic(onPressed);
 
     // Spinner must contrast with the variant surface:
     // - filled: light spinner on brand fill
