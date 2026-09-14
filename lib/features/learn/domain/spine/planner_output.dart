@@ -137,7 +137,8 @@ class AiPlanParser {
 
     final conceptId = _asString(raw['conceptId'] ?? raw['nextConcept']);
     if (conceptId.isEmpty) return null; // no concept anchor at all
-    if (!seenSteps.add('$conceptId:${kind.name}')) {
+    final stepKey = '$conceptId:${kind.name}';
+    if (seenSteps.contains(stepKey)) {
       return null; // duplicate step (same concept, same kind)
     }
 
@@ -171,6 +172,8 @@ class AiPlanParser {
     final minutes = (raw['estimatedMinutes'] is num)
         ? (raw['estimatedMinutes'] as num).toInt()
         : 5;
+
+    seenSteps.add(stepKey);
 
     return LearningActivity(
       id: 'act-ai-${concept.id}',

@@ -76,14 +76,12 @@ class DeterministicExamPlanner {
     var rotation = 0;
 
     // --- M8 §22: the reserved weak-area recovery day, if any.
-    final decision = ctx.weakArea?.decision;
-    final recoveryDay =
-        (decision != null && decision.shouldRecover) ? decision.dayIndex : -1;
-
-    // --- M8 §23: due/overdue revision items become review tasks,
-    //     spread over the earliest days (overdue first). Only
-    //     IN-SCOPE topics may become tasks (§16 rule 1).
     final inScopeIds = selected.map((u) => u.id).toSet();
+    final decision = ctx.weakArea?.decision;
+    final shouldRecover = decision != null &&
+        decision.shouldRecover &&
+        inScopeIds.contains(decision.focusTopicId);
+    final recoveryDay = shouldRecover ? decision.dayIndex : -1;
     final revisionQueue = ctx.weakArea == null
         ? <RevisionItem>[]
         : RevisionEngine.dueToday(
@@ -266,14 +264,15 @@ class DeterministicExamPlanner {
 
     // Self-check: the deterministic planner must ALWAYS pass its own
     // validator (§14 deterministic structures control the floor).
+    final validationErrors = ExamPlanValidator.validate(
+      plan: plan,
+      view: ctx.view,
+      selection: ctx.selection,
+      profile: ctx.profile,
+    );
     assert(
-      ExamPlanValidator.isValid(
-        plan: plan,
-        view: ctx.view,
-        selection: ctx.selection,
-        profile: ctx.profile,
-      ),
-      'Deterministic plan failed validation — budget math bug',
+      validationErrors.isEmpty,
+      'Deterministic plan failed validation — budget math bug: $validationErrors',
     );
     return plan;
   }
