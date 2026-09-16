@@ -37,7 +37,7 @@ abstract final class VaaniXTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: VaaniXColors.learnCanvasBg,
       fontFamily: 'Poppins',
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: VaaniXColors.learnSurfaceCard,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -94,7 +94,7 @@ abstract final class VaaniXTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: VaaniXColors.examCanvasBg,
       fontFamily: 'Poppins',
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: VaaniXColors.examSurfaceCard,
         elevation: 0,
         margin: EdgeInsets.zero,

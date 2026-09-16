@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data' show ByteData, Uint8List;
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,6 +37,15 @@ void main() {
   void clearMock() {
     TestWidgetsFlutterBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', null);
+    rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    rootBundle.evict('assets/syllabus/cbse/index.json');
+  }
+
+  void mockMissingAssets() {
+    TestWidgetsFlutterBinding.instance.defaultBinaryMessenger
+        .setMockMessageHandler('flutter/assets', (message) async => null);
+    rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    rootBundle.evict('assets/syllabus/cbse/index.json');
   }
 
   group('catalog index (assets/syllabus/cbse/index.json)', () {
@@ -109,14 +119,16 @@ void main() {
     });
 
     test('returns null when the asset channel is unavailable', () async {
-      clearMock();
+      mockMissingAssets();
+      addTearDown(clearMock);
       final result = await loadCourseSyllabus('cbse_10_sanskrit');
       expect(result, isNull);
     });
 
     test('index loader degrades to an empty index when assets are missing',
         () async {
-      clearMock();
+      mockMissingAssets();
+      addTearDown(clearMock);
       final index = await loadSyllabusIndex();
       expect(index.classes, isEmpty);
       expect(index.board.value, 'cbse');

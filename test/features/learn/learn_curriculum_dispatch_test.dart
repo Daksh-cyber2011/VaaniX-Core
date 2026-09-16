@@ -23,9 +23,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/sanskrit_curriculum.dart';
-import 'package:vaanix_app/features/learn/data/sanskrit_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
-import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart'
+    show Chapter;
 
 /// Binding initializer so rootBundle.loadString works in unit tests
 /// (it reads from the on-disk assets/ directory when the test runs
@@ -122,7 +122,7 @@ void main() {
         final raw = File(spec.curriculumAssetPath).readAsStringSync();
         final json = jsonDecode(raw) as Map<String, dynamic>;
         expect(json['schemaVersion'], kLearnCurriculumSchemaVersion);
-        expect(json['chapters'], isA<List>());
+        expect(json['chapters'], isA<List<dynamic>>());
       }
     });
 
@@ -230,7 +230,8 @@ void main() {
       // the Sanskrit path reads `curriculumProvider`, the Learn path
       // reads `learnCurriculumProvider(language)`. They never share
       // state, so loading Hindi cannot pollute Sanskrit's cache.
-      expect(curriculumProvider, isA<AsyncNotifierProvider>(),
+      expect(curriculumProvider,
+          isA<AsyncNotifierProvider<CurriculumNotifier, List<Chapter>>>(),
           reason: 'Legacy Sanskrit curriculum provider must be a '
               'plain AsyncNotifierProvider.');
       expect(learnCurriculumProvider, isNot(same(curriculumProvider)),

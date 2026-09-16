@@ -18,7 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_profile_screen.dart';
 

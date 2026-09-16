@@ -21,7 +21,6 @@ import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/diagnostic_engine.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
 

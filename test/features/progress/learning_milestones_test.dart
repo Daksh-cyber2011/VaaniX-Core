@@ -11,20 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vaanix_app/features/progress/domain/learning_milestones.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
-Lesson _lesson(String id, String chapterId, {int order = 0}) => Lesson(
-      id: id,
-      title: 'Lesson $id',
-      chapterId: chapterId,
-      order: order,
-    );
-
-Chapter _chapter(String id, int order, List<Lesson> lessons) => Chapter(
-      id: id,
-      title: 'Chapter $id',
-      lessons: lessons,
-      order: order,
-    );
-
 /// A 5-chapter curriculum mirroring the shipped Learn Mode arc
 /// (1 Script · 2 Greetings · 3 Daily Life · 4 Grammar · 5 Reading).
 /// Deliberately declared OUT of order to prove ordinal sorting.

@@ -71,7 +71,8 @@ void main() {
         expect(ch['title'], isNotEmpty, reason: 'chapter title missing');
         expect(ch['subtitle'], isNotEmpty, reason: 'chapter subtitle missing');
         expect(ch['order'], isA<int>(), reason: 'chapter order missing');
-        expect(ch['lessons'], isA<List<dynamic>>(), reason: 'chapter lessons missing');
+        expect(ch['lessons'], isA<List<dynamic>>(),
+            reason: 'chapter lessons missing');
       }
     });
 

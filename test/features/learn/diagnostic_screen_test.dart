@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
-import 'package:vaanix_app/features/learn/domain/spine/diagnostic_engine.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/diagnostic_screen.dart';
