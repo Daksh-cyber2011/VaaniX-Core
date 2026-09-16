@@ -18,7 +18,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/hindi_exercises.dart';
-import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 /// Loads the Hindi curriculum JSON from disk.
@@ -72,7 +71,7 @@ void main() {
         expect(ch['title'], isNotEmpty, reason: 'chapter title missing');
         expect(ch['subtitle'], isNotEmpty, reason: 'chapter subtitle missing');
         expect(ch['order'], isA<int>(), reason: 'chapter order missing');
-        expect(ch['lessons'], isA<List>(), reason: 'chapter lessons missing');
+        expect(ch['lessons'], isA<List<dynamic>>(), reason: 'chapter lessons missing');
       }
     });
 
