@@ -11,7 +11,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vaanix_app/features/learn/data/bengali_exercises.dart';
-import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 
 Map<String, dynamic> _loadBengaliJson() {
@@ -63,7 +62,7 @@ void main() {
         expect(ch['title'], isNotEmpty);
         expect(ch['subtitle'], isNotEmpty);
         expect(ch['order'], isA<int>());
-        expect(ch['lessons'], isA<List>());
+        expect(ch['lessons'], isA<List<dynamic>>());
       }
     });
 
