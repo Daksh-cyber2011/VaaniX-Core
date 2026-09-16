@@ -135,6 +135,13 @@ class LocalStorageService implements ILocalStorageService {
   Future<void> setLanguage(String language) =>
       _prefs.setString(AppConstants.keyLanguage, language);
 
+  @override
+  String? get activeAppMode => _prefs.getString('vaanix_active_app_mode');
+
+  @override
+  Future<void> setActiveAppMode(String mode) =>
+      _prefs.setString('vaanix_active_app_mode', mode);
+
   // ─── Learner Identity ──────────────────────────────────────────────────
 
   @override

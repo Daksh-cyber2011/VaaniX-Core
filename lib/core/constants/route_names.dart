@@ -36,6 +36,11 @@ abstract final class RouteNames {
   static const String chat = '/chat';
   static const String achievements = '/achievements';
   static const String settings = '/settings';
+  static const String learnHome = '/learn/home';
+  static const String examCockpit = '/exam/cockpit';
+  static const String interactiveDrill = '/practice/drill';
+  static const String chapterStudy = '/syllabus/chapter';
+  static const String profileTray = '/profile/tray';
 
   // Named route identifiers (for GoRouter.of(context).goNamed())
   static const String splashName = 'splash';
@@ -68,4 +73,9 @@ abstract final class RouteNames {
   static const String chatName = 'chat';
   static const String achievementsName = 'achievements';
   static const String settingsName = 'settings';
+  static const String learnHomeName = 'learn-home';
+  static const String examCockpitName = 'exam-cockpit';
+  static const String interactiveDrillName = 'interactive-drill';
+  static const String chapterStudyName = 'chapter-study';
+  static const String profileTrayName = 'profile-tray';
 }

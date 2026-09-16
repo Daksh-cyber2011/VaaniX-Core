@@ -48,6 +48,11 @@ import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/screens/progress_screen.dart';
 import 'package:vaanix_app/features/settings/presentation/screens/settings_screen.dart';
 import 'package:vaanix_app/features/van_profile/presentation/screens/van_profile_screen.dart';
+import 'package:vaanix_app/features/learn/presentation/screens/learn_home_screen.dart';
+import 'package:vaanix_app/features/exam/presentation/screens/exam_cockpit_screen.dart';
+import 'package:vaanix_app/features/practice/presentation/screens/interactive_drill_screen.dart';
+import 'package:vaanix_app/features/syllabus/presentation/chapter_study_screen.dart';
+import 'package:vaanix_app/features/profile/presentation/screens/profile_tray_screen.dart';
 import 'package:vaanix_app/shared/widgets/widgets.dart';
 
 /// Routes reachable without onboarding completion or a session.
@@ -76,6 +81,11 @@ const protectedRoutes = <String>{
   RouteNames.settings,
   RouteNames.chat,
   RouteNames.achievements,
+  RouteNames.learnHome,
+  RouteNames.examCockpit,
+  RouteNames.interactiveDrill,
+  RouteNames.chapterStudy,
+  RouteNames.profileTray,
 };
 
 /// True when [location] is exactly a protected route or nested under one.
@@ -436,6 +446,35 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.achievements,
         name: RouteNames.achievementsName,
         builder: (context, state) => const AchievementsScreen(),
+      ),
+
+      // ----------------------------------------------------------
+      // STITCH V1 DESIGN SYSTEM SCREENS
+      // ----------------------------------------------------------
+      GoRoute(
+        path: RouteNames.learnHome,
+        name: RouteNames.learnHomeName,
+        builder: (context, state) => const LearnHomeScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.examCockpit,
+        name: RouteNames.examCockpitName,
+        builder: (context, state) => const ExamCockpitScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.interactiveDrill,
+        name: RouteNames.interactiveDrillName,
+        builder: (context, state) => const InteractiveDrillScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.chapterStudy,
+        name: RouteNames.chapterStudyName,
+        builder: (context, state) => const ChapterStudyScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.profileTray,
+        name: RouteNames.profileTrayName,
+        builder: (context, state) => const ProfileTrayScreen(),
       ),
     ],
   );

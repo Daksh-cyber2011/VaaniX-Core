@@ -25,11 +25,11 @@ import 'package:vaanix_app/core/theme/app_colors.dart';
 
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_auth_page.dart';
+import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_experience_choice_page.dart';
 import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_goal_page.dart';
 import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_name_page.dart';
 import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_nest_reveal_page.dart';
 import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_personality_page.dart';
-import 'package:vaanix_app/features/onboarding/presentation/widgets/ob_subject_page.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -44,7 +44,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   static const _pages = [
     ObNamePage(),
     ObPersonalityPage(),
-    ObSubjectPage(),
+    ObExperienceChoicePage(),
     ObGoalPage(),
     ObAuthPage(),
     ObNestRevealPage(),

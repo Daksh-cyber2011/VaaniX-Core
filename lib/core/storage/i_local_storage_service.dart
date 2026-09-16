@@ -57,6 +57,10 @@ abstract class ILocalStorageService {
   String? get language;
   Future<void> setLanguage(String language);
 
+  // App Mode (Dual-engine: Exam Cockpit ⟷ Learn Sanctuary)
+  String? get activeAppMode;
+  Future<void> setActiveAppMode(String mode);
+
   // Learner identity — the learner's own display name (not Van's). Used by
   // the AI persona / offline tutor personalization. Empty string = unset.
   String get learnerName;

@@ -9,6 +9,10 @@ library;
 
 import 'package:flutter/material.dart';
 
+export 'package:vaanix_app/core/theme/vaanix_colors.dart';
+export 'package:vaanix_app/core/theme/vaanix_spacing.dart';
+export 'package:vaanix_app/core/theme/vaanix_radius.dart';
+
 abstract final class AppColors {
   // ============================================================
   // VAN SIGNATURE COLORS (Constitutional — never change)

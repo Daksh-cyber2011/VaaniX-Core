@@ -20,3 +20,8 @@ export 'vaanix_text_field.dart';
 export 'van_speech_strip.dart';
 export 'van_widget.dart';
 export 'xp_badge.dart';
+export 'vaanix_mode_switch.dart';
+export 'vaanix_radial_gauge.dart';
+export 'audio_cadence_waveform.dart';
+export 'van_companion_bubble.dart';
+export 'vaanix_button.dart';
