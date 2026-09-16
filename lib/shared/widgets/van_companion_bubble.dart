@@ -10,7 +10,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
-import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
 enum VanBadgeRole {
