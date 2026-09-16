@@ -25,7 +25,6 @@ import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
 import 'package:vaanix_app/features/learn/data/learn_plan_repository.dart';
 import 'package:vaanix_app/features/learn/data/personalized_content_generator.dart';
-import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
 import 'package:vaanix_app/features/learn/domain/spine/content_registry.dart';
@@ -35,7 +34,6 @@ import 'package:vaanix_app/features/learn/domain/spine/generated_content_parser.
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
-import 'package:vaanix_app/features/learn/domain/spine/planner_output.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner_prompt.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 

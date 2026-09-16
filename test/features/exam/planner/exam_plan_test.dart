@@ -10,7 +10,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'dart:convert';
 
-import 'package:dartz/dartz.dart' show Left, Right;
 import 'package:vaanix_app/features/exam/data/planner/deterministic_exam_planner.dart';
 import 'package:vaanix_app/features/exam/data/planner/gemini_exam_planner.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus_models.dart';
@@ -290,12 +289,9 @@ void main() {
 }
 
 class _FakeTextClient implements PlannerTextClient {
-  _FakeTextClient({required this.available, this.response});
+  _FakeTextClient({required this.available});
 
-  @override
   final bool available;
-
-  final String? response;
 
   @override
   bool get isAvailable => available;
@@ -303,8 +299,6 @@ class _FakeTextClient implements PlannerTextClient {
   @override
   Future<String> complete(
       {required String system, required String user}) async {
-    final r = response;
-    if (r == null) throw Exception('network down');
-    return r;
+    throw Exception('network down');
   }
 }

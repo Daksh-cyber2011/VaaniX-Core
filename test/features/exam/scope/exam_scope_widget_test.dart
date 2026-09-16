@@ -22,7 +22,6 @@ import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/features/exam/data/exam_scope_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
-import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_scope_selection_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_scope_summary_screen.dart';
 import 'package:vaanix_app/features/exam/presentation/screens/exam_track_selection_screen.dart';
