@@ -18,7 +18,8 @@ import 'package:vaanix_app/features/van/presentation/van_expression.dart';
 
 /// Key of the canonical artwork visual. Tests assert on this to prove the
 /// canonical art (not the fallback painter) is on screen.
-const ValueKey<String> kVanCanonicalArtKey = ValueKey<String>('van-canonical-art');
+const ValueKey<String> kVanCanonicalArtKey =
+    ValueKey<String>('van-canonical-art');
 
 class VanVisualRenderer extends StatelessWidget {
   const VanVisualRenderer({

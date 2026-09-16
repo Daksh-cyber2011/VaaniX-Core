@@ -47,8 +47,7 @@ void main() {
       }
     });
 
-    test('concepts are ordered and prerequisites form one grounded chain',
-        () {
+    test('concepts are ordered and prerequisites form one grounded chain', () {
       final orders = graph.concepts.map((c) => c.order).toList();
       expect(orders, orders.toList()..sort());
 
@@ -57,8 +56,7 @@ void main() {
 
       // Every other concept requires exactly its in-order predecessor.
       for (var i = 1; i < graph.concepts.length; i++) {
-        expect(graph.concepts[i].prerequisites,
-            [graph.concepts[i - 1].id]);
+        expect(graph.concepts[i].prerequisites, [graph.concepts[i - 1].id]);
       }
     });
 
@@ -93,7 +91,8 @@ void main() {
     test('prerequisite closure is transitive and cycle-safe', () {
       final third = graph.concepts[2];
       final closure = graph.prerequisiteClosureOf(third.id);
-      expect(closure, containsAll([graph.concepts[0].id, graph.concepts[1].id]));
+      expect(
+          closure, containsAll([graph.concepts[0].id, graph.concepts[1].id]));
       expect(closure.contains(third.id), isFalse);
     });
   });

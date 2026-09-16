@@ -137,8 +137,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
       storage.remove(_sessionKey);
       return;
     }
-    final restored =
-        ref.read(exerciseSessionProvider(widget.lesson.id));
+    final restored = ref.read(exerciseSessionProvider(widget.lesson.id));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -256,9 +255,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             await ref.read(milestoneCheckerProvider).checkMilestones();
         if (mounted && milestones.isNotEmpty) {
           final first = milestones.first;
-          final extra = milestones.length > 1
-              ? ' (+${milestones.length - 1} more)'
-              : '';
+          final extra =
+              milestones.length > 1 ? ' (+${milestones.length - 1} more)' : '';
           ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
                 VanEventType.milestoneUnlocked,
                 message: 'Milestone unlocked: ${first.title}!',
@@ -349,8 +347,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             // Capture messenger BEFORE the async gap so the lint
             // use_build_context_synchronously is satisfied.
             final messenger = ScaffoldMessenger.of(context);
-            final paid = await ref
-                .read(claimReviewChallengeProvider)(widget.lesson.id);
+            final paid =
+                await ref.read(claimReviewChallengeProvider)(widget.lesson.id);
             if (mounted && paid > 0) {
               messenger.showSnackBar(
                 SnackBar(
@@ -500,8 +498,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                       color: AppColors.primary.withValues(alpha: 0.15)),
                 ),
                 child: Directionality(
-                  textDirection:
-                      _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
                   child: Text(
                     exercise.prompt,
                     style: AppTextStyles.headlineSmall(),
@@ -568,8 +565,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
                   Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
             ),
             child: Directionality(
-              textDirection:
-                  _isRTL ? TextDirection.rtl : TextDirection.ltr,
+              textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
               child: Text(
                 exercise.hint!,
                 style: AppTextStyles.bodyMedium(color: _subtext),
@@ -768,8 +764,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             for (final item in remaining)
               ActionChip(
                 label: Directionality(
-                  textDirection:
-                      _isRTL ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
                   child: Text(item, style: AppTextStyles.labelMedium()),
                 ),
                 onPressed:
@@ -804,8 +799,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
           textInputAction: TextInputAction.done,
           // Typed Urdu answers lay out right-to-left; every other language
           // keeps the LTR field.
-          textDirection:
-              _isRTL ? TextDirection.rtl : TextDirection.ltr,
+          textDirection: _isRTL ? TextDirection.rtl : TextDirection.ltr,
           onSubmitted: (_) {
             if (state.answerText.trim().isNotEmpty) notifier.submit();
           },
@@ -847,9 +841,8 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
     // When a left item is pending, right-column chips announce what they
     // would pair with (sighted users see the pending highlight color).
     final pendingLeftIndex = _pendingLeftIndex;
-    final pendingLeftLabel = pendingLeftIndex == null
-        ? null
-        : exercise.pairs[pendingLeftIndex].left;
+    final pendingLeftLabel =
+        pendingLeftIndex == null ? null : exercise.pairs[pendingLeftIndex].left;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -998,8 +991,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             child: AnimatedContainer(
               duration: AppMotion.fast,
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.primary.withValues(alpha: 0.12)
@@ -1056,9 +1048,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
             // dark mode keeps the vivid base tokens.
             color: Theme.of(context).brightness == Brightness.dark
                 ? (isCorrect ? AppColors.success : AppColors.error)
-                : (isCorrect
-                    ? AppColors.successDeep
-                    : AppColors.errorDeep),
+                : (isCorrect ? AppColors.successDeep : AppColors.errorDeep),
           ),
         ),
       ),

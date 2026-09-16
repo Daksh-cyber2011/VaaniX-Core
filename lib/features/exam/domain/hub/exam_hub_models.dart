@@ -172,12 +172,12 @@ class ExamHubSnapshot {
     ];
   }
 
-  int get todayTotalMinutes =>
-      todayTasks.fold(0, (sum, t) => sum + t.minutes);
+  int get todayTotalMinutes => todayTasks.fold(0, (sum, t) => sum + t.minutes);
 
   int get todayDoneCount => todayTasks.where((t) => t.done).length;
 
-  bool get todayAllDone => todayTasks.isNotEmpty && todayDoneCount == todayTasks.length;
+  bool get todayAllDone =>
+      todayTasks.isNotEmpty && todayDoneCount == todayTasks.length;
 
   /// The CONTINUE target: the first not-done task of today (M10
   /// "Continue"). Null when everything is done or no plan exists —
@@ -200,9 +200,8 @@ class ExamHubSnapshot {
     if (weak.findingCount == 0) {
       return 'No weak areas detected yet';
     }
-    final severity = weak.topSeverityName.isEmpty
-        ? 'developing'
-        : weak.topSeverityName;
+    final severity =
+        weak.topSeverityName.isEmpty ? 'developing' : weak.topSeverityName;
     return '${weak.findingCount} weak area'
         '${weak.findingCount > 1 ? 's' : ''} · $severity';
   }

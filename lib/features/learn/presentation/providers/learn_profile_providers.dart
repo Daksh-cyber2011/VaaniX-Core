@@ -33,9 +33,8 @@ final learnProfileRepositoryProvider = Provider<LearnProfileRepository>(
 /// Per-language profile state: persisted profile, or safe defaults for a
 /// brand-new learner. All mutations go through [LearnerProfileNotifier.update],
 /// which persists before publishing the new state.
-final learnerProfileProvider =
-    StateNotifierProvider.family<LearnerProfileNotifier, LearnerProfile,
-        LearnLanguage>(
+final learnerProfileProvider = StateNotifierProvider.family<
+    LearnerProfileNotifier, LearnerProfile, LearnLanguage>(
   (ref, language) => LearnerProfileNotifier(
     ref.watch(learnProfileRepositoryProvider),
     language,
@@ -44,8 +43,7 @@ final learnerProfileProvider =
 
 class LearnerProfileNotifier extends StateNotifier<LearnerProfile> {
   LearnerProfileNotifier(this._repo, this._language)
-      : super(_repo.getProfile(_language) ??
-            LearnerProfile.initial(_language));
+      : super(_repo.getProfile(_language) ?? LearnerProfile.initial(_language));
 
   final LearnProfileRepository _repo;
   final LearnLanguage _language;
@@ -60,12 +58,14 @@ class LearnerProfileNotifier extends StateNotifier<LearnerProfile> {
     state = next;
   }
 
-  Future<void> setGoal(LearningGoal goal) => update((p) => p.copyWith(goal: goal));
+  Future<void> setGoal(LearningGoal goal) =>
+      update((p) => p.copyWith(goal: goal));
 
   Future<void> setDesiredLevel(DesiredLevel level) =>
       update((p) => p.copyWith(desiredLevel: level));
 
-  Future<void> setPace(LearningPace pace) => update((p) => p.copyWith(pace: pace));
+  Future<void> setPace(LearningPace pace) =>
+      update((p) => p.copyWith(pace: pace));
 
   Future<void> setPracticeStyle(PracticeStyle style) =>
       update((p) => p.copyWith(practiceStyle: style));

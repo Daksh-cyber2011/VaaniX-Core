@@ -92,8 +92,7 @@ class MockEngine {
     switch (kind) {
       case MockKind.full:
         final sections = [
-          for (final s in boardSections)
-            sliceOf(s.id, s.title, s.marks),
+          for (final s in boardSections) sliceOf(s.id, s.title, s.marks),
         ].where((s) => s.questions.isNotEmpty).toList();
         final total = sections.fold<double>(0, (sum, s) => sum + s.targetMarks);
         return MockPaper(
@@ -124,8 +123,7 @@ class MockEngine {
 
       case MockKind.mini:
         final focus = _resolveFocus(boardSections, focusSectionId);
-        final marks =
-            focus.marks.clamp(1.0, miniMaxMarks).toDouble();
+        final marks = focus.marks.clamp(1.0, miniMaxMarks).toDouble();
         final sections = [sliceOf(focus.id, focus.title, marks)];
         return MockPaper(
           id: 'mock-${trackId}-mini-${t.millisecondsSinceEpoch}',
@@ -133,9 +131,8 @@ class MockEngine {
           trackId: trackId,
           sections: sections,
           totalMarks: marks,
-          timeLimitMinutes: (marks * minutesPerMark)
-              .round()
-              .clamp(miniMinMinutes, 60),
+          timeLimitMinutes:
+              (marks * minutesPerMark).round().clamp(miniMinMinutes, 60),
           createdAtIso: t.toIso8601String(),
         );
     }

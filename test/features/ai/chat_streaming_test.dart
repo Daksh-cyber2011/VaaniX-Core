@@ -73,8 +73,8 @@ class _ScriptedPipeline implements ConversationPipeline {
   }) async* {
     streamCalls++;
     lastStreamContext = context;
-    for (final delta in deltas ??
-        [ok(const AiStreamDelta(content: '', done: true))]) {
+    for (final delta
+        in deltas ?? [ok(const AiStreamDelta(content: '', done: true))]) {
       // A real microtask gap between events so the consumer processes each
       // delta separately (state snapshots are observable per delta).
       await Future<void>.delayed(Duration.zero);
@@ -128,7 +128,8 @@ Future<ProviderContainer> _makeContainer({
         AiConfig(provider: AiProviderId.offline, enableStreaming: streaming),
       ),
       if (van != null) vanControllerProvider.overrideWith((ref) => van),
-      if (safetyFilter != null) safetyFilterProvider.overrideWithValue(safetyFilter),
+      if (safetyFilter != null)
+        safetyFilterProvider.overrideWithValue(safetyFilter),
     ],
   );
 }
@@ -236,8 +237,7 @@ void main() {
     expect(state.isSending, isFalse);
     expect(state.error, 'The AI response was blocked by safety filters.');
     expect(state.messages, hasLength(1),
-        reason:
-            'the pipeline would not persist this text, so the UI drops it');
+        reason: 'the pipeline would not persist this text, so the UI drops it');
   });
 
   test('streaming success drives the full Van speaking lifecycle', () async {
@@ -290,7 +290,8 @@ void main() {
     final container = await _makeContainer(pipeline: pipeline);
     addTearDown(container.dispose);
 
-    final tracker = TokenUsageTracker(container.read(localStorageServiceProvider));
+    final tracker =
+        TokenUsageTracker(container.read(localStorageServiceProvider));
 
     // Prime the provider with the current (empty) usage.
     await container.read(dailyUsageProvider.future);

@@ -198,10 +198,12 @@ Map<String, dynamic>? extractPlanJson(String raw) {
     var bodyStart = text.indexOf('\n', fenceStart);
     bodyStart = bodyStart < 0 ? fenceStart + 3 : bodyStart + 1;
     final fenceEnd = text.indexOf('```', bodyStart);
-    final fenced = fenceEnd < 0 ? text.substring(bodyStart) : text.substring(
-      bodyStart,
-      fenceEnd,
-    );
+    final fenced = fenceEnd < 0
+        ? text.substring(bodyStart)
+        : text.substring(
+            bodyStart,
+            fenceEnd,
+          );
     final fromFence = _tryDecode(fenced.trim());
     if (fromFence != null) return fromFence;
   }

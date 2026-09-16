@@ -160,7 +160,8 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
               HapticFeedback.selectionClick();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Notifications: 12 cards due for spaced review!'),
+                  content:
+                      Text('Notifications: 12 cards due for spaced review!'),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -278,8 +279,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: VaaniXColors.learnPrimaryViolet.withValues(alpha: 0.1),
                   borderRadius: VaaniXRadius.borderPill,

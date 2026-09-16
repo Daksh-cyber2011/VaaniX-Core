@@ -117,7 +117,8 @@ void main() {
     });
 
     test('quizzes exist per chapter with valid options', () {
-      expect(chapterQuizzes.keys,
+      expect(
+          chapterQuizzes.keys,
           containsAll(
               ['ch_alphabet', 'ch_words', 'ch_sentences', 'ch_grammar']));
       chapterQuizzes.forEach((chapterId, questions) {

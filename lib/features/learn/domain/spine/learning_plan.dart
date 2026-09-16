@@ -140,7 +140,13 @@ class LearningActivity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id, kind, title, reason, conceptId, lessonId, difficulty,
+        id,
+        kind,
+        title,
+        reason,
+        conceptId,
+        lessonId,
+        difficulty,
         estimatedMinutes,
       ];
 }
@@ -313,15 +319,17 @@ class PlannerDecision extends Equatable {
       activityType: kind ?? ActivityKind.practice,
       reason: asString(json['reason']),
       languageCode: asString(json['language']),
-      lessonId: json['lessonId'] is String
-          ? json['lessonId'] as String
-          : null,
+      lessonId: json['lessonId'] is String ? json['lessonId'] as String : null,
     );
   }
 
   @override
   List<Object?> get props => [
-        nextConceptId, difficulty, activityType, reason, languageCode,
+        nextConceptId,
+        difficulty,
+        activityType,
+        reason,
+        languageCode,
         lessonId,
       ];
 }

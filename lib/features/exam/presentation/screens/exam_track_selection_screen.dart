@@ -61,8 +61,7 @@ class _ExamTrackSelectionScreenState
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 32),
       children: [
         const VanSpeechStrip(
-          message:
-              'Board exam prep starts with your official syllabus. '
+          message: 'Board exam prep starts with your official syllabus. '
               'Pick your board, class and course.',
           state: VanState.idle,
         ),
@@ -72,7 +71,6 @@ class _ExamTrackSelectionScreenState
           onOpen: _openScope,
         ),
         const SizedBox(height: 20),
-
         _stepLabel(context, '1 · Board'),
         _ChoiceCard(
           title: 'CBSE',
@@ -89,7 +87,6 @@ class _ExamTrackSelectionScreenState
           onTap: null,
         ),
         const SizedBox(height: 20),
-
         _stepLabel(context, '2 · Class'),
         for (final classEntry in catalog.classes) ...[
           _ChoiceCard(
@@ -107,7 +104,6 @@ class _ExamTrackSelectionScreenState
           const SizedBox(height: 10),
         ],
         const SizedBox(height: 10),
-
         if (_class != null) ...[
           _stepLabel(context, '3 · Subject'),
           for (final subject in _subjectsOf(catalog)) ...[
@@ -124,7 +120,6 @@ class _ExamTrackSelectionScreenState
             const SizedBox(height: 10),
           ],
           const SizedBox(height: 10),
-
           if (_subjectId != null) ...[
             _stepLabel(context, '4 · Course'),
             for (final course in _coursesOf(catalog)) ...[
@@ -140,8 +135,7 @@ class _ExamTrackSelectionScreenState
             PrimaryButton(
               label: 'View official syllabus',
               icon: const Icon(Icons.arrow_forward),
-              onPressed:
-                  _trackId == null ? null : () => _openScope(_trackId!),
+              onPressed: _trackId == null ? null : () => _openScope(_trackId!),
             ),
           ],
         ],
@@ -169,9 +163,7 @@ class _ExamTrackSelectionScreenState
   }
 
   List<SyllabusCourseEntry> _coursesOf(SyllabusIndex catalog) {
-    return _subjectsOf(catalog)
-        .firstWhere((s) => s.id == _subjectId)
-        .courses;
+    return _subjectsOf(catalog).firstWhere((s) => s.id == _subjectId).courses;
   }
 
   void _openScope(String trackId) {
@@ -289,9 +281,7 @@ class _ChoiceCard extends StatelessWidget {
                   : fillColor,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: accent && !selected
-                    ? AppColors.vanYellow
-                    : borderColor,
+                color: accent && !selected ? AppColors.vanYellow : borderColor,
                 width: selected ? 2 : 1,
               ),
             ),
@@ -344,8 +334,7 @@ class _CatalogError extends StatelessWidget {
   Widget build(BuildContext context) {
     return const ErrorStateWidget(
       title: 'Syllabus catalog unavailable',
-      message:
-          'The official syllabus data couldn\'t be read.\n'
+      message: 'The official syllabus data couldn\'t be read.\n'
           'Please go back and try again.',
     );
   }

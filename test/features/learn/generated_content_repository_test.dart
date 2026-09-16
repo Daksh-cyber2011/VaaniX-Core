@@ -19,8 +19,8 @@ import 'package:vaanix_app/features/learn/data/learn_profile_repository.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/generated_content.dart';
 
-Future<({GeneratedContentRepository repo, ILocalStorageService storage})>
-    _make({Map<String, Object> seed = const {}}) async {
+Future<({GeneratedContentRepository repo, ILocalStorageService storage})> _make(
+    {Map<String, Object> seed = const {}}) async {
   SharedPreferences.setMockInitialValues(seed);
   final prefs = await SharedPreferences.getInstance();
   final storage = LocalStorageService(prefs);
@@ -109,13 +109,14 @@ void main() {
       await m.repo.save(LearnLanguage.hindi, key, _content('hi'));
       await m.repo.save(LearnLanguage.hindi, key, _content('hi'));
 
-      final raw =
-          m.storage.getString(GeneratedContentRepository.cacheKey(LearnLanguage.hindi))!;
+      final raw = m.storage
+          .getString(GeneratedContentRepository.cacheKey(LearnLanguage.hindi))!;
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
       expect((decoded['items'] as List).length, 1);
     });
 
-    test('the store is bounded at ${GeneratedContentRepository.maxEntries} '
+    test(
+        'the store is bounded at ${GeneratedContentRepository.maxEntries} '
         '(oldest evicted)', () async {
       final m = await _make();
       for (var i = 0; i < GeneratedContentRepository.maxEntries + 3; i++) {
@@ -125,8 +126,8 @@ void main() {
           _content('hi'),
         );
       }
-      final raw =
-          m.storage.getString(GeneratedContentRepository.cacheKey(LearnLanguage.hindi))!;
+      final raw = m.storage
+          .getString(GeneratedContentRepository.cacheKey(LearnLanguage.hindi))!;
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
       final items = decoded['items'] as List;
       expect(items.length, GeneratedContentRepository.maxEntries);
@@ -156,8 +157,7 @@ void main() {
       expect(m.repo.get(LearnLanguage.urdu, key), isNotNull);
     });
 
-    test('corrupt storage degrades to nothing cached, never throws',
-        () async {
+    test('corrupt storage degrades to nothing cached, never throws', () async {
       final m = await _make(seed: {
         'learn_profile_hi_gen': '{definitely not json',
       });
@@ -167,8 +167,7 @@ void main() {
       );
     });
 
-    test('the M2 prefix reset (clearAll) covers the generated cache',
-        () async {
+    test('the M2 prefix reset (clearAll) covers the generated cache', () async {
       final m = await _make();
       const key = 'hi_ls_greetings|explanation|2';
       await m.repo.save(LearnLanguage.hindi, key, _content('hi'));
@@ -191,8 +190,7 @@ void main() {
       final old = _content(
         'hi',
         createdAt: DateTime.now().subtract(
-          GeneratedContentRepository.kDefaultMaxAge +
-              const Duration(hours: 1),
+          GeneratedContentRepository.kDefaultMaxAge + const Duration(hours: 1),
         ),
       );
       expect(GeneratedContentRepository.isFresh(old), isFalse);

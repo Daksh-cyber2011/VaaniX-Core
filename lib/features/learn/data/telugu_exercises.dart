@@ -174,7 +174,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_script_conjuncts',
       type: ExerciseType.mcq,
       prompt: 'తెలుగులో జ్ఞ ఎలా ఉచ్చరిస్తారు?',
-      options: ['/gy/ (హిందీ లాగా)', '/dʒɲ/ (jñ)', '/ggyo/ (బెంగాలి లాగా)', '/ña/'],
+      options: [
+        '/gy/ (హిందీ లాగా)',
+        '/dʒɲ/ (jñ)',
+        '/ggyo/ (బెంగాలి లాగా)',
+        '/ña/'
+      ],
       correctIndex: 1,
       explanation:
           'తెలుగులో జ్ఞ = /dʒɲ/ (jñ) — సంస్కృత ఉచ్చారణ దగ్గరగా. జ్ఞానం = jñānaṃ. హిందీలో /gy/ (gyān).',
@@ -211,7 +216,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_greet_namaste',
       type: ExerciseType.mcq,
       prompt: '"మీరు ఎలా ఉన్నారు?" అంటే ఏమిటి?',
-      options: ['What is your name?', 'How are you? (respectful)', 'Where are you?', 'Who are you?'],
+      options: [
+        'What is your name?',
+        'How are you? (respectful)',
+        'Where are you?',
+        'Who are you?'
+      ],
       correctIndex: 1,
       explanation:
           'మీరు ఎలా ఉన్నారు? = How are you? (respectful). మీరు = you (respectful), ఎలా = how, ఉన్నారు = are.',
@@ -260,7 +270,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"మీరు ఎక్కడ నుండి వచ్చారు?" అంటే ఏమిటి?',
-      options: ['What is your name?', 'Where are you from?', 'How are you?', 'When are you coming?'],
+      options: [
+        'What is your name?',
+        'Where are you from?',
+        'How are you?',
+        'When are you coming?'
+      ],
       correctIndex: 1,
       explanation:
           'మీరు ఎక్కడ నుండి వచ్చారు? = Where are you from? ఎక్కడ = where, నుండి = from. -నుండి తెలుగు "from" postposition.',
@@ -270,7 +285,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_greet_intro',
       type: ExerciseType.mcq,
       prompt: 'తెలుగులో "I am a student" ఎలా చెప్పాలి?',
-      options: ['నేను విద్యార్థిని।', 'నేను విద్యార్థినిని।', 'నేను ఉపాధ్యాయుడిని।', 'నేను డాక్టర్.'],
+      options: [
+        'నేను విద్యార్థిని।',
+        'నేను విద్యార్థినిని।',
+        'నేను ఉపాధ్యాయుడిని।',
+        'నేను డాక్టర్.'
+      ],
       correctIndex: 0,
       explanation:
           'నేను విద్యార్థిని = I am a student. గమనిక: తెలుగులో క్రియ లింగం ప్రకారం మారదు — నేను విద్యార్థిని అన్ని వక్తలకు ఒకే.',
@@ -349,7 +369,8 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       id: 'ex_te_numbers_4',
       lessonId: 'te_greet_numbers',
       type: ExerciseType.matching,
-      prompt: 'సంఖ్యలను తెలుగు పేర్లతో జతచేయండి (Match numbers to Telugu names)',
+      prompt:
+          'సంఖ్యలను తెలుగు పేర్లతో జతచేయండి (Match numbers to Telugu names)',
       pairs: [
         (left: '1', right: 'ఒకటి'),
         (left: '5', right: 'ఐదు'),
@@ -413,7 +434,8 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       prompt: '"ఎక్కడ" అంటే ఏమిటి?',
       options: ['What', 'Who', 'Where', 'When'],
       correctIndex: 2,
-      explanation: 'ఎక్కడ (ekkaḍa) = where. ఉదా: మీరు ఎక్కడ వెళ్తారు? = Where do you go?',
+      explanation:
+          'ఎక్కడ (ekkaḍa) = where. ఉదా: మీరు ఎక్కడ వెళ్తారు? = Where do you go?',
     ),
     Exercise(
       id: 'ex_te_questions_2',
@@ -422,7 +444,8 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       prompt: '"ఎందుకు" అంటే ఏమిటి?',
       options: ['How', 'Why', 'What', 'Who'],
       correctIndex: 1,
-      explanation: 'ఎందుకు (eṃduku) = why. సమాధానం సాధారణంగా ఎందుకంటే (because) తో మొదలవుతుంది.',
+      explanation:
+          'ఎందుకు (eṃduku) = why. సమాధానం సాధారణంగా ఎందుకంటే (because) తో మొదలవుతుంది.',
     ),
     Exercise(
       id: 'ex_te_questions_3',
@@ -502,7 +525,8 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       prompt: '"స్నానం చేయడం" అంటే ఏమిటి?',
       options: ['To eat', 'To bathe', 'To sleep', 'To study'],
       correctIndex: 1,
-      explanation: 'స్నానం చేయడం (snānaṃ cēyaḍaṃ) = to bathe. స్నానం చేస్తాను = I bathe.',
+      explanation:
+          'స్నానం చేయడం (snānaṃ cēyaḍaṃ) = to bathe. స్నానం చేస్తాను = I bathe.',
     ),
     Exercise(
       id: 'ex_te_routine_3',
@@ -578,7 +602,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_grammar_tenses',
       type: ExerciseType.mcq,
       prompt: '"నేను వెళ్తాను" — ఇది ఏ కాలం?',
-      options: ['కేవలం వర్తమానం', 'కేవలం భవిష్యత్తు', 'వర్తమానం మరియు భవిష్యత్తు', 'భూతం'],
+      options: [
+        'కేవలం వర్తమానం',
+        'కేవలం భవిష్యత్తు',
+        'వర్తమానం మరియు భవిష్యత్తు',
+        'భూతం'
+      ],
       correctIndex: 2,
       explanation:
           'నేను వెళ్తాను = I go / I will go. ఆధునిక తెలుగులో వర్తమానం మరియు భవిష్యత్తు రూపాలు ఒకే — సందర్భం నిర్ణయిస్తుంది.',
@@ -606,7 +635,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"ఇంట్లో" అంటే ఏమిటి?',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
       explanation:
           '-లో (-lō) = in/inside. ఇంట్లో = in the house. postposition నామవాచకం తరువాత వస్తుంది.',
@@ -616,7 +650,12 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
       lessonId: 'te_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"హైదరాబాద్ నుండి" అంటే ఏమిటి?',
-      options: ['to Hyderabad', 'in Hyderabad', 'from Hyderabad', 'near Hyderabad'],
+      options: [
+        'to Hyderabad',
+        'in Hyderabad',
+        'from Hyderabad',
+        'near Hyderabad'
+      ],
       correctIndex: 2,
       explanation:
           '-నుండి (-nuṇḍi) = from. హైదరాబాద్ నుండి = from Hyderabad. హిందీ से, మారాఠీ -हून, బెంగాలి থেকে కి బదులుగా తెలుగులో -నుండి.',
@@ -630,13 +669,15 @@ final Map<String, List<Exercise>> teluguExercisesByLesson = {
         'to me',
         'To me',
       ],
-      explanation: 'నాకు (nāku) = to me. నేను + కి = నాకు. -కి తెలుగు "to" postposition.',
+      explanation:
+          'నాకు (nāku) = to me. నేను + కి = నాకు. -కి తెలుగు "to" postposition.',
     ),
     Exercise(
       id: 'ex_te_post_4',
       lessonId: 'te_grammar_postpositions',
       type: ExerciseType.matching,
-      prompt: 'Postpositions ను అర్థాలతో జతచేయండి (Match postpositions to meanings)',
+      prompt:
+          'Postpositions ను అర్థాలతో జతచేయండి (Match postpositions to meanings)',
       pairs: [
         (left: '-లో', right: 'in'),
         (left: '-కి', right: 'to'),

@@ -9,6 +9,7 @@
 ///   [VanLoadingState]        — VAN companion with loading strip (for major
 ///                              async states like plan generation, AI calls)
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';

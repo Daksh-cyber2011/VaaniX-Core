@@ -118,8 +118,7 @@ sealed class DiagnosticAnswer {
     Map<int, int> leftToRightDisplay,
   ) {
     if (leftToRightDisplay.length != exercise.pairs.length) return false;
-    final slotToPair =
-        prepareExerciseOptions(exercise, 0).pairIndexByDisplay;
+    final slotToPair = prepareExerciseOptions(exercise, 0).pairIndexByDisplay;
     final seenSlots = <int>{};
     for (final entry in leftToRightDisplay.entries) {
       final slot = entry.value;
@@ -233,8 +232,7 @@ class DiagnosticItemBank {
   /// Session-shuffled view the accessors walk.
   final Map<DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>> _pools;
 
-  static DiagnosticItemBank empty() =>
-      DiagnosticItemBank._(const {}, const {});
+  static DiagnosticItemBank empty() => DiagnosticItemBank._(const {}, const {});
 
   /// Builds the pools from the trusted concept graph + exercise banks.
   ///
@@ -247,8 +245,7 @@ class DiagnosticItemBank {
     required Map<String, List<Exercise>> exercisesByLesson,
     int seed = 0,
   }) {
-    final raw =
-        <DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>>{};
+    final raw = <DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>>{};
     final seen = <String>{};
 
     for (final concept in graph.concepts) {
@@ -275,10 +272,13 @@ class DiagnosticItemBank {
           ),
           conceptOrder: concept.order,
         );
-        raw.putIfAbsent(dimension, () => {}).putIfAbsent(
+        raw
+            .putIfAbsent(dimension, () => {})
+            .putIfAbsent(
               concept.difficulty,
               () => [],
-            ).add(item);
+            )
+            .add(item);
       }
     }
 
@@ -416,8 +416,7 @@ class DiagnosticEngine {
     return bounded;
   }
 
-  List<DiagnosticAnswerRecord> get answerRecords =>
-      List.unmodifiable(_records);
+  List<DiagnosticAnswerRecord> get answerRecords => List.unmodifiable(_records);
 
   /// Records the answer to the current probe (first-try, no retries) and
   /// applies the §12 difficulty strategy:
@@ -491,8 +490,7 @@ class DiagnosticEngine {
     for (var i = 0; i < _activeDimensions.length; i++) {
       final dimension =
           _activeDimensions[(startAt + i) % _activeDimensions.length];
-      if ((_accumulators[dimension]?.asked ?? 0) >=
-          kTargetProbesPerDimension) {
+      if ((_accumulators[dimension]?.asked ?? 0) >= kTargetProbesPerDimension) {
         continue;
       }
       final item = _pickAtBand(dimension);
@@ -545,13 +543,10 @@ class DiagnosticEngine {
 
   bool _coverageComplete() {
     for (final dimension in _activeDimensions) {
-      if ((_accumulators[dimension]?.asked ?? 0) <
-          kTargetProbesPerDimension) {
+      if ((_accumulators[dimension]?.asked ?? 0) < kTargetProbesPerDimension) {
         // A dimension below target is acceptable ONLY if it has nothing
         // left to ask.
-        if (_bank
-            .itemsAnyBand(dimension, excludeIds: _askedIds)
-            .isNotEmpty) {
+        if (_bank.itemsAnyBand(dimension, excludeIds: _askedIds).isNotEmpty) {
           return false;
         }
       }

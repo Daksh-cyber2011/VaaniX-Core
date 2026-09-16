@@ -24,8 +24,8 @@ Future<ProviderContainer> makeContainer() async {
   );
 }
 
-Future<void> pumpAt(WidgetTester tester, ProviderContainer container,
-    String location) async {
+Future<void> pumpAt(
+    WidgetTester tester, ProviderContainer container, String location) async {
   final router = container.read(appRouterProvider);
   await tester.pumpWidget(
     UncontrolledProviderScope(
@@ -52,7 +52,9 @@ void main() {
     final container = await makeContainer();
     addTearDown(container.dispose);
     // Mark onboarding complete so the not-found screen itself is reachable.
-    await container.read(localStorageServiceProvider).setOnboardingComplete(true);
+    await container
+        .read(localStorageServiceProvider)
+        .setOnboardingComplete(true);
 
     await pumpAt(tester, container, '/definitely-not-a-route');
 
@@ -69,7 +71,9 @@ void main() {
 
     final container = await makeContainer();
     addTearDown(container.dispose);
-    await container.read(localStorageServiceProvider).setOnboardingComplete(true);
+    await container
+        .read(localStorageServiceProvider)
+        .setOnboardingComplete(true);
 
     await pumpAt(tester, container, '/definitely-not-a-route');
     await tester.tap(find.text('Back to Home'));

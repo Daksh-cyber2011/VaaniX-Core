@@ -264,21 +264,19 @@ class LearnerProfile extends Equatable {
       orElse: () => LearnLanguage.hindi,
     );
     final level = (json['currentLevel'] as num?)?.toInt();
-    final minutes = (json['dailyGoalMinutes'] as num?)?.toInt() ??
-        kDefaultDailyGoalMinutes;
+    final minutes =
+        (json['dailyGoalMinutes'] as num?)?.toInt() ?? kDefaultDailyGoalMinutes;
     return LearnerProfile(
       language: language,
       currentLevel: level == null ? null : level.clamp(0, 4).toInt(),
-      desiredLevel:
-          DesiredLevel.tryParse(json['desiredLevel'] as String?) ??
-              DesiredLevel.beginner,
+      desiredLevel: DesiredLevel.tryParse(json['desiredLevel'] as String?) ??
+          DesiredLevel.beginner,
       goal: LearningGoal.tryParse(json['goal'] as String?) ??
           LearningGoal.general,
-      pace: LearningPace.tryParse(json['pace'] as String?) ??
-          LearningPace.steady,
-      practiceStyle:
-          PracticeStyle.tryParse(json['practiceStyle'] as String?) ??
-              PracticeStyle.mixed,
+      pace:
+          LearningPace.tryParse(json['pace'] as String?) ?? LearningPace.steady,
+      practiceStyle: PracticeStyle.tryParse(json['practiceStyle'] as String?) ??
+          PracticeStyle.mixed,
       selfReport: SelfReport.tryParse(json['selfReport'] as String?) ??
           SelfReport.almostNothing,
       dailyGoalMinutes: minutes.clamp(5, 120).toInt(),

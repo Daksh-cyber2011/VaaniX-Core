@@ -48,8 +48,7 @@ class LearnProfileScreen extends ConsumerStatefulWidget {
   const LearnProfileScreen({super.key});
 
   @override
-  ConsumerState<LearnProfileScreen> createState() =>
-      _LearnProfileScreenState();
+  ConsumerState<LearnProfileScreen> createState() => _LearnProfileScreenState();
 }
 
 class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
@@ -68,9 +67,8 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
     // planning. (Watching the profile in build would clobber in-progress
     // edits on every rebuild.)
     final language = ref.read(selectedLearnLanguageProvider);
-    final profile = language == null
-        ? null
-        : ref.read(learnerProfileProvider(language));
+    final profile =
+        language == null ? null : ref.read(learnerProfileProvider(language));
     if (profile != null) {
       _selfReport = profile.selfReport;
       _goal = profile.goal;
@@ -144,8 +142,7 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
           // internal level name — raw scores stay internal (Master Brief
           // §11/§44). Undiagnosed learners get a quiet invitation.
           _LevelCheckCard(
-            result: ref.watch(
-                lastDiagnosticProvider(language)),
+            result: ref.watch(lastDiagnosticProvider(language)),
           ),
 
           // ── 1. Self-reported starting point (coarse, honest) ──
@@ -289,10 +286,9 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtext =
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.subtextDark
-            : AppColors.subtextLight;
+    final subtext = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.subtextDark
+        : AppColors.subtextLight;
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 10),
       child: Column(
@@ -401,8 +397,8 @@ class _MinuteChip extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppDimens.radiusSm),
           child: Container(
-            constraints: const BoxConstraints(
-                minHeight: AppDimens.minTouchTarget),
+            constraints:
+                const BoxConstraints(minHeight: AppDimens.minTouchTarget),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
@@ -450,67 +446,60 @@ class _LevelCheckCard extends StatelessWidget {
         button: true,
         container: true,
         child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-          onTap: () => context.go(RouteNames.learnDiagnostic),
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: diagnosed
-                  ? AppColors.success.withValues(alpha: 0.07)
-                  : theme.cardTheme.color,
-              borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-              border: Border.all(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+            onTap: () => context.go(RouteNames.learnDiagnostic),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
                 color: diagnosed
-                    ? AppColors.success.withValues(alpha: 0.5)
-                    : (isDark
-                        ? AppColors.borderDark
-                        : AppColors.borderLight),
+                    ? AppColors.success.withValues(alpha: 0.07)
+                    : theme.cardTheme.color,
+                borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+                border: Border.all(
+                  color: diagnosed
+                      ? AppColors.success.withValues(alpha: 0.5)
+                      : (isDark ? AppColors.borderDark : AppColors.borderLight),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    diagnosed ? Icons.verified_rounded : Icons.explore_rounded,
+                    color: diagnosed
+                        ? AppColors.success
+                        : Theme.of(context).colorScheme.primary,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          diagnosed
+                              ? 'Level check: ${result!.levelLabel}'
+                              : 'Level check not played yet',
+                          style: AppTextStyles.titleSmall(),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          diagnosed
+                              ? 'VAN re-checks your level whenever you like — '
+                                  'the path updates itself.'
+                              : 'Play the short discovery game and VAN will '
+                                  'size your path to fit.',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: subtext, size: 22),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Icon(
-                  diagnosed
-                      ? Icons.verified_rounded
-                      : Icons.explore_rounded,
-                  color:
-                      diagnosed
-                          ? AppColors.success
-                          : Theme.of(context).colorScheme.primary,
-                  size: 22,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        diagnosed
-                            ? 'Level check: ${result!.levelLabel}'
-                            : 'Level check not played yet',
-                        style: AppTextStyles.titleSmall(),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        diagnosed
-                            ? 'VAN re-checks your level whenever you like — '
-                                'the path updates itself.'
-                            : 'Play the short discovery game and VAN will '
-                                'size your path to fit.',
-                        style: AppTextStyles.bodySmall(color: subtext),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(Icons.chevron_right_rounded,
-                    color: subtext, size: 22),
-              ],
-            ),
           ),
-        ),
         ),
       ),
     );

@@ -35,9 +35,8 @@ class VaaniXModeSwitch extends ConsumerWidget {
     final bgTrackColor = isDark
         ? VaaniXColors.examSurfaceCard
         : VaaniXColors.learnSurfaceElevated;
-    final borderColor = isDark
-        ? VaaniXColors.examBorder
-        : VaaniXColors.learnBorder;
+    final borderColor =
+        isDark ? VaaniXColors.examBorder : VaaniXColors.learnBorder;
 
     return Container(
       height: compact ? 36 : 42,

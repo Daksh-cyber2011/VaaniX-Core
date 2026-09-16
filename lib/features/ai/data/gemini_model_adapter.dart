@@ -364,7 +364,8 @@ class GeminiModelAdapter implements ModelAdapter {
           }
           break; // stream completed normally
         } catch (e) {
-          if (yieldedAny || attempt >= _maxSendRetries ||
+          if (yieldedAny ||
+              attempt >= _maxSendRetries ||
               !isTransientAiError(e)) {
             rethrow;
           }

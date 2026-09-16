@@ -48,14 +48,12 @@ class VanCompanionBubble extends StatelessWidget {
     final isDark =
         Theme.of(context).brightness == Brightness.dark || isTactical;
 
-    final bgColor = isDark
-        ? VaaniXColors.examSurfaceCard
-        : VaaniXColors.learnSurfaceCard;
+    final bgColor =
+        isDark ? VaaniXColors.examSurfaceCard : VaaniXColors.learnSurfaceCard;
     final borderColor =
         isDark ? VaaniXColors.examBorder : VaaniXColors.learnBorder;
-    final primaryAccent = isDark
-        ? VaaniXColors.examCyanAccent
-        : VaaniXColors.learnPrimaryViolet;
+    final primaryAccent =
+        isDark ? VaaniXColors.examCyanAccent : VaaniXColors.learnPrimaryViolet;
 
     final resolvedBadgeLabel = badgeLabel ??
         switch (badgeRole) {

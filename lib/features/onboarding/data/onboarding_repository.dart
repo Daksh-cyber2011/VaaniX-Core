@@ -30,8 +30,7 @@ class OnboardingRepository {
 
   /// Persists the page the learner is on so a mid-onboarding app restart
   /// resumes instead of restarting from page 0 (Phase 5).
-  Future<void> saveCurrentPage(int page) =>
-      _storage.setOnboardingPage(page);
+  Future<void> saveCurrentPage(int page) => _storage.setOnboardingPage(page);
 
   /// Removes the stored page index. Called when onboarding completes so
   /// no stale index survives for a future (re-)run of the flow.

@@ -173,8 +173,8 @@ void main() {
     await tester.tap(find.text('Submit'));
     await tester.pump();
 
-    expect(tester.getSemantics(find.text('alpha')).label,
-        contains('incorrect'));
+    expect(
+        tester.getSemantics(find.text('alpha')).label, contains('incorrect'));
     expect(tester.getSemantics(find.text('beta')).label,
         contains('correct answer'));
     for (final option in ['alpha', 'beta', 'gamma']) {

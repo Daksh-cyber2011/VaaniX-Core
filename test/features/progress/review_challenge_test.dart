@@ -44,8 +44,7 @@ void main() {
   });
 
   group('pickDailyReviewChallenge', () {
-    test('empty weak-lesson list → no challenge (nothing worth reviewing)',
-        () {
+    test('empty weak-lesson list → no challenge (nothing worth reviewing)', () {
       expect(
         pickDailyReviewChallenge(
           const [],
@@ -85,7 +84,8 @@ void main() {
       );
     });
 
-    test('fully-mastered lessons never appear as weak lessons, so the '
+    test(
+        'fully-mastered lessons never appear as weak lessons, so the '
         'picker mirrors the adaptive engine contract', () {
       // The caller (dailyReviewChallengeProvider) only passes lessons from
       // weakLessonsProvider; a fully mastered lesson would never arrive.

@@ -134,8 +134,8 @@ void main() {
         snapshot: _snapshot(),
         reviewQueue: entries,
       );
-      expect(state.reviewQueue.map((e) => e.conceptId).toList(),
-          ['a', 'c', 'b']);
+      expect(
+          state.reviewQueue.map((e) => e.conceptId).toList(), ['a', 'c', 'b']);
 
       final restored = LearningState.fromJson(state.toJson());
       expect(restored.reviewQueue.map((e) => e.conceptId).toList(),

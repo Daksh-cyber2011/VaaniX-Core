@@ -41,8 +41,7 @@ class ExamProfileScreen extends ConsumerStatefulWidget {
   final String trackId;
 
   @override
-  ConsumerState<ExamProfileScreen> createState() =>
-      _ExamProfileScreenState();
+  ConsumerState<ExamProfileScreen> createState() => _ExamProfileScreenState();
 }
 
 class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
@@ -75,7 +74,9 @@ class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
 
   Future<void> _pickReadinessDate() async {
     final picked = await _pickDate(
-      initial: ref.read(examProfileProvider(widget.trackId)).value
+      initial: ref
+              .read(examProfileProvider(widget.trackId))
+              .value
               ?.readinessTargetDate ??
           DateTime.now().add(const Duration(days: 56)),
     );
@@ -88,9 +89,9 @@ class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
 
   Future<void> _pickActualExamDate() async {
     final picked = await _pickDate(
-      initial: ref.read(examProfileProvider(widget.trackId)).value
-              ?.actualExamDate ??
-          DateTime.now().add(const Duration(days: 90)),
+      initial:
+          ref.read(examProfileProvider(widget.trackId)).value?.actualExamDate ??
+              DateTime.now().add(const Duration(days: 90)),
     );
     if (picked != null) {
       await ref
@@ -112,9 +113,8 @@ class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
 
   Future<void> _onSave() async {
     setState(() => _error = null);
-    final errors = await ref
-        .read(examProfileProvider(widget.trackId).notifier)
-        .save();
+    final errors =
+        await ref.read(examProfileProvider(widget.trackId).notifier).save();
     if (!mounted) return;
     if (errors.isNotEmpty) {
       setState(() => _error = errors.first);
@@ -155,9 +155,8 @@ class _ProfileForm extends ConsumerWidget {
           message: profile.hasReadinessSource
               ? 'बढ़िया। ${profile.budgetSentence()} — योजना इसी समय में बनेगी।'
               : 'आप कब तक तैयार होना चाहते हैं? तारीख़ चुनें या हफ़्ते बताएँ।',
-          state: profile.hasReadinessSource
-              ? VanState.achievement
-              : VanState.idle,
+          state:
+              profile.hasReadinessSource ? VanState.achievement : VanState.idle,
         ),
         const SizedBox(height: 8),
 
@@ -172,8 +171,9 @@ class _ProfileForm extends ConsumerWidget {
                 'By when do you want to be exam-ready? Date चुनें, हफ़्ते बताएँ, '
                 'या दोनों — date primary रहेगी।',
                 style: AppTextStyles.bodySmall(
-                    color:
-                        isDark ? AppColors.subtextDark : AppColors.subtextLight),
+                    color: isDark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ),
               const SizedBox(height: 12),
               Semantics(
@@ -215,8 +215,8 @@ class _ProfileForm extends ConsumerWidget {
                         if (profile.readinessTargetDate != null)
                           IconButton(
                             icon: const Icon(Icons.close, size: 18),
-                            onPressed: () => controller
-                                .setReadinessTargetDate(null),
+                            onPressed: () =>
+                                controller.setReadinessTargetDate(null),
                           ),
                       ],
                     ),
@@ -226,8 +226,9 @@ class _ProfileForm extends ConsumerWidget {
               const SizedBox(height: 12),
               Text('या हफ़्तों में:',
                   style: AppTextStyles.labelMedium(
-                      color:
-                          isDark ? AppColors.subtextDark : AppColors.subtextLight)),
+                      color: isDark
+                          ? AppColors.subtextDark
+                          : AppColors.subtextLight)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -259,8 +260,9 @@ class _ProfileForm extends ConsumerWidget {
                 'जो आप सच में दे सकते हैं, वही चुनें — योजना आपके समय के अंदर '
                 'बनेगी, उससे बड़ी नहीं।',
                 style: AppTextStyles.bodySmall(
-                    color:
-                        isDark ? AppColors.subtextDark : AppColors.subtextLight),
+                    color: isDark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ),
               const SizedBox(height: 12),
               Wrap(
@@ -277,8 +279,7 @@ class _ProfileForm extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Text('हफ़्ते में कितने दिन?',
-                  style: AppTextStyles.titleSmall()),
+              Text('हफ़्ते में कितने दिन?', style: AppTextStyles.titleSmall()),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -309,8 +310,9 @@ class _ProfileForm extends ConsumerWidget {
               Text(
                 'अगर पता है तो बता दें — यह योजना की एकमात्र आधार नहीं बनेगी।',
                 style: AppTextStyles.bodySmall(
-                    color:
-                        isDark ? AppColors.subtextDark : AppColors.subtextLight),
+                    color: isDark
+                        ? AppColors.subtextDark
+                        : AppColors.subtextLight),
               ),
               const SizedBox(height: 12),
               Semantics(
@@ -350,8 +352,7 @@ class _ProfileForm extends ConsumerWidget {
                         if (profile.actualExamDate != null)
                           IconButton(
                             icon: const Icon(Icons.close, size: 18),
-                            onPressed: () =>
-                                controller.setActualExamDate(null),
+                            onPressed: () => controller.setActualExamDate(null),
                           ),
                       ],
                     ),
@@ -463,8 +464,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );
@@ -473,8 +474,18 @@ class _Card extends StatelessWidget {
 
 String _fmtDate(DateTime d) {
   const months = [
-    'जन', 'फ़र', 'मार्च', 'अप्रै', 'मई', 'जून',
-    'जुल', 'अग', 'सित', 'अक्टू', 'नव', 'दिस'
+    'जन',
+    'फ़र',
+    'मार्च',
+    'अप्रै',
+    'मई',
+    'जून',
+    'जुल',
+    'अग',
+    'सित',
+    'अक्टू',
+    'नव',
+    'दिस'
   ];
   return '${d.day} ${months[d.month - 1]} ${d.year}';
 }

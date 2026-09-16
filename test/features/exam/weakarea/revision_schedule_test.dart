@@ -22,8 +22,7 @@ ErrorPattern pat(String topicId) => ErrorPattern(
       lastSeenIso: '2026-09-02T10:00:00.000',
     );
 
-TopicMastery tm(String topicId, TopicStage stage,
-        {double strength = 0.8}) =>
+TopicMastery tm(String topicId, TopicStage stage, {double strength = 0.8}) =>
     TopicMastery(
       topicId: topicId,
       stage: stage,
@@ -74,8 +73,7 @@ void main() {
       expect(expanded.intervalIndex, kRevisionIntervalDays.length - 1);
     });
 
-    test('contract drops sharply (relearning) with a floor of index 0',
-        () {
+    test('contract drops sharply (relearning) with a floor of index 0', () {
       final item = RevisionItem(
         topicId: 't1',
         intervalIndex: 4,
@@ -166,8 +164,8 @@ void main() {
       );
       expect(items, hasLength(1));
       expect(items.first.intervalIndex, 0);
-      expect(items.first.dueIso,
-          t.add(const Duration(days: 1)).toIso8601String());
+      expect(
+          items.first.dueIso, t.add(const Duration(days: 1)).toIso8601String());
     });
 
     test('history keeps an even-sooner relearning entry (min due)', () {

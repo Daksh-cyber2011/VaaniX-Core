@@ -71,8 +71,9 @@ void main() {
 
     test('the placeholder catalog resolves nothing (art-free hosts)', () {
       for (final expression in VanExpression.values) {
-        expect(VanAssetCatalog.placeholder.expressionFor(expression)
-            .isAvailable, isFalse);
+        expect(
+            VanAssetCatalog.placeholder.expressionFor(expression).isAvailable,
+            isFalse);
       }
       for (final state in VanState.values) {
         expect(VanAssetCatalog.placeholder.staticArtForState(state), isNull);
@@ -113,9 +114,8 @@ void main() {
     });
 
     test('no supplied artwork is unreachable', () {
-      final reachable = VanState.values
-          .map((s) => s.canonicalExpression)
-          .toSet();
+      final reachable =
+          VanState.values.map((s) => s.canonicalExpression).toSet();
       expect(reachable, VanExpression.values.toSet(),
           reason: 'all eight canonical expressions must be reachable from '
               'the state vocabulary');
@@ -178,8 +178,7 @@ void main() {
 
       for (final type in wiredEvents) {
         final reaction = VanReactionResolver.resolve(VanEvent(type));
-        final art = VanAssetCatalog.v1
-            .expressionForState(reaction.state);
+        final art = VanAssetCatalog.v1.expressionForState(reaction.state);
         expect(art.isAvailable, isTrue,
             reason: '$type → ${reaction.state.name} must land on available '
                 'canonical artwork');
@@ -249,7 +248,8 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('reduced motion still shows the static canonical art '
+    testWidgets(
+        'reduced motion still shows the static canonical art '
         '(motionless by definition)', (tester) async {
       await tester.pumpWidget(
         ProviderScope(

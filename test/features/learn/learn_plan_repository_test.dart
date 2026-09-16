@@ -149,8 +149,7 @@ void main() {
       final old = _plan(
         'hi',
         createdAt: DateTime.now().subtract(
-          LearnPlanRepository.kDefaultMaxAge +
-              const Duration(hours: 1),
+          LearnPlanRepository.kDefaultMaxAge + const Duration(hours: 1),
         ),
       );
       expect(LearnPlanRepository.isFresh(old), isFalse);

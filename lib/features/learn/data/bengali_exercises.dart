@@ -55,7 +55,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       prompt: 'আম শব্দে কোন স্বর আছে?',
       options: ['অ', 'আ', 'ই', 'এ'],
       correctIndex: 1,
-      explanation: 'আম (ām) শব্দে আ স্বর আছে। আ এর মাত্রা া যা ম এর সাথে যুক্ত হয়ে মা বানায়।',
+      explanation:
+          'আম (ām) শব্দে আ স্বর আছে। আ এর মাত্রা া যা ম এর সাথে যুক্ত হয়ে মা বানায়।',
     ),
     Exercise(
       id: 'ex_bn_vowels_4',
@@ -193,7 +194,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       prompt: 'বই শব্দে কোন স্বর আছে?',
       options: ['অ', 'ঐ', 'ও', 'আ'],
       correctIndex: 1,
-      explanation: 'বই তে ঐ স্বর আছে (কোনো মাত্রা ছাড়া, পূর্ণ রূপে)। ব + ঐ = বই (boi = book)।',
+      explanation:
+          'বই তে ঐ স্বর আছে (কোনো মাত্রা ছাড়া, পূর্ণ রূপে)। ব + ঐ = বই (boi = book)।',
     ),
   ],
 
@@ -255,7 +257,12 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       lessonId: 'bn_greet_nomoskar',
       type: ExerciseType.mcq,
       prompt: '"কেমন আছেন?" এর অর্থ কী?',
-      options: ['What is your name?', 'How are you? (formal)', 'Where are you?', 'Who are you?'],
+      options: [
+        'What is your name?',
+        'How are you? (formal)',
+        'Where are you?',
+        'Who are you?'
+      ],
       correctIndex: 1,
       explanation:
           'কেমন আছেন? = How are you? (formal/respectful)। আপনি (you, formal) এর সাথে আছেন (are) ব্যবহৃত হয়। অনানুষ্ঠানিক রূপ: কেমন আছো? (তুমি এর সাথে)।',
@@ -294,7 +301,12 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       lessonId: 'bn_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"আপনি কোথায় থাকেন?" এর অর্থ কী?',
-      options: ['What is your name?', 'Where do you live?', 'How are you?', 'When are you coming?'],
+      options: [
+        'What is your name?',
+        'Where do you live?',
+        'How are you?',
+        'When are you coming?'
+      ],
       correctIndex: 1,
       explanation:
           'আপনি কোথায় থাকেন? = Where do you live? (formal)। কোথায় = where, থাকেন = live (respectful)। অনানুষ্ঠানিক: তুমি কোথায় থাকো?',
@@ -366,7 +378,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       prompt: 'বাংলায় ৫ কী?',
       options: ['চার', 'পাঁচ', 'ছয়', 'সাত'],
       correctIndex: 1,
-      explanation: '৫ = পাঁচ (pānch)। ৪ = চার, ৬ = ছয়। বাংলা সংখ্যা দেবনাগরি থেকে আলাদা দেখতে।',
+      explanation:
+          '৫ = পাঁচ (pānch)। ৪ = চার, ৬ = ছয়। বাংলা সংখ্যা দেবনাগরি থেকে আলাদা দেখতে।',
     ),
     Exercise(
       id: 'ex_bn_numbers_2',
@@ -455,7 +468,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       prompt: '"কোথায়" এর অর্থ কী?',
       options: ['What', 'Who', 'Where', 'When'],
       correctIndex: 2,
-      explanation: 'কোথায় (kothay) = where। যেমন: আপনি কোথায় যান? = Where do you go?',
+      explanation:
+          'কোথায় (kothay) = where। যেমন: আপনি কোথায় যান? = Where do you go?',
     ),
     Exercise(
       id: 'ex_bn_questions_2',
@@ -464,7 +478,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       prompt: '"কেন" এর অর্থ কী?',
       options: ['How', 'Why', 'What', 'Who'],
       correctIndex: 1,
-      explanation: 'কেন (keno) = why। উত্তর সাধারণত কারণ (because) দিয়ে শুরু হয়।',
+      explanation:
+          'কেন (keno) = why। উত্তর সাধারণত কারণ (because) দিয়ে শুরু হয়।',
     ),
     Exercise(
       id: 'ex_bn_questions_3',
@@ -649,8 +664,7 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
         'আমি যাব',
         'আমি যাব।',
       ],
-      explanation:
-          'বর্তমান: আমি যাই → ভবিষ্যৎ: আমি যাব (I will go)। -ি → -ব।',
+      explanation: 'বর্তমান: আমি যাই → ভবিষ্যৎ: আমি যাব (I will go)। -ি → -ব।',
     ),
   ],
 
@@ -660,7 +674,12 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       lessonId: 'bn_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"বাড়িতে" এর অর্থ কী?',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
       explanation:
           'বাড়িতে (barite) = in the house। -এ (-e) locative case marker — ব্যঞ্জনের পরে। এটি বাংলার বিশেষত্ব (হিন্দিতে নেই)।',
@@ -685,13 +704,15 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
         'On the table',
         'on the table',
       ],
-      explanation: 'টেবিলে (ṭebile) = on the table। -এ (locative) টেবিল এর সাথে।',
+      explanation:
+          'টেবিলে (ṭebile) = on the table। -এ (locative) টেবিল এর সাথে।',
     ),
     Exercise(
       id: 'ex_bn_post_4',
       lessonId: 'bn_grammar_postpositions',
       type: ExerciseType.matching,
-      prompt: 'Postposition কে অর্থের সাথে মিলান (Match postposition to meaning)',
+      prompt:
+          'Postposition কে অর্থের সাথে মিলান (Match postposition to meaning)',
       pairs: [
         (left: '-এ / -য়', right: 'in / at'),
         (left: '-কে', right: 'to'),
@@ -723,7 +744,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       id: 'ex_bn_nogender_2',
       lessonId: 'bn_grammar_no_gender',
       type: ExerciseType.mcq,
-      prompt: '"ভালো ছেলে" এবং "ভালো মেয়ে" — এখানে ভালো শব্দটি কীভাবে পরিবর্তিত হয়?',
+      prompt:
+          '"ভালো ছেলে" এবং "ভালো মেয়ে" — এখানে ভালো শব্দটি কীভাবে পরিবর্তিত হয়?',
       options: [
         'ভালো → ভালী (নারীর সাথে)',
         'ভালো অপরিবর্তিত থাকে — লিঙ্গ-নিরপেক্ষ',
@@ -738,7 +760,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
       id: 'ex_bn_nogender_3',
       lessonId: 'bn_grammar_no_gender',
       type: ExerciseType.mcq,
-      prompt: 'বাংলায় নির্দিষ্টতা বোঝাতে কোন প্রত্যয় ব্যবহৃত হয় (যেমন "the")?',
+      prompt:
+          'বাংলায় নির্দিষ্টতা বোঝাতে কোন প্রত্যয় ব্যবহৃত হয় (যেমন "the")?',
       options: ['-রা (-ra)', '-টা (-ṭa)', '-গুলো (-gulo)', 'কোনোটিই নয়'],
       correctIndex: 1,
       explanation:
@@ -862,7 +885,8 @@ final Map<String, List<Exercise>> bengaliExercisesByLesson = {
         'কোথাও না',
       ],
       correctIndex: 1,
-      explanation: 'না ক্রিয়ার পরে বসে: আমি যাই না (I don\'t go)। হিন্দির বিপরীতে।',
+      explanation:
+          'না ক্রিয়ার পরে বসে: আমি যাই না (I don\'t go)। হিন্দির বিপরীতে।',
     ),
     Exercise(
       id: 'ex_bn_review_3',

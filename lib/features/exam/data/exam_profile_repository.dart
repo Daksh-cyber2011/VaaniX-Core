@@ -43,9 +43,9 @@ class ExamProfileRepository {
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
-      final profilesJson =
-          (json['profiles'] as Map<String, dynamic>?)?.cast<String, dynamic>() ??
-              const <String, dynamic>{};
+      final profilesJson = (json['profiles'] as Map<String, dynamic>?)
+              ?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
       final profiles = <String, ExamProfile>{};
       profilesJson.forEach((trackId, value) {
         try {
@@ -63,8 +63,7 @@ class ExamProfileRepository {
   }
 
   /// One track's profile, or null when never set.
-  Future<ExamProfile?> load(String trackId) async =>
-      (await loadAll())[trackId];
+  Future<ExamProfile?> load(String trackId) async => (await loadAll())[trackId];
 
   /// Persists [profile]. Refuses invalid profiles (returns false) so the
   /// store can only ever contain planning-grade data.

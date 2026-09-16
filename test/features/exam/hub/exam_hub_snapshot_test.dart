@@ -11,8 +11,7 @@ import 'package:vaanix_app/features/exam/domain/exam_profile.dart';
 import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
 import 'package:vaanix_app/features/exam/domain/planner/exam_plan_models.dart';
 
-ExamPlanTask task(ExamTaskType type, String topic, int minutes) =>
-    ExamPlanTask(
+ExamPlanTask task(ExamTaskType type, String topic, int minutes) => ExamPlanTask(
       type: type,
       topicId: topic,
       title: 'Task $topic',
@@ -27,8 +26,7 @@ ExamPlan plan(List<ExamDayPlan> days, {String? createdAtIso}) => ExamPlan(
       focusSummary: 'focus',
       rationale: 'rationale',
       days: days,
-      createdAtIso:
-          createdAtIso ?? '2026-09-12T09:00:00.000',
+      createdAtIso: createdAtIso ?? '2026-09-12T09:00:00.000',
     );
 
 ExamProfile profile({DateTime? target, int? weeks}) => ExamProfile(
@@ -73,8 +71,7 @@ void main() {
     expect(s.pyqLine, 'Not attempted yet');
     expect(s.mockLine, 'No mock yet');
     expect(s.vanMood, ExamHubVanMood.welcome);
-    expect(s.vanMessage,
-        'A short diagnostic will tell me where to start.');
+    expect(s.vanMessage, 'A short diagnostic will tell me where to start.');
   });
 
   group('readiness countdown (§8 anchor)', () {
@@ -125,7 +122,8 @@ void main() {
         mockCount: 0,
         completedTaskTypeNames: const {},
       );
-      expect(overdue.readinessLine, 'Readiness target has passed — set a new one');
+      expect(
+          overdue.readinessLine, 'Readiness target has passed — set a new one');
       expect(overdue.readinessOverdue, isTrue);
     });
   });
@@ -169,7 +167,8 @@ void main() {
     test('3 days old → today is day 3 (clamped into window)', () {
       final s = withPlan([
         for (var i = 0; i < 5; i++)
-          ExamDayPlan(dayIndex: i, tasks: [task(ExamTaskType.learn, 't$i', 10)]),
+          ExamDayPlan(
+              dayIndex: i, tasks: [task(ExamTaskType.learn, 't$i', 10)]),
       ], createdAtIso: '2026-09-09T08:00:00.000');
       expect(s.todayDayIndex, 3);
       expect(s.todayTasks.first.topicId, 't3');
@@ -193,7 +192,9 @@ void main() {
           task(ExamTaskType.pyq, 'b', 10),
           task(ExamTaskType.mock, 'c', 20),
         ]),
-      ], completed: {'practice'});
+      ], completed: {
+        'practice'
+      });
       expect(s.todayTasks[0].done, isTrue);
       expect(s.continueTask!.type, ExamTaskType.pyq);
       expect(s.todayDoneCount, 1);
@@ -204,11 +205,14 @@ void main() {
         ExamDayPlan(dayIndex: 0, tasks: [
           task(ExamTaskType.practice, 'a', 10),
         ]),
-      ], completed: {'practice'});
+      ], completed: {
+        'practice'
+      });
       expect(s.todayAllDone, isTrue);
       expect(s.continueTask, isNull);
       expect(s.vanMood, ExamHubVanMood.celebrate);
-      expect(s.vanMessage, 'Today\u2019s plan is complete. Wonderful consistency!');
+      expect(s.vanMessage,
+          'Today\u2019s plan is complete. Wonderful consistency!');
     });
   });
 
@@ -217,7 +221,8 @@ void main() {
           now: now,
           hasDiagnostic: true,
           plan: plan([
-            ExamDayPlan(dayIndex: 0, tasks: [task(ExamTaskType.practice, 'a', 10)]),
+            ExamDayPlan(
+                dayIndex: 0, tasks: [task(ExamTaskType.practice, 'a', 10)]),
           ]),
           profile: profile(weeks: 6),
           weak: w,

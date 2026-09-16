@@ -120,7 +120,12 @@ void main() {
       final repo = ExamAttemptLogRepository(await freshPrefs());
       await repo.recordSession(trackId: 'x', attempts: [
         const ErrorEvidence(
-            questionId: '', topicId: '', kind: 'mcq', verdict: '', retries: 0, atIso: ''),
+            questionId: '',
+            topicId: '',
+            kind: 'mcq',
+            verdict: '',
+            retries: 0,
+            atIso: ''),
       ]);
       expect(await repo.load('x'), isEmpty);
       await repo.recordSession(trackId: 'x', attempts: const []);
@@ -134,8 +139,7 @@ void main() {
       expect(await repo.loadAll(), isEmpty);
     });
 
-    test('corrupt single track entry is skipped, rest survive (§41)',
-        () async {
+    test('corrupt single track entry is skipped, rest survive (§41)', () async {
       final good = ErrorEvidence(
               questionId: 'q1',
               topicId: 't1',
@@ -264,8 +268,7 @@ void main() {
       }
       expect(state.recheckOutcomes.length, 100);
       // Newest kept, oldest trimmed.
-      expect(
-          state.recheckOutcomes.first.topicId, 't${130 - 100} % 7');
+      expect(state.recheckOutcomes.first.topicId, 't${130 - 100} % 7');
       await repo.save(state);
       expect((await repo.load('x')).recheckOutcomes.length, 100);
     });
@@ -288,13 +291,12 @@ void main() {
     });
 
     test('corrupt store degrades to empty state (§41)', () async {
-      final repo = WeakAreaRepository(
-          await freshPrefs({WeakAreaRepository.storageKey: 'null-ish garbage'}));
+      final repo = WeakAreaRepository(await freshPrefs(
+          {WeakAreaRepository.storageKey: 'null-ish garbage'}));
       expect((await repo.load('x')).revision, isEmpty);
     });
 
-    test('corrupt single revision entry skipped, rest survive (§41)',
-        () async {
+    test('corrupt single revision entry skipped, rest survive (§41)', () async {
       final good = RevisionItem(
               topicId: 't1',
               intervalIndex: 3,

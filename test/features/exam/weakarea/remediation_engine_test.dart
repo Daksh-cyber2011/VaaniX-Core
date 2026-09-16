@@ -91,8 +91,7 @@ void main() {
         ],
         previouslyWrongQuestionIds: const {'w1'},
       );
-      expect(plan.recheckQuestions.every((q) => q.difficultyTier == 2),
-          isTrue);
+      expect(plan.recheckQuestions.every((q) => q.difficultyTier == 2), isTrue);
     });
 
     test('thin pool tops up the recheck from any tier', () {
@@ -184,8 +183,7 @@ void main() {
       }
       expect(remediationOutcomeFromName('recovered'),
           RemediationOutcome.recovered);
-      expect(remediationOutcomeFromName('bogus'),
-          RemediationOutcome.notRun);
+      expect(remediationOutcomeFromName('bogus'), RemediationOutcome.notRun);
       expect(remediationOutcomeFromName(null), RemediationOutcome.notRun);
     });
   });
@@ -205,8 +203,8 @@ void main() {
     });
 
     test('empty subtopics → honest official fallback line', () {
-      const recap = RemediationRecap(
-          topicTitle: 'T', sectionTitle: 'S', subtopics: []);
+      const recap =
+          RemediationRecap(topicTitle: 'T', sectionTitle: 'S', subtopics: []);
       expect(recap.recapText, isNotEmpty);
     });
   });
@@ -221,7 +219,8 @@ void main() {
         previouslyWrongQuestionIds: const {'w1'},
       );
       expect(plan.mainQuestions.first.id, 'w1');
-      expect(plan.totalQuestions,
+      expect(
+          plan.totalQuestions,
           plan.mistakeRetryQuestions.length +
               plan.targetedQuestions.length +
               plan.recheckQuestions.length);

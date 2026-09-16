@@ -169,13 +169,12 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(_app(container, _lesson(lessonId)));
-      await tester
-          .pump(const Duration(milliseconds: 50)); // postFrame restore
+      await tester.pump(const Duration(milliseconds: 50)); // postFrame restore
 
       expect(find.text('Q 3 / ${lessonExercises.length}'), findsOneWidget,
           reason: 'the session must resume at the persisted index');
-      expect(find.textContaining('Picked up where you left off'),
-          findsOneWidget,
+      expect(
+          find.textContaining('Picked up where you left off'), findsOneWidget,
           reason: 'the resume must be visible, not silent');
 
       final state = container.read(exerciseSessionProvider(lessonId));

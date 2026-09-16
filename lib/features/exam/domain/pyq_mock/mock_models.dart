@@ -97,8 +97,7 @@ class MockPaper extends Equatable {
 
   int get questionCount => allQuestions.length;
 
-  String get focusSectionTitle =>
-      sections.isEmpty ? '' : sections.first.title;
+  String get focusSectionTitle => sections.isEmpty ? '' : sections.first.title;
 
   @override
   List<Object?> get props => [id, kind, sections];

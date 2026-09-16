@@ -123,8 +123,7 @@ void main() {
       );
     }
 
-    test('two turns with different progress produce the SAME instruction',
-        () {
+    test('two turns with different progress produce the SAME instruction', () {
       final turnOne = buildContext(LearningContext.bounded(
         currentStreak: 1,
         lessonsCompleted: 2,

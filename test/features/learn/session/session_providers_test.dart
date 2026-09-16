@@ -112,8 +112,7 @@ void main() {
         .getLearningState(LearnLanguage.hindi);
     expect(extras, isNotNull);
     expect(
-      extras!.reviewQueue
-          .where((e) => e.reason == ReviewReason.recentlyWeak),
+      extras!.reviewQueue.where((e) => e.reason == ReviewReason.recentlyWeak),
       isEmpty,
     );
     expect(extras.recentPerformance.events, hasLength(2));
@@ -122,7 +121,8 @@ void main() {
     expect(extras.conceptMasteries.containsKey(_focusConcept), isTrue);
   });
 
-  test('a struggling run ladders, seeds the review queue, and the spine '
+  test(
+      'a struggling run ladders, seeds the review queue, and the spine '
       'sees the evidence', () async {
     final container = await _container(prefs: {'learn_language': 'hindi'});
     addTearDown(container.dispose);
@@ -181,17 +181,16 @@ void main() {
         .read(learnProfileRepositoryProvider)
         .getLearningState(LearnLanguage.hindi);
     expect(extras, isNotNull);
-    final weakEntries = extras!.reviewQueue
-        .where((e) => e.conceptId == _focusConcept)
-        .toList();
+    final weakEntries =
+        extras!.reviewQueue.where((e) => e.conceptId == _focusConcept).toList();
     expect(weakEntries, hasLength(1));
     expect(weakEntries.first.reason, ReviewReason.recentlyWeak);
     expect(weakEntries.first.dueAt, isNotNull,
         reason: '§20: review SOON — due dates are set');
 
     // NOTHING was recorded as mastered (every answer was wrong).
-    expect(container.read(masteredExercisesProvider('hi_script_vowels')),
-        isEmpty);
+    expect(
+        container.read(masteredExercisesProvider('hi_script_vowels')), isEmpty);
 
     // The spine picks the extras + evidence overlay up.
     final learningState =
@@ -245,8 +244,7 @@ void main() {
 
     final learningStateBefore =
         await container.read(activeLearningStateProvider.future);
-    expect(learningStateBefore.stageOf(_focusConcept),
-        MasteryStage.understood);
+    expect(learningStateBefore.stageOf(_focusConcept), MasteryStage.understood);
 
     final notifier = container.read(adaptiveSessionProvider.notifier);
     await notifier.start(

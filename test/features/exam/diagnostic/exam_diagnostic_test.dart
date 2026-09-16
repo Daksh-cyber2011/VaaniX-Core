@@ -24,10 +24,9 @@ void main() {
   late ExamScopeSelection selection;
 
   setUpAll(() async {
-    final raw =
-        await rootBundle.loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
-    syllabus =
-        CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final raw = await rootBundle
+        .loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    syllabus = CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     view = ExamScopeView.fromSyllabus(syllabus);
     selection = ExamScopeSelection.empty(view.trackId)
         .selectAll(view.selectableUnitIds);

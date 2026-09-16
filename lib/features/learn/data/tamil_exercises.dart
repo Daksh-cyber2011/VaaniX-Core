@@ -119,8 +119,7 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Romanize: தமிழ்',
       acceptedAnswers: ['tamiḻ', 'tamizh', 'tamil'],
-      explanation:
-          'தமிழ் = tamiḻ. ழ (ḻa) என்பது தமிழின் தனித்துவமான ஒலி.',
+      explanation: 'தமிழ் = tamiḻ. ழ (ḻa) என்பது தமிழின் தனித்துவமான ஒலி.',
     ),
     Exercise(
       id: 'ex_ta_barakhadi_2',
@@ -128,8 +127,7 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Romanize: சோறு',
       acceptedAnswers: ['cōṟu', 'choru', 'sooru'],
-      explanation:
-          'சோறு = cōṟu (rice). ற (ṟa) ஒலி — தமிழின் தனித்துவமான ஒலி.',
+      explanation: 'சோறு = cōṟu (rice). ற (ṟa) ஒலி — தமிழின் தனித்துவமான ஒலி.',
     ),
     Exercise(
       id: 'ex_ta_barakhadi_3',
@@ -190,7 +188,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_greet_vanakkam',
       type: ExerciseType.mcq,
       prompt: '"நீங்கள் எப்படி இருக்கிறீர்கள்?" என்றால் என்ன?',
-      options: ['What is your name?', 'How are you? (respectful)', 'Where are you?', 'Who are you?'],
+      options: [
+        'What is your name?',
+        'How are you? (respectful)',
+        'Where are you?',
+        'Who are you?'
+      ],
       correctIndex: 1,
       explanation:
           'நீங்கள் எப்படி இருக்கிறீர்கள்? = How are you? (respectful).',
@@ -206,7 +209,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
         (left: 'மாலை வணக்கம்', right: 'Good evening'),
         (left: 'மீண்டும் சந்திப்போம்', right: 'See you again'),
       ],
-      explanation: 'ஒவ்வொரு வாழ்த்துக்கும் அதன் சொந்த அர்த்தம் மற்றும் நேரம் உண்டு.',
+      explanation:
+          'ஒவ்வொரு வாழ்த்துக்கும் அதன் சொந்த அர்த்தம் மற்றும் நேரம் உண்டு.',
     ),
   ],
 
@@ -225,7 +229,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"நீங்கள் எங்கிருந்து வந்திருக்கிறீர்கள்?" என்றால் என்ன?',
-      options: ['What is your name?', 'Where are you from?', 'How are you?', 'When are you coming?'],
+      options: [
+        'What is your name?',
+        'Where are you from?',
+        'How are you?',
+        'When are you coming?'
+      ],
       correctIndex: 1,
       explanation:
           'எங்கிருந்து = from where. -இருந்து என்பது தமிழ் "from" postposition.',
@@ -235,7 +244,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_greet_intro',
       type: ExerciseType.mcq,
       prompt: 'தமிழில் "I am a student" எப்படி சொல்வது (male)?',
-      options: ['நான் மாணவன்.', 'நான் மாணவி.', 'நான் ஆசிரியர்.', 'நான் மருத்துவர்.'],
+      options: [
+        'நான் மாணவன்.',
+        'நான் மாணவி.',
+        'நான் ஆசிரியர்.',
+        'நான் மருத்துவர்.'
+      ],
       correctIndex: 0,
       explanation:
           'நான் மாணவன் = I am a student (male). பெண்: மாணவி. ஆனால் கிரியா லிங்கம் படி மாறாது.',
@@ -260,8 +274,7 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: '"அக்கா" என்றால் என்ன?',
       options: ['younger sister', 'older sister', 'mother', 'aunt'],
       correctIndex: 1,
-      explanation:
-          'அக்கா (akkā) = older sister. தங்கை = younger sister.',
+      explanation: 'அக்கா (akkā) = older sister. தங்கை = younger sister.',
     ),
     Exercise(
       id: 'ex_ta_family_3',
@@ -274,8 +287,7 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
         (left: 'அண்ணன்', right: 'older brother'),
         (left: 'அக்கா', right: 'older sister'),
       ],
-      explanation:
-          'தமிழ் குடும்ப சொற்கள் ஹிந்தியிலிருந்து வேறுபட்டவை.',
+      explanation: 'தமிழ் குடும்ப சொற்கள் ஹிந்தியிலிருந்து வேறுபட்டவை.',
     ),
   ],
 
@@ -287,7 +299,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: 'தமிழில் 5 ஐ எப்படி சொல்வது?',
       options: ['ஐந்து', 'பஞ்ச்', 'பாஂச்', 'ஐது'],
       correctIndex: 0,
-      explanation: 'தமிழில் 5 = ஐந்து (aindu). ஹிந்தी पांच, தெலுங்கு ఐదు — அனைத்தும் வேறு.',
+      explanation:
+          'தமிழில் 5 = ஐந்து (aindu). ஹிந்தी पांच, தெலுங்கு ఐదు — அனைத்தும் வேறு.',
     ),
     Exercise(
       id: 'ex_ta_numbers_2',
@@ -296,7 +309,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: 'தமிழில் 100 ஐ எப்படி சொல்வது?',
       options: ['ஸௌ', 'ஶம்பர்', 'நூறு', 'வந்த'],
       correctIndex: 2,
-      explanation: 'தமிழில் 100 = நூறு (nūṟu). ஹிந்தी सौ, மராத்தி शंभर் — அனைத்தும் வேறு.',
+      explanation:
+          'தமிழில் 100 = நூறு (nūṟu). ஹிந்தी सौ, மராத்தி शंभर் — அனைத்தும் வேறு.',
     ),
     Exercise(
       id: 'ex_ta_numbers_3',
@@ -377,8 +391,13 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_daily_questions',
       type: ExerciseType.translation,
       prompt: 'Translate: நீங்கள் எங்கிருந்து வந்திருக்கிறீர்கள்?',
-      acceptedAnswers: ['Where have you come from', 'Where have you come from?', 'Where are you from'],
-      explanation: 'எங்கிருந்து = from where. -இருந்து என்பது தமிழ் "from" postposition.',
+      acceptedAnswers: [
+        'Where have you come from',
+        'Where have you come from?',
+        'Where are you from'
+      ],
+      explanation:
+          'எங்கிருந்து = from where. -இருந்து என்பது தமிழ் "from" postposition.',
     ),
   ],
 
@@ -388,7 +407,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_daily_negation',
       type: ExerciseType.mcq,
       prompt: '"நான் மருத்துவர் இல்லை" என்றால் என்ன?',
-      options: ['I am a doctor', 'I am not a doctor', 'I want to be a doctor', 'Where is the doctor'],
+      options: [
+        'I am a doctor',
+        'I am not a doctor',
+        'I want to be a doctor',
+        'Where is the doctor'
+      ],
       correctIndex: 1,
       explanation:
           'இல்லை (illai) = "is not". நான் மருத்துவர் இல்லை = I am not a doctor.',
@@ -398,7 +422,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_daily_negation',
       type: ExerciseType.mcq,
       prompt: '"போக வேண்டாம்!" என்றால் என்ன?',
-      options: ['I am not going', 'Don\'t go! (command)', 'He is not going', 'No going'],
+      options: [
+        'I am not going',
+        'Don\'t go! (command)',
+        'He is not going',
+        'No going'
+      ],
       correctIndex: 1,
       explanation:
           'வேண்டாம் (vēṇṭām) = don\'t! (negative command). போக வேண்டாம்! = Don\'t go!',
@@ -409,7 +438,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Make negative (future): நான் போகிறேன்।',
       acceptedAnswers: ['நான் போமாட்டேன்', 'நான் போமாட்டேன்।'],
-      explanation: 'நான் போகிறேன் → நான் போமாட்டேன் (I won\'t go). -மாட்டேன் = future negation.',
+      explanation:
+          'நான் போகிறேன் → நான் போமாட்டேன் (I won\'t go). -மாட்டேன் = future negation.',
     ),
   ],
 
@@ -458,7 +488,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_grammar_pronouns',
       type: ExerciseType.mcq,
       prompt: 'தமிழில் "we" க்கு எத்தனை வடிவங்கள்?',
-      options: ['1 (நாங்கள்)', '2 — நாம் (inclusive) மற்றும் நாங்கள் (exclusive)', '3', '4'],
+      options: [
+        '1 (நாங்கள்)',
+        '2 — நாம் (inclusive) மற்றும் நாங்கள் (exclusive)',
+        '3',
+        '4'
+      ],
       correctIndex: 1,
       explanation:
           'தமிழில் 2 "we" வடிவங்கள்: நாம் (inclusive — கேட்பவரையும் சேர்த்து), நாங்கள் (exclusive — கேட்பவரை தவிர்த்து).',
@@ -526,7 +561,12 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"வீட்டில்" என்றால் என்ன?',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
       explanation: '-இல் (-il) = in/at/on. வீட்டில் = in the house.',
     ),
@@ -537,7 +577,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: '"சென்னையிலிருந்து" என்றால் என்ன?',
       options: ['to Chennai', 'in Chennai', 'from Chennai', 'near Chennai'],
       correctIndex: 2,
-      explanation: '-இருந்து (-ilirundhu) = from. சென்னையிலிருந்து = from Chennai.',
+      explanation:
+          '-இருந்து (-ilirundhu) = from. சென்னையிலிருந்து = from Chennai.',
     ),
     Exercise(
       id: 'ex_ta_post_3',
@@ -619,7 +660,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       id: 'ex_ta_conv_1',
       lessonId: 'ta_reading_conversation',
       type: ExerciseType.mcq,
-      prompt: '"அண்ணா, உருளைக்கிழங்கு எவ்வளவு?" — இது எந்த சூழ்நிலையில் சொல்லப்படுகிறது?',
+      prompt:
+          '"அண்ணா, உருளைக்கிழங்கு எவ்வளவு?" — இது எந்த சூழ்நிலையில் சொல்லப்படுகிறது?',
       options: [
         'நண்பரை சந்திக்கும்போது',
         'காய்கறி வாங்கும்போது கடைக்காரரிடம்',
@@ -637,7 +679,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: '"போகலாமா?" என்றால் என்ன?',
       options: ['Let\'s walk', 'Shall we go?', 'Are you walking?', 'Walk!'],
       correctIndex: 1,
-      explanation: 'போகலாமா? = Shall we go? / Let\'s go. மகாபலிபுரம் போகலாமா? = Shall we go to Mahabalipuram?',
+      explanation:
+          'போகலாமா? = Shall we go? / Let\'s go. மகாபலிபுரம் போகலாமா? = Shall we go to Mahabalipuram?',
     ),
     Exercise(
       id: 'ex_ta_conv_3',
@@ -649,7 +692,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
         'See you at 6 AM',
         'Let\'s meet at six in the morning',
       ],
-      explanation: 'காலை ஆறு மணிக்கு சந்திப்போம் = See you / Let\'s meet at six in the morning.',
+      explanation:
+          'காலை ஆறு மணிக்கு சந்திப்போம் = See you / Let\'s meet at six in the morning.',
     ),
   ],
 
@@ -659,9 +703,15 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       lessonId: 'ta_reading_paragraph',
       type: ExerciseType.mcq,
       prompt: 'Passage 1 படி சென்னையை என்ன என்று அழைக்கிறார்கள்?',
-      options: ['பசுமை நகரம்', 'தென்னிந்தியாவின் நுழைவாயில்', 'வெள்ளை நகரம்', 'நீல நகரம்'],
+      options: [
+        'பசுமை நகரம்',
+        'தென்னிந்தியாவின் நுழைவாயில்',
+        'வெள்ளை நகரம்',
+        'நீல நகரம்'
+      ],
       correctIndex: 1,
-      explanation: 'Passage 1 கூறுகிறது: "சென்னை தென்னிந்தியாவின் நுழைவாயில் என்று அழைக்கப்படுகிறது."',
+      explanation:
+          'Passage 1 கூறுகிறது: "சென்னை தென்னிந்தியாவின் நுழைவாயில் என்று அழைக்கப்படுகிறது."',
     ),
     Exercise(
       id: 'ex_ta_para_2',
@@ -691,7 +741,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       prompt: 'தமிழில் வாக்கிய அமைப்பு என்ன?',
       options: ['SVO', 'SOV', 'VSO', 'OVS'],
       correctIndex: 1,
-      explanation: 'Subject-Object-Verb (SOV). நான் (S) சோறு (O) சாப்பிடுகிறேன் (V).',
+      explanation:
+          'Subject-Object-Verb (SOV). நான் (S) சோறு (O) சாப்பிடுகிறேன் (V).',
     ),
     Exercise(
       id: 'ex_ta_review_2',
@@ -724,7 +775,8 @@ final Map<String, List<Exercise>> tamilExercisesByLesson = {
       type: ExerciseType.translation,
       prompt: 'Translate: என் பெயர் _____।',
       acceptedAnswers: ['My name is _____'],
-      explanation: 'என் பெயர் _____ = My name is _____. இது அடிப்படை அறிமுக வாக்கியம்.',
+      explanation:
+          'என் பெயர் _____ = My name is _____. இது அடிப்படை அறிமுக வாக்கியம்.',
     ),
   ],
 };

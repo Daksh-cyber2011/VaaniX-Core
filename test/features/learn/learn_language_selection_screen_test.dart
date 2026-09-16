@@ -17,7 +17,8 @@ import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/learn_language_selection_screen.dart';
 
-Future<ProviderContainer> _container({Map<String, Object> prefs = const {}}) async {
+Future<ProviderContainer> _container(
+    {Map<String, Object> prefs = const {}}) async {
   SharedPreferences.setMockInitialValues(prefs);
   final prefsInstance = await SharedPreferences.getInstance();
   return ProviderContainer(
@@ -77,7 +78,8 @@ void main() {
 
     for (final spec in kLearnLanguageCatalogue) {
       expect(find.text(spec.nativeName), findsOneWidget,
-          reason: '${spec.englishName} native name "${spec.nativeName}" should render');
+          reason:
+              '${spec.englishName} native name "${spec.nativeName}" should render');
     }
   });
 
@@ -96,8 +98,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     // Selection should now be persisted.
-    expect(container.read(selectedLearnLanguageProvider),
-        LearnLanguage.hindi);
+    expect(container.read(selectedLearnLanguageProvider), LearnLanguage.hindi);
 
     // And the router should have navigated to /learn.
     expect(find.text('Learn'), findsOneWidget,
@@ -156,8 +157,7 @@ void main() {
     });
     addTearDown(container.dispose);
 
-    expect(container.read(selectedLearnLanguageProvider),
-        LearnLanguage.tamil);
+    expect(container.read(selectedLearnLanguageProvider), LearnLanguage.tamil);
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
@@ -168,8 +168,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(container.read(selectedLearnLanguageProvider),
-        LearnLanguage.marathi,
-        reason: 'Tapping Marathi should overwrite the previous Tamil selection');
+    expect(container.read(selectedLearnLanguageProvider), LearnLanguage.marathi,
+        reason:
+            'Tapping Marathi should overwrite the previous Tamil selection');
   });
 }

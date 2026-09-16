@@ -83,8 +83,7 @@ Future<ExamHubSnapshot> computeExamHubSnapshot(
     final findings = overview.report.findings;
     weak = ExamHubWeakInput(
       findingCount: findings.length,
-      topSeverityName:
-          findings.isEmpty ? '' : findings.first.severity.name,
+      topSeverityName: findings.isEmpty ? '' : findings.first.severity.name,
       recoveryRecommended: overview.decision.shouldRecover,
       recoveryDayIndex: overview.decision.dayIndex,
       revisionDueCount: overview.dueRevision(limit: 10).length,
@@ -110,8 +109,7 @@ Future<ExamHubSnapshot> computeExamHubSnapshot(
   String? lastMockKind;
   var mockCount = 0;
   try {
-    final history =
-        await ref.read(mockResultRepositoryProvider).load(trackId);
+    final history = await ref.read(mockResultRepositoryProvider).load(trackId);
     mockCount = history.length;
     if (history.isNotEmpty) {
       lastMockBand = history.last.overallBand;

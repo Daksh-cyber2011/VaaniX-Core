@@ -171,16 +171,16 @@ class ExamProfile extends Equatable {
       ('actualExamDate', actualExamDate),
     ]) {
       final d = field.$2;
-      if (d != null && d.isBefore(DateTime(today.year, today.month, today.day))) {
+      if (d != null &&
+          d.isBefore(DateTime(today.year, today.month, today.day))) {
         errors.add('${field.$1} is in the past (${d.toIso8601String()})');
       }
     }
     // Actual exam date, when present, must not predate the readiness
     // target — being "ready" after the exam is a data-entry error.
     if (actualExamDate != null && readinessTargetDate != null) {
-      if (actualExamDate!.isBefore(
-          DateTime(readinessTargetDate!.year, readinessTargetDate!.month,
-              readinessTargetDate!.day))) {
+      if (actualExamDate!.isBefore(DateTime(readinessTargetDate!.year,
+          readinessTargetDate!.month, readinessTargetDate!.day))) {
         errors.add('actualExamDate precedes readinessTargetDate');
       }
     }
@@ -227,8 +227,7 @@ class ExamProfile extends Equatable {
     final weeks = (json['readinessDurationWeeks'] as num?)?.toInt();
     return ExamProfile(
       trackId: trackId,
-      dailyStudyMinutes:
-          minutes < minDailyMinutes ? minDailyMinutes : minutes,
+      dailyStudyMinutes: minutes < minDailyMinutes ? minDailyMinutes : minutes,
       studyDaysPerWeek: days < minStudyDaysPerWeek ? minStudyDaysPerWeek : days,
       readinessTargetDate: _parseDate(json['readinessTargetDate']),
       readinessDurationWeeks: (weeks == null || weeks < minDurationWeeks)

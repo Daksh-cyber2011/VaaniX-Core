@@ -108,9 +108,8 @@ class ExamSessionXp {
   }) {
     if (totalCount <= 0 || correctCount < 0) return 0;
     final base = correctXp(kind, correctCount) + completionBonus(kind);
-    final withPerfect = deservesPerfectBonus(correctCount, totalCount)
-        ? base + 5
-        : base;
+    final withPerfect =
+        deservesPerfectBonus(correctCount, totalCount) ? base + 5 : base;
     return withPerfect.clamp(0, _sessionXpCap[kind]!);
   }
 

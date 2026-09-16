@@ -18,7 +18,8 @@ import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
 Future<(ConceptGraph, List<Chapter>)> _hindi() async {
   final chapters = await loadLearnCurriculum(LearnLanguage.hindi);
-  final graph = ConceptGraph.forCurriculum(languageCode: 'hi', chapters: chapters);
+  final graph =
+      ConceptGraph.forCurriculum(languageCode: 'hi', chapters: chapters);
   return (graph, chapters);
 }
 
@@ -57,8 +58,8 @@ void main() {
 
     test('exercise entries mirror the trusted bank', () {
       final entries = registry.exerciseEntriesFor(graph.concepts.first.id);
-      final bank = hindiExercisesByLesson[graph.concepts.first.lessonId] ??
-          const [];
+      final bank =
+          hindiExercisesByLesson[graph.concepts.first.lessonId] ?? const [];
       expect(entries.length, bank.length);
       for (final entry in entries) {
         expect(entry.kind, TrustedContentKind.exercise);

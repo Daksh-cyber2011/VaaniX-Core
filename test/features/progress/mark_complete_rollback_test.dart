@@ -76,8 +76,7 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  test('failed completion does not pollute the reactive lesson list',
-      () async {
+  test('failed completion does not pollute the reactive lesson list', () async {
     final container = ProviderContainer(overrides: [
       progressRepositoryProvider.overrideWithValue(
         _FailingProgressRepository(),

@@ -56,15 +56,13 @@ void main() {
       expect(index.allCourses.length, 7);
 
       // Class 9 Hindi has BOTH आर-1 and आर-2 variants from the same PDF.
-      final hindi9 = class9.subjects
-          .firstWhere((s) => s.id == 'hindi');
+      final hindi9 = class9.subjects.firstWhere((s) => s.id == 'hindi');
       expect(hindi9.courses.length, 2);
       expect(hindi9.courses.map((c) => c.id).toSet(),
           {'cbse_9_hindi_r1', 'cbse_9_hindi_r2'});
 
       // Class 10 Sanskrit has both विषयगत (122) and संप्रेषणात्मक (119).
-      final sanskrit10 = class10.subjects
-          .firstWhere((s) => s.id == 'sanskrit');
+      final sanskrit10 = class10.subjects.firstWhere((s) => s.id == 'sanskrit');
       expect(sanskrit10.courses.length, 2);
     });
 
@@ -76,8 +74,7 @@ void main() {
 
       for (final course in index.allCourses) {
         final expectedPending = course.id.startsWith('cbse_9_');
-        expect(course.literaturePending, expectedPending,
-            reason: course.id);
+        expect(course.literaturePending, expectedPending, reason: course.id);
       }
     });
 
@@ -141,8 +138,10 @@ void main() {
 
       // Cache hit: same instance identity on the second call.
       final again = await repo.course('cbse_10_sanskrit');
-      expect(identical(again, courses
-          .firstWhere((c) => c.id.value == 'cbse_10_sanskrit')), isTrue);
+      expect(
+          identical(again,
+              courses.firstWhere((c) => c.id.value == 'cbse_10_sanskrit')),
+          isTrue);
 
       repo.clearCache();
     });
@@ -156,8 +155,8 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final syllabus =
-          await container.read(courseSyllabusProvider('cbse_9_sanskrit').future);
+      final syllabus = await container
+          .read(courseSyllabusProvider('cbse_9_sanskrit').future);
       expect(syllabus, isNotNull);
       expect(syllabus!.hasPendingLiterature, isTrue);
     });

@@ -157,13 +157,13 @@ class LocalStorageService implements ILocalStorageService {
   /// `ai_conversation_<conversationId>` (prefix constant shared with the
   /// conversation-memory retention pruning).
   @override
-  String? getAiConversation(String conversationId) =>
-      _prefs.getString('${AppConstants.aiConversationKeyPrefix}$conversationId');
+  String? getAiConversation(String conversationId) => _prefs
+      .getString('${AppConstants.aiConversationKeyPrefix}$conversationId');
 
   @override
   Future<void> setAiConversation(String conversationId, String jsonMessages) =>
-      _prefs.setString(
-          '${AppConstants.aiConversationKeyPrefix}$conversationId', jsonMessages);
+      _prefs.setString('${AppConstants.aiConversationKeyPrefix}$conversationId',
+          jsonMessages);
 
   @override
   Future<void> clearAiConversations() async {

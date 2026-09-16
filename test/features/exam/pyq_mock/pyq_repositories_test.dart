@@ -69,13 +69,12 @@ void main() {
           isFalse);
     });
 
-    test('empty outcomes are a no-op; corrupt store degrades (§41)',
-        () async {
+    test('empty outcomes are a no-op; corrupt store degrades (§41)', () async {
       final repo = PyqPerformanceRepository(await freshPrefs());
       await repo.mergeSession(trackId: 'x', outcomes: const []);
       expect(await repo.load('x'), isEmpty);
-      final corrupt = PyqPerformanceRepository(await freshPrefs(
-          {PyqPerformanceRepository.storageKey: 'not-json'}));
+      final corrupt = PyqPerformanceRepository(
+          await freshPrefs({PyqPerformanceRepository.storageKey: 'not-json'}));
       expect(await corrupt.loadAll(), isEmpty);
     });
   });
@@ -122,7 +121,8 @@ void main() {
       final loaded = await repo.load('x');
       expect(loaded.length, MockResultRepository.maxResults);
       expect(loaded.first.paperId, 'p-x-11');
-      expect(loaded.last.paperId, 'p-x-${MockResultRepository.maxResults + 10}');
+      expect(
+          loaded.last.paperId, 'p-x-${MockResultRepository.maxResults + 10}');
     });
 
     test('per-track isolation + corrupt degradation (§41)', () async {

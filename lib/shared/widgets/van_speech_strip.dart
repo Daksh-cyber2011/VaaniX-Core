@@ -11,6 +11,7 @@
 /// The strip animates in on first render (subtle fade + slide-up). Set
 /// [animate] to [false] for list items that rebuild frequently.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';

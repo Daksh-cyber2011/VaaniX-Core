@@ -94,7 +94,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       id: 'ex_mr_consonants_4',
       lessonId: 'mr_script_consonants',
       type: ExerciseType.matching,
-      prompt: 'हिंदी शब्दांना मराठी प्रतिरूपांसोबत जोडा (Match Hindi to Marathi)',
+      prompt:
+          'हिंदी शब्दांना मराठी प्रतिरूपांसोबत जोडा (Match Hindi to Marathi)',
       pairs: [
         (left: 'काल', right: 'काळ'),
         (left: 'फल', right: 'फळ'),
@@ -184,7 +185,12 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_script_conjuncts',
       type: ExerciseType.mcq,
       prompt: 'मराठीत ज्ञ कसा उच्चारला जातो?',
-      options: ['/gy/ (हिंदीसारखा)', '/dʒɲ/ (jñ)', '/ggyo/ (बंगालीसारखा)', '/ña/'],
+      options: [
+        '/gy/ (हिंदीसारखा)',
+        '/dʒɲ/ (jñ)',
+        '/ggyo/ (बंगालीसारखा)',
+        '/ña/'
+      ],
       correctIndex: 1,
       explanation:
           'मराठीत ज्ञ = /dʒɲ/ (jñ) — संस्कृत उच्चाराच्या जवळ. ज्ञान = jñān. हिंदीत ज्ञ = /gy/ (gyān).',
@@ -221,7 +227,12 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_greet_namaskar',
       type: ExerciseType.mcq,
       prompt: '"तुम्ही कसे आहात?" चा अर्थ काय?',
-      options: ['What is your name?', 'How are you? (respectful, to male)', 'Where are you?', 'Who are you?'],
+      options: [
+        'What is your name?',
+        'How are you? (respectful, to male)',
+        'Where are you?',
+        'Who are you?'
+      ],
       correctIndex: 1,
       explanation:
           'तुम्ही कसे आहात? = How are you? (respectful, to male). तुम्ही = you (respectful), कसे = how, आहात = are.',
@@ -270,7 +281,12 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_greet_intro',
       type: ExerciseType.mcq,
       prompt: '"तुम्ही कोठून आहात?" चा अर्थ काय?',
-      options: ['What is your name?', 'Where are you from?', 'How are you?', 'When are you coming?'],
+      options: [
+        'What is your name?',
+        'Where are you from?',
+        'How are you?',
+        'When are you coming?'
+      ],
       correctIndex: 1,
       explanation:
           'तुम्ही कोठून आहात? = Where are you from? कोठून = from where. -हून हा "from" चा मराठी postposition आहे (हिंदी से च्या ऐवजी).',
@@ -280,7 +296,12 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_greet_intro',
       type: ExerciseType.mcq,
       prompt: 'मराठीत "I am a student" (male) कसं म्हणतात?',
-      options: ['मी विद्यार्थी आहे।', 'मी विद्यार्थिनी आहे।', 'मी शिक्षक आहे।', 'मी शिक्षिका आहे।'],
+      options: [
+        'मी विद्यार्थी आहे।',
+        'मी विद्यार्थिनी आहे।',
+        'मी शिक्षक आहे।',
+        'मी शिक्षिका आहे।'
+      ],
       correctIndex: 0,
       explanation:
           'पुरुष student = विद्यार्थी (vidyārthī). स्त्री = विद्यार्थिनी (vidyārthinī). मी विद्यार्थी आहे = I am a student.',
@@ -362,8 +383,7 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       prompt: 'मराठीत 2 ला काय म्हणतात?',
       options: ['दो', 'दोन', 'दुई', 'द्वे'],
       correctIndex: 1,
-      explanation:
-          'मराठीत 2 = दोन (don). हिंदीत दो (do). मराठीत -न अंत आहे.',
+      explanation: 'मराठीत 2 = दोन (don). हिंदीत दो (do). मराठीत -न अंत आहे.',
     ),
     Exercise(
       id: 'ex_mr_numbers_4',
@@ -428,7 +448,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       prompt: '"कोठे" चा अर्थ काय?',
       options: ['What', 'Who', 'Where', 'When'],
       correctIndex: 2,
-      explanation: 'कोठे (koṭhe) = where. उदा: तुम्ही कोठे जाता? = Where do you go?',
+      explanation:
+          'कोठे (koṭhe) = where. उदा: तुम्ही कोठे जाता? = Where do you go?',
     ),
     Exercise(
       id: 'ex_mr_questions_2',
@@ -437,7 +458,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       prompt: '"कधी" चा अर्थ काय?',
       options: ['How', 'Why', 'What', 'When'],
       correctIndex: 3,
-      explanation: 'कधी (kadhī) = when. उदा: तुम्ही कधी येणार? = When will you come?',
+      explanation:
+          'कधी (kadhī) = when. उदा: तुम्ही कधी येणार? = When will you come?',
     ),
     Exercise(
       id: 'ex_mr_questions_3',
@@ -531,7 +553,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       prompt: '"आंघोळ करणे" चा अर्थ काय?',
       options: ['To eat', 'To bathe', 'To sleep', 'To study'],
       correctIndex: 1,
-      explanation: 'आंघोळ करणे (ānghoḷ karaṇe) = to bathe. आंघोळ करतो = I bathe.',
+      explanation:
+          'आंघोळ करणे (ānghoḷ karaṇe) = to bathe. आंघोळ करतो = I bathe.',
     ),
     Exercise(
       id: 'ex_mr_routine_3',
@@ -597,7 +620,12 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_grammar_gender',
       type: ExerciseType.mcq,
       prompt: 'मराठीत किती लिंग आहेत?',
-      options: ['2 (masculine, feminine)', '3 (masculine, feminine, neuter)', '1', '4'],
+      options: [
+        '2 (masculine, feminine)',
+        '3 (masculine, feminine, neuter)',
+        '1',
+        '4'
+      ],
       correctIndex: 1,
       explanation:
           'मराठीत 3 लिंग आहेत: पुल्लिंग (masculine), स्त्रीलिंग (feminine), नपुंसकलिंग (neuter). हिंदीत फक्त 2 आहेत — neuter मराठीचे वैशिष्ट्य!',
@@ -607,7 +635,11 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_grammar_gender',
       type: ExerciseType.mcq,
       prompt: 'मराठीत "पुस्तक" कोणत्या लिंगात आहे?',
-      options: ['पुल्लिंग (masculine)', 'स्त्रीलिंग (feminine)', 'नपुंसकलिंग (neuter)'],
+      options: [
+        'पुल्लिंग (masculine)',
+        'स्त्रीलिंग (feminine)',
+        'नपुंसकलिंग (neuter)'
+      ],
       correctIndex: 2,
       explanation:
           'मराठीत पुस्तक = नपुंसकलिंग (neuter)! हिंदीत पुस्तक = स्त्रीलिंग. हा मराठीचा मोठा फरक आहे — हिंदी शिकणाऱ्यांना हे नवीन शिकावे लागते.',
@@ -626,7 +658,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       id: 'ex_mr_gender_4',
       lessonId: 'mr_grammar_gender',
       type: ExerciseType.matching,
-      prompt: 'संज्ञांना त्यांच्या मराठी लिंगांसोबत जोडा (Match nouns to Marathi genders)',
+      prompt:
+          'संज्ञांना त्यांच्या मराठी लिंगांसोबत जोडा (Match nouns to Marathi genders)',
       pairs: [
         (left: 'मुलगा (boy)', right: 'पुल्लिंग'),
         (left: 'मुलगी (girl)', right: 'स्त्रीलिंग'),
@@ -682,9 +715,15 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       lessonId: 'mr_grammar_postpositions',
       type: ExerciseType.mcq,
       prompt: '"घरामध्ये" चा अर्थ काय?',
-      options: ['on the house', 'in the house', 'from the house', 'to the house'],
+      options: [
+        'on the house',
+        'in the house',
+        'from the house',
+        'to the house'
+      ],
       correctIndex: 1,
-      explanation: 'मध्ये (madhye) = in/inside. घरामध्ये = in the house. postposition संज्ञानंतर येते.',
+      explanation:
+          'मध्ये (madhye) = in/inside. घरामध्ये = in the house. postposition संज्ञानंतर येते.',
     ),
     Exercise(
       id: 'ex_mr_post_2',
@@ -693,7 +732,8 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
       prompt: '"मुंबईहून" चा अर्थ काय?',
       options: ['to Mumbai', 'in Mumbai', 'from Mumbai', 'near Mumbai'],
       correctIndex: 2,
-      explanation: 'हून (hūn) = from. मुंबईहून = from Mumbai. हिंदीच्या से च्या ऐवजी मराठीत हून.',
+      explanation:
+          'हून (hūn) = from. मुंबईहून = from Mumbai. हिंदीच्या से च्या ऐवजी मराठीत हून.',
     ),
     Exercise(
       id: 'ex_mr_post_3',
@@ -704,13 +744,15 @@ final Map<String, List<Exercise>> marathiExercisesByLesson = {
         'on the table',
         'On the table',
       ],
-      explanation: 'टेबलावर = on the table. वर (var) = on. टेबल + वर = on the table.',
+      explanation:
+          'टेबलावर = on the table. वर (var) = on. टेबल + वर = on the table.',
     ),
     Exercise(
       id: 'ex_mr_post_4',
       lessonId: 'mr_grammar_postpositions',
       type: ExerciseType.matching,
-      prompt: 'Postpositions ना अर्थांसोबत जोडा (Match postpositions to meanings)',
+      prompt:
+          'Postpositions ना अर्थांसोबत जोडा (Match postpositions to meanings)',
       pairs: [
         (left: 'मध्ये', right: 'in'),
         (left: 'वर', right: 'on'),

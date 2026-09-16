@@ -64,7 +64,8 @@ void main() {
       final notifier = buildNotifier()..goToPage(99);
       await flushAsyncWrites();
 
-      expect(notifier.state.currentPage, AppConstants.onboardingScreenCount - 1);
+      expect(
+          notifier.state.currentPage, AppConstants.onboardingScreenCount - 1);
       expect(storage.onboardingPage, AppConstants.onboardingScreenCount - 1);
     });
 
@@ -74,7 +75,8 @@ void main() {
         ..nextPage();
       await flushAsyncWrites();
 
-      expect(notifier.state.currentPage, AppConstants.onboardingScreenCount - 1);
+      expect(
+          notifier.state.currentPage, AppConstants.onboardingScreenCount - 1);
       expect(storage.onboardingPage, AppConstants.onboardingScreenCount - 1);
     });
 
@@ -136,8 +138,7 @@ void main() {
   });
 
   group('page-count constant', () {
-    test('AppConstants.onboardingScreenCount matches the real flow (6)',
-        () {
+    test('AppConstants.onboardingScreenCount matches the real flow (6)', () {
       // Audit defect #17: the constant claimed 7 (the PRD's screen count
       // including the splash) while the actual PageView hosts 6 pages.
       expect(AppConstants.onboardingScreenCount, 6);
@@ -148,8 +149,8 @@ void main() {
       for (var i = 0; i < AppConstants.onboardingScreenCount - 1; i++) {
         notifier.nextPage();
       }
-      expect(notifier.state.currentPage,
-          AppConstants.onboardingScreenCount - 1);
+      expect(
+          notifier.state.currentPage, AppConstants.onboardingScreenCount - 1);
       expect(notifier.state.isComplete, isFalse);
     });
   });

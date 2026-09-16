@@ -3,6 +3,7 @@
 /// Uses the brand XP-gold accent with a Material glyph (never emoji) so it
 /// renders identically on every device and in both themes.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';

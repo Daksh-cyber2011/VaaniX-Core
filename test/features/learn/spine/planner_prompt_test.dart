@@ -52,8 +52,7 @@ PlannerContext _context({
     profile: profile,
     minutesAvailable: minutes,
     recentMistakeTitles: const ['Greetings'],
-    supportedActivityTypes:
-        kinds ?? kDeterministicPlannerActivityKinds,
+    supportedActivityTypes: kinds ?? kDeterministicPlannerActivityKinds,
   );
 }
 
@@ -77,7 +76,8 @@ void main() {
       final prompt = buildPlannerSystemPrompt(
         supportedActivityTypes: kDeterministicPlannerActivityKinds,
       );
-      expect(prompt, contains('ONLY conceptIds that appear in the concept menu'));
+      expect(
+          prompt, contains('ONLY conceptIds that appear in the concept menu'));
       expect(prompt, contains('Never mix languages'));
       expect(prompt, contains('1..5'));
     });
@@ -118,8 +118,7 @@ void main() {
       expect(prompt, contains('Language: Hindi (code: hi).'));
     });
 
-    test('concept menu lists every trusted concept with its status',
-        () {
+    test('concept menu lists every trusted concept with its status', () {
       final state = LearningState(
         languageCode: 'hi',
         conceptMasteries: {
@@ -157,8 +156,7 @@ void main() {
       expect(prompt, contains('no more than 25 minutes'));
     });
 
-    test('empty graph renders an explicit empty menu (stub languages)',
-        () {
+    test('empty graph renders an explicit empty menu (stub languages)', () {
       final emptyGraph = ConceptGraph.forCurriculum(
         languageCode: 'kn',
         chapters: const [],
@@ -175,8 +173,7 @@ void main() {
       expect(json!['activities'], isEmpty);
     });
 
-    test('decodes JSON inside markdown fences with surrounding prose',
-        () {
+    test('decodes JSON inside markdown fences with surrounding prose', () {
       const raw = '''
 Here is your plan:
 
@@ -192,15 +189,13 @@ Hope this helps!
     });
 
     test('decodes JSON embedded in prose without fences', () {
-      final json =
-          extractPlanJson('Sure! {"activities": [{"a": 1}]} — enjoy!');
+      final json = extractPlanJson('Sure! {"activities": [{"a": 1}]} — enjoy!');
       expect(json, isNotNull);
       expect(json!['activities'], hasLength(1));
     });
 
     test('braces inside string values never break the scan', () {
-      const raw =
-          '{"focusSummary": "use { and } freely", "activities": []}';
+      const raw = '{"focusSummary": "use { and } freely", "activities": []}';
       final json = extractPlanJson('noise $raw noise');
       expect(json, isNotNull);
       expect(json!['focusSummary'], 'use { and } freely');

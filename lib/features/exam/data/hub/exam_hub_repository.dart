@@ -43,8 +43,7 @@ class ExamHubRepository {
   /// The plan task-type names completed on [dayKey] for [trackId]
   /// ('practice', 'review', 'weakArea', 'pyq', 'mock'). Empty when
   /// nothing happened that day.
-  Future<Set<String>> loadDayCompletions(
-      String trackId, String dayKey) async {
+  Future<Set<String>> loadDayCompletions(String trackId, String dayKey) async {
     final doc = await _loadCompletionsDoc();
     final track = doc[trackId];
     if (track is! Map<String, dynamic>) return const <String>{};

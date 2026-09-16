@@ -62,11 +62,11 @@ class _FailingProfileRepository implements UserProfileRepository {
   Future<Result<int>> recordDailyActivity() async => err(const ServerFailure());
 
   @override
-  Future<Result<void>> resetLearningStreak() async => err(const ServerFailure());
+  Future<Result<void>> resetLearningStreak() async =>
+      err(const ServerFailure());
 }
 
-String _isoDate(DateTime d) =>
-    '${d.year.toString().padLeft(4, '0')}'
+String _isoDate(DateTime d) => '${d.year.toString().padLeft(4, '0')}'
     '-${d.month.toString().padLeft(2, '0')}'
     '-${d.day.toString().padLeft(2, '0')}';
 

@@ -101,12 +101,11 @@ class AchievementChecker {
         // journey progress everywhere. The ledger is idempotent per
         // achievement and never touches completed-lesson records.
         if (ach.xpReward > 0) {
-          final xpResult = await _ref
-              .read(progressRepositoryProvider)
-              .awardBonusXp(
-                sourceId: 'ach_${ach.id}',
-                amount: ach.xpReward,
-              );
+          final xpResult =
+              await _ref.read(progressRepositoryProvider).awardBonusXp(
+                    sourceId: 'ach_${ach.id}',
+                    amount: ach.xpReward,
+                  );
           xpResult.fold(
             (_) {},
             (_) => _ref.invalidate(xpTotalProvider),

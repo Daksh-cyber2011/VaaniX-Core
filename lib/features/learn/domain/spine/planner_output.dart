@@ -57,8 +57,7 @@ class AiPlanParser {
     // Plan-level language gate (Master Brief §14 + §47): a plan that
     // claims another language is rejected whole — never executed.
     final claimedLanguage = _asString(json['language']);
-    if (claimedLanguage.isNotEmpty &&
-        claimedLanguage != context.languageCode) {
+    if (claimedLanguage.isNotEmpty && claimedLanguage != context.languageCode) {
       return Left(AiServiceFailure(
         'Planner returned a plan for "$claimedLanguage" '
         'while learning "${context.languageCode}"',
@@ -156,9 +155,8 @@ class AiPlanParser {
     }
 
     // §14: difficulty valid (1..5).
-    final knob = (raw['difficulty'] is num)
-        ? (raw['difficulty'] as num).toInt()
-        : 0;
+    final knob =
+        (raw['difficulty'] is num) ? (raw['difficulty'] as num).toInt() : 0;
     if (knob < PlannerDecision.kMinDifficulty ||
         knob > PlannerDecision.kMaxDifficulty) {
       return null;

@@ -83,34 +83,34 @@ class _VaaniXTextFieldState extends State<VaaniXTextField> {
             const SizedBox(height: 8),
           ],
           TextFormField(
-          controller: widget.controller,
-          obscureText: _obscureText,
-          keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          onChanged: widget.onChanged,
-          onFieldSubmitted: widget.onSubmitted,
-          validator: widget.validator,
-          enabled: widget.enabled,
-          autofocus: widget.autofocus,
-          maxLines: widget.isPassword ? 1 : widget.maxLines,
-          style: AppTextStyles.bodyMedium(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            errorText: widget.errorText,
-            prefixIcon: widget.prefixIcon,
-            suffixIcon: widget.isPassword
-                ? IconButton(
-                    tooltip: _obscureText ? 'Show password' : 'Hide password',
-                    icon: Icon(
-                      _obscureText
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                    ),
-                    onPressed: _toggleObscure,
-                  )
-                : widget.suffixIcon,
+            controller: widget.controller,
+            obscureText: _obscureText,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            onChanged: widget.onChanged,
+            onFieldSubmitted: widget.onSubmitted,
+            validator: widget.validator,
+            enabled: widget.enabled,
+            autofocus: widget.autofocus,
+            maxLines: widget.isPassword ? 1 : widget.maxLines,
+            style: AppTextStyles.bodyMedium(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            decoration: InputDecoration(
+              hintText: widget.hint,
+              errorText: widget.errorText,
+              prefixIcon: widget.prefixIcon,
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      tooltip: _obscureText ? 'Show password' : 'Hide password',
+                      icon: Icon(
+                        _obscureText
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: _toggleObscure,
+                    )
+                  : widget.suffixIcon,
             ),
           ),
         ],

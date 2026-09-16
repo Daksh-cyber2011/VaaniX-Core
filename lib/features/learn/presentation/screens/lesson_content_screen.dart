@@ -177,9 +177,8 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
             await ref.read(milestoneCheckerProvider).checkMilestones();
         if (mounted && milestones.isNotEmpty) {
           final first = milestones.first;
-          final extra = milestones.length > 1
-              ? ' (+${milestones.length - 1} more)'
-              : '';
+          final extra =
+              milestones.length > 1 ? ' (+${milestones.length - 1} more)' : '';
           ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
                 VanEventType.milestoneUnlocked,
                 message: 'Milestone unlocked: ${first.title}!',
@@ -354,9 +353,8 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
               ),
             ),
             OutlinedButton(
-              onPressed: () =>
-                  context.go(RouteNames.lessonPractice
-                      .replaceFirst(':lessonId', widget.lesson.id)),
+              onPressed: () => context.go(RouteNames.lessonPractice
+                  .replaceFirst(':lessonId', widget.lesson.id)),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 48),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -396,9 +394,8 @@ class _LessonContentScreenState extends ConsumerState<LessonContentScreen> {
               ),
             ],
             OutlinedButton(
-              onPressed: () =>
-                  context.go(RouteNames.lessonPractice
-                      .replaceFirst(':lessonId', widget.lesson.id)),
+              onPressed: () => context.go(RouteNames.lessonPractice
+                  .replaceFirst(':lessonId', widget.lesson.id)),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(0, 48),
                 padding: const EdgeInsets.symmetric(horizontal: 16),

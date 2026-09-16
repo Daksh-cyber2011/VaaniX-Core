@@ -351,8 +351,11 @@ class _ExerciseRunner extends ConsumerStatefulWidget {
 class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
   /// Display preparation (deterministic shuffle) — mirrors the practice
   /// engine's [prepareExerciseOptions] exactly, for every type.
-  late final ({List<String> options, int correctIndex, List<int> pairIndexByDisplay})
-      _display = prepareExerciseOptions(widget.exercise, 0);
+  late final ({
+    List<String> options,
+    int correctIndex,
+    List<int> pairIndexByDisplay
+  }) _display = prepareExerciseOptions(widget.exercise, 0);
 
   String _answerText = '';
   List<String> _chosen = [];
@@ -513,8 +516,8 @@ class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
                 borderRadius: BorderRadius.circular(AppDimens.radiusMd),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
                     color: _lockAll && i == _display.correctIndex
                         ? AppColors.success.withValues(alpha: 0.12)
@@ -574,9 +577,10 @@ class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
               const SizedBox(width: 12),
               TextButton(
                 onPressed: () => _submit(false),
-                child: Text('Not sure', style: AppTextStyles.labelLarge(
-                  color: subtext,
-                )),
+                child: Text('Not sure',
+                    style: AppTextStyles.labelLarge(
+                      color: subtext,
+                    )),
               ),
             ],
           ),
@@ -651,8 +655,9 @@ class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
         if (!_lockAll)
           PrimaryButton(
             label: 'Check',
-            onPressed:
-                _chosen.length == exercise.items.length ? _submitOrdering : null,
+            onPressed: _chosen.length == exercise.items.length
+                ? _submitOrdering
+                : null,
           ),
       ],
     );
@@ -695,8 +700,8 @@ class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
                   borderRadius: BorderRadius.circular(AppDimens.radiusMd),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
                       color: _pendingLeft == i
                           ? AppColors.primary.withValues(alpha: 0.12)
@@ -772,9 +777,8 @@ class _ExerciseRunnerState extends ConsumerState<_ExerciseRunner> {
         if (!_lockAll)
           PrimaryButton(
             label: 'Check',
-            onPressed: _pairs.length == exercise.pairs.length
-                ? _submitMatching
-                : null,
+            onPressed:
+                _pairs.length == exercise.pairs.length ? _submitMatching : null,
           ),
         if (_pendingLeft != null)
           Padding(
@@ -899,8 +903,7 @@ class _FeedbackView extends ConsumerWidget {
 
   String _answerReveal(Exercise exercise) => switch (exercise.type) {
         ExerciseType.ordering => exercise.items.join(' → '),
-        ExerciseType.translation =>
-          exercise.acceptedAnswers.firstOrNull ?? '',
+        ExerciseType.translation => exercise.acceptedAnswers.firstOrNull ?? '',
         ExerciseType.matching => [
             for (final p in exercise.pairs) '${p.left} = ${p.right}',
           ].join('  ·  '),

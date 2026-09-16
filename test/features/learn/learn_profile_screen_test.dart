@@ -121,16 +121,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     // Provider state updated...
-    final profile =
-        container.read(learnerProfileProvider(LearnLanguage.hindi));
+    final profile = container.read(learnerProfileProvider(LearnLanguage.hindi));
     expect(profile.goal, LearningGoal.travel);
     expect(profile.desiredLevel, DesiredLevel.advanced);
 
     // ...storage persisted (fresh repository read over the same prefs)...
-    final persisted =
-        container.read(learnProfileRepositoryProvider).getProfile(
-              LearnLanguage.hindi,
-            );
+    final persisted = container.read(learnProfileRepositoryProvider).getProfile(
+          LearnLanguage.hindi,
+        );
     expect(persisted!.goal, LearningGoal.travel);
 
     // ...the configured flag flipped (Learn screen prompt disappears)...

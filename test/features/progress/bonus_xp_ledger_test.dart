@@ -50,8 +50,10 @@ void main() {
     final (container, repo) = await makeRepo();
     addTearDown(container.dispose);
 
-    final first = await repo.awardBonusXp(sourceId: 'ach_test_badge', amount: 25);
-    final second = await repo.awardBonusXp(sourceId: 'ach_test_badge', amount: 25);
+    final first =
+        await repo.awardBonusXp(sourceId: 'ach_test_badge', amount: 25);
+    final second =
+        await repo.awardBonusXp(sourceId: 'ach_test_badge', amount: 25);
 
     expect(first.fold((_) => -1, (v) => v), 25);
     expect(second.fold((_) => -1, (v) => v), 25,
@@ -94,8 +96,7 @@ void main() {
         reason: 'synthetic achievement ids must be stripped');
   });
 
-  test('checker-driven unlock keeps lesson ids clean but awards XP',
-      () async {
+  test('checker-driven unlock keeps lesson ids clean but awards XP', () async {
     final (container, repo) = await makeRepo();
     addTearDown(container.dispose);
 

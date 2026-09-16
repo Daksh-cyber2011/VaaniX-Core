@@ -21,8 +21,7 @@ import 'package:vaanix_app/features/progress/presentation/providers/adaptive_pro
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<ProviderContainer> makeContainer(
-      Map<String, Object> seed) async {
+  Future<ProviderContainer> makeContainer(Map<String, Object> seed) async {
     SharedPreferences.setMockInitialValues(seed);
     final prefs = await SharedPreferences.getInstance();
     final container = ProviderContainer(

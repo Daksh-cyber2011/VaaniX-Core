@@ -164,8 +164,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: VaaniXColors.examCyanAccent
-                              .withValues(alpha: 0.3 + (_pulseController.value * 0.5)),
+                          color: VaaniXColors.examCyanAccent.withValues(
+                              alpha: 0.3 + (_pulseController.value * 0.5)),
                           blurRadius: 6,
                           spreadRadius: 2,
                         ),
@@ -589,9 +589,8 @@ class _DiagnosticBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isAlert
-        ? VaaniXColors.telemetryRose
-        : VaaniXColors.examCyanAccent;
+    final color =
+        isAlert ? VaaniXColors.telemetryRose : VaaniXColors.examCyanAccent;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

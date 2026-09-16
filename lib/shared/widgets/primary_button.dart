@@ -10,6 +10,7 @@
 /// standard premium mobile micro-interaction (iOS system buttons behave the
 /// same way). Haptic is suppressed while [isLoading] is true.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';

@@ -169,75 +169,75 @@ class _ModeCard extends StatelessWidget {
       label: '${option.title}, ${option.subtitle}',
       child: ExcludeSemantics(
         child: AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color: isSelected
-            ? option.color.withValues(alpha: 0.08)
-            : Theme.of(context).cardTheme.color,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected
-              ? option.color
-              : (isDark ? AppColors.borderDark : AppColors.borderLight),
-          width: isSelected ? 2 : 1,
-        ),
-        boxShadow: isSelected
-            ? [
-                BoxShadow(
-                  color: option.color.withValues(alpha: 0.15),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: option.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Center(
-                  child: Icon(option.icon, size: 24, color: option.color),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(option.title, style: AppTextStyles.titleMedium()),
-                    const SizedBox(height: 2),
-                    Text(
-                      option.subtitle,
-                      style: AppTextStyles.bodySmall(color: subtext),
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? option.color.withValues(alpha: 0.08)
+                : Theme.of(context).cardTheme.color,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected
+                  ? option.color
+                  : (isDark ? AppColors.borderDark : AppColors.borderLight),
+              width: isSelected ? 2 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: option.color.withValues(alpha: 0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
-                  ],
-                ),
+                  ]
+                : null,
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: option.color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: Icon(option.icon, size: 24, color: option.color),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(option.title, style: AppTextStyles.titleMedium()),
+                        const SizedBox(height: 2),
+                        Text(
+                          option.subtitle,
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedScale(
+                    scale: isSelected ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(
+                      Icons.check_circle_rounded,
+                      color: option.color,
+                      size: 22,
+                    ),
+                  ),
+                ],
               ),
-              AnimatedScale(
-                scale: isSelected ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  Icons.check_circle_rounded,
-                  color: option.color,
-                  size: 22,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-      ),
       ),
     );
   }

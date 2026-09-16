@@ -92,9 +92,7 @@ class _ExamMockScreenState extends ConsumerState<ExamMockScreen> {
             _resetInput();
           },
           onAdvance: () async {
-            await ref
-                .read(examMockProvider(widget.trackId).notifier)
-                .advance();
+            await ref.read(examMockProvider(widget.trackId).notifier).advance();
             _resetInput();
           },
           onReveal: () async {
@@ -111,8 +109,7 @@ class _ExamMockScreenState extends ConsumerState<ExamMockScreen> {
     await ref
         .read(examMockProvider(widget.trackId).notifier)
         .start(kind, focusSectionId: focusSectionId);
-    final paper =
-        ref.read(examMockProvider(widget.trackId)).value?.paper;
+    final paper = ref.read(examMockProvider(widget.trackId)).value?.paper;
     if (mounted && paper != null) {
       _startTicker(paper.timeLimitMinutes);
     }
@@ -539,9 +536,7 @@ class _ResultView extends StatelessWidget {
       children: [
         VanSpeechStrip(
           message: result.summary,
-          state: result.hasWeakSection
-              ? VanState.achievement
-              : VanState.happy,
+          state: result.hasWeakSection ? VanState.achievement : VanState.happy,
         ),
         const SizedBox(height: 8),
         // M10: the honest XP/streak line for this finished mock.
@@ -618,8 +613,7 @@ class _OptionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 4),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
                 ? AppColors.primary.withValues(alpha: 0.10)
@@ -631,9 +625,7 @@ class _OptionTile extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                selected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off,
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
                 size: 18,
                 color: selected ? AppColors.primary : AppColors.subtextLight,
               ),
@@ -679,8 +671,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

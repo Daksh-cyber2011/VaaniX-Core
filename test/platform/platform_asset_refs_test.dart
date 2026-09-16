@@ -138,8 +138,7 @@ void main() {
   });
 
   group('ios Podfile', () {
-    test('exists and pins the deployment target used by Runner.xcodeproj',
-        () {
+    test('exists and pins the deployment target used by Runner.xcodeproj', () {
       final file = File('$root/ios/Podfile');
       expect(file.existsSync(), isTrue, reason: 'ios/Podfile missing');
       final content = file.readAsStringSync();

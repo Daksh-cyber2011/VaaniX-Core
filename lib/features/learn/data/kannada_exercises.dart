@@ -29,7 +29,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_vowels_1',
       lessonId: 'kn_script_vowels',
       type: ExerciseType.mcq,
-      prompt: 'ಕನ್ನಡದಲ್ಲಿ ಎಷ್ಟು ಸ್ವರಗಳಿವೆ? (How many vowels does Kannada have?)',
+      prompt:
+          'ಕನ್ನಡದಲ್ಲಿ ಎಷ್ಟು ಸ್ವರಗಳಿವೆ? (How many vowels does Kannada have?)',
       options: ['10', '11', '13', '14'],
       correctIndex: 3,
       explanation:
@@ -39,7 +40,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_vowels_2',
       lessonId: 'kn_script_vowels',
       type: ExerciseType.matching,
-      prompt: 'ಸ್ವರಗಳನ್ನು ಅರ್ಥದೊಂದಿಗೆ ಹೊಂದಿಸಿ (Match vowels to their example words)',
+      prompt:
+          'ಸ್ವರಗಳನ್ನು ಅರ್ಥದೊಂದಿಗೆ ಹೊಂದಿಸಿ (Match vowels to their example words)',
       pairs: [
         (left: 'ಅಮ್ಮ', right: 'a — mother'),
         (left: 'ಆಕಾಶ', right: 'ā — sky'),
@@ -113,7 +115,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_matras_2',
       lessonId: 'kn_script_matras',
       type: ExerciseType.matching,
-      prompt: 'ಗುಣಿತಾಕ್ಷರಗಳನ್ನು ಹೊಂದಿಸಿ (Match the developed letters to sounds)',
+      prompt:
+          'ಗುಣಿತಾಕ್ಷರಗಳನ್ನು ಹೊಂದಿಸಿ (Match the developed letters to sounds)',
       pairs: [
         (left: 'ಕಾ', right: 'kā'),
         (left: 'ಕಿ', right: 'ki'),
@@ -228,7 +231,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_intro_1',
       lessonId: 'kn_greet_intro',
       type: ExerciseType.translation,
-      prompt: "ಗೆಳೆಯನ ಹೆಸರನ್ನು ಕೇಳಿ — 'What is your name?' (to a FRIEND, intimate)",
+      prompt:
+          "ಗೆಳೆಯನ ಹೆಸರನ್ನು ಕೇಳಿ — 'What is your name?' (to a FRIEND, intimate)",
       acceptedAnswers: ['ನಿನ್ನ ಹೆಸರು ಏನು', 'ninna hesaru enu'],
       explanation:
           'ನಿನ್ನ ಹೆಸರು ಏನು? is the intimate form. For respect: ನಿಮ್ಮ ಹೆಸರು ಏನು? — ನಿನ್ನ (your-intimate) vs ನಿಮ್ಮ (your-respectful).',
@@ -408,7 +412,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_daily2_3',
       lessonId: 'kn_daily_questions',
       type: ExerciseType.mcq,
-      prompt: '"ನಾನು ಗೊತ್ತಿಲ್ಲ" — ಇದರ ಅರ್ಥ: (The best everyday "I don\'t know" is…)',
+      prompt:
+          '"ನಾನು ಗೊತ್ತಿಲ್ಲ" — ಇದರ ಅರ್ಥ: (The best everyday "I don\'t know" is…)',
       options: ['ಗೊತ್ತು', 'ಗೊತ್ತಿಲ್ಲ', 'ಇಷ್ಟ', 'ಸರಿ'],
       correctIndex: 1,
       explanation:
@@ -623,7 +628,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_gram3_3',
       lessonId: 'kn_grammar_cases',
       type: ExerciseType.fillBlank,
-      prompt: 'ಇದು ಅಜ್ಜಿ___ ಮನೆ. (This is grandmother\'s house — fill the possessive)',
+      prompt:
+          'ಇದು ಅಜ್ಜಿ___ ಮನೆ. (This is grandmother\'s house — fill the possessive)',
       options: ['-ಗೆ', '-ಇಂದ', '-ಯ', '-ಜೊತೆ'],
       correctIndex: 2,
       explanation:
@@ -701,7 +707,12 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       lessonId: 'kn_reading_conversation',
       type: ExerciseType.mcq,
       prompt: "'ನಾನೂ ಬರುತ್ತೇನೆ' ಎಂದರೆ: (What does ನಾನೂ ಬರುತ್ತೇನೆ mean?)",
-      options: ['I am not coming', 'I too am coming', 'You come too', 'He comes'],
+      options: [
+        'I am not coming',
+        'I too am coming',
+        'You come too',
+        'He comes'
+      ],
       correctIndex: 1,
       explanation:
           'ನೂ = also/too, tagged on: ನಾನು + ನೂ → ನಾನೂ. From the friend dialogue: ನಾನೂ ಬರುತ್ತೇನೆ! — I\'ll come too!',
@@ -710,7 +721,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_read1_3',
       lessonId: 'kn_reading_conversation',
       type: ExerciseType.mcq,
-      prompt: "'-ತ್ತಿದ್ದೇನೆ' ಯಾವ ಕಾಲ? (The ending -ತ್ತಿದ್ದೇನೆ (ಹೋಗುತ್ತಿದ್ದೇನೆ) marks…)",
+      prompt:
+          "'-ತ್ತಿದ್ದೇನೆ' ಯಾವ ಕಾಲ? (The ending -ತ್ತಿದ್ದೇನೆ (ಹೋಗುತ್ತಿದ್ದೇನೆ) marks…)",
       options: [
         'the right-now continuous ("am going")',
         'the past ("went")',
@@ -768,14 +780,17 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       type: ExerciseType.matching,
       prompt: 'ಗಾದೆಗಳನ್ನು ಅರ್ಥದೊಂದಿಗೆ ಹೊಂದಿಸಿ (Match proverbs to meanings)',
       pairs: [
-        (left: 'ಮಾತು ಬೆಳ್ಳಿ, ಮೌನ ಬಂಗಾರ', right: 'speech is silver, silence is gold'),
+        (
+          left: 'ಮಾತು ಬೆಳ್ಳಿ, ಮೌನ ಬಂಗಾರ',
+          right: 'speech is silver, silence is gold'
+        ),
         (left: 'ಬಿತ್ತಿದ ಬೀಜ', right: 'the sown seed (sprouts)'),
         (left: 'ಮೌನ', right: 'silence'),
         (left: 'ಬೀಜ', right: 'seed'),
       ],
       explanation:
-        'Proverbs teach vocabulary plus worldview: ಬೆಳ್ಳಿ silver, ಬಂಗಾರ gold, ಬೀಜ seed, ಮೊಳಕೆ sprout.',
-      ),
+          'Proverbs teach vocabulary plus worldview: ಬೆಳ್ಳಿ silver, ಬಂಗಾರ gold, ಬೀಜ seed, ಮೊಳಕೆ sprout.',
+    ),
     Exercise(
       id: 'ex_kn_read3_2',
       lessonId: 'kn_reading_proverbs',
@@ -820,7 +835,8 @@ final Map<String, List<Exercise>> kannadaExercisesByLesson = {
       id: 'ex_kn_read4_2',
       lessonId: 'kn_reading_review',
       type: ExerciseType.translation,
-      prompt: 'ಸ್ವಯಂ-ಪರೀಕ್ಷೆ: "ನನ್ನ ಹೆಸರು ___" — complete it with YOUR name (type any name)',
+      prompt:
+          'ಸ್ವಯಂ-ಪರೀಕ್ಷೆ: "ನನ್ನ ಹೆಸರು ___" — complete it with YOUR name (type any name)',
       acceptedAnswers: ['ನನ್ನ ಹೆಸರು', 'nanna hesaru'],
       explanation:
           'ನನ್ನ ಹೆಸರು + [your name]. The first sentence every learner says — and now you can build ten more around it.',

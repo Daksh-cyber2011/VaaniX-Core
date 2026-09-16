@@ -167,8 +167,7 @@ void main() {
       expect(criterion.progressOf(evidence), 0.0);
     });
 
-    test('full lessons + full mastery pass when the chapter has no exams',
-        () {
+    test('full lessons + full mastery pass when the chapter has no exams', () {
       // Learn Mode chapters ship no exam questions today: the gate is
       // carried by practice mastery, never silently dropped.
       final evidence = _evidence(
@@ -184,8 +183,7 @@ void main() {
       expect(criterion.progressOf(evidence), 1.0);
     });
 
-    test('a chapter WITH exam questions requires the best attempt to pass',
-        () {
+    test('a chapter WITH exam questions requires the best attempt to pass', () {
       final quizIds = {
         'ch1': ['quiz_1'],
       };
@@ -344,10 +342,20 @@ void main() {
             'l5a': ['g'],
           };
       Map<String, int> authoredAll() => const {
-            'l1a': 2, 'l1b': 1, 'l2a': 1, 'l3a': 1, 'l4a': 1, 'l5a': 1,
+            'l1a': 2,
+            'l1b': 1,
+            'l2a': 1,
+            'l3a': 1,
+            'l4a': 1,
+            'l5a': 1,
           };
       final allLessons = const {
-        'l1a', 'l1b', 'l2a', 'l3a', 'l4a', 'l5a',
+        'l1a',
+        'l1b',
+        'l2a',
+        'l3a',
+        'l4a',
+        'l5a',
       };
 
       final at60 = _evidence(
@@ -358,11 +366,11 @@ void main() {
         attempts: attemptsOf(3),
       );
       expect(at60.overallExamFraction, closeTo(0.6, 1e-9));
-      expect(JourneyCompleteCriterion(minExamFraction: 0.6)
-          .isSatisfiedBy(at60), isTrue);
+      expect(JourneyCompleteCriterion(minExamFraction: 0.6).isSatisfiedBy(at60),
+          isTrue);
       // The Mastery Milestone bar (0.8) is NOT satisfied by 60%.
-      expect(JourneyCompleteCriterion(minExamFraction: 0.8)
-          .isSatisfiedBy(at60), isFalse);
+      expect(JourneyCompleteCriterion(minExamFraction: 0.8).isSatisfiedBy(at60),
+          isFalse);
 
       final at80 = _evidence(
         completed: allLessons,
@@ -371,8 +379,8 @@ void main() {
         quizIdsByChapter: quizIds,
         attempts: attemptsOf(4),
       );
-      expect(JourneyCompleteCriterion(minExamFraction: 0.8)
-          .isSatisfiedBy(at80), isTrue);
+      expect(JourneyCompleteCriterion(minExamFraction: 0.8).isSatisfiedBy(at80),
+          isTrue);
     });
   });
 
@@ -386,7 +394,8 @@ void main() {
     });
 
     test('progress clamps at 1.0', () {
-      expect(criterion.progressOf(_evidence(streakDays: 3)), closeTo(3 / 7, 1e-9));
+      expect(
+          criterion.progressOf(_evidence(streakDays: 3)), closeTo(3 / 7, 1e-9));
       expect(criterion.progressOf(_evidence(streakDays: 99)), 1.0);
       expect(criterion.evidenceLine(_evidence(streakDays: 3)),
           '3 of 7 day streak');
@@ -451,8 +460,7 @@ void main() {
       );
     });
 
-    test('every milestone pays a positive bonus and names its competency',
-        () {
+    test('every milestone pays a positive bonus and names its competency', () {
       for (final m in MilestoneDefinitions.all) {
         expect(m.xpReward, greaterThan(0), reason: '${m.id} must pay XP');
         expect(m.competency, isNotEmpty);

@@ -75,15 +75,15 @@ class DeterministicPlanner implements LearningPlanner {
     for (final concept in graph.concepts) {
       final mastery = state.conceptMasteries[concept.id];
       if (mastery == null) continue; // not started → not "weak"
-      if (mastery.stage.index < MasteryStage.understood.index) weak.add(concept);
+      if (mastery.stage.index < MasteryStage.understood.index)
+        weak.add(concept);
     }
     for (final concept in weak.take(2)) {
       activities.add(LearningActivity(
         id: 'act-repair-${concept.id}',
         kind: ActivityKind.weakRepair,
         title: 'Practice: ${concept.title}',
-        reason:
-            '${concept.title} still needs practice to lock it in.',
+        reason: '${concept.title} still needs practice to lock it in.',
         conceptId: concept.id,
         lessonId: concept.lessonId,
         difficulty: concept.difficulty,
@@ -117,8 +117,7 @@ class DeterministicPlanner implements LearningPlanner {
       for (final concept in graph.concepts) {
         if (started.contains(concept.id)) continue;
         if (!graph.isUnlocked(concept.id, {
-          for (final e in state.conceptMasteries.entries)
-            e.key: e.value.stage,
+          for (final e in state.conceptMasteries.entries) e.key: e.value.stage,
         })) {
           continue;
         }
@@ -130,8 +129,7 @@ class DeterministicPlanner implements LearningPlanner {
           id: 'act-new-${next.id}',
           kind: ActivityKind.newLearning,
           title: next.title,
-          reason:
-              'Up next on your ${context.languageName} journey.',
+          reason: 'Up next on your ${context.languageName} journey.',
           conceptId: next.id,
           lessonId: next.lessonId,
           difficulty: next.difficulty,

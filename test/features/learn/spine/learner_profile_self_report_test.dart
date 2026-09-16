@@ -60,9 +60,8 @@ void main() {
         selfReport: SelfReport.recognizeScript,
         goal: LearningGoal.conversation,
       );
-      final restored =
-          LearnerProfile.fromJson(jsonDecode(jsonEncode(profile.toJson()))
-              as Map<String, dynamic>);
+      final restored = LearnerProfile.fromJson(
+          jsonDecode(jsonEncode(profile.toJson())) as Map<String, dynamic>);
       expect(restored.selfReport, SelfReport.recognizeScript);
       expect(restored.goal, LearningGoal.conversation);
       expect(restored.language, LearnLanguage.tamil);
@@ -80,16 +79,18 @@ void main() {
 
   group('enum catalogues match the Master Brief', () {
     test('goals cover §28 options', () {
-      expect(LearningGoal.values.map((g) => g.name), containsAll([
-        'general',
-        'conversation',
-        'reading',
-        'writing',
-        'travel',
-        'school',
-        'culture',
-        'mastery',
-      ]));
+      expect(
+          LearningGoal.values.map((g) => g.name),
+          containsAll([
+            'general',
+            'conversation',
+            'reading',
+            'writing',
+            'travel',
+            'school',
+            'culture',
+            'mastery',
+          ]));
     });
 
     test('desired levels cover §29 ladder with clear labels', () {

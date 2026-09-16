@@ -117,8 +117,8 @@ void main() {
     tearDown(() => container.dispose);
 
     test('serves the deterministic selection for a config', () async {
-      const config = ExamConfig(
-          chapterId: 'ch_alphabet', difficulty: Difficulty.beginner);
+      const config =
+          ExamConfig(chapterId: 'ch_alphabet', difficulty: Difficulty.beginner);
       // First read resolves the session.
       await container.read(examQuizProvider(config).future);
       final controller = container.read(examQuizProvider(config).notifier);
@@ -133,8 +133,8 @@ void main() {
     });
 
     test('restart yields a fresh attempt for the same config', () async {
-      const config = ExamConfig(
-          chapterId: 'ch_alphabet', difficulty: Difficulty.beginner);
+      const config =
+          ExamConfig(chapterId: 'ch_alphabet', difficulty: Difficulty.beginner);
       await container.read(examQuizProvider(config).future);
       final notifier = container.read(examQuizProvider(config).notifier);
 
@@ -158,8 +158,8 @@ void main() {
         () async {
       // ch_alphabet authors no advanced questions — an empty-bank config
       // must surface total == 0, never a crash on build.
-      const config = ExamConfig(
-          chapterId: 'ch_alphabet', difficulty: Difficulty.advanced);
+      const config =
+          ExamConfig(chapterId: 'ch_alphabet', difficulty: Difficulty.advanced);
       await container.read(examQuizProvider(config).future);
       final controller = container.read(examQuizProvider(config).notifier);
       expect(controller.total, 0);

@@ -104,7 +104,13 @@ class LearningSession extends Equatable {
 
   @override
   List<Object?> get props => [
-        id, planId, languageCode, kind, startedAt, status, activityIds,
+        id,
+        planId,
+        languageCode,
+        kind,
+        startedAt,
+        status,
+        activityIds,
       ];
 }
 

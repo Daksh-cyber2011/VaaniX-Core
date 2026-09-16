@@ -66,63 +66,63 @@ class MessageBubble extends StatelessWidget {
                 child: GestureDetector(
                   onLongPress: () => _copyMessage(context),
                   child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                decoration: BoxDecoration(
-                  color: _isUser
-                      ? AppColors.primary
-                      : (isDark
-                          ? AppColors.surfaceDark
-                          : AppColors.surfaceLight),
-                  borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(16),
-                    topRight: const Radius.circular(16),
-                    bottomLeft:
-                        _isUser ? const Radius.circular(16) : Radius.zero,
-                    bottomRight:
-                        _isUser ? Radius.zero : const Radius.circular(16),
-                  ),
-                  border: _isUser
-                      ? null
-                      : Border.all(
-                          color: isDark
-                              ? AppColors.borderDark
-                              : AppColors.borderLight,
-                        ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      message.content,
-                      style: hasDevanagari
-                          ? AppTextStyles.sanskritBody(
-                              color: _isUser ? Colors.white : null,
-                            )
-                          : AppTextStyles.bodyMedium(
-                              color: _isUser ? Colors.white : null,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _isUser
+                          ? AppColors.primary
+                          : (isDark
+                              ? AppColors.surfaceDark
+                              : AppColors.surfaceLight),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(16),
+                        topRight: const Radius.circular(16),
+                        bottomLeft:
+                            _isUser ? const Radius.circular(16) : Radius.zero,
+                        bottomRight:
+                            _isUser ? Radius.zero : const Radius.circular(16),
+                      ),
+                      border: _isUser
+                          ? null
+                          : Border.all(
+                              color: isDark
+                                  ? AppColors.borderDark
+                                  : AppColors.borderLight,
                             ),
                     ),
-                    if (message.createdAt != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        _formatTime(message.createdAt!),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: _isUser
-                              ? Colors.white.withValues(alpha: 0.6)
-                              : (isDark
-                                  ? AppColors.subtextDark
-                                  : AppColors.subtextLight),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message.content,
+                          style: hasDevanagari
+                              ? AppTextStyles.sanskritBody(
+                                  color: _isUser ? Colors.white : null,
+                                )
+                              : AppTextStyles.bodyMedium(
+                                  color: _isUser ? Colors.white : null,
+                                ),
                         ),
-                      ),
-                    ],
-                  ],
+                        if (message.createdAt != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            _formatTime(message.createdAt!),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: _isUser
+                                  ? Colors.white.withValues(alpha: 0.6)
+                                  : (isDark
+                                      ? AppColors.subtextDark
+                                      : AppColors.subtextLight),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          ),
           ),
           if (_isUser) const SizedBox(width: 8),
         ],

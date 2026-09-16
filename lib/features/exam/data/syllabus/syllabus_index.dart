@@ -29,8 +29,8 @@ class SyllabusCourseEntry extends Equatable {
         name: json['name'] as String,
         nameEn: (json['nameEn'] as String?) ?? '',
         file: json['file'] as String,
-        literatureStatus: SyllabusItemStatus.fromName(
-            json['literatureStatus'] as String?),
+        literatureStatus:
+            SyllabusItemStatus.fromName(json['literatureStatus'] as String?),
         subjectCode: json['subjectCode'] as String?,
       );
 
@@ -74,8 +74,7 @@ class SyllabusSubjectEntry extends Equatable {
         id: json['id'] as String,
         name: json['name'] as String,
         courses: (json['courses'] as List<dynamic>)
-            .map((e) =>
-                SyllabusCourseEntry.fromJson(e as Map<String, dynamic>))
+            .map((e) => SyllabusCourseEntry.fromJson(e as Map<String, dynamic>))
             .toList(),
       );
 
@@ -143,10 +142,8 @@ class SyllabusIndex extends Equatable {
   final List<SyllabusClassEntry> classes;
 
   /// All course entries across the catalog.
-  List<SyllabusCourseEntry> get allCourses => classes
-      .expand((c) => c.subjects)
-      .expand((s) => s.courses)
-      .toList();
+  List<SyllabusCourseEntry> get allCourses =>
+      classes.expand((c) => c.subjects).expand((s) => s.courses).toList();
 
   /// Look up a course entry by track id.
   SyllabusCourseEntry? courseById(String trackId) {

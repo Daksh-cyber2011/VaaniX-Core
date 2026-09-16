@@ -103,7 +103,9 @@ class _AudioCadenceWaveformState extends State<AudioCadenceWaveform>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = widget.accentColor ??
-        (isDark ? VaaniXColors.examCyanAccent : VaaniXColors.learnPrimaryViolet);
+        (isDark
+            ? VaaniXColors.examCyanAccent
+            : VaaniXColors.learnPrimaryViolet);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -166,9 +168,7 @@ class _AudioCadenceWaveformState extends State<AudioCadenceWaveform>
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    _isPlaying
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
+                    _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                     color: primary,
                     size: 22,
                   ),
@@ -187,8 +187,8 @@ class _AudioCadenceWaveformState extends State<AudioCadenceWaveform>
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: List.generate(_barHeights.length, (i) {
                           final baseHeight = _barHeights[i];
-                          final animOffset =
-                              math.sin((_waveController.value * math.pi * 2) +
+                          final animOffset = math.sin(
+                              (_waveController.value * math.pi * 2) +
                                   (i * 0.4));
                           final dynamicScale = _isPlaying
                               ? (baseHeight + (animOffset * 0.25))

@@ -67,8 +67,7 @@ class LearnScreen extends ConsumerWidget {
           tooltip: selectedSpec == null
               ? 'Choose Learn language'
               : 'Learn language: ${selectedSpec.englishName}',
-          onPressed: () =>
-              context.go(RouteNames.learnLanguageSelection),
+          onPressed: () => context.go(RouteNames.learnLanguageSelection),
         ),
         // M2: per-language learner profile. Only meaningful once a
         // language is selected (profiles are per-language).
@@ -133,8 +132,7 @@ class LearnScreen extends ConsumerWidget {
                         .length;
                     // Real persisted practice mastery per lesson (empty when no
                     // exercises are authored for that lesson yet).
-                    final practice =
-                        <String, ({int mastered, int total})>{};
+                    final practice = <String, ({int mastered, int total})>{};
                     for (final lesson in chapter.lessons) {
                       final mastered = ref
                           .watch(masteredExercisesProvider(lesson.id))
@@ -197,31 +195,31 @@ class LearnScreen extends ConsumerWidget {
         child: Semantics(
           liveRegion: true,
           child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const VanWidget(
-              // A system stumble — the confused/reassuring expression, not
-              // the tired "sad" pose (VAN state-context correctness).
-              state: VanState.error,
-              size: 140,
-              showSpeechBubble: true,
-              dialogueText: 'I could not reach the lesson shelf.',
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Lessons live on your device, so this is usually temporary. '
-              'Your progress is safe.',
-              style: AppTextStyles.bodyMedium(color: subtext),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            PrimaryButton(
-              label: 'Try again',
-              icon: const Icon(Icons.refresh_rounded, size: 20),
-              onPressed: () => ref.invalidate(activeCurriculumProvider),
-            ),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const VanWidget(
+                // A system stumble — the confused/reassuring expression, not
+                // the tired "sad" pose (VAN state-context correctness).
+                state: VanState.error,
+                size: 140,
+                showSpeechBubble: true,
+                dialogueText: 'I could not reach the lesson shelf.',
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Lessons live on your device, so this is usually temporary. '
+                'Your progress is safe.',
+                style: AppTextStyles.bodyMedium(color: subtext),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              PrimaryButton(
+                label: 'Try again',
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                onPressed: () => ref.invalidate(activeCurriculumProvider),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -254,8 +252,7 @@ class LearnScreen extends ConsumerWidget {
   }
 
   void _onTapLesson(BuildContext context, Lesson lesson) {
-    context.go(RouteNames.lessonContent
-        .replaceFirst(':lessonId', lesson.id));
+    context.go(RouteNames.lessonContent.replaceFirst(':lessonId', lesson.id));
   }
 }
 
@@ -402,8 +399,7 @@ class _ProfilePromptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Padding(
@@ -412,43 +408,42 @@ class _ProfilePromptCard extends StatelessWidget {
         button: true,
         container: true,
         child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
-              borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-              border: Border.all(color: borderColor),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.auto_awesome_rounded,
-                    color: AppColors.primary, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Make it yours',
-                          style: AppTextStyles.titleSmall()),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Tell VAN your goal for $languageName — '
-                            'your path adapts to it.',
-                        style: AppTextStyles.bodySmall(color: subtext),
-                      ),
-                    ],
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+                border: Border.all(color: borderColor),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.auto_awesome_rounded,
+                      color: AppColors.primary, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Make it yours',
+                            style: AppTextStyles.titleSmall()),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Tell VAN your goal for $languageName — '
+                          'your path adapts to it.',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(Icons.chevron_right_rounded,
-                    color: subtext, size: 22),
-              ],
+                  Icon(Icons.chevron_right_rounded, color: subtext, size: 22),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -473,8 +468,7 @@ class _DiagnosticPromptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
     final diagnosed = result != null;
 
@@ -484,62 +478,62 @@ class _DiagnosticPromptCard extends StatelessWidget {
         button: true,
         container: true,
         child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
-              borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-              border: Border.all(
-                color: diagnosed
-                    ? AppColors.success.withValues(alpha: 0.5)
-                    : borderColor,
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+                border: Border.all(
+                  color: diagnosed
+                      ? AppColors.success.withValues(alpha: 0.5)
+                      : borderColor,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    diagnosed
+                        ? Icons.verified_rounded
+                        : Icons.emoji_events_rounded,
+                    color: diagnosed ? AppColors.success : AppColors.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          diagnosed
+                              ? 'Your path starts at ${result!.levelLabel}'
+                              : 'Discover your level',
+                          style: AppTextStyles.titleSmall(),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          diagnosed
+                              ? 'VAN shaped your path from a quick game — '
+                                  'retake it anytime.'
+                              : 'A 3–7 minute game with VAN — and $languageName '
+                                  'learning fits you.',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: subtext,
+                    size: 22,
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Icon(
-                  diagnosed
-                      ? Icons.verified_rounded
-                      : Icons.emoji_events_rounded,
-                  color: diagnosed ? AppColors.success : AppColors.primary,
-                  size: 20,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        diagnosed
-                            ? 'Your path starts at ${result!.levelLabel}'
-                            : 'Discover your level',
-                        style: AppTextStyles.titleSmall(),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        diagnosed
-                            ? 'VAN shaped your path from a quick game — '
-                                'retake it anytime.'
-                            : 'A 3–7 minute game with VAN — and $languageName '
-                                'learning fits you.',
-                        style: AppTextStyles.bodySmall(color: subtext),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: subtext,
-                  size: 22,
-                ),
-              ],
-            ),
           ),
-        ),
         ),
       ),
     );
@@ -562,8 +556,7 @@ class _SmartPracticeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor =
-        isDark ? AppColors.borderDark : AppColors.borderLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     return Padding(
@@ -572,47 +565,47 @@ class _SmartPracticeCard extends StatelessWidget {
         button: true,
         container: true,
         child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardTheme.color,
-              borderRadius: BorderRadius.circular(AppDimens.radiusMd),
-              border: Border.all(color: borderColor),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.auto_fix_high_rounded,
-                    color: AppColors.primary, size: 20),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Smart practice',
-                          style: AppTextStyles.titleSmall()),
-                      const SizedBox(height: 2),
-                      Text(
-                        "Today's focus from your trusted $languageName "
-                            'lessons — VAN can explain, show, or quiz it '
-                            'your way.',
-                        style: AppTextStyles.bodySmall(color: subtext),
-                      ),
-                    ],
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+                border: Border.all(color: borderColor),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.auto_fix_high_rounded,
+                      color: AppColors.primary, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Smart practice',
+                            style: AppTextStyles.titleSmall()),
+                        const SizedBox(height: 2),
+                        Text(
+                          "Today's focus from your trusted $languageName "
+                          'lessons — VAN can explain, show, or quiz it '
+                          'your way.',
+                          style: AppTextStyles.bodySmall(color: subtext),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: subtext,
-                  size: 22,
-                ),
-              ],
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: subtext,
+                    size: 22,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -637,8 +630,7 @@ class _SelectedLanguageBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bannerBg =
-        isDark ? AppColors.nestWarmDark : AppColors.nestWarmLight;
+    final bannerBg = isDark ? AppColors.nestWarmDark : AppColors.nestWarmLight;
     final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
 
     // M9: curriculum availability is now derived from the LOADED
@@ -664,9 +656,8 @@ class _SelectedLanguageBanner extends StatelessWidget {
                 Row(
                   children: [
                     Directionality(
-                      textDirection: spec.isRTL
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
+                      textDirection:
+                          spec.isRTL ? TextDirection.rtl : TextDirection.ltr,
                       child: Text(
                         spec.nativeName,
                         style: AppTextStyles.titleSmall(),
@@ -690,8 +681,7 @@ class _SelectedLanguageBanner extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.swap_horiz_rounded),
             tooltip: 'Switch Learn language',
-            onPressed: () =>
-                context.go(RouteNames.learnLanguageSelection),
+            onPressed: () => context.go(RouteNames.learnLanguageSelection),
           ),
         ],
       ),

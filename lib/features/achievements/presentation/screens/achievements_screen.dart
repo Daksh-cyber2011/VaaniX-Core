@@ -25,8 +25,7 @@ class AchievementsScreen extends ConsumerWidget {
     // The unlock map loads from storage on first open; wait for it instead
     // of flashing every card as locked and reshuffling a beat later. On a
     // storage error the map resolves empty, so the list still renders.
-    final unlockedReady =
-        !ref.watch(unlockedAchievementsProvider).isLoading;
+    final unlockedReady = !ref.watch(unlockedAchievementsProvider).isLoading;
     if (!unlockedReady) {
       return VaaniXScaffold(
         title: 'Achievements',
@@ -147,9 +146,7 @@ class _AchievementCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isUnlocked
                   ? AppColors.success.withValues(alpha: 0.15)
-                  : (isDark
-                          ? AppColors.subtextDark
-                          : AppColors.subtextLight)
+                  : (isDark ? AppColors.subtextDark : AppColors.subtextLight)
                       .withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
@@ -157,9 +154,7 @@ class _AchievementCard extends StatelessWidget {
               _iconForName(ach.iconName),
               color: isUnlocked
                   ? AppColors.success
-                  : (isDark
-                      ? AppColors.subtextDark
-                      : AppColors.subtextLight),
+                  : (isDark ? AppColors.subtextDark : AppColors.subtextLight),
               size: 24,
             ),
           ),

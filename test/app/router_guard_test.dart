@@ -30,8 +30,8 @@ void main() {
 
     test('matches locations nested under a protected route', () {
       expect(isProtectedLocation('/learn/lesson/ls_greetings'), isTrue);
-      expect(isProtectedLocation('/learn/lesson/ls_greetings/practice'),
-          isTrue);
+      expect(
+          isProtectedLocation('/learn/lesson/ls_greetings/practice'), isTrue);
       expect(isProtectedLocation('/home/x'), isTrue);
       // Part 0: the Learn language picker is nested under /learn so it
       // inherits the same protection as the rest of the Learn branch.
@@ -50,8 +50,7 @@ void main() {
   });
 
   group('guardRedirect — onboarding gate', () {
-    test('redirects every non-public route while onboarding is incomplete',
-        () {
+    test('redirects every non-public route while onboarding is incomplete', () {
       const locations = [
         RouteNames.home,
         RouteNames.learn,
@@ -97,8 +96,7 @@ void main() {
   group('guardRedirect — auth gate (Supabase configured)', () {
     test(
         'unauthenticated users are redirected away from ALL protected '
-        'routes — including /chat and /achievements (Phase 5 regression)',
-        () {
+        'routes — including /chat and /achievements (Phase 5 regression)', () {
       for (final location in protectedRoutes) {
         expect(
           guardRedirect(
@@ -142,8 +140,7 @@ void main() {
   });
 
   group('guardRedirect — offline / no backend', () {
-    test('auth gate never fires without Supabase (offline-first contract)',
-        () {
+    test('auth gate never fires without Supabase (offline-first contract)', () {
       for (final location in [...protectedRoutes, ..._publicLocations]) {
         expect(
           guardRedirect(
@@ -153,8 +150,7 @@ void main() {
             isAuthenticated: false,
           ),
           isNull,
-          reason:
-              '$location must stay reachable for offline (noop-auth) users',
+          reason: '$location must stay reachable for offline (noop-auth) users',
         );
       }
     });

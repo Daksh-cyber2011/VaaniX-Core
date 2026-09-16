@@ -47,8 +47,7 @@ void main() {
     expect(digest['currentLevel'], isNull);
     expect(digest['desiredLevel'], isNull);
     expect(digest['goal'], isNull);
-    expect(digest['minutesAvailable'],
-        LearnerProfile.kDefaultDailyGoalMinutes);
+    expect(digest['minutesAvailable'], LearnerProfile.kDefaultDailyGoalMinutes);
   });
 
   test('digest carries the saved profile as structured data', () {

@@ -238,8 +238,8 @@ LearnLanguageSpec learnLanguageSpec(LearnLanguage language) {
   for (final spec in kLearnLanguageCatalogue) {
     if (spec.language == language) return spec;
   }
-  throw ArgumentError.value(language, 'language',
-      'not present in kLearnLanguageCatalogue');
+  throw ArgumentError.value(
+      language, 'language', 'not present in kLearnLanguageCatalogue');
 }
 
 /// Looks up a spec by ISO 639-1 [code] (case-insensitive).

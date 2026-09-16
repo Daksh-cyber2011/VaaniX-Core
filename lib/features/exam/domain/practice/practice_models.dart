@@ -64,8 +64,10 @@ class PracticeQuestion extends Equatable {
   final int difficultyTier;
 
   bool get isValid => switch (kind) {
-        PracticeQuestionKind.mcq =>
-          options.length == 4 && correctIndex != null && correctIndex! >= 0 && correctIndex! < options.length,
+        PracticeQuestionKind.mcq => options.length == 4 &&
+            correctIndex != null &&
+            correctIndex! >= 0 &&
+            correctIndex! < options.length,
         PracticeQuestionKind.shortAnswer => acceptedAnswers.isNotEmpty,
       };
 

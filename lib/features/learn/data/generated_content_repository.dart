@@ -35,8 +35,8 @@ class GeneratedContentRepository {
       'learn_profile_${learnLanguageSpec(language).code}_gen';
 
   /// Stable lookup key for one generated item.
-  static String itemKeyFor(String conceptId, GeneratedContentKind kind,
-          int difficultyKnob) =>
+  static String itemKeyFor(
+          String conceptId, GeneratedContentKind kind, int difficultyKnob) =>
       '$conceptId|${kind.name}|$difficultyKnob';
 
   /// How long a cached item stays serveable (matches the M4 plan cache).
@@ -68,9 +68,7 @@ class GeneratedContentRepository {
     String itemKey,
     GeneratedContent content,
   ) {
-    final entries = _readAll(language)
-        .where((e) => e.key != itemKey)
-        .toList()
+    final entries = _readAll(language).where((e) => e.key != itemKey).toList()
       ..insert(0, _CacheEntry(key: itemKey, content: content));
     // Evict beyond the cap (list is newest-insert-first).
     if (entries.length > maxEntries) {
@@ -80,7 +78,8 @@ class GeneratedContentRepository {
   }
 
   /// Removes the whole cache for [language].
-  Future<void> clear(LearnLanguage language) => _storage.remove(cacheKey(language));
+  Future<void> clear(LearnLanguage language) =>
+      _storage.remove(cacheKey(language));
 
   /// True when [content] is young enough to serve from the cache.
   static bool isFresh(GeneratedContent content, {DateTime? now}) {

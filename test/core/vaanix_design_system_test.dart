@@ -180,8 +180,7 @@ void main() {
       );
 
       expect(find.text('VAN • TACTICAL INTEL'), findsOneWidget);
-      expect(
-          find.text('Master Virodhabhas Alankar in Pad 2'), findsOneWidget);
+      expect(find.text('Master Virodhabhas Alankar in Pad 2'), findsOneWidget);
     });
 
     testWidgets('VaaniXButton responds to click and respects disabled state',

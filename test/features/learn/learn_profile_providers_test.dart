@@ -111,8 +111,7 @@ void main() {
 
     final notifier =
         container.read(learnerProfileProvider(LearnLanguage.hindi).notifier);
-    final before =
-        container.read(learnerProfileProvider(LearnLanguage.hindi));
+    final before = container.read(learnerProfileProvider(LearnLanguage.hindi));
 
     await notifier.setGoal(LearningGoal.travel); // same value
 

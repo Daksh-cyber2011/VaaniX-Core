@@ -75,7 +75,8 @@ class VanExpressionArt {
       other.available == available;
 
   @override
-  int get hashCode => Object.hash(id, expression, path, width, height, available);
+  int get hashCode =>
+      Object.hash(id, expression, path, width, height, available);
 }
 
 /// The canonical expression set as supplied, with the exact bundle paths and

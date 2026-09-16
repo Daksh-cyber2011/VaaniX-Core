@@ -163,7 +163,11 @@ class ExamLearnerProfile extends Equatable {
 
   /// Overall qualitative diagnostic band: strong / learning /
   /// needsAttention (never a percentage, §30).
-  static const Set<String> knownBands = {'strong', 'learning', 'needsAttention'};
+  static const Set<String> knownBands = {
+    'strong',
+    'learning',
+    'needsAttention'
+  };
 
   final String trackId;
 
@@ -264,8 +268,7 @@ class ExamLearnerProfile extends Equatable {
       topics: topics,
       diagnosticCompletedAtIso:
           json['diagnosticCompletedAtIso'] as String? ?? '',
-      diagnosticOverallBand:
-          knownBands.contains(band) ? band : '',
+      diagnosticOverallBand: knownBands.contains(band) ? band : '',
       schemaVersion: (json['schemaVersion'] as num?)?.toInt() ?? 0,
       updatedAtIso: json['updatedAtIso'] as String? ?? '',
     );

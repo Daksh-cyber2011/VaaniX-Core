@@ -236,9 +236,8 @@ class LearnCurriculumNotifier
 /// Returns an empty list for every language in Part 0 (no curricula
 /// authored yet). Parts A–J replace each stub asset with real content
 /// without changing this provider's contract.
-final learnCurriculumProvider =
-    AsyncNotifierProvider.family<LearnCurriculumNotifier, List<Chapter>,
-        LearnLanguage>(
+final learnCurriculumProvider = AsyncNotifierProvider.family<
+    LearnCurriculumNotifier, List<Chapter>, LearnLanguage>(
   LearnCurriculumNotifier.new,
 );
 
@@ -271,8 +270,7 @@ final learnCurriculumProvider =
 ///
 /// The Learn screen treats an empty list as "no content available" and
 /// shows the appropriate empty state.
-final activeCurriculumProvider =
-    FutureProvider<List<Chapter>>((ref) async {
+final activeCurriculumProvider = FutureProvider<List<Chapter>>((ref) async {
   final selected = ref.watch(selectedLearnLanguageProvider);
   if (selected == null) {
     // Legacy path: no Learn language chosen → show the Sanskrit Exam

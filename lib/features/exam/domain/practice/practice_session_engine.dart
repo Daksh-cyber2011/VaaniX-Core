@@ -200,8 +200,7 @@ class PracticeSessionEngine {
     }
 
     // Budget spent → final verdict, explanation revealed.
-    final closing =
-        '${result.feedback} ${q.explanation ?? ''}'.trim();
+    final closing = '${result.feedback} ${q.explanation ?? ''}'.trim();
     return PracticeSessionState(
       questions: state.questions,
       index: state.index,
@@ -224,8 +223,7 @@ class PracticeSessionEngine {
   static Map<String, bool> masteryUpdates(PracticeSessionState state) {
     final updates = <String, bool>{};
     for (final a in state.attempts) {
-      final correct =
-          a.verdict == 'correct' || a.verdict == 'partiallyCorrect';
+      final correct = a.verdict == 'correct' || a.verdict == 'partiallyCorrect';
       updates[a.topicId] = correct;
     }
     return updates;

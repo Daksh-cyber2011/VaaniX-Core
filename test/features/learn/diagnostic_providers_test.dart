@@ -58,12 +58,9 @@ DiagnosticAnswer _wrongAnswerFor(DiagnosticItem item) {
   final exercise = item.exercise;
   final display = prepareExerciseOptions(exercise, 0);
   return switch (exercise.type) {
-    ExerciseType.mcq ||
-    ExerciseType.fillBlank =>
-      DiagnosticChoiceAnswer(
-          (display.correctIndex + 1) % display.options.length),
-    ExerciseType.translation =>
-      const DiagnosticTextAnswer('definitely wrong'),
+    ExerciseType.mcq || ExerciseType.fillBlank => DiagnosticChoiceAnswer(
+        (display.correctIndex + 1) % display.options.length),
+    ExerciseType.translation => const DiagnosticTextAnswer('definitely wrong'),
     ExerciseType.matching => DiagnosticMatchAnswer({
         for (var left = 0; left < exercise.pairs.length; left++)
           left: display.pairIndexByDisplay
@@ -105,8 +102,7 @@ Future<void> _runToFinish(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('bank provider builds trusted pools for the active language',
-      () async {
+  test('bank provider builds trusted pools for the active language', () async {
     final container = await _container(prefs: {'learn_language': 'hindi'});
     addTearDown(container.dispose);
 
@@ -137,10 +133,9 @@ void main() {
     expect(result.overallLevel, 4);
 
     // 1. Persisted result (read through a fresh repository look-up).
-    final stored =
-        container.read(learnProfileRepositoryProvider).getDiagnostic(
-              LearnLanguage.hindi,
-            );
+    final stored = container.read(learnProfileRepositoryProvider).getDiagnostic(
+          LearnLanguage.hindi,
+        );
     expect(stored, isNotNull);
     expect(stored!.overallLevel, 4);
 
@@ -160,8 +155,8 @@ void main() {
 
     // 4. The spine sees the placement (persist-before-publish + the
     //    session-state rebuild signal).
-    expect(container.read(lastDiagnosticProvider(LearnLanguage.hindi)),
-        isNotNull);
+    expect(
+        container.read(lastDiagnosticProvider(LearnLanguage.hindi)), isNotNull);
 
     final learningState =
         await container.read(activeLearningStateProvider.future);
@@ -221,16 +216,15 @@ void main() {
     addTearDown(container.dispose);
 
     await _runToFinish(container, LearnLanguage.hindi, correct: true);
-    final firstLevel =
-        container.read(lastDiagnosticProvider(LearnLanguage.hindi))!
-            .overallLevel;
+    final firstLevel = container
+        .read(lastDiagnosticProvider(LearnLanguage.hindi))!
+        .overallLevel;
 
     // Fresh run with the opposite outcome.
     container.read(diagnosticSessionProvider.notifier).reset();
     await _runToFinish(container, LearnLanguage.hindi, correct: false);
 
-    final second =
-        container.read(lastDiagnosticProvider(LearnLanguage.hindi))!;
+    final second = container.read(lastDiagnosticProvider(LearnLanguage.hindi))!;
     expect(second.overallLevel, 0);
     expect(firstLevel, 4);
 
@@ -240,8 +234,7 @@ void main() {
 
   test('newly supported Kannada language builds a diagnostic session',
       () async {
-    final container =
-        await _container(prefs: {'learn_language': 'kannada'});
+    final container = await _container(prefs: {'learn_language': 'kannada'});
     addTearDown(container.dispose);
 
     final notifier = container.read(diagnosticSessionProvider.notifier);
@@ -260,7 +253,7 @@ void main() {
     container
         .read(diagnosticSessionProvider.notifier)
         .submitAnswer(const DiagnosticTextAnswer('x'));
-    expect(container.read(diagnosticSessionProvider).phase,
-        DiagnosticPhase.idle);
+    expect(
+        container.read(diagnosticSessionProvider).phase, DiagnosticPhase.idle);
   });
 }

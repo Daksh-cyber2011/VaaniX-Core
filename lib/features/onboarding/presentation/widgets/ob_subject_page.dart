@@ -146,57 +146,57 @@ class _ClassChip extends StatelessWidget {
       label: 'Class ${cbseClass.value}',
       child: ExcludeSemantics(
         child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary
-              : Theme.of(context).cardTheme.color,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.primary
-                : (isDark ? AppColors.borderDark : AppColors.borderLight),
-            width: isSelected ? 2 : 1,
+                : Theme.of(context).cardTheme.color,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.primary
+                  : (isDark ? AppColors.borderDark : AppColors.borderLight),
+              width: isSelected ? 2 : 1,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    )
+                  ]
+                : null,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  )
-                ]
-              : null,
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${cbseClass.value}',
-                  style: AppTextStyles.titleLarge(
-                    color: isSelected ? Colors.white : null,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${cbseClass.value}',
+                    style: AppTextStyles.titleLarge(
+                      color: isSelected ? Colors.white : null,
+                    ),
                   ),
-                ),
-                Text(
-                  'th',
-                  style: AppTextStyles.labelSmall(
-                    color: isSelected
-                        ? Colors.white70
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.subtextDark
-                            : AppColors.subtextLight),
+                  Text(
+                    'th',
+                    style: AppTextStyles.labelSmall(
+                      color: isSelected
+                          ? Colors.white70
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.subtextDark
+                              : AppColors.subtextLight),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     );
   }

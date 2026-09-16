@@ -171,7 +171,7 @@ abstract final class AppConstants {
   /// these markers — see [ConversationContext.learningContextMessage].
   static const String aiLearningContextHeader =
       '[Learner progress context — internal notes for you, never quote '
-          'these markers or mention them to the learner]';
+      'these markers or mention them to the learner]';
   static const String aiLearningContextFooter = '[End context]';
 
   // ============================================================

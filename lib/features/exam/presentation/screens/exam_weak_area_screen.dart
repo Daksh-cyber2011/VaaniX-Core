@@ -39,8 +39,7 @@ class ExamWeakAreaScreen extends ConsumerStatefulWidget {
   final String trackId;
 
   @override
-  ConsumerState<ExamWeakAreaScreen> createState() =>
-      _ExamWeakAreaScreenState();
+  ConsumerState<ExamWeakAreaScreen> createState() => _ExamWeakAreaScreenState();
 }
 
 class _ExamWeakAreaScreenState extends ConsumerState<ExamWeakAreaScreen> {
@@ -97,8 +96,7 @@ class _SessionUnavailable extends ConsumerWidget {
           PrimaryButton.secondary(
             label: 'फिर से कोशिश करें',
             icon: const Icon(Icons.refresh),
-            onPressed: () =>
-                ref.invalidate(weakAreaOverviewProvider(trackId)),
+            onPressed: () => ref.invalidate(weakAreaOverviewProvider(trackId)),
           ),
         ],
       ),
@@ -158,7 +156,8 @@ class _WeakAreaBody extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('कमज़ोर क्षेत्र — सबूत के साथ', style: AppTextStyles.titleSmall()),
+              Text('कमज़ोर क्षेत्र — सबूत के साथ',
+                  style: AppTextStyles.titleSmall()),
               const SizedBox(height: 4),
               Text(report.evidenceNote, style: AppTextStyles.bodySmall()),
               const SizedBox(height: 10),
@@ -295,8 +294,8 @@ class _FindingRow extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Text(finding.evidenceSentence,
-              style: AppTextStyles.bodyMedium()),
+          child:
+              Text(finding.evidenceSentence, style: AppTextStyles.bodyMedium()),
         ),
       ],
     );
@@ -321,7 +320,11 @@ class _RevisionRow extends StatelessWidget {
           'देर हो रही है'
         ),
       RevisionRiskBand.due => (Icons.schedule, AppColors.warning, 'समय आ गया'),
-      RevisionRiskBand.fresh => (Icons.check_circle, AppColors.success, 'ताज़ा'),
+      RevisionRiskBand.fresh => (
+          Icons.check_circle,
+          AppColors.success,
+          'ताज़ा'
+        ),
     };
     return Row(
       children: [
@@ -382,7 +385,8 @@ class _SessionViewState extends ConsumerState<_SessionView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('छोटा concept दोहराव', style: AppTextStyles.titleMedium()),
+                  Text('छोटा concept दोहराव',
+                      style: AppTextStyles.titleMedium()),
                   const SizedBox(height: 10),
                   Text(s.plan?.recap.recapText ?? '',
                       style: AppTextStyles.bodyMedium()),
@@ -525,7 +529,9 @@ class _QuestionCard extends StatelessWidget {
     final s = session.session!;
     final phaseLabel = session.phase == WeakSessionPhase.recheck
         ? 'mastery जाँच (बिना मदद)'
-        : (session.mode == WeakSessionMode.revision ? 'दोहराव' : 'recovery अभ्यास');
+        : (session.mode == WeakSessionMode.revision
+            ? 'दोहराव'
+            : 'recovery अभ्यास');
     final progress =
         '${(s.index + 1).clamp(1, s.questions.length)}/${s.questions.length}';
     final isMcq = question.kind == PracticeQuestionKind.mcq;
@@ -542,21 +548,22 @@ class _QuestionCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(phaseLabel, style: AppTextStyles.labelMedium(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.subtextDark
-                          : AppColors.subtextLight)),
+                  Text(phaseLabel,
+                      style: AppTextStyles.labelMedium(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.subtextDark
+                              : AppColors.subtextLight)),
                   const Spacer(),
-                  Text(progress, style: AppTextStyles.labelMedium(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.subtextDark
-                          : AppColors.subtextLight)),
+                  Text(progress,
+                      style: AppTextStyles.labelMedium(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.subtextDark
+                              : AppColors.subtextLight)),
                 ],
               ),
               const SizedBox(height: 12),
               Text(question.prompt, style: AppTextStyles.titleSmall()),
               const SizedBox(height: 14),
-
               if (isMcq && !answered)
                 for (var i = 0; i < question.options.length; i++)
                   _OptionTile(
@@ -572,7 +579,6 @@ class _QuestionCard extends StatelessWidget {
                   onPressed: mcqSelected != null ? onSubmit : null,
                 ),
               ],
-
               if (!isMcq && !answered) ...[
                 TextField(
                   controller: typedController,
@@ -589,7 +595,6 @@ class _QuestionCard extends StatelessWidget {
                   onPressed: onSubmit,
                 ),
               ],
-
               if (s.awaitingNext) ...[
                 _FeedbackPanel(text: s.currentVerdictText ?? ''),
                 const SizedBox(height: 12),
@@ -665,9 +670,7 @@ class _OptionTile extends StatelessWidget {
           child: Row(
             children: [
               Icon(
-                selected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_off,
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
                 size: 18,
                 color: selected ? AppColors.primary : AppColors.subtextLight,
               ),
@@ -709,8 +712,7 @@ class _PhaseStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (mode == WeakSessionMode.revision) {
-      return _PhaseChipRow(
-          labels: const ['मिला-जुला दोहराव'], activeIndex: 0);
+      return _PhaseChipRow(labels: const ['मिला-जुला दोहराव'], activeIndex: 0);
     }
     const labels = ['दोहराव', 'गलतियाँ + अभ्यास', 'mastery जाँच', 'पूरा'];
     final active = switch (phase) {
@@ -803,8 +805,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

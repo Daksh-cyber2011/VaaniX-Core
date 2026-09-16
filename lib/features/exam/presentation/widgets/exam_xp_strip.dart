@@ -39,14 +39,12 @@ class ExamSessionXpStrip extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.bolt_rounded,
-              size: 16, color: AppColors.success),
+          const Icon(Icons.bolt_rounded, size: 16, color: AppColors.success),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               headline,
-              style: AppTextStyles.labelMedium(
-                  color: AppColors.success),
+              style: AppTextStyles.labelMedium(color: AppColors.success),
             ),
           ),
         ],

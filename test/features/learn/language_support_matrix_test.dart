@@ -94,8 +94,7 @@ void main() {
           expect(spec.isRTL, isTrue, reason: 'Urdu must remain RTL');
           expect(spec.scriptCode, 'Arab');
         } else {
-          expect(spec.isRTL, isFalse,
-              reason: '${spec.code} must stay LTR');
+          expect(spec.isRTL, isFalse, reason: '${spec.code} must stay LTR');
         }
       }
     });
@@ -145,7 +144,8 @@ void main() {
                 reason: '$code lesson ids must be language-prefixed');
             expect((l['content'] as String).length, greaterThan(800),
                 reason: '${l['id']} content must be substantive');
-            expect(l['difficulty'], isIn(['beginner', 'intermediate', 'advanced']));
+            expect(l['difficulty'],
+                isIn(['beginner', 'intermediate', 'advanced']));
           }
         }
         expect(lessonCount, 20, reason: '$code must ship 20 lessons');
@@ -195,8 +195,8 @@ void main() {
             // noting shared Hindi vocabulary), so the negative check
             // is scoped to the M9 set only.
             if (const {'kn', 'ml', 'or'}.contains(code)) {
-              expect(_touchesForeignIndicBlock(content, spec.scriptCode),
-                  isFalse,
+              expect(
+                  _touchesForeignIndicBlock(content, spec.scriptCode), isFalse,
                   reason: '${lesson['id']} content contains characters from '
                       'a foreign Indic/Arabic block (mojibake guard §77)');
             }
@@ -204,8 +204,7 @@ void main() {
         }
       });
 
-      test('$code: milestone + planner + mastery support derivable (§74)',
-          () {
+      test('$code: milestone + planner + mastery support derivable (§74)', () {
         final file = File('assets/curriculum/learn/$code.json');
         final json =
             jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -214,13 +213,11 @@ void main() {
         // Milestones reference chapter ORDINALS 1..5 — each shipped
         // curriculum must expose five ordered chapters so the SAME
         // criteria resolve for every language.
-        final orders = chapters.map((c) => c['order'] as int).toList()
-          ..sort();
+        final orders = chapters.map((c) => c['order'] as int).toList()..sort();
         expect(orders, [0, 1, 2, 3, 4]);
         // Planner graph + diagnostic banks derive from (chapter,
         // lesson) structure — non-empty curriculum is the support gate.
-        expect(chapters.any((c) => (c['lessons'] as List).isNotEmpty),
-            isTrue);
+        expect(chapters.any((c) => (c['lessons'] as List).isNotEmpty), isTrue);
       });
     }
   });
@@ -242,8 +239,7 @@ void main() {
       }
     });
 
-    test('all 10 language banks stay disjoint (one bank per lesson id)',
-        () {
+    test('all 10 language banks stay disjoint (one bank per lesson id)', () {
       final seen = <String, String>{};
       _banks.forEach((code, bank) {
         for (final lessonId in bank.keys) {

@@ -31,7 +31,8 @@ import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 
 class ExamScopeStore {
-  ExamScopeStore({String? activeTrackId, required Map<String, ExamScopeSelection> scopes})
+  ExamScopeStore(
+      {String? activeTrackId, required Map<String, ExamScopeSelection> scopes})
       : _activeTrackId = activeTrackId,
         _scopes = scopes;
 
@@ -57,9 +58,9 @@ class ExamScopeRepository {
     }
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
-      final scopesJson = (json['scopes'] as Map<String, dynamic>?)
-              ?.cast<String, dynamic>() ??
-          const <String, dynamic>{};
+      final scopesJson =
+          (json['scopes'] as Map<String, dynamic>?)?.cast<String, dynamic>() ??
+              const <String, dynamic>{};
       final scopes = <String, ExamScopeSelection>{};
       scopesJson.forEach((trackId, value) {
         try {

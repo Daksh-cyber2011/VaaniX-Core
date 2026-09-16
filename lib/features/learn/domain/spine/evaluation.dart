@@ -87,11 +87,11 @@ class EvaluationResult extends Equatable {
   factory EvaluationResult.fromJson(Map<String, dynamic> json) {
     return EvaluationResult(
       sessionId: json['sessionId'] as String? ?? '',
-      conceptEvaluations: (json['conceptEvaluations'] as List<dynamic>? ??
-              const [])
-          .whereType<Map<String, dynamic>>()
-          .map(ConceptEvaluation.fromJson)
-          .toList(),
+      conceptEvaluations:
+          (json['conceptEvaluations'] as List<dynamic>? ?? const [])
+              .whereType<Map<String, dynamic>>()
+              .map(ConceptEvaluation.fromJson)
+              .toList(),
       completedAt: json['completedAt'] != null
           ? DateTime.tryParse(json['completedAt'] as String)
           : null,
@@ -156,7 +156,11 @@ class MasteryUpdate extends Equatable {
 
   @override
   List<Object?> get props => [
-        conceptId, fromStage, toStage, correctDelta, attemptDelta,
+        conceptId,
+        fromStage,
+        toStage,
+        correctDelta,
+        attemptDelta,
         reviewDueAt,
       ];
 }

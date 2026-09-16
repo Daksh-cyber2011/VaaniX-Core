@@ -64,8 +64,7 @@ class LocalConversationMemory implements ConversationMemory {
       // Bounded transcript: keep the newest messages when the cap is
       // exceeded (an old conversation can never grow without bound).
       if (next.length > AppConstants.maxAiTranscriptMessages) {
-        next = next
-            .sublist(next.length - AppConstants.maxAiTranscriptMessages);
+        next = next.sublist(next.length - AppConstants.maxAiTranscriptMessages);
       }
       await _storage.setAiConversation(
         conversationId,

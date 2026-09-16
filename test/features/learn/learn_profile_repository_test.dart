@@ -18,8 +18,7 @@ import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
 
-Future<({LearnProfileRepository repo, ILocalStorageService storage})>
-    _make({
+Future<({LearnProfileRepository repo, ILocalStorageService storage})> _make({
   Map<String, Object> seed = const {},
 }) async {
   SharedPreferences.setMockInitialValues(seed);
@@ -144,7 +143,8 @@ void main() {
       expect(m.repo.getLearningState(LearnLanguage.urdu), isNull);
     });
 
-    test('state stored under another language\u2019s key is rejected', () async {
+    test('state stored under another language\u2019s key is rejected',
+        () async {
       final m = await _make();
       // A state whose own languageCode says 'bn', saved under the HI key:
       await m.repo.saveLearningState(

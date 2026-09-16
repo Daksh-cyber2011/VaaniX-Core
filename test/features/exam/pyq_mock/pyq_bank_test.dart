@@ -21,17 +21,15 @@ void main() {
   late ExamScopeSelection selection;
 
   setUpAll(() async {
-    final raw =
-        await rootBundle.loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
-    syllabus =
-        CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final raw = await rootBundle
+        .loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    syllabus = CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     view = ExamScopeView.fromSyllabus(syllabus);
     selection = ExamScopeSelection.empty(view.trackId)
         .selectAll(view.selectableUnitIds);
   });
 
-  test('bank is non-empty and grounded in the official syllabus (§60)',
-      () {
+  test('bank is non-empty and grounded in the official syllabus (§60)', () {
     final bank = PyqBank.build(
       syllabus: syllabus,
       view: view,
@@ -71,9 +69,8 @@ void main() {
       view: view,
       selection: selection,
     );
-    final patternItems = bank
-        .where((q) => q.provenance == PyqProvenance.examPattern)
-        .toList();
+    final patternItems =
+        bank.where((q) => q.provenance == PyqProvenance.examPattern).toList();
     // Cross-check against the syllabus's own pattern data.
     final officialMarks = <String, double>{};
     for (final item in syllabus.allItems) {
@@ -137,8 +134,7 @@ void main() {
     expect(bank.length, lessThanOrEqualTo(3));
   });
 
-  test('typed PYQ questions only where sub-topic data exists (§24/§60)',
-      () {
+  test('typed PYQ questions only where sub-topic data exists (§24/§60)', () {
     final bank = PyqBank.build(
       syllabus: syllabus,
       view: view,

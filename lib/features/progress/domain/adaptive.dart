@@ -173,10 +173,9 @@ NextAction computeNextAction({
   final allLessonsDone = allLessonIds.difference(completedLessons).isEmpty;
   // Chapters without any quiz (Learn Mode languages) count as "exam OK" —
   // they gate on nothing, so allDone means every lesson done.
-  final allExamsPassed = curriculum.every(
-      (c) =>
-          !_chapterHasExam(c.id, quizIdsByChapter) ||
-          _chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId));
+  final allExamsPassed = curriculum.every((c) =>
+      !_chapterHasExam(c.id, quizIdsByChapter) ||
+      _chapterExamPassed(c.id, quizIdsByChapter, attemptsByQuizId));
 
   // 1. Complete journey.
   if (allLessonsDone && allExamsPassed) {

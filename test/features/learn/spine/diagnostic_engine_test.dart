@@ -24,8 +24,8 @@ import 'package:vaanix_app/features/learn/domain/spine/diagnostic_engine.dart';
 
 Future<DiagnosticItemBank> _hindiBank(int seed) async {
   final chapters = await loadLearnCurriculum(LearnLanguage.hindi);
-  final graph = ConceptGraph.forCurriculum(
-      languageCode: 'hi', chapters: chapters);
+  final graph =
+      ConceptGraph.forCurriculum(languageCode: 'hi', chapters: chapters);
   return DiagnosticItemBank.build(
     graph: graph,
     exercisesByLesson: hindiExercisesByLesson,
@@ -65,8 +65,7 @@ void main() {
       expect(engine.askedCount, 0);
     });
 
-    test('self-report seeds the difficulty track, never the result',
-        () async {
+    test('self-report seeds the difficulty track, never the result', () async {
       final bank = await _hindiBank(3);
       final engine = DiagnosticEngine(bank: bank, seedLevel: 2);
       expect(engine.levelTrack, 2,
@@ -145,8 +144,7 @@ void main() {
       expect(result.confidence, greaterThan(0.4));
     });
 
-    test('a struggling learner lands at Starter with honest zeros',
-        () async {
+    test('a struggling learner lands at Starter with honest zeros', () async {
       final engine = await _run(seed: 11, answerScript: (_) => false);
 
       final result = engine.buildResult(language: LearnLanguage.hindi);
@@ -158,8 +156,7 @@ void main() {
 
     test('a mixed learner lands in the middle band', () async {
       // Alternate: a genuinely borderline learner.
-      final engine =
-          await _run(seed: 11, answerScript: (i) => i.isEven);
+      final engine = await _run(seed: 11, answerScript: (i) => i.isEven);
 
       final result = engine.buildResult(language: LearnLanguage.hindi);
       expect(result.overallLevel, inInclusiveRange(1, 3));
@@ -173,16 +170,17 @@ void main() {
         (i) => i % 3 != 0,
       ]) {
         final engine = await _run(seed: 13, answerScript: script);
-        expect(engine.askedCount,
-            inInclusiveRange(DiagnosticEngine.kMinProbes, DiagnosticEngine.kMaxProbes));
+        expect(
+            engine.askedCount,
+            inInclusiveRange(
+                DiagnosticEngine.kMinProbes, DiagnosticEngine.kMaxProbes));
       }
     });
   });
 
   group('answer records + state-extras material', () {
     test('records mirror the run truthfully', () async {
-      final engine =
-          await _run(seed: 21, answerScript: (i) => i.isEven);
+      final engine = await _run(seed: 21, answerScript: (i) => i.isEven);
 
       expect(engine.answerRecords, hasLength(engine.askedCount));
       for (final record in engine.answerRecords) {
@@ -196,8 +194,7 @@ void main() {
 
   group('result honesty', () {
     test('friendly summary never leaks raw numbers', () async {
-      final engine =
-          await _run(seed: 11, answerScript: (i) => i.isEven);
+      final engine = await _run(seed: 11, answerScript: (i) => i.isEven);
       final result = engine.buildResult(language: LearnLanguage.hindi);
 
       final lines = result.friendlySummary();
@@ -209,8 +206,7 @@ void main() {
       expect(result.levelLabel, isA<String>());
     });
 
-    test('only dimensions with real answers appear in the result',
-        () async {
+    test('only dimensions with real answers appear in the result', () async {
       final bank = await _hindiBank(31);
       final engine = DiagnosticEngine(bank: bank, seedLevel: 0);
       // Answer exactly ONE probe, then finish by hand.
@@ -219,8 +215,7 @@ void main() {
       // Force the stop: buildResult must not invent the other five.
       final result = engine.buildResult(language: LearnLanguage.hindi);
       expect(result.dimensionScores, hasLength(1));
-      expect(result.dimensionScores.keys.single,
-          DiagnosticDimension.script);
+      expect(result.dimensionScores.keys.single, DiagnosticDimension.script);
     });
   });
 
@@ -254,16 +249,13 @@ void main() {
           expect(correct.isCorrectFor(engine.currentItem!), isTrue);
           expect(wrong.isCorrectFor(engine.currentItem!), isFalse);
         case ExerciseType.translation:
-          final correct =
-              DiagnosticTextAnswer(exercise.acceptedAnswers.first);
+          final correct = DiagnosticTextAnswer(exercise.acceptedAnswers.first);
           final wrong = const DiagnosticTextAnswer('no chance');
           expect(correct.isCorrectFor(engine.currentItem!), isTrue);
           expect(wrong.isCorrectFor(engine.currentItem!), isFalse);
         case ExerciseType.matching:
           final correctPairs = <int, int>{
-            for (var left = 0;
-                left < exercise.pairs.length;
-                left++)
+            for (var left = 0; left < exercise.pairs.length; left++)
               left: display.pairIndexByDisplay.indexOf(left),
           };
           final correct = DiagnosticMatchAnswer(correctPairs);

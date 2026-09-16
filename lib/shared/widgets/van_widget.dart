@@ -54,6 +54,7 @@ class VanWidget extends StatefulWidget {
   @override
   State<VanWidget> createState() => VanWidgetState();
 }
+
 /// Public so tests can assert ticker behavior directly.
 class VanWidgetState extends State<VanWidget>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
@@ -100,8 +101,8 @@ class VanWidgetState extends State<VanWidget>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _appInactive = state == AppLifecycleState.paused ||
-        state == AppLifecycleState.hidden;
+    _appInactive =
+        state == AppLifecycleState.paused || state == AppLifecycleState.hidden;
     if (mounted) _syncMotion();
   }
 
@@ -120,8 +121,7 @@ class VanWidgetState extends State<VanWidget>
     if (!identical(widget.assetCatalog, VanAssetCatalog.v1)) {
       return widget.assetCatalog;
     }
-    return ref.watch(vanAssetCatalogProvider).valueOrNull ??
-        VanAssetCatalog.v1;
+    return ref.watch(vanAssetCatalogProvider).valueOrNull ?? VanAssetCatalog.v1;
   }
 
   @override
@@ -174,8 +174,7 @@ class VanWidgetState extends State<VanWidget>
       // ("Van — thinking", "Van — excited", …), so expression changes are
       // never communicated by colour alone. No per-frame announcements: this
       // is a plain static label, not a live region.
-      label: widget.semanticLabel ??
-          'Van — ${state.canonicalExpression.name}',
+      label: widget.semanticLabel ?? 'Van — ${state.canonicalExpression.name}',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: widget.onTap ?? defaultTap,

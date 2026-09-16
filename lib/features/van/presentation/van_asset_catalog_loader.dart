@@ -30,23 +30,21 @@ VanAssetCatalog parseVanAssetCatalogJson(String raw) {
   final width = (dimensions?['width'] as num?)?.toInt() ?? 512;
   final height = (dimensions?['height'] as num?)?.toInt() ?? 512;
   final entries = map['assets'] as List<dynamic>? ?? const [];
-  final assets = entries
-      .map((e) {
-        final m = e as Map<String, dynamic>;
-        return VanVisualAsset(
-          id: m['id'] as String,
-          state: VanState.values.byName(m['state'] as String),
-          format: (m['format'] as String?) == 'flutter'
-              ? VanAssetFormat.flutter
-              : VanAssetFormat.lottie,
-          path: m['path'] as String?,
-          available: (m['available'] as bool?) ?? false,
-          loop: (m['loop'] as bool?) ?? false,
-          width: width,
-          height: height,
-        );
-      })
-      .toList(growable: false);
+  final assets = entries.map((e) {
+    final m = e as Map<String, dynamic>;
+    return VanVisualAsset(
+      id: m['id'] as String,
+      state: VanState.values.byName(m['state'] as String),
+      format: (m['format'] as String?) == 'flutter'
+          ? VanAssetFormat.flutter
+          : VanAssetFormat.lottie,
+      path: m['path'] as String?,
+      available: (m['available'] as bool?) ?? false,
+      loop: (m['loop'] as bool?) ?? false,
+      width: width,
+      height: height,
+    );
+  }).toList(growable: false);
   return VanAssetCatalog(assets, expressions: _parseExpressions(map));
 }
 
@@ -55,19 +53,17 @@ VanAssetCatalog parseVanAssetCatalogJson(String raw) {
 /// callers then render the Flutter fallback exactly as before.
 List<VanExpressionArt> _parseExpressions(Map<String, dynamic> map) {
   final entries = map['expressions'] as List<dynamic>? ?? const [];
-  return entries
-      .map((e) {
-        final m = e as Map<String, dynamic>;
-        return VanExpressionArt(
-          id: m['id'] as String,
-          expression: VanExpression.values.byName(m['expression'] as String),
-          path: m['path'] as String,
-          width: (m['width'] as num?)?.toInt() ?? 0,
-          height: (m['height'] as num?)?.toInt() ?? 0,
-          available: (m['available'] as bool?) ?? false,
-        );
-      })
-      .toList(growable: false);
+  return entries.map((e) {
+    final m = e as Map<String, dynamic>;
+    return VanExpressionArt(
+      id: m['id'] as String,
+      expression: VanExpression.values.byName(m['expression'] as String),
+      path: m['path'] as String,
+      width: (m['width'] as num?)?.toInt() ?? 0,
+      height: (m['height'] as num?)?.toInt() ?? 0,
+      available: (m['available'] as bool?) ?? false,
+    );
+  }).toList(growable: false);
 }
 
 /// Loads the catalog from the bundled JSON metadata.

@@ -39,8 +39,7 @@ final xpTotalProvider = StateNotifierProvider<_XpNotifier, int>((ref) {
 });
 
 class _CompletedLessonsNotifier extends StateNotifier<List<String>> {
-  _CompletedLessonsNotifier(this._repo, this._analytics)
-      : super(const []) {
+  _CompletedLessonsNotifier(this._repo, this._analytics) : super(const []) {
     final result = _repo.getCompletedLessonIds();
     result.fold((_) => null, (ids) => state = ids);
   }

@@ -17,8 +17,8 @@ import 'package:vaanix_app/features/learn/data/learn_profile_repository.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/diagnostic.dart';
 
-Future<({LearnProfileRepository repo, ILocalStorageService storage})>
-    _make({Map<String, Object> seed = const {}}) async {
+Future<({LearnProfileRepository repo, ILocalStorageService storage})> _make(
+    {Map<String, Object> seed = const {}}) async {
   SharedPreferences.setMockInitialValues(seed);
   final prefs = await SharedPreferences.getInstance();
   final storage = LocalStorageService(prefs);
@@ -92,12 +92,10 @@ void main() {
       expect(m.repo.getDiagnostic(LearnLanguage.hindi), isNull);
     });
 
-    test('a result stored under the WRONG language key is rejected',
-        () async {
+    test('a result stored under the WRONG language key is rejected', () async {
       final m = await _make();
       // A Bengali result physically written under the Hindi key.
-      final payload =
-          jsonEncode(_result(LearnLanguage.bengali).toJson());
+      final payload = jsonEncode(_result(LearnLanguage.bengali).toJson());
       await m.storage.setString(
         LearnProfileRepository.diagnosticKey(LearnLanguage.hindi),
         payload,
@@ -125,8 +123,7 @@ void main() {
       expect(m.repo.getDiagnostic(LearnLanguage.tamil), isNotNull);
     });
 
-    test('the key follows the learn_profile_<iso>_diagnostic contract',
-        () {
+    test('the key follows the learn_profile_<iso>_diagnostic contract', () {
       expect(
         LearnProfileRepository.diagnosticKey(LearnLanguage.hindi),
         'learn_profile_hi_diagnostic',

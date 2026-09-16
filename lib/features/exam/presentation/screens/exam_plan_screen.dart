@@ -41,7 +41,8 @@ class ExamPlanScreen extends ConsumerWidget {
           child: VaaniXLoadingIndicator(message: 'Loading your plan…'),
         ),
         error: (e, _) => ErrorStateWidget(
-          message: 'Your plan couldn\'t be loaded right now.\nTry rebuilding it.',
+          message:
+              'Your plan couldn\'t be loaded right now.\nTry rebuilding it.',
           onRetry: () => ref.invalidate(examPlanProvider(trackId)),
           retryLabel: 'Rebuild Plan',
         ),

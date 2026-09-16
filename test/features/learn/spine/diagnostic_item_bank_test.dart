@@ -45,8 +45,7 @@ void main() {
 
     test('A–G chapter themes map to the verified dimensions', () {
       expect(
-        classifyDiagnosticDimension(
-            chapterOrder: 0, type: ExerciseType.mcq),
+        classifyDiagnosticDimension(chapterOrder: 0, type: ExerciseType.mcq),
         DiagnosticDimension.script,
       );
       expect(
@@ -55,8 +54,7 @@ void main() {
         DiagnosticDimension.practical,
       );
       expect(
-        classifyDiagnosticDimension(
-            chapterOrder: 2, type: ExerciseType.mcq),
+        classifyDiagnosticDimension(chapterOrder: 2, type: ExerciseType.mcq),
         DiagnosticDimension.vocabulary,
       );
       // Production in the daily-life chapter builds sentences.
@@ -66,13 +64,11 @@ void main() {
         DiagnosticDimension.sentenceFormation,
       );
       expect(
-        classifyDiagnosticDimension(
-            chapterOrder: 3, type: ExerciseType.mcq),
+        classifyDiagnosticDimension(chapterOrder: 3, type: ExerciseType.mcq),
         DiagnosticDimension.grammar,
       );
       expect(
-        classifyDiagnosticDimension(
-            chapterOrder: 4, type: ExerciseType.mcq),
+        classifyDiagnosticDimension(chapterOrder: 4, type: ExerciseType.mcq),
         DiagnosticDimension.reading,
       );
       expect(
@@ -96,8 +92,7 @@ void main() {
       );
     });
 
-    test('measures exactly the six testable dimensions, priority-ordered',
-        () {
+    test('measures exactly the six testable dimensions, priority-ordered', () {
       expect(bank.isNotEmpty, isTrue);
       expect(bank.activeDimensions, [
         DiagnosticDimension.script,
@@ -114,9 +109,7 @@ void main() {
       // comprehension claim. (Master Brief §11.)
       expect(bank.activeDimensions.contains(DiagnosticDimension.listening),
           isFalse);
-      expect(
-          bank.activeDimensions
-              .contains(DiagnosticDimension.comprehension),
+      expect(bank.activeDimensions.contains(DiagnosticDimension.comprehension),
           isFalse);
     });
 
@@ -169,8 +162,8 @@ void main() {
   group('DiagnosticItemBank.build on other shipped languages', () {
     test('Bengali builds the same six-dimension shape', () async {
       final chapters = await loadLearnCurriculum(LearnLanguage.bengali);
-      final graph = ConceptGraph.forCurriculum(
-          languageCode: 'bn', chapters: chapters);
+      final graph =
+          ConceptGraph.forCurriculum(languageCode: 'bn', chapters: chapters);
       final bank = DiagnosticItemBank.build(
         graph: graph,
         exercisesByLesson: bengaliExercisesByLesson,
@@ -185,8 +178,8 @@ void main() {
 
   group('empty-curriculum honesty', () {
     test('stub language → empty bank, no dimensions', () {
-      final graph = ConceptGraph.forCurriculum(
-          languageCode: 'kn', chapters: const []);
+      final graph =
+          ConceptGraph.forCurriculum(languageCode: 'kn', chapters: const []);
       final bank = DiagnosticItemBank.build(
         graph: graph,
         exercisesByLesson: const {},
@@ -198,8 +191,7 @@ void main() {
   });
 
   group('reshuffled', () {
-    test('keeps the same trusted pools but changes the walk order',
-        () async {
+    test('keeps the same trusted pools but changes the walk order', () async {
       final graph = await _hindiGraph();
       final base = DiagnosticItemBank.build(
         graph: graph,
@@ -210,10 +202,10 @@ void main() {
       final a = base.reshuffled(11);
       final b = base.reshuffled(12);
 
-      final scriptA = a.itemsAt(DiagnosticDimension.script,
-          Difficulty.beginner);
-      final scriptB = b.itemsAt(DiagnosticDimension.script,
-          Difficulty.beginner);
+      final scriptA =
+          a.itemsAt(DiagnosticDimension.script, Difficulty.beginner);
+      final scriptB =
+          b.itemsAt(DiagnosticDimension.script, Difficulty.beginner);
 
       // Same content…
       expect(

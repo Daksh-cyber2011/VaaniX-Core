@@ -231,10 +231,8 @@ class RevisionEngine {
   /// first, then due. Fresh topics are excluded — no blanket revision.
   static List<RevisionItem> dueToday(List<RevisionItem> items, DateTime now,
       {int limit = 3}) {
-    final due = items
-        .where((i) =>
-            i.bandOf(now) != RevisionRiskBand.fresh)
-        .toList();
+    final due =
+        items.where((i) => i.bandOf(now) != RevisionRiskBand.fresh).toList();
     due.sort((a, b) {
       // overdue before due; then earlier dueIso; then topicId.
       final ba = a.bandOf(now).index;

@@ -75,7 +75,8 @@ class VaaniXScaffold extends StatelessWidget {
       content = RefreshIndicator(
         onRefresh: onRefresh!,
         color: theme.colorScheme.primary,
-        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        backgroundColor:
+            isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: content,

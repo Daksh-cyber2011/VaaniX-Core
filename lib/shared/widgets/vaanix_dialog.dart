@@ -4,6 +4,7 @@
 /// The confirm action adapts to dark mode and uses the semantic danger color
 /// for destructive confirmations.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';

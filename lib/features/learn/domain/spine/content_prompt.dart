@@ -44,8 +44,7 @@ String buildContentSystemPrompt({
   Set<ExerciseType>? generatableExerciseTypes,
 }) {
   final kinds = generatableExerciseTypes ?? kGeneratableExerciseTypes;
-  final exerciseTypes =
-      kinds.map((t) => '"${t.name}"').join(' | ');
+  final exerciseTypes = kinds.map((t) => '"${t.name}"').join(' | ');
   final kindWord = kGeneratedContentKindDescriptions[kind] ?? kind.name;
 
   return '''
@@ -130,12 +129,12 @@ String buildContentUserPrompt({
     buffer.writeln(excerpt.vocabulary.take(60).join(', '));
     buffer.writeln();
   } else {
-    buffer.writeln(
-        'TRUSTED VOCABULARY: (none available — you must decline.)');
+    buffer.writeln('TRUSTED VOCABULARY: (none available — you must decline.)');
     buffer.writeln();
   }
   if (excerpt.exampleSentences.isNotEmpty) {
-    buffer.writeln('TRUSTED EXAMPLES (copy these patterns, never contradict them):');
+    buffer.writeln(
+        'TRUSTED EXAMPLES (copy these patterns, never contradict them):');
     for (final sentence in excerpt.exampleSentences) {
       buffer.writeln('- $sentence');
     }
@@ -149,21 +148,19 @@ String buildContentUserPrompt({
 
   // ── Section 2: LEARNER STATE ─────────────────────────────────────────
   buffer.writeln('=== LEARNER STATE ===');
-  buffer.writeln(
-      const JsonEncoder.withIndent('  ').convert(learnerDigest));
+  buffer.writeln(const JsonEncoder.withIndent('  ').convert(learnerDigest));
 
   // ── Section 3: TASK ──────────────────────────────────────────────────
   buffer.writeln();
   buffer.writeln('=== TASK ===');
   buffer.writeln('Requested JSON kind: "kind": "${kind.name}".');
-  buffer.writeln(
-      'Make ONE item of kind "${kind.name}" for the concept above, at '
-      'difficulty $difficultyKnob (1 = brand new, 5 = very hard), '
-      'personalized to the learner state.');
+  buffer
+      .writeln('Make ONE item of kind "${kind.name}" for the concept above, at '
+          'difficulty $difficultyKnob (1 = brand new, 5 = very hard), '
+          'personalized to the learner state.');
   switch (kind) {
     case GeneratedContentKind.explanation:
-      buffer.writeln(
-          'Explain it differently from the lesson, in a few short '
+      buffer.writeln('Explain it differently from the lesson, in a few short '
           'sentences, using only the trusted vocabulary and patterns.');
     case GeneratedContentKind.example:
       buffer.writeln(
@@ -171,8 +168,7 @@ String buildContentUserPrompt({
           'the trusted vocabulary. Each line needs an English '
           '"translation" field.');
     case GeneratedContentKind.practice:
-      buffer.writeln(
-          'Write ONE practice question: "mcq" or "fillBlank" with 3 '
+      buffer.writeln('Write ONE practice question: "mcq" or "fillBlank" with 3 '
           'options and "correctIndex", or "translation" with '
           '"acceptedAnswers". Always include an "explanation" for the '
           'answer.');

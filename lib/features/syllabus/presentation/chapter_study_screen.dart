@@ -164,9 +164,8 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
                 fontFamily: 'Poppins',
                 fontSize: 11.5,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected
-                    ? Colors.white
-                    : VaaniXColors.textSecondaryLight,
+                color:
+                    isSelected ? Colors.white : VaaniXColors.textSecondaryLight,
               ),
               selectedColor: VaaniXColors.learnPrimaryViolet,
               backgroundColor: Colors.white,
@@ -389,7 +388,6 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
           ),
         ),
         const SizedBox(height: 10),
-
         VaaniXCard(
           padding: const EdgeInsets.all(14),
           onTap: () {
@@ -445,7 +443,6 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
           ),
         ),
         const SizedBox(height: 8),
-
         VaaniXCard(
           padding: const EdgeInsets.all(14),
           onTap: () {

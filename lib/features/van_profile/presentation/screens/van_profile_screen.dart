@@ -72,8 +72,7 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
           ),
 
           const SizedBox(height: 32),
-          Text('PERSONALITY',
-              style: AppTextStyles.labelSmall(color: subtext)),
+          Text('PERSONALITY', style: AppTextStyles.labelSmall(color: subtext)),
           const SizedBox(height: 8),
           ...PersonalityMode.values.map((m) {
             final selected = mode == m;
@@ -90,47 +89,47 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
                       .updatePersonalityMode(m),
                   borderRadius: BorderRadius.circular(16),
                   child: AnimatedContainer(
-                  duration: AppMotion.fast,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? AppColors.primary.withValues(alpha: 0.08)
-                        : Theme.of(context).cardTheme.color,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
+                    duration: AppMotion.fast,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
                       color: selected
-                          ? AppColors.primary
-                          : (isDark
-                              ? AppColors.borderDark
-                              : AppColors.borderLight),
-                      width: selected ? 2 : 1,
+                          ? AppColors.primary.withValues(alpha: 0.08)
+                          : Theme.of(context).cardTheme.color,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: selected
+                            ? AppColors.primary
+                            : (isDark
+                                ? AppColors.borderDark
+                                : AppColors.borderLight),
+                        width: selected ? 2 : 1,
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: (selected ? AppColors.primary : subtext)
-                              .withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: (selected ? AppColors.primary : subtext)
+                                .withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(_modeIcon(m),
+                              size: 20,
+                              color: selected ? AppColors.primary : subtext),
                         ),
-                        child: Icon(_modeIcon(m),
-                            size: 20,
-                            color: selected ? AppColors.primary : subtext),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child:
-                            Text(m.label, style: AppTextStyles.titleMedium()),
-                      ),
-                      if (selected)
-                        const Icon(Icons.check_circle_rounded,
-                            color: AppColors.primary, size: 22),
-                    ],
-                  ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child:
+                              Text(m.label, style: AppTextStyles.titleMedium()),
+                        ),
+                        if (selected)
+                          const Icon(Icons.check_circle_rounded,
+                              color: AppColors.primary, size: 22),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -147,9 +146,8 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
               // label — cheerleader is just the first option, not a
               // default. It now genuinely clears the explicit mode, so
               // Van returns to his default (un-personalised) behavior.
-              onPressed: () => ref
-                  .read(userProfileProvider.notifier)
-                  .clearPersonalityMode(),
+              onPressed: () =>
+                  ref.read(userProfileProvider.notifier).clearPersonalityMode(),
             ),
           ],
         ],

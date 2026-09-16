@@ -253,7 +253,8 @@ class LocalProgressRepository implements ProgressRepository {
     if (attempts.length <= AppConstants.maxAttemptsPerQuiz) return attempts;
     final kept = List<QuizResult>.of(attempts);
     while (kept.length > AppConstants.maxAttemptsPerQuiz) {
-      final bestPct = kept.map((r) => r.percentage).reduce((a, b) => a > b ? a : b);
+      final bestPct =
+          kept.map((r) => r.percentage).reduce((a, b) => a > b ? a : b);
       // Drop the OLDEST attempt strictly below the best; when every kept
       // attempt ties the best, drop the oldest (the best VALUE survives
       // regardless, which is what the best-score displays read).

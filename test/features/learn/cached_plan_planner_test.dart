@@ -28,8 +28,7 @@ ConceptGraph _graph(String code) => ConceptGraph.forCurriculum(
           id: '${code}_ch1',
           title: 'First words',
           lessons: [
-            Lesson(
-                id: '${code}_ls_1', title: 'Greetings', chapterId: 'ch_1'),
+            Lesson(id: '${code}_ls_1', title: 'Greetings', chapterId: 'ch_1'),
           ],
         ),
       ],
@@ -69,7 +68,8 @@ Future<CachedPlanPlanner> _planner({
 }) async {
   SharedPreferences.setMockInitialValues(seed);
   final prefs = await SharedPreferences.getInstance();
-  return CachedPlanPlanner(repository: LearnPlanRepository(
+  return CachedPlanPlanner(
+      repository: LearnPlanRepository(
     LocalStorageService(prefs),
   ));
 }
@@ -82,8 +82,7 @@ void main() {
       expect(result.isLeft(), isTrue);
     });
 
-    test('fresh cached plan → Right with honest cached provenance',
-        () async {
+    test('fresh cached plan → Right with honest cached provenance', () async {
       final planner = await _planner();
       await planner.repository.savePlan(_aiPlan('hi'));
 
@@ -110,8 +109,7 @@ void main() {
         _aiPlan(
           'hi',
           createdAt: DateTime.now().subtract(
-            LearnPlanRepository.kDefaultMaxAge +
-                const Duration(hours: 1),
+            LearnPlanRepository.kDefaultMaxAge + const Duration(hours: 1),
           ),
         ),
       );
@@ -134,8 +132,7 @@ void main() {
       expect(result.isLeft(), isTrue);
     });
 
-    test('legacy Sanskrit track (sa) → Left — no cache by design',
-        () async {
+    test('legacy Sanskrit track (sa) → Left — no cache by design', () async {
       final planner = await _planner();
       final result = await planner.buildPlan(_context('hi'));
       // Sanity for the guard: 'sa' resolves to no catalogue language.

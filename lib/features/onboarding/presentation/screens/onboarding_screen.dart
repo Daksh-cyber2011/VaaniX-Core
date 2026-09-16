@@ -117,8 +117,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   // readers, never conveyed by the dots alone.
                   Expanded(
                     child: Semantics(
-                      label:
-                          'Page ${currentPage + 1} of $_totalPages',
+                      label: 'Page ${currentPage + 1} of $_totalPages',
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(_totalPages, (i) {

@@ -185,9 +185,9 @@ class ValidatingPlanner implements LearningPlanner {
           return _fallbackPlan(
             context,
             UnknownFailure(
-                plan.activities.isEmpty
-                    ? 'Planner returned an empty plan'
-                    : 'Planner returned a plan for a different language',
+              plan.activities.isEmpty
+                  ? 'Planner returned an empty plan'
+                  : 'Planner returned a plan for a different language',
             ),
           );
         }
@@ -252,8 +252,7 @@ class ValidatingPlanner implements LearningPlanner {
       if (concept == null) return false; // unknown concept
       if (concept.languageCode != context.graph.languageCode) return false;
       // Lesson anchor must be the concept's trusted content.
-      if (activity.lessonId != null &&
-          activity.lessonId != concept.lessonId) {
+      if (activity.lessonId != null && activity.lessonId != concept.lessonId) {
         return false;
       }
     } else if (activity.kind == ActivityKind.challenge) {

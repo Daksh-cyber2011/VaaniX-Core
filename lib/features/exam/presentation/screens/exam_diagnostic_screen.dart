@@ -49,12 +49,12 @@ class _ExamDiagnosticScreenState extends ConsumerState<ExamDiagnosticScreen> {
         ),
         error: (e, _) => _DiagnosticUnavailable(
           onStart: _start,
-          message: 'Couldn\'t start the diagnostic.\nPlease make sure you\'ve selected a syllabus.',
+          message:
+              'Couldn\'t start the diagnostic.\nPlease make sure you\'ve selected a syllabus.',
         ),
         data: (data) {
           if (data.isFinished && data.report != null) {
-            return _ReportView(
-                report: data.report!, trackId: widget.trackId);
+            return _ReportView(report: data.report!, trackId: widget.trackId);
           }
           if (data.isRunning && data.session != null) {
             return _QuestionFlow(
@@ -72,25 +72,19 @@ class _ExamDiagnosticScreenState extends ConsumerState<ExamDiagnosticScreen> {
   }
 
   Future<void> _start() async {
-    await ref
-        .read(examDiagnosticProvider(widget.trackId).notifier)
-        .start();
+    await ref.read(examDiagnosticProvider(widget.trackId).notifier).start();
   }
 
   Future<void> _onAnswer() async {
     final sel = _selected;
     if (sel == null) return;
     setState(() => _selected = null);
-    await ref
-        .read(examDiagnosticProvider(widget.trackId).notifier)
-        .answer(sel);
+    await ref.read(examDiagnosticProvider(widget.trackId).notifier).answer(sel);
   }
 
   Future<void> _onSkip() async {
     setState(() => _selected = null);
-    await ref
-        .read(examDiagnosticProvider(widget.trackId).notifier)
-        .answer(-1);
+    await ref.read(examDiagnosticProvider(widget.trackId).notifier).answer(-1);
   }
 }
 
@@ -121,9 +115,12 @@ class _IntroCard extends StatelessWidget {
               _Bullet(
                   text: 'कुछ MCQ प्रश्न — जवाब के साथ-साथ कठिनाई भी अपने आप '
                       'बदलती है (§11 adaptive)।'),
-              _Bullet(text: 'सवाल आपकी चुनी हुई syllabus से ही आते हैं — बाहर से कुछ नहीं।'),
               _Bullet(
-                  text: 'स्किप करना ठीक है — Van समझ जाएगा (हिसाब ईमानदार रहेगा)।',
+                  text:
+                      'सवाल आपकी चुनी हुई syllabus से ही आते हैं — बाहर से कुछ नहीं।'),
+              _Bullet(
+                  text:
+                      'स्किप करना ठीक है — Van समझ जाएगा (हिसाब ईमानदार रहेगा)।',
                   isDark: isDark),
               const SizedBox(height: 16),
               PrimaryButton(
@@ -180,10 +177,10 @@ class _QuestionFlow extends StatelessWidget {
                     const Spacer(),
                     Text('$answered उत्तरित',
                         style: AppTextStyles.labelSmall(
-                            color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                ? AppColors.subtextDark
-                                : AppColors.subtextLight)),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -291,7 +288,9 @@ class _TopicBandRow extends StatelessWidget {
       label: '${estimate.topicTitle}: ${estimate.band.label}',
       child: Row(
         children: [
-          Expanded(child: Text(estimate.topicTitle, style: AppTextStyles.bodyMedium())),
+          Expanded(
+              child:
+                  Text(estimate.topicTitle, style: AppTextStyles.bodyMedium())),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -320,9 +319,7 @@ class _ObsRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(Icons.insights,
-            size: 18,
-            color: AppColors.primary,
-            semanticLabel: 'observation'),
+            size: 18, color: AppColors.primary, semanticLabel: 'observation'),
         const SizedBox(width: 8),
         Expanded(child: Text(text, style: AppTextStyles.bodyMedium())),
       ],
@@ -420,8 +417,7 @@ class _Bullet extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle_outline,
-              size: 16, color: AppColors.primary),
+          Icon(Icons.check_circle_outline, size: 16, color: AppColors.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -450,8 +446,8 @@ class _Card extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        border: Border.all(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight),
       ),
       child: child,
     );

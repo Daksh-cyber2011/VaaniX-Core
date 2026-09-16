@@ -58,7 +58,12 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       lessonId: 'or_script_vowels',
       type: ExerciseType.mcq,
       prompt: 'ମାନେ vs ମନେ — ପାର୍ଥକ୍ୟ କଣ? (ମାନେ vs ମନେ differ in…)',
-      options: ['the consonant', 'the vowel LENGTH (ଆ vs ଅ)', 'nothing', 'the ending'],
+      options: [
+        'the consonant',
+        'the vowel LENGTH (ଆ vs ଅ)',
+        'nothing',
+        'the ending'
+      ],
       correctIndex: 1,
       explanation:
           'ମାନେ (māne, means) holds the long ଆ; ମନେ (mane, to the mind) the short ଅ. Eleven vowels, one held-beat rule.',
@@ -95,7 +100,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_cons_3',
       lessonId: 'or_script_consonants',
       type: ExerciseType.mcq,
-      prompt: 'ରାଜା vs ଓଡ଼ିଆ — ଦୁଇ r-ଧ୍ୱନି: (ରାଜା vs ଓଡ଼ିଆ — the two r-sounds are…)',
+      prompt:
+          'ରାଜା vs ଓଡ଼ିଆ — ଦୁଇ r-ଧ୍ୱନି: (ରାଜା vs ଓଡ଼ିଆ — the two r-sounds are…)',
       options: [
         'ର = plain tooth-r; ଡ଼ = curled flap',
         'Both identical',
@@ -164,7 +170,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_conj_2',
       lessonId: 'or_script_conjuncts',
       type: ExerciseType.mcq,
-      prompt: "'ଧର୍ମ' ରେ ର କେମିତି ଲେଖାଯାଏ? (How does ର appear in ଧର୍ମ (dharma)?)",
+      prompt:
+          "'ଧର୍ମ' ରେ ର କେମିତି ଲେଖାଯାଏ? (How does ର appear in ଧର୍ମ (dharma)?)",
       options: [
         'As a diagonal ର୍ ABOVE the next consonant',
         'Below the consonant',
@@ -227,7 +234,12 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       type: ExerciseType.mcq,
       prompt: 'ଓଡ଼ିଶା ଘରକୁ ପ୍ରବେଶ କଲେ ପ୍ରଥମେ କଣ ମିଳେ? '
           '(Entering an Odia home, what comes FIRST — before hello?)',
-      options: ['ପାଣି (water)', 'ଭୋଜନ (a full meal)', 'ଚା (tea)', 'ଉପହାର (a gift)'],
+      options: [
+        'ପାଣି (water)',
+        'ଭୋଜନ (a full meal)',
+        'ଚା (tea)',
+        'ଉପହାର (a gift)'
+      ],
       correctIndex: 0,
       explanation:
           'ପାଣି ପିଅନ୍ତୁ (please drink water) is offered before anything — Odia hospitality\'s famous first move.',
@@ -289,8 +301,14 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_family_2',
       lessonId: 'or_greet_family',
       type: ExerciseType.mcq,
-      prompt: 'ଦୋକାନୀକୁ କିପରି ସମ୍ବୋଧନ? (How would you warmly address a shopkeeper?)',
-      options: ['ଭାଇ (brother)', 'ଶତ୍ରୁ', 'କିଛି ନୁହେଁ (nothing — no address)', 'ଗଛ'],
+      prompt:
+          'ଦୋକାନୀକୁ କିପରି ସମ୍ବୋଧନ? (How would you warmly address a shopkeeper?)',
+      options: [
+        'ଭାଇ (brother)',
+        'ଶତ୍ରୁ',
+        'କିଛି ନୁହେଁ (nothing — no address)',
+        'ଗଛ'
+      ],
       correctIndex: 0,
       explanation:
           'ଭାଇ (brother) and ମାଉସୀ (auntie) are warm addresses for strangers — kinship as politeness.',
@@ -300,7 +318,11 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       lessonId: 'or_greet_family',
       type: ExerciseType.translation,
       prompt: 'ଓଡ଼ିଆରେ କୁହ: "I have one sister."',
-      acceptedAnswers: ['ମୋର ଜଣେ ଭଉଣୀ ଅଛି', 'mora jane bhhauni achhi', 'mora jana bhhauni achhi'],
+      acceptedAnswers: [
+        'ମୋର ଜଣେ ଭଉଣୀ ଅଛି',
+        'mora jane bhhauni achhi',
+        'mora jana bhhauni achhi'
+      ],
       explanation:
           'ମୋର (my) + ଜଣେ (one, for people) + ଭଉଣୀ + ଅଛି. ଜଣେ is the human-counter — things take ଟିଏ instead.',
     ),
@@ -353,8 +375,7 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       type: ExerciseType.ordering,
       prompt: 'ବାକ୍ୟ ସଜାଅ (Arrange: "I am eating rice")',
       items: ['ମୁଁ (I)', 'ଭାତ (rice)', 'ଖାଉଛି (eating)'],
-      explanation:
-          'SOV: ମୁଁ ଭାତ ଖାଉଛି. The verb always closes the sentence.',
+      explanation: 'SOV: ମୁଁ ଭାତ ଖାଉଛି. The verb always closes the sentence.',
     ),
     Exercise(
       id: 'ex_or_daily1_2',
@@ -370,8 +391,14 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_daily1_3',
       lessonId: 'or_daily_sentences',
       type: ExerciseType.mcq,
-      prompt: "'ମାଆ ଘରେ ଅଛନ୍ତି' — '-ନ୍ତି' କଣ ସୂଚାଏ? (In ମାଆ ଘରେ ଅଛନ୍ତି, what does -ନ୍ତି mark?)",
-      options: ['respect (mother honored)', 'past tense', 'a question', 'plural objects'],
+      prompt:
+          "'ମାଆ ଘରେ ଅଛନ୍ତି' — '-ନ୍ତି' କଣ ସୂଚାଏ? (In ମାଆ ଘରେ ଅଛନ୍ତି, what does -ନ୍ତି mark?)",
+      options: [
+        'respect (mother honored)',
+        'past tense',
+        'a question',
+        'plural objects'
+      ],
       correctIndex: 0,
       explanation:
           '-ନ୍ତି is the respectful verb ending — ଅଛନ୍ତି (is, hon.). Odia marks respect right in the verb.',
@@ -398,7 +425,12 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       lessonId: 'or_daily_questions',
       type: ExerciseType.mcq,
       prompt: "'ବସ୍ କେଉଁଠି?' ର ଅର୍ଥ: (What does ବସ୍ କେଉଁଠି? ask?)",
-      options: ['When is the bus?', 'Where is the bus?', 'How much is the bus?', 'Who is on the bus?'],
+      options: [
+        'When is the bus?',
+        'Where is the bus?',
+        'How much is the bus?',
+        'Who is on the bus?'
+      ],
       correctIndex: 1,
       explanation:
           'କେଉଁଠି = where. Question word holds the answer\'s slot: "bus where?"',
@@ -496,7 +528,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_daily4_3',
       lessonId: 'or_daily_routine',
       type: ExerciseType.mcq,
-      prompt: 'ଗ୍ରୀଷ୍ମର ଓଡ଼ିଶା ଖାଦ୍ୟ ଆଇକନ୍: (Odisha\'s summer food icon, fermented water-rice, is…)',
+      prompt:
+          'ଗ୍ରୀଷ୍ମର ଓଡ଼ିଶା ଖାଦ୍ୟ ଆଇକନ୍: (Odisha\'s summer food icon, fermented water-rice, is…)',
       options: ['ପଖାଳ (pakhāḷa)', 'ଦୋସା', 'ପିଜ୍ଜା', 'ଚାପ'],
       correctIndex: 0,
       explanation:
@@ -621,7 +654,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_gram3_3',
       lessonId: 'or_grammar_cases',
       type: ExerciseType.mcq,
-      prompt: 'ସମ୍ମାନର ଅଧିକାରଣ: (The HONORIFIC possessive ("mother\'s", respected) is…)',
+      prompt:
+          'ସମ୍ମାନର ଅଧିକାରଣ: (The HONORIFIC possessive ("mother\'s", respected) is…)',
       options: ['ମାଆର', 'ମାଆଙ୍କ', 'ମାଆକୁ', 'ମାଆରୁ'],
       correctIndex: 1,
       explanation:
@@ -658,7 +692,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_gram4_3',
       lessonId: 'or_grammar_politeness',
       type: ExerciseType.mcq,
-      prompt: 'ଦୋକାନରେ ଦାମ୍ କମ୍ କରିବା: (The polite "reduce (the price) a little" is…)',
+      prompt:
+          'ଦୋକାନରେ ଦାମ୍ କମ୍ କରିବା: (The polite "reduce (the price) a little" is…)',
       options: ['ଅଳ୍ପ କମ୍ କରନ୍ତୁ', 'ମହଙ୍ଗା!', 'ଦିଅ ଦିଅ!', 'ଚୁପ୍'],
       correctIndex: 0,
       explanation:
@@ -675,8 +710,14 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read1_1',
       lessonId: 'or_reading_conversation',
       type: ExerciseType.mcq,
-      prompt: 'ବଜାର: "କଣ ଦରକାର?" ର ଅର୍ଥ: (The standard shop opener କଣ ଦରକାର? means…)',
-      options: ['What is needed? / What do you need?', 'What is this?', 'Who are you?', 'Where from?'],
+      prompt:
+          'ବଜାର: "କଣ ଦରକାର?" ର ଅର୍ଥ: (The standard shop opener କଣ ଦରକାର? means…)',
+      options: [
+        'What is needed? / What do you need?',
+        'What is this?',
+        'Who are you?',
+        'Where from?'
+      ],
       correctIndex: 0,
       explanation:
           'କଣ (what) + ଦରକାର (needed) — every Odia shop opens with it. Answer: ଟମାଟୋ ଦରକାର (I need tomatoes).',
@@ -685,7 +726,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read1_2',
       lessonId: 'or_reading_conversation',
       type: ExerciseType.mcq,
-      prompt: "'ଅଳ୍ପ କମ୍ କରନ୍ତୁ!' — କେଉଁ ପରିସ୍ଥିତି? (Where does ଅଳ୍ପ କମ୍ କରନ୍ତୁ! belong?)",
+      prompt:
+          "'ଅଳ୍ପ କମ୍ କରନ୍ତୁ!' — କେଉଁ ପରିସ୍ଥିତି? (Where does ଅଳ୍ପ କମ୍ କରନ୍ତୁ! belong?)",
       options: [
         'Bargaining at the market',
         'Ordering food',
@@ -718,7 +760,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read2_1',
       lessonId: 'or_reading_paragraph',
       type: ExerciseType.mcq,
-      prompt: 'ପୁରୀ ଯାତ୍ରା: ଟ୍ରେନ୍ ଯାତ୍ରା କେତେ ସମୟ? (In the paragraph, how long is the train ride?)',
+      prompt:
+          'ପୁରୀ ଯାତ୍ରା: ଟ୍ରେନ୍ ଯାତ୍ରା କେତେ ସମୟ? (In the paragraph, how long is the train ride?)',
       options: ['ଏକ ଘଣ୍ଟା', 'ତିନି ଘଣ୍ଟା', 'ଦଶ ଘଣ୍ଟା', 'ଅଧ ଘଣ୍ଟା'],
       correctIndex: 0,
       explanation:
@@ -742,7 +785,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read2_3',
       lessonId: 'or_reading_paragraph',
       type: ExerciseType.mcq,
-      prompt: 'ମନ୍ଦିର ପାଇଁ ସଠିକ୍ ଶବ୍ଦ: (The culturally correct verb for viewing a temple is…)',
+      prompt:
+          'ମନ୍ଦିର ପାଇଁ ସଠିକ୍ ଶବ୍ଦ: (The culturally correct verb for viewing a temple is…)',
       options: ['ଦର୍ଶନ କଲି', 'ଦେଖିଲି only', 'ଛୁଅଁଲି', 'ଖାଇଲି'],
       correctIndex: 0,
       explanation:
@@ -769,7 +813,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read3_2',
       lessonId: 'or_reading_proverbs',
       type: ExerciseType.mcq,
-      prompt: "'ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ' — କେଉଁଠି ଲାଗେ? (When does ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ apply?)",
+      prompt:
+          "'ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ' — କେଉଁଠି ଲାଗେ? (When does ଅଳ୍ପ ଜ୍ଞାନ ବିଷ ସମ apply?)",
       options: [
         'When half-learning misleads someone',
         'When cooking rice',
@@ -784,7 +829,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read3_3',
       lessonId: 'or_reading_proverbs',
       type: ExerciseType.mcq,
-      prompt: "'ଗଛରୁ ଫଳ ତଳକୁ ଖସେ' — ଅର୍ଥ: (The fruit-falls-downward proverb teaches…)",
+      prompt:
+          "'ଗଛରୁ ଫଳ ତଳକୁ ଖସେ' — ଅର୍ଥ: (The fruit-falls-downward proverb teaches…)",
       options: [
         'Things settle naturally; rising needs effort',
         'Fruit is expensive',
@@ -802,7 +848,8 @@ final Map<String, List<Exercise>> odiaExercisesByLesson = {
       id: 'ex_or_read4_1',
       lessonId: 'or_reading_review',
       type: ExerciseType.mcq,
-      prompt: 'ସମ୍ପୂର୍ଣ୍ଣ ଯାତ୍ରା: ବାକ୍ୟ କେଉଁଠୁ ଶେଷ? (Full recap: what closes EVERY Odia sentence?)',
+      prompt:
+          'ସମ୍ପୂର୍ଣ୍ଣ ଯାତ୍ରା: ବାକ୍ୟ କେଉଁଠୁ ଶେଷ? (Full recap: what closes EVERY Odia sentence?)',
       options: ['the subject', 'the object', 'the verb', 'a question word'],
       correctIndex: 2,
       explanation:

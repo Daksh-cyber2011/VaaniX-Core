@@ -38,8 +38,8 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   /// Persist and apply a new [ThemeMode].
   Future<void> setThemeMode(ThemeMode mode) async {
-    ref.log(AnalyticsEvent(AnalyticsEventName.themeChanged,
-        {'mode': _toString(mode)}));
+    ref.log(AnalyticsEvent(
+        AnalyticsEventName.themeChanged, {'mode': _toString(mode)}));
     state = mode;
     final storage = ref.read(localStorageServiceProvider);
     await storage.setThemeMode(_toString(mode));

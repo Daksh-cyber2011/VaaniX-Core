@@ -35,10 +35,9 @@ void main() {
   late String focusTopicId;
 
   setUpAll(() async {
-    final raw =
-        await rootBundle.loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
-    syllabus =
-        CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    final raw = await rootBundle
+        .loadString('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    syllabus = CourseSyllabus.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     view = ExamScopeView.fromSyllabus(syllabus);
     selection = ExamScopeSelection.empty(view.trackId)
         .selectAll(view.selectableUnitIds);
@@ -99,7 +98,8 @@ void main() {
     }
   });
 
-  test('§22: the reserved day carries the recovery task of the focus topic', () {
+  test('§22: the reserved day carries the recovery task of the focus topic',
+      () {
     final dayIndex = 3;
     final plan = DeterministicExamPlanner.build(ctxWith(
       WeakAreaPlannerInput(
@@ -107,8 +107,7 @@ void main() {
         revisionItems: const [],
       ),
     ));
-    final recoveryDay =
-        plan.days.firstWhere((d) => d.dayIndex == dayIndex);
+    final recoveryDay = plan.days.firstWhere((d) => d.dayIndex == dayIndex);
     final weakTasks = recoveryDay.tasks
         .where((t) => t.type == ExamTaskType.weakArea)
         .toList();
@@ -136,15 +135,13 @@ void main() {
     expect(normalDay.tasks.any((t) => t.type == ExamTaskType.learn), isTrue);
   });
 
-  test('§23: overdue revision becomes review tasks, only in-scope ones',
-      () {
+  test('§23: overdue revision becomes review tasks, only in-scope ones', () {
     final inScopeOverdue = RevisionItem(
       topicId: focusTopicId,
       intervalIndex: 1,
       lastReviewedIso: '',
-      dueIso: DateTime.now()
-          .subtract(const Duration(days: 4))
-          .toIso8601String(),
+      dueIso:
+          DateTime.now().subtract(const Duration(days: 4)).toIso8601String(),
     );
     final plan = DeterministicExamPlanner.build(ctxWith(
       WeakAreaPlannerInput(
@@ -174,8 +171,8 @@ void main() {
           plan: plan, view: view, selection: selection, profile: examProfile),
       isEmpty,
     );
-    expect(plan.days.first.tasks.any((t) => t.type == ExamTaskType.learn),
-        isTrue);
+    expect(
+        plan.days.first.tasks.any((t) => t.type == ExamTaskType.learn), isTrue);
   });
 
   test('§50: the plan rationale states the recovery reservation', () {
@@ -189,8 +186,7 @@ void main() {
   });
 
   group('Gemini prompt digest (§18 bounded, §21 honest)', () {
-    ExamPlannerContext plannerCtx(List<String> digest) =>
-        ExamPlannerContext(
+    ExamPlannerContext plannerCtx(List<String> digest) => ExamPlannerContext(
           trackId: view.trackId,
           view: view,
           selection: selection,
@@ -210,8 +206,7 @@ void main() {
       expect(prompt, contains('dayIndex 2'));
     });
 
-    test('no evidence → the block is absent entirely (never fabricated)',
-        () {
+    test('no evidence → the block is absent entirely (never fabricated)', () {
       final prompt = ExamPlannerPrompt.user(plannerCtx(const []));
       expect(prompt.contains('WEAK AREA'), isFalse);
     });

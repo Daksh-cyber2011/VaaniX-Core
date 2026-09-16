@@ -31,8 +31,7 @@ import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 /// The remediation session's outcome (§22 mastery check).
 enum RemediationOutcome { notRun, recovered, stillNeedsWork }
 
-RemediationOutcome remediationOutcomeFromName(String? name) =>
-    switch (name) {
+RemediationOutcome remediationOutcomeFromName(String? name) => switch (name) {
       'recovered' => RemediationOutcome.recovered,
       'stillNeedsWork' => RemediationOutcome.stillNeedsWork,
       _ => RemediationOutcome.notRun,
@@ -94,12 +93,11 @@ class RemediationPlan extends Equatable {
   List<PracticeQuestion> get mainQuestions =>
       [...mistakeRetryQuestions, ...targetedQuestions];
 
-  bool get isViable =>
-      recheckQuestions.isNotEmpty && mainQuestions.isNotEmpty;
+  bool get isViable => recheckQuestions.isNotEmpty && mainQuestions.isNotEmpty;
 
   @override
-  List<Object?> get props => [topicId, mistakeRetryQuestions,
-      targetedQuestions, recheckQuestions];
+  List<Object?> get props =>
+      [topicId, mistakeRetryQuestions, targetedQuestions, recheckQuestions];
 }
 
 /// Deterministic remediation builder + recheck judge.
@@ -148,7 +146,8 @@ class RemediationEngine {
       }
     }
     // Pool too thin for tier-2 only → top up from any fresh tier.
-    for (var i = 0; i < recheckPool.length && recheck.length < recheckSize;
+    for (var i = 0;
+        i < recheckPool.length && recheck.length < recheckSize;
         i++) {
       final q = recheckPool[i];
       recheck.add(q);
@@ -177,8 +176,8 @@ class RemediationEngine {
     if (recheckAttempts.length < recheckSize) {
       return RemediationOutcome.stillNeedsWork;
     }
-    final allGood = recheckAttempts.every((a) =>
-        a.verdict == 'correct' || a.verdict == 'partiallyCorrect');
+    final allGood = recheckAttempts.every(
+        (a) => a.verdict == 'correct' || a.verdict == 'partiallyCorrect');
     return allGood
         ? RemediationOutcome.recovered
         : RemediationOutcome.stillNeedsWork;

@@ -86,7 +86,8 @@ void main() {
   });
 
   group('Provider wiring', () {
-    test('localStorageServiceProvider resolves from sharedPreferencesProvider', () {
+    test('localStorageServiceProvider resolves from sharedPreferencesProvider',
+        () {
       final service = _container.read(localStorageServiceProvider);
       expect(service, isA<LocalStorageService>());
     });
@@ -107,7 +108,8 @@ void main() {
         (_) => fail('expected success'),
         (profile) {
           expect(profile.companionName, AppConstants.companionDefaultName);
-          expect(profile.dailyGoalMinutes, AppConstants.defaultDailyGoalMinutes);
+          expect(
+              profile.dailyGoalMinutes, AppConstants.defaultDailyGoalMinutes);
           // xpTotal is no longer on UserProfile — it lives in the progress
           // repo (single source of truth). Verified in the progress repo tests.
           expect(profile.currentStreak, 0);
@@ -175,9 +177,9 @@ void main() {
       ));
       await repo.reset();
       repo.getXp().fold(
-        (_) => fail('expected success'),
-        (xp) => expect(xp, 0),
-      );
+            (_) => fail('expected success'),
+            (xp) => expect(xp, 0),
+          );
     });
   });
 

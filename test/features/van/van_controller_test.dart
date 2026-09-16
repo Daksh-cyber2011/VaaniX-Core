@@ -318,7 +318,8 @@ void main() {
       expect(controller.state.isLoading, isFalse);
     });
 
-    test('back-to-back userMessageReceived + aiThinking never flickers '
+    test(
+        'back-to-back userMessageReceived + aiThinking never flickers '
         'through an intermediate state', () {
       final controller = VanController();
       addTearDown(controller.dispose);
@@ -334,7 +335,8 @@ void main() {
       expect(controller.state.reaction?.state, VanState.thinking);
     });
 
-    test('aiThinking is deferred while a protected celebration is visible '
+    test(
+        'aiThinking is deferred while a protected celebration is visible '
         '(no thinking flash over an achievement)', () {
       final controller = VanController();
       addTearDown(controller.dispose);

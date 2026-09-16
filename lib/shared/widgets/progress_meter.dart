@@ -4,6 +4,7 @@
 /// animated fill. Use for lesson progress, exam progress and mastery rows.
 /// Never pair it with an unnamed percentage - always give [semanticLabel].
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';
 

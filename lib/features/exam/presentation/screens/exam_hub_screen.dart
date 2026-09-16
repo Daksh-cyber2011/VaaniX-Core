@@ -79,8 +79,7 @@ class _ExamHubScreenState extends ConsumerState<ExamHubScreen> {
         ),
         error: (e, _) => ErrorStateWidget(
           title: 'Couldn\'t load your plan',
-          message:
-              'Something went wrong loading your exam home.\n'
+          message: 'Something went wrong loading your exam home.\n'
               'Your progress is safe — try again in a moment.',
           onRetry: () => ref.invalidate(
             examHubSnapshotProvider(widget.trackId),

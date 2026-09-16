@@ -10,6 +10,7 @@
 ///   - [VanState.caring]  → needs attention (no lessons yet, go explore!)
 ///   - [VanState.focus]   → challenge-ready (try your first practice!)
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -93,8 +94,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
     final theme = Theme.of(context);
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final accent = widget.iconColor ?? theme.colorScheme.primary;
-    final subtext =
-        theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
+    final subtext = theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72);
 
     final Widget content = Center(
       child: Padding(

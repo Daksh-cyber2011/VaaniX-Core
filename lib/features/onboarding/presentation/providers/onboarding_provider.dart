@@ -28,8 +28,7 @@ final onboardingRepositoryProvider = Provider<OnboardingRepository>((ref) {
 
 /// Manages the full onboarding flow state.
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
-  OnboardingNotifier(this._repo, this._analytics)
-      : super(_hydrate(_repo));
+  OnboardingNotifier(this._repo, this._analytics) : super(_hydrate(_repo));
 
   final OnboardingRepository _repo;
   final AnalyticsClient _analytics;
@@ -42,9 +41,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     // an older build with a different flow length) and ignored entirely
     // once onboarding is complete — the router redirects away anyway.
     final savedPage = repo.getCurrentPage();
-    final restoredPage = complete
-        ? 0
-        : (savedPage ?? 0).clamp(0, _kOnboardingPageCount - 1);
+    final restoredPage =
+        complete ? 0 : (savedPage ?? 0).clamp(0, _kOnboardingPageCount - 1);
     return OnboardingState(
       isComplete: complete,
       currentPage: restoredPage,
@@ -132,7 +130,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     // The flow is done — drop the resume index so no stale page number
     // survives for a future (re-)run of the flow.
     await _repo.clearCurrentPage();
-    _analytics.log(const AnalyticsEvent(AnalyticsEventName.onboardingCompleted));
+    _analytics
+        .log(const AnalyticsEvent(AnalyticsEventName.onboardingCompleted));
     state = state.copyWith(isComplete: true);
   }
 }

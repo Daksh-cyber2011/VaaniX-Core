@@ -64,8 +64,8 @@ void main() {
       );
       for (var i = 0; i < catalog.expressions.length; i++) {
         expect(
-          vanExpressionArtMatch(catalog.expressions[i],
-              kVanCanonicalExpressionArt[i]),
+          vanExpressionArtMatch(
+              catalog.expressions[i], kVanCanonicalExpressionArt[i]),
           isTrue,
           reason: 'JSON expression #${i + 1} '
               '(${catalog.expressions[i].id}) drifted from the Dart contract '

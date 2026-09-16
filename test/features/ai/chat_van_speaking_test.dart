@@ -126,7 +126,8 @@ void main() {
   test('a successful send drives the full speaking lifecycle to idle',
       () async {
     final van = _RecordingVan();
-    final container = await _makeContainer(() async => ok(_okReply('Namaste!')), van);
+    final container =
+        await _makeContainer(() async => ok(_okReply('Namaste!')), van);
     addTearDown(container.dispose);
     final controller = container.read(chatControllerProvider.notifier);
 

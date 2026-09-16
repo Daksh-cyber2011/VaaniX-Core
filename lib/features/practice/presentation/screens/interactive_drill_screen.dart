@@ -33,7 +33,8 @@ class InteractiveDrillScreen extends ConsumerStatefulWidget {
       _InteractiveDrillScreenState();
 }
 
-class _InteractiveDrillScreenState extends ConsumerState<InteractiveDrillScreen> {
+class _InteractiveDrillScreenState
+    extends ConsumerState<InteractiveDrillScreen> {
   int? _selectedOption = 1; // Option B selected as in Stitch spec
   bool _submitted = true;
   bool _xpAwarded = false;
@@ -43,19 +44,22 @@ class _InteractiveDrillScreenState extends ConsumerState<InteractiveDrillScreen>
       'label': 'A',
       'devanagari': 'तू कैसा है?',
       'transliteration': 'Tu kaisa hai?',
-      'note': 'Very informal / intimate form — inappropriate for elders or teachers.',
+      'note':
+          'Very informal / intimate form — inappropriate for elders or teachers.',
     },
     {
       'label': 'B',
       'devanagari': 'आप कैसे हैं?',
       'transliteration': 'Aap kaise hain?',
-      'note': 'Correct! "आप" expresses honorific respect with plural verb agreement.',
+      'note':
+          'Correct! "आप" expresses honorific respect with plural verb agreement.',
     },
     {
       'label': 'C',
       'devanagari': 'तुम कैसे हो?',
       'transliteration': 'Tum kaise ho?',
-      'note': 'Semi-formal / friendly form — suitable for peers and younger friends.',
+      'note':
+          'Semi-formal / friendly form — suitable for peers and younger friends.',
     },
   ];
 
@@ -388,7 +392,8 @@ class _InteractiveDrillScreenState extends ConsumerState<InteractiveDrillScreen>
               ),
               child: Center(
                 child: isSelected && _submitted
-                    ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                    ? const Icon(Icons.check_rounded,
+                        color: Colors.white, size: 18)
                     : Text(
                         opt['label']!,
                         style: TextStyle(

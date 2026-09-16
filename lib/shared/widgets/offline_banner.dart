@@ -6,6 +6,7 @@
 ///
 /// Mount it once under the top of any screen body (or inside an app shell).
 library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vaanix_app/core/network/connectivity_service.dart';
@@ -35,33 +36,35 @@ class OfflineBanner extends ConsumerWidget {
               // offline.
               liveRegion: true,
               child: Container(
-              width: double.infinity,
-              margin: margin,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.warningContainerDark
-                    : AppColors.warningContainerLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.wifi_off_rounded,
-                    size: 18,
-                    color: isDark ? const Color(0xFFFFB74D) : AppColors.warning,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "You're offline. Lessons keep working - Van's AI chat needs a connection.",
-                      style: AppTextStyles.bodySmall(
-                        color: theme.colorScheme.onSurface,
+                width: double.infinity,
+                margin: margin,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.warningContainerDark
+                      : AppColors.warningContainerLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.wifi_off_rounded,
+                      size: 18,
+                      color:
+                          isDark ? const Color(0xFFFFB74D) : AppColors.warning,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "You're offline. Lessons keep working - Van's AI chat needs a connection.",
+                        style: AppTextStyles.bodySmall(
+                          color: theme.colorScheme.onSurface,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             ),
     );

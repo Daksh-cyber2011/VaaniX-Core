@@ -71,9 +71,8 @@ abstract final class GeneratedContentParser {
     );
 
     if (!validation.isValid) {
-      final reasons = validation.rejections
-          .map((r) => r.explanation)
-          .join('; ');
+      final reasons =
+          validation.rejections.map((r) => r.explanation).join('; ');
       return Left(AiServiceFailure(
         'Generated material rejected: $reasons',
       ));

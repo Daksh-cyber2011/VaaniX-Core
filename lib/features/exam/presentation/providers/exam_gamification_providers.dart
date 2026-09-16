@@ -71,8 +71,7 @@ class ExamGamification {
   final Ref _ref;
 
   /// Runs the full chain for one FINISHED session. Never throws (§41).
-  Future<ExamSessionOutcome> sessionFinished(
-      ExamSessionRecord record) async {
+  Future<ExamSessionOutcome> sessionFinished(ExamSessionRecord record) async {
     var xpAwarded = 0;
     var streakExtended = false;
     var streak = 0;
@@ -84,9 +83,7 @@ class ExamGamification {
       final hubRepo = _ref.read(examHubRepositoryProvider);
       final alreadyPaid = await hubRepo.isAwarded(record.xpSourceId);
       if (!alreadyPaid && record.award > 0) {
-        final result = await _ref
-            .read(progressRepositoryProvider)
-            .awardBonusXp(
+        final result = await _ref.read(progressRepositoryProvider).awardBonusXp(
               sourceId: record.xpSourceId,
               amount: record.award,
             );
@@ -114,8 +111,8 @@ class ExamGamification {
               record.dayKey,
               taskType,
             );
-        _ref.invalidate(examDayCompletionsProvider(
-            '${record.trackId}|${record.dayKey}'));
+        _ref.invalidate(
+            examDayCompletionsProvider('${record.trackId}|${record.dayKey}'));
       }
     } catch (_) {
       // §41: completion bookkeeping is UI-state aid, never critical.
@@ -162,12 +159,10 @@ class ExamGamification {
     try {
       final van = _ref.read(vanControllerProvider.notifier);
       if (xpAwarded > 0) {
-        final perfect = record.correctCount == record.totalCount &&
-            record.totalCount >= 5;
+        final perfect =
+            record.correctCount == record.totalCount && record.totalCount >= 5;
         van.dispatch(VanEvent(
-          perfect
-              ? VanEventType.perfectScore
-              : VanEventType.quizCompleted,
+          perfect ? VanEventType.perfectScore : VanEventType.quizCompleted,
           message: perfect
               ? 'Perfect run — $xpAwarded XP!'
               : 'Session done — $xpAwarded XP earned.',

@@ -33,7 +33,8 @@ void main() {
     container = ProviderContainer(overrides: [
       sharedPreferencesProvider.overrideWithValue(prefs),
     ]);
-    memory = LocalConversationMemory(container.read(localStorageServiceProvider));
+    memory =
+        LocalConversationMemory(container.read(localStorageServiceProvider));
   });
 
   tearDown(() => container.dispose());
@@ -56,7 +57,8 @@ void main() {
     final messages = stored.fold((_) => <AiMessage>[], (v) => v);
     expect(messages.length, AppConstants.maxAiTranscriptMessages,
         reason: 'the transcript is hard-capped on disk');
-    expect(messages.last.content, 'r${AppConstants.maxAiTranscriptMessages + 24}',
+    expect(
+        messages.last.content, 'r${AppConstants.maxAiTranscriptMessages + 24}',
         reason: 'the NEWEST messages are the ones kept');
     expect(messages.first.id, 'u75',
         reason: 'the oldest messages were the ones dropped (sliding window)');
@@ -98,8 +100,7 @@ void main() {
   test('the conversation being written is never pruned', () async {
     // Fill storage with newer conversations than the current one.
     const current = 'conv_1690000000000';
-    final newer = List.generate(
-        AppConstants.maxStoredAiConversations + 2,
+    final newer = List.generate(AppConstants.maxStoredAiConversations + 2,
         (i) => 'conv_${1700000000000 + i}');
     for (final id in newer) {
       await memory.append(conversationId: id, message: _user(1));
@@ -122,7 +123,8 @@ void main() {
       await memory.append(conversationId: id, message: _user(1));
     }
     // One more conversation forces a prune; 'default' must go first.
-    await memory.append(conversationId: 'conv_1800000000000', message: _user(1));
+    await memory.append(
+        conversationId: 'conv_1800000000000', message: _user(1));
 
     final remaining = aiKeys()
         .map((k) => k.substring(AppConstants.aiConversationKeyPrefix.length))

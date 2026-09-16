@@ -100,8 +100,8 @@ void main() {
             q('x', marks: 2, pattern: 'पूर्णवाक्यात्मक 3×2'), 'sec1'),
         isFalse,
       );
-      expect(filter.matches(q('x', marks: 2, pattern: 'MCQ 1×2'), 'sec1'),
-          isFalse,
+      expect(
+          filter.matches(q('x', marks: 2, pattern: 'MCQ 1×2'), 'sec1'), isFalse,
           reason: 'MCQ pattern kind excluded by typed marker');
     });
   });
@@ -116,7 +116,8 @@ void main() {
     test('band ladder: weak / building / strong', () {
       const weak = PyqTopicPerformance(topicId: 't', attempted: 5, correct: 1);
       const mid = PyqTopicPerformance(topicId: 't', attempted: 5, correct: 3);
-      const strong = PyqTopicPerformance(topicId: 't', attempted: 5, correct: 4);
+      const strong =
+          PyqTopicPerformance(topicId: 't', attempted: 5, correct: 4);
       expect(weak.band, 'needsAttention');
       expect(mid.band, 'learning');
       expect(strong.band, 'strong');

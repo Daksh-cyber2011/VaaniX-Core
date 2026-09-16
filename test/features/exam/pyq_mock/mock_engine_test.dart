@@ -158,9 +158,11 @@ void main() {
       final secC = p.sections.firstWhere((s) => s.sectionId == 'sec_c');
       final attempts = <PracticeAttempt>[
         for (final q in p.allQuestions)
-          at(q.id, secC.questions.any((x) => x.id == q.id)
-              ? 'incorrect'
-              : 'correct'),
+          at(
+              q.id,
+              secC.questions.any((x) => x.id == q.id)
+                  ? 'incorrect'
+                  : 'correct'),
       ];
       final result = MockEngine.analyze(paper: p, attempts: attempts);
       expect(result.hasWeakSection, isTrue);

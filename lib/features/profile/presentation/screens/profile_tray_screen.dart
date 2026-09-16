@@ -48,7 +48,8 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: VaaniXRadius.borderLg),
-        title: const Text('Rename VAN', style: TextStyle(fontFamily: 'Poppins')),
+        title:
+            const Text('Rename VAN', style: TextStyle(fontFamily: 'Poppins')),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
@@ -65,7 +66,9 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
             onPressed: () {
               final newName = controller.text.trim();
               if (newName.isNotEmpty) {
-                ref.read(userProfileProvider.notifier).updateCompanionName(newName);
+                ref
+                    .read(userProfileProvider.notifier)
+                    .updateCompanionName(newName);
               }
               Navigator.of(ctx).pop();
             },
@@ -107,7 +110,8 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
               Navigator.of(ctx).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Exam track reset successfully. Learn progress preserved.'),
+                  content: Text(
+                      'Exam track reset successfully. Learn progress preserved.'),
                 ),
               );
             },
@@ -187,7 +191,8 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
         children: [
           CircleAvatar(
             radius: 26,
-            backgroundColor: VaaniXColors.learnPrimaryViolet.withValues(alpha: 0.12),
+            backgroundColor:
+                VaaniXColors.learnPrimaryViolet.withValues(alpha: 0.12),
             child: const Icon(
               Icons.person_outline_rounded,
               color: VaaniXColors.learnPrimaryViolet,
@@ -243,11 +248,16 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
 
     return Row(
       children: [
-        Expanded(child: _MetricTile(emoji: '🔥', value: '$displayStreak Days', label: 'Streak')),
+        Expanded(
+            child: _MetricTile(
+                emoji: '🔥', value: '$displayStreak Days', label: 'Streak')),
         const SizedBox(width: 10),
-        Expanded(child: _MetricTile(emoji: '⚡', value: displayXp, label: 'XP Earned')),
+        Expanded(
+            child:
+                _MetricTile(emoji: '⚡', value: displayXp, label: 'XP Earned')),
         const SizedBox(width: 10),
-        Expanded(child: _MetricTile(emoji: '🎯', value: '88%', label: 'Accuracy')),
+        Expanded(
+            child: _MetricTile(emoji: '🎯', value: '88%', label: 'Accuracy')),
       ],
     );
   }
@@ -444,7 +454,6 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
           ),
         ),
         const SizedBox(height: 10),
-
         VaaniXCard(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -627,11 +636,14 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
             onPressed: () {
               setState(() => _cachedMegabytes = 120);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cache cleaned. 120 MB essential data kept.')),
+                const SnackBar(
+                    content:
+                        Text('Cache cleaned. 120 MB essential data kept.')),
               );
             },
             style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(borderRadius: VaaniXRadius.borderMd),
+              shape:
+                  RoundedRectangleBorder(borderRadius: VaaniXRadius.borderMd),
             ),
             child: const Text('Clear Audio Waveform Cache'),
           ),

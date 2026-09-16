@@ -30,18 +30,20 @@ void main() {
   group('ErrorCategory vocabulary (§47)', () {
     test('all ten official categories exist', () {
       expect(ErrorCategory.values.length, 10);
-      expect(ErrorCategory.values, containsAll([
-        ErrorCategory.conceptGap,
-        ErrorCategory.recallGap,
-        ErrorCategory.applicationGap,
-        ErrorCategory.questionInterpretation,
-        ErrorCategory.carelessMistake,
-        ErrorCategory.grammarError,
-        ErrorCategory.structureError,
-        ErrorCategory.incompleteAnswer,
-        ErrorCategory.timeIssue,
-        ErrorCategory.misconception,
-      ]));
+      expect(
+          ErrorCategory.values,
+          containsAll([
+            ErrorCategory.conceptGap,
+            ErrorCategory.recallGap,
+            ErrorCategory.applicationGap,
+            ErrorCategory.questionInterpretation,
+            ErrorCategory.carelessMistake,
+            ErrorCategory.grammarError,
+            ErrorCategory.structureError,
+            ErrorCategory.incompleteAnswer,
+            ErrorCategory.timeIssue,
+            ErrorCategory.misconception,
+          ]));
     });
 
     test('name round-trip is total', () {
@@ -74,18 +76,18 @@ void main() {
 
     test('partiallyCorrect splits by kind and retry', () {
       expect(
-        ErrorIntelligence.classify(ev('q1', 't1', 'partiallyCorrect',
-            kind: 'mcq')),
+        ErrorIntelligence.classify(
+            ev('q1', 't1', 'partiallyCorrect', kind: 'mcq')),
         ErrorCategory.questionInterpretation,
       );
       expect(
-        ErrorIntelligence.classify(ev('q1', 't1', 'partiallyCorrect',
-            kind: 'typed')),
+        ErrorIntelligence.classify(
+            ev('q1', 't1', 'partiallyCorrect', kind: 'typed')),
         ErrorCategory.incompleteAnswer,
       );
       expect(
-        ErrorIntelligence.classify(ev('q1', 't1', 'partiallyCorrect',
-            kind: 'typed', retries: 1)),
+        ErrorIntelligence.classify(
+            ev('q1', 't1', 'partiallyCorrect', kind: 'typed', retries: 1)),
         ErrorCategory.structureError,
       );
     });
@@ -96,8 +98,7 @@ void main() {
         ErrorCategory.recallGap,
       );
       expect(
-        ErrorIntelligence.classify(
-            ev('q1', 't1', 'incorrect', kind: 'typed')),
+        ErrorIntelligence.classify(ev('q1', 't1', 'incorrect', kind: 'typed')),
         ErrorCategory.applicationGap,
       );
     });
@@ -145,8 +146,7 @@ void main() {
       expect(patterns.first.questionIds, ['q1', 'q2']);
     });
 
-    test('3+ first-shot misses stay recallGap (escalation needs evidence)',
-        () {
+    test('3+ first-shot misses stay recallGap (escalation needs evidence)', () {
       final patterns = ErrorIntelligence.analyze([
         ev('q1', 't1', 'incorrect'),
         ev('q2', 't1', 'incorrect'),
@@ -189,13 +189,10 @@ void main() {
         ev('q2', 't1', 'partiallyCorrect', kind: 'typed', retries: 1),
         // structureError — different category
       ]);
-      expect(
-          patterns.where((p) => p.category == ErrorCategory.conceptGap),
+      expect(patterns.where((p) => p.category == ErrorCategory.conceptGap),
           isEmpty,
           reason: 'only ONE conceptGap evidence — below threshold');
-      expect(
-          patterns
-              .where((p) => p.category == ErrorCategory.structureError),
+      expect(patterns.where((p) => p.category == ErrorCategory.structureError),
           isEmpty,
           reason: 'only ONE structureError evidence — below threshold');
       expect(patterns, isEmpty);
@@ -219,12 +216,10 @@ void main() {
     test('unfabricatable categories never appear (§30/§21 honesty)', () {
       // No data path can produce grammar/time categories.
       final all = ErrorIntelligence.analyze([
-        for (var i = 0; i < 10; i++)
-          ev('q$i', 't$i', 'incorrect', retries: 1),
+        for (var i = 0; i < 10; i++) ev('q$i', 't$i', 'incorrect', retries: 1),
         for (var i = 10; i < 20; i++)
           ev('q$i', 't$i', 'incorrect', kind: 'typed'),
-        for (var i = 20; i < 30; i++)
-          ev('q$i', 't$i', 'correct', retries: 1),
+        for (var i = 20; i < 30; i++) ev('q$i', 't$i', 'correct', retries: 1),
       ]);
       for (final p in all) {
         expect(

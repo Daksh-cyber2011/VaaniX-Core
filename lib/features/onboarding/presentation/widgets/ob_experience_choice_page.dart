@@ -235,7 +235,9 @@ class _JourneyCard extends StatelessWidget {
         ? VaaniXColors.examSurfaceCard
         : VaaniXColors.learnSurfaceCard;
     final borderColor = isSelected
-        ? (isTactical ? VaaniXColors.examCyanAccent : VaaniXColors.learnPrimaryViolet)
+        ? (isTactical
+            ? VaaniXColors.examCyanAccent
+            : VaaniXColors.learnPrimaryViolet)
         : (isTactical ? VaaniXColors.examBorder : VaaniXColors.learnBorder);
 
     return GestureDetector(
@@ -272,7 +274,8 @@ class _JourneyCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isTactical
                         ? VaaniXColors.examCyanAccent.withValues(alpha: 0.15)
-                        : VaaniXColors.learnPrimaryViolet.withValues(alpha: 0.1),
+                        : VaaniXColors.learnPrimaryViolet
+                            .withValues(alpha: 0.1),
                     borderRadius: VaaniXRadius.borderPill,
                   ),
                   child: Text(

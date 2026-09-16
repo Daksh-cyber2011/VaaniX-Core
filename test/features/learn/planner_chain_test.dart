@@ -94,8 +94,7 @@ Future<ProviderContainer> _container({
   return ProviderContainer(
     overrides: [
       plannerTextClientProvider.overrideWithValue(textClient),
-      learnPlanRepositoryProvider
-          .overrideWithValue(LearnPlanRepository(
+      learnPlanRepositoryProvider.overrideWithValue(LearnPlanRepository(
         LocalStorageService(prefs),
       )),
     ],
@@ -114,8 +113,7 @@ Future<LearningPlan> _planFrom(
 
 String _encode(LearningPlan plan) => jsonEncode(plan.toJson());
 
-String _planKey() =>
-    LearnPlanRepository.planKey(learnLanguageForCode('hi')!);
+String _planKey() => LearnPlanRepository.planKey(learnLanguageForCode('hi')!);
 
 void main() {
   setUpAll(() {
@@ -161,10 +159,9 @@ void main() {
       textClient: _FakeTextClient(reply: _validPlanJson),
     );
     await _planFrom(good, _context());
-    final cachedPlan =
-        good.read(learnPlanRepositoryProvider).getPlan(
-              learnLanguageForCode('hi')!,
-            )!;
+    final cachedPlan = good.read(learnPlanRepositoryProvider).getPlan(
+          learnLanguageForCode('hi')!,
+        )!;
     good.dispose();
 
     // Now the outage: same storage contents, unavailable client.
@@ -195,8 +192,7 @@ void main() {
     expect(plan.activities.first.kind, ActivityKind.newLearning);
   });
 
-  test('stale cache is skipped — the chain falls to deterministic',
-      () async {
+  test('stale cache is skipped — the chain falls to deterministic', () async {
     final stale = LearningPlan(
       id: 'plan-ai-old',
       languageCode: 'hi',
@@ -230,10 +226,9 @@ void main() {
       textClient: _FakeTextClient(reply: _validPlanJson),
     );
     await _planFrom(good, _context());
-    final cachedPlan =
-        good.read(learnPlanRepositoryProvider).getPlan(
-              learnLanguageForCode('hi')!,
-            )!;
+    final cachedPlan = good.read(learnPlanRepositoryProvider).getPlan(
+          learnLanguageForCode('hi')!,
+        )!;
     good.dispose();
 
     final c = await _container(

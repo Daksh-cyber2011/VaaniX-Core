@@ -14,6 +14,7 @@
 /// An optional VAN companion ([showVan]) makes error states feel supportive
 /// rather than alarming. Use [VanState.caring] (default) or [VanState.sad].
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_dimens.dart';
@@ -97,8 +98,8 @@ class ErrorStateWidget extends StatelessWidget {
                 label: retryLabel,
                 onPressed: onRetry,
                 minimumSize: const Size(180, 48),
-                icon: const Icon(Icons.refresh_rounded, size: 20,
-                    color: Colors.white),
+                icon: const Icon(Icons.refresh_rounded,
+                    size: 20, color: Colors.white),
               ),
             ],
           ],

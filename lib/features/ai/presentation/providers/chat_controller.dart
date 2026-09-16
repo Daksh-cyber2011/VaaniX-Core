@@ -153,8 +153,7 @@ class ChatController extends StateNotifier<ChatState> {
     if (lastUser == null) return;
     final text = lastUser.content;
     state = state.copyWith(
-      messages:
-          state.messages.where((m) => m.id != lastUser!.id).toList(),
+      messages: state.messages.where((m) => m.id != lastUser!.id).toList(),
     );
     await sendMessage(text);
   }
@@ -336,8 +335,8 @@ class ChatController extends StateNotifier<ChatState> {
     }
 
     try {
-      await for (final result
-          in pipeline.stream(context: context, userMessage: userMessage, config: config)) {
+      await for (final result in pipeline.stream(
+          context: context, userMessage: userMessage, config: config)) {
         if (_disposed || !mounted) return; // cancels the subscription
         result.fold(
           (failure) {

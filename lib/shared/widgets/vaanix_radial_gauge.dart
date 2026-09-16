@@ -80,7 +80,9 @@ class _VaaniXRadialGaugeState extends State<VaaniXRadialGauge>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeColor = widget.primaryColor ??
-        (isDark ? VaaniXColors.examCyanAccent : VaaniXColors.learnPrimaryViolet);
+        (isDark
+            ? VaaniXColors.examCyanAccent
+            : VaaniXColors.learnPrimaryViolet);
     final bgTrack = widget.trackColor ??
         (isDark
             ? VaaniXColors.examSurfaceElevated

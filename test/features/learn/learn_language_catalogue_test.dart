@@ -45,13 +45,18 @@ void main() {
   });
 
   group('catalogue — per-language metadata integrity', () {
-    test('every spec has a non-empty code, english name, native name, script', () {
+    test('every spec has a non-empty code, english name, native name, script',
+        () {
       for (final spec in kLearnLanguageCatalogue) {
         expect(spec.code, isNotEmpty, reason: '${spec.language} code');
-        expect(spec.englishName, isNotEmpty, reason: '${spec.language} englishName');
-        expect(spec.nativeName, isNotEmpty, reason: '${spec.language} nativeName');
-        expect(spec.scriptName, isNotEmpty, reason: '${spec.language} scriptName');
-        expect(spec.scriptCode, isNotEmpty, reason: '${spec.language} scriptCode');
+        expect(spec.englishName, isNotEmpty,
+            reason: '${spec.language} englishName');
+        expect(spec.nativeName, isNotEmpty,
+            reason: '${spec.language} nativeName');
+        expect(spec.scriptName, isNotEmpty,
+            reason: '${spec.language} scriptName');
+        expect(spec.scriptCode, isNotEmpty,
+            reason: '${spec.language} scriptCode');
         expect(spec.iso639_1, isNotEmpty, reason: '${spec.language} iso639_1');
         expect(spec.iso639_2, isNotEmpty, reason: '${spec.language} iso639_2');
         expect(spec.curriculumAssetPath, isNotEmpty,
@@ -62,11 +67,13 @@ void main() {
     test('every code is a 2-letter lower-case ISO 639-1 string', () {
       for (final spec in kLearnLanguageCatalogue) {
         expect(RegExp(r'^[a-z]{2}$').hasMatch(spec.code), isTrue,
-            reason: '${spec.language} code "${spec.code}" must be 2 lowercase letters');
+            reason:
+                '${spec.language} code "${spec.code}" must be 2 lowercase letters');
       }
     });
 
-    test('every curriculum asset path is assets/curriculum/learn/<code>.json', () {
+    test('every curriculum asset path is assets/curriculum/learn/<code>.json',
+        () {
       for (final spec in kLearnLanguageCatalogue) {
         expect(
           spec.curriculumAssetPath,
@@ -112,15 +119,13 @@ void main() {
     });
 
     test('every native name is unique', () {
-      final names =
-          kLearnLanguageCatalogue.map((s) => s.nativeName).toSet();
+      final names = kLearnLanguageCatalogue.map((s) => s.nativeName).toSet();
       expect(names.length, kLearnLanguageCatalogue.length,
           reason: 'duplicate nativeName');
     });
 
     test('every english name is unique', () {
-      final names =
-          kLearnLanguageCatalogue.map((s) => s.englishName).toSet();
+      final names = kLearnLanguageCatalogue.map((s) => s.englishName).toSet();
       expect(names.length, kLearnLanguageCatalogue.length,
           reason: 'duplicate englishName');
     });
@@ -139,8 +144,7 @@ void main() {
       final ltr = kLearnLanguageCatalogue
           .where((s) => s.scriptDirection == ScriptDirection.ltr)
           .toSet();
-      expect(ltr.length, 9,
-          reason: '9 of the 10 Learn languages are LTR');
+      expect(ltr.length, 9, reason: '9 of the 10 Learn languages are LTR');
     });
   });
 
@@ -155,8 +159,7 @@ void main() {
     test('learnLanguageSpecByCode resolves every catalogue code', () {
       for (final expected in kLearnLanguageCatalogue) {
         final resolved = learnLanguageSpecByCode(expected.code);
-        expect(resolved, isNotNull,
-            reason: '${expected.code} should resolve');
+        expect(resolved, isNotNull, reason: '${expected.code} should resolve');
         expect(resolved!.language, expected.language);
       }
     });

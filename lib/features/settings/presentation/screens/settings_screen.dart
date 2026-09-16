@@ -434,8 +434,8 @@ class SettingsScreen extends ConsumerWidget {
     controller.dispose();
     if (result == null) return; // cancelled
     await ref.read(userProfileProvider.notifier).updateDisplayName(result);
-    ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged,
-        {'field': 'displayName'}));
+    ref.log(const AnalyticsEvent(
+        AnalyticsEventName.settingsChanged, {'field': 'displayName'}));
   }
 
   Future<void> _editCompanionName(
@@ -473,7 +473,8 @@ class SettingsScreen extends ConsumerWidget {
     controller.dispose();
     if (result != null && result.isNotEmpty) {
       await ref.read(userProfileProvider.notifier).updateCompanionName(result);
-      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'companionName'}));
+      ref.log(const AnalyticsEvent(
+          AnalyticsEventName.settingsChanged, {'field': 'companionName'}));
     }
   }
 
@@ -493,24 +494,24 @@ class SettingsScreen extends ConsumerWidget {
             child: Semantics(
               selected: current == mode,
               child: Row(
-              children: [
-                Icon(
-                  switch (mode) {
-                    PersonalityMode.cheerleader => Icons.celebration_rounded,
-                    PersonalityMode.calm => Icons.self_improvement_rounded,
-                    PersonalityMode.fun => Icons.mood_rounded,
-                  },
-                  size: 22,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 12),
-                Text(mode.label, style: AppTextStyles.titleMedium()),
-                if (current == mode) ...[
-                  const Spacer(),
-                  Icon(Icons.check,
-                      color: Theme.of(context).colorScheme.primary),
+                children: [
+                  Icon(
+                    switch (mode) {
+                      PersonalityMode.cheerleader => Icons.celebration_rounded,
+                      PersonalityMode.calm => Icons.self_improvement_rounded,
+                      PersonalityMode.fun => Icons.mood_rounded,
+                    },
+                    size: 22,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(mode.label, style: AppTextStyles.titleMedium()),
+                  if (current == mode) ...[
+                    const Spacer(),
+                    Icon(Icons.check,
+                        color: Theme.of(context).colorScheme.primary),
+                  ],
                 ],
-              ],
               ),
             ),
           );
@@ -521,8 +522,8 @@ class SettingsScreen extends ConsumerWidget {
       await ref
           .read(userProfileProvider.notifier)
           .updatePersonalityMode(result);
-      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged,
-          {'field': 'personality'}));
+      ref.log(const AnalyticsEvent(
+          AnalyticsEventName.settingsChanged, {'field': 'personality'}));
     }
   }
 
@@ -542,16 +543,16 @@ class SettingsScreen extends ConsumerWidget {
             child: Semantics(
               selected: minutes == current,
               child: Row(
-              children: [
-                Text('$minutes', style: AppTextStyles.titleLarge()),
-                const SizedBox(width: 6),
-                Text('min/day', style: AppTextStyles.bodySmall()),
-                if (minutes == current) ...[
-                  const Spacer(),
-                  Icon(Icons.check,
-                      color: Theme.of(context).colorScheme.primary),
+                children: [
+                  Text('$minutes', style: AppTextStyles.titleLarge()),
+                  const SizedBox(width: 6),
+                  Text('min/day', style: AppTextStyles.bodySmall()),
+                  if (minutes == current) ...[
+                    const Spacer(),
+                    Icon(Icons.check,
+                        color: Theme.of(context).colorScheme.primary),
+                  ],
                 ],
-              ],
               ),
             ),
           );
@@ -560,7 +561,8 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (result != null) {
       await ref.read(userProfileProvider.notifier).updateDailyGoal(result);
-      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'dailyGoal'}));
+      ref.log(const AnalyticsEvent(
+          AnalyticsEventName.settingsChanged, {'field': 'dailyGoal'}));
     }
   }
 
@@ -580,14 +582,14 @@ class SettingsScreen extends ConsumerWidget {
             child: Semantics(
               selected: current == c,
               child: Row(
-              children: [
-                Text(c.label, style: AppTextStyles.titleMedium()),
-                if (current == c) ...[
-                  const Spacer(),
-                  Icon(Icons.check,
-                      color: Theme.of(context).colorScheme.primary),
+                children: [
+                  Text(c.label, style: AppTextStyles.titleMedium()),
+                  if (current == c) ...[
+                    const Spacer(),
+                    Icon(Icons.check,
+                        color: Theme.of(context).colorScheme.primary),
+                  ],
                 ],
-              ],
               ),
             ),
           );
@@ -596,7 +598,8 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (result != null) {
       await ref.read(userProfileProvider.notifier).updateCbseClass(result);
-      ref.log(const AnalyticsEvent(AnalyticsEventName.settingsChanged, {'field': 'cbseClass'}));
+      ref.log(const AnalyticsEvent(
+          AnalyticsEventName.settingsChanged, {'field': 'cbseClass'}));
     }
   }
 

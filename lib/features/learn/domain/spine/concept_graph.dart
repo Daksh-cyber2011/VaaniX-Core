@@ -203,8 +203,10 @@ class ConceptGraph extends Equatable {
   LearnConcept? conceptForLesson(String lessonId) => _byId()[lessonId];
 
   /// All concepts belonging to one skill, in curriculum order.
-  List<LearnConcept> conceptsInSkill(String skillId) =>
-      [for (final c in concepts) if (c.skillId == skillId) c];
+  List<LearnConcept> conceptsInSkill(String skillId) => [
+        for (final c in concepts)
+          if (c.skillId == skillId) c
+      ];
 
   /// The first concept that has not reached [atLeast] for the learner,
   /// in curriculum order. `null` when everything reached it (or graph is

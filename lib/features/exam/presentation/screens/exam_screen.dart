@@ -78,8 +78,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   Future<void> _openExamMode2(BuildContext context) async {
     final router = GoRouter.maybeOf(context);
     if (router == null) return;
-    final store =
-        await ref.read(examScopeStoreProvider.future);
+    final store = await ref.read(examScopeStoreProvider.future);
     final trackId = store.activeTrackId;
     if (trackId == null) {
       router.pushNamed(RouteNames.examSetupName);
@@ -97,8 +96,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           pathParameters: {'trackId': trackId});
       return;
     }
-    final learner =
-        await ref.read(examLearnerProfileProvider(trackId).future);
+    final learner = await ref.read(examLearnerProfileProvider(trackId).future);
     if (!learner.hasDiagnostic) {
       router.pushNamed(RouteNames.examDiagnosticName,
           pathParameters: {'trackId': trackId});
@@ -113,8 +111,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
   }
 
   void _beginQuiz() {
-    ref.log(AnalyticsEvent(AnalyticsEventName.examStarted,
-        {'quizId': _config.quizId}));
+    ref.log(AnalyticsEvent(
+        AnalyticsEventName.examStarted, {'quizId': _config.quizId}));
     ref
         .read(vanControllerProvider.notifier)
         .dispatch(const VanEvent(VanEventType.quizStarted));
@@ -273,9 +271,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
           await ref.read(milestoneCheckerProvider).checkMilestones();
       if (!mounted || milestones.isEmpty) return;
       final first = milestones.first;
-      final extra = milestones.length > 1
-          ? ' (+${milestones.length - 1} more)'
-          : '';
+      final extra =
+          milestones.length > 1 ? ' (+${milestones.length - 1} more)' : '';
       ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
             VanEventType.milestoneUnlocked,
             message: 'Milestone unlocked: ${first.title}!',
@@ -562,8 +559,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                 dialogueText: 'Something went wrong loading this exam.',
               ),
               const SizedBox(height: 16),
-              PrimaryButton(
-                  label: 'Back to setup', onPressed: _backToSetup),
+              PrimaryButton(label: 'Back to setup', onPressed: _backToSetup),
             ],
           ),
         ),
@@ -754,8 +750,7 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                     : () => notifier.select(i),
                                 borderRadius: BorderRadius.circular(14),
                                 child: AnimatedContainer(
-                                  duration:
-                                      const Duration(milliseconds: 150),
+                                  duration: const Duration(milliseconds: 150),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 14),
                                   decoration: BoxDecoration(
@@ -763,9 +758,8 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
                                         color: borderColor,
-                                        width: isSelected || showCorrect
-                                            ? 2
-                                            : 1),
+                                        width:
+                                            isSelected || showCorrect ? 2 : 1),
                                   ),
                                   child: Row(
                                     children: [
@@ -920,7 +914,8 @@ class _BoardPrepCard extends StatelessWidget {
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
+              border:
+                  Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
             ),
             child: Row(
               children: [
@@ -1024,10 +1019,10 @@ class _ChapterTile extends StatelessWidget {
                       Text(
                         subtitle,
                         style: AppTextStyles.bodySmall(
-                            color: (Theme.of(context).brightness ==
-                                    Brightness.dark
-                                ? AppColors.subtextDark
-                                : AppColors.subtextLight)),
+                            color:
+                                (Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.subtextDark
+                                    : AppColors.subtextLight)),
                       ),
                     ],
                   ),
@@ -1109,9 +1104,7 @@ class _DifficultyChip extends StatelessWidget {
                         : (isDark
                             ? AppColors.borderDark
                             : AppColors.borderLight))
-                    : (isDark
-                        ? AppColors.borderDark
-                        : AppColors.borderLight),
+                    : (isDark ? AppColors.borderDark : AppColors.borderLight),
               ),
             ),
             child: Text(
@@ -1242,11 +1235,9 @@ class _ResultView extends StatelessWidget {
                   _SaveState.saving => 'Saving\u2026',
                   // Unsaved / failed: retryable. XP is only promised on a
                   // first completion — repeats earn 0 by design.
-                  _SaveState.unsaved ||
-                  _SaveState.failed =>
-                    alreadyCompleted
-                        ? 'Save Progress'
-                        : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
+                  _SaveState.unsaved || _SaveState.failed => alreadyCompleted
+                      ? 'Save Progress'
+                      : 'Save Progress (+${score * AppConstants.xpPerCorrectAnswer} XP)',
                 },
                 icon: const Icon(Icons.save_outlined, color: Colors.white),
                 onPressed: saveState == _SaveState.saved ||

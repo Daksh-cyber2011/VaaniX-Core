@@ -32,8 +32,8 @@ List<String> _hindiLessonIds() {
   final chapters = json['chapters'] as List<dynamic>;
   return [
     for (final ch in chapters)
-      for (final lesson in (ch as Map<String, dynamic>)['lessons']
-          as List<dynamic>)
+      for (final lesson
+          in (ch as Map<String, dynamic>)['lessons'] as List<dynamic>)
         (lesson as Map<String, dynamic>)['id'] as String,
   ];
 }
@@ -99,8 +99,7 @@ void main() {
     expect(action.chapterId, isNull);
   });
 
-  test('Sanskrit fallback stays intact when NO language is selected',
-      () async {
+  test('Sanskrit fallback stays intact when NO language is selected', () async {
     final container = await _container({});
     addTearDown(container.dispose);
 

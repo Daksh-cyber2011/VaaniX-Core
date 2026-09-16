@@ -143,42 +143,43 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               // without the user having to hunt for the banner.
               liveRegion: true,
               child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: AppColors.error.withValues(alpha: 0.08),
-              child: Row(
-                children: [
-                  const Icon(Icons.error_outline_rounded,
-                      color: AppColors.error, size: 18),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      chatState.error!,
-                      style: AppTextStyles.bodySmall(
-                          color: Theme.of(context).brightness ==
-                                  Brightness.dark
-                              ? AppColors.error
-                              : AppColors.errorDeep),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: AppColors.error.withValues(alpha: 0.08),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline_rounded,
+                        color: AppColors.error, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        chatState.error!,
+                        style: AppTextStyles.bodySmall(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.error
+                                    : AppColors.errorDeep),
+                      ),
                     ),
-                  ),
-                  // Real retry: re-sends the learner's last message so a
-                  // failed turn is one tap away from recovery — no retyping.
-                  if (!chatState.isSending &&
-                      chatState.messages.any((m) => m.role == AiRole.user))
-                    TextButton(
-                      onPressed: () => ref
-                          .read(chatControllerProvider.notifier)
-                          .retryLastUserMessage(),
-                      child: const Text('Try again'),
+                    // Real retry: re-sends the learner's last message so a
+                    // failed turn is one tap away from recovery — no retyping.
+                    if (!chatState.isSending &&
+                        chatState.messages.any((m) => m.role == AiRole.user))
+                      TextButton(
+                        onPressed: () => ref
+                            .read(chatControllerProvider.notifier)
+                            .retryLastUserMessage(),
+                        child: const Text('Try again'),
+                      ),
+                    IconButton(
+                      tooltip: 'Dismiss error',
+                      icon: const Icon(Icons.close_rounded, size: 16),
+                      onPressed: () {
+                        ref.read(chatControllerProvider.notifier).clearError();
+                      },
                     ),
-                  IconButton(
-                    tooltip: 'Dismiss error',
-                    icon: const Icon(Icons.close_rounded, size: 16),
-                    onPressed: () {
-                      ref.read(chatControllerProvider.notifier).clearError();
-                    },
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             ),
 
@@ -234,8 +235,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             onTap: () => _showUsageDialog(context, usage),
             child: Container(
               constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
@@ -265,8 +265,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.bolt_rounded,
-                color: Theme.of(ctx).colorScheme.primary),
+            Icon(Icons.bolt_rounded, color: Theme.of(ctx).colorScheme.primary),
             const SizedBox(width: 8),
             const Text('AI Usage Today'),
           ],

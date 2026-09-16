@@ -139,9 +139,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           await ref.read(milestoneCheckerProvider).checkMilestones();
       if (!mounted || milestones.isEmpty) return;
       final first = milestones.first;
-      final extra = milestones.length > 1
-          ? ' (+${milestones.length - 1} more)'
-          : '';
+      final extra =
+          milestones.length > 1 ? ' (+${milestones.length - 1} more)' : '';
       ref.read(vanControllerProvider.notifier).dispatch(VanEvent(
             VanEventType.milestoneUnlocked,
             message: 'Milestone unlocked: ${first.title}!',
@@ -246,13 +245,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // understands it immediately. The Devanagari stays as the premium moment;
     // the English label serves as a readable anchor.
     final (greetingDevanagari, greetingEnglish) = hour < 12
-        ? ('\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D',
-            'Good morning, $companionName!')
+        ? (
+            '\u0938\u0941\u092A\u094D\u0930\u092D\u093E\u0924\u092E\u094D',
+            'Good morning, $companionName!'
+          )
         : (hour < 17
-            ? ('\u0936\u0941\u092D \u0938\u093E\u092F\u092E\u094D',
-                'Good afternoon, $companionName!')
-            : ('\u0936\u0941\u092D\u0930\u093E\u0924\u094D\u0930\u093F\u0903',
-                'Good evening, $companionName!'));
+            ? (
+                '\u0936\u0941\u092D \u0938\u093E\u092F\u092E\u094D',
+                'Good afternoon, $companionName!'
+              )
+            : (
+                '\u0936\u0941\u092D\u0930\u093E\u0924\u094D\u0930\u093F\u0903',
+                'Good evening, $companionName!'
+              ));
 
     // Real learning state from live providers.
     final nextAction = ref.watch(adaptiveNextActionProvider);
@@ -407,7 +412,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ));
                         return FadeTransition(
                           opacity: animation,
-                          child: SlideTransition(position: offset, child: child),
+                          child:
+                              SlideTransition(position: offset, child: child),
                         );
                       },
                       child: _ContinueCard(
@@ -599,75 +605,75 @@ class _ContinueCard extends StatelessWidget {
             onTap: onTap,
             borderRadius: BorderRadius.circular(AppDimens.radiusLg),
             child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(_icon, color: colorScheme.primary, size: 24),
                   ),
-                  child: Icon(_icon, color: colorScheme.primary, size: 24),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        action.title,
-                        style: AppTextStyles.labelMedium(
-                          color: colorScheme.primary,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          action.title,
+                          style: AppTextStyles.labelMedium(
+                            color: colorScheme.primary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        action.subtitle,
-                        style: AppTextStyles.titleSmall(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (showProgress &&
-                          totalExercises > 0 &&
-                          nextLesson != null) ...[
                         const SizedBox(height: 2),
                         Text(
-                          masteredCount >= totalExercises
-                              ? 'Practice complete - $masteredCount/$totalExercises'
-                              : 'Practice: $masteredCount of $totalExercises mastered',
-                          style: AppTextStyles.bodySmall(color: subtext),
+                          action.subtitle,
+                          style: AppTextStyles.titleSmall(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                        if (showProgress &&
+                            totalExercises > 0 &&
+                            nextLesson != null) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            masteredCount >= totalExercises
+                                ? 'Practice complete - $masteredCount/$totalExercises'
+                                : 'Practice: $masteredCount of $totalExercises mastered',
+                            style: AppTextStyles.bodySmall(color: subtext),
+                          ),
+                        ],
+                        if (showProgress && totalLessons > 0) ...[
+                          const SizedBox(height: 8),
+                          ProgressMeter(
+                            value: journeyProgress,
+                            height: 6,
+                            semanticLabel:
+                                '$completedCount of $totalLessons lessons completed',
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '$completedCount of $totalLessons lessons done',
+                            style: AppTextStyles.bodySmall(color: subtext),
+                          ),
+                        ],
                       ],
-                      if (showProgress && totalLessons > 0) ...[
-                        const SizedBox(height: 8),
-                        ProgressMeter(
-                          value: journeyProgress,
-                          height: 6,
-                          semanticLabel:
-                              '$completedCount of $totalLessons lessons completed',
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '$completedCount of $totalLessons lessons done',
-                          style: AppTextStyles.bodySmall(color: subtext),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: colorScheme.primary,
-                  size: 24,
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: colorScheme.primary,
+                    size: 24,
+                  ),
+                ],
+              ),
             ),
-          ),
           ),
         ),
       ),
@@ -721,9 +727,7 @@ class _DailyGoalStrip extends ConsumerWidget {
             Row(
               children: [
                 Icon(
-                  goal.isMet
-                      ? Icons.check_circle_rounded
-                      : Icons.flag_rounded,
+                  goal.isMet ? Icons.check_circle_rounded : Icons.flag_rounded,
                   size: 18,
                   color: goal.isMet ? AppColors.success : colorScheme.primary,
                   semanticLabel:
@@ -771,9 +775,7 @@ class _DailyGoalStrip extends ConsumerWidget {
                               ? Icons.verified_rounded
                               : Icons.fitness_center_rounded,
                           size: 18,
-                          color: claimed
-                              ? AppColors.success
-                              : AppColors.accent,
+                          color: claimed ? AppColors.success : AppColors.accent,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -784,8 +786,7 @@ class _DailyGoalStrip extends ConsumerWidget {
                                     ' (${challenge.remaining} left,'
                                     ' +${kReviewChallengeBonusXp} XP)',
                             style: AppTextStyles.labelMedium(
-                              color:
-                                  claimed ? AppColors.success : null,
+                              color: claimed ? AppColors.success : null,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

@@ -26,9 +26,9 @@ class ExamLearnerProfileRepository {
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
-      final profilesJson =
-          (json['profiles'] as Map<String, dynamic>?)?.cast<String, dynamic>() ??
-              const <String, dynamic>{};
+      final profilesJson = (json['profiles'] as Map<String, dynamic>?)
+              ?.cast<String, dynamic>() ??
+          const <String, dynamic>{};
       final profiles = <String, ExamLearnerProfile>{};
       profilesJson.forEach((trackId, value) {
         try {
@@ -51,12 +51,14 @@ class ExamLearnerProfileRepository {
   Future<void> save(ExamLearnerProfile profile) async {
     final all = await loadAll();
     all[profile.trackId] = profile;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'profiles': {
-        for (final e in all.entries) e.key: e.value.toJson(),
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'profiles': {
+            for (final e in all.entries) e.key: e.value.toJson(),
+          },
+        }));
   }
 
   @visibleForTesting

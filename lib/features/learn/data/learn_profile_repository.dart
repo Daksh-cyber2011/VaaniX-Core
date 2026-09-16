@@ -71,8 +71,7 @@ class LearnProfileRepository {
   }
 
   /// True when a readable profile exists for [language].
-  bool hasProfile(LearnLanguage language) =>
-      getProfile(language) != null;
+  bool hasProfile(LearnLanguage language) => getProfile(language) != null;
 
   /// Persists [profile] under its own language's key.
   Future<void> saveProfile(LearnerProfile profile) {
@@ -170,9 +169,8 @@ class LearnProfileRepository {
   /// Used by profile reset flows (mirrors the progress repository's
   /// prefix-based reset pattern).
   Future<void> clearAll() async {
-    final doomed = _storage.keys
-        .where((k) => k.startsWith(kNamespacePrefix))
-        .toList();
+    final doomed =
+        _storage.keys.where((k) => k.startsWith(kNamespacePrefix)).toList();
     for (final key in doomed) {
       await _storage.remove(key);
     }

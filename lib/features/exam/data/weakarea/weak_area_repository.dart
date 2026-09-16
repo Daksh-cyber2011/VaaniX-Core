@@ -51,8 +51,7 @@ class WeakAreaState extends Equatable {
 
   final int schemaVersion;
 
-  static WeakAreaState empty(String trackId) =>
-      WeakAreaState(trackId: trackId);
+  static WeakAreaState empty(String trackId) => WeakAreaState(trackId: trackId);
 
   WeakAreaState withRecoveryCompleted(DateTime now) => WeakAreaState(
         trackId: trackId,
@@ -80,8 +79,9 @@ class WeakAreaState extends Equatable {
       lastRecoveryDayIso: lastRecoveryDayIso,
       recoveryDayCount: recoveryDayCount,
       revision: revision,
-      recheckOutcomes:
-          bounded.length > cap ? bounded.sublist(bounded.length - cap) : bounded,
+      recheckOutcomes: bounded.length > cap
+          ? bounded.sublist(bounded.length - cap)
+          : bounded,
       schemaVersion: schemaVersion,
     );
   }
@@ -132,8 +132,13 @@ class WeakAreaState extends Equatable {
       };
 
   @override
-  List<Object?> get props =>
-      [trackId, lastRecoveryDayIso, recoveryDayCount, revision, recheckOutcomes];
+  List<Object?> get props => [
+        trackId,
+        lastRecoveryDayIso,
+        recoveryDayCount,
+        revision,
+        recheckOutcomes
+      ];
 }
 
 /// One §22 mastery-recheck outcome (bounded log).
@@ -202,12 +207,14 @@ class WeakAreaRepository {
   Future<void> save(WeakAreaState state) async {
     final all = await loadAll();
     all[state.trackId] = state;
-    await _storage.setString(storageKey, jsonEncode({
-      'version': 1,
-      'states': {
-        for (final e in all.entries) e.key: e.value.toJson(),
-      },
-    }));
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'states': {
+            for (final e in all.entries) e.key: e.value.toJson(),
+          },
+        }));
   }
 
   @visibleForTesting

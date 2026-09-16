@@ -35,7 +35,8 @@ void main() {
 
       test('invalid credentials wording → InvalidCredentialsFailure', () {
         expect(map('Invalid credentials'), isA<InvalidCredentialsFailure>());
-        expect(map('Wrong password provided'), isA<InvalidCredentialsFailure>());
+        expect(
+            map('Wrong password provided'), isA<InvalidCredentialsFailure>());
         expect(
           map('Email not confirmed yet'),
           isA<InvalidCredentialsFailure>(),

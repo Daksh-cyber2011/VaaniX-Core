@@ -91,11 +91,11 @@ class ErrorEvidence extends Equatable {
   final String atIso;
 
   bool get isWrong =>
-      verdict == 'incorrect' || verdict == 'revealed' ||
+      verdict == 'incorrect' ||
+      verdict == 'revealed' ||
       verdict == 'partiallyCorrect';
 
-  factory ErrorEvidence.fromJson(Map<String, dynamic> json) =>
-      ErrorEvidence(
+  factory ErrorEvidence.fromJson(Map<String, dynamic> json) => ErrorEvidence(
         questionId: json['questionId'] as String? ?? '',
         topicId: json['topicId'] as String? ?? '',
         kind: json['kind'] as String? ?? 'mcq',
@@ -214,8 +214,7 @@ class ErrorIntelligence {
   /// not a weakness (§21).
   static List<ErrorPattern> analyze(List<ErrorEvidence> evidence) {
     // topicId → category → evidence list.
-    final byTopicCategory =
-        <String, Map<ErrorCategory, List<ErrorEvidence>>>{};
+    final byTopicCategory = <String, Map<ErrorCategory, List<ErrorEvidence>>>{};
     for (final e in evidence) {
       final category = classify(e);
       if (category == null) continue;

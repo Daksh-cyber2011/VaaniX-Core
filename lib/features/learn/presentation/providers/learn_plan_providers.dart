@@ -55,5 +55,6 @@ final geminiPlannerProvider = Provider<GeminiPlanner>(
 
 /// The cached-plan fallback hop (last good AI plan, ≤7 days old).
 final cachedPlanPlannerProvider = Provider<CachedPlanPlanner>(
-  (ref) => CachedPlanPlanner(repository: ref.watch(learnPlanRepositoryProvider)),
+  (ref) =>
+      CachedPlanPlanner(repository: ref.watch(learnPlanRepositoryProvider)),
 );

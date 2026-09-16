@@ -85,8 +85,7 @@ void main() {
       expect(plan.activities.last.difficulty, Difficulty.beginner);
     });
 
-    test('the Master Brief §14 single-decision shape parses to one step',
-        () {
+    test('the Master Brief §14 single-decision shape parses to one step', () {
       const raw = '''
 {"nextConcept": "hi_ls_1", "difficulty": 1, "activityType": "practice",
  "reason": "Learner lacks greeting vocabulary", "language": "hi"}
@@ -103,8 +102,7 @@ void main() {
       expect(plan.activities, hasLength(2));
     });
 
-    test('AI-supplied titles win; fallback titles are kind-labelled',
-        () {
+    test('AI-supplied titles win; fallback titles are kind-labelled', () {
       const raw = '''
 {"activities": [
   {"conceptId": "hi_ls_1", "activityType": "review", "difficulty": 1,
@@ -165,8 +163,7 @@ void main() {
       expect(plan.activities.single.conceptId, 'hi_ls_1');
     });
 
-    test('the brief\'s own example activityType "lesson" is unsupported',
-        () {
+    test('the brief\'s own example activityType "lesson" is unsupported', () {
       // Master Brief §14 example uses "lesson" — not a kind this build
       // can execute, so it must never drive navigation.
       const raw = '''
@@ -207,8 +204,7 @@ void main() {
       expect(plan.activities.single.reason, 'right anchor');
     });
 
-    test('steps without a reason are dropped (the learner reads reasons)',
-        () {
+    test('steps without a reason are dropped (the learner reads reasons)', () {
       const raw = '''
 {"activities": [
   {"conceptId": "hi_ls_1", "activityType": "practice", "difficulty": 1,
@@ -221,8 +217,7 @@ void main() {
       expect(plan.activities, hasLength(1));
     });
 
-    test('duplicate concept+kind steps are deduplicated (first wins)',
-        () {
+    test('duplicate concept+kind steps are deduplicated (first wins)', () {
       const raw = '''
 {"activities": [
   {"conceptId": "hi_ls_1", "activityType": "practice", "difficulty": 1,
@@ -251,10 +246,8 @@ void main() {
     });
 
     test('no decodable JSON is a Left, never a crash', () {
-      expect(_parseFail('I cannot help with that.'),
-          isA<AiServiceFailure>());
-      expect(_parseFail('{"activities": [broken'),
-          isA<AiServiceFailure>());
+      expect(_parseFail('I cannot help with that.'), isA<AiServiceFailure>());
+      expect(_parseFail('{"activities": [broken'), isA<AiServiceFailure>());
     });
 
     test('an empty activity list is a Left (chain falls back)', () {

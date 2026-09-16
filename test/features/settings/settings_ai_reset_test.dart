@@ -27,8 +27,7 @@ void main() {
       // Learner identity that must SURVIVE the reset.
       AppConstants.keyUserCompanionName: 'Mita',
       // A persisted chat transcript.
-      '${AppConstants.aiConversationKeyPrefix}conv_1700000000000':
-          jsonEncode([
+      '${AppConstants.aiConversationKeyPrefix}conv_1700000000000': jsonEncode([
         {'id': 'u1', 'role': 'user', 'content': 'namaste'},
         {'id': 'a1', 'role': 'assistant', 'content': 'Namaste!'},
       ]),

@@ -102,12 +102,10 @@ void main() {
     });
 
     test('plan task mapping: diagnostic marks nothing', () {
-      expect(record(ExamSessionKind.diagnostic, 'x').planTaskTypeName,
-          isNull);
-      expect(record(ExamSessionKind.recovery, 'x').planTaskTypeName,
-          'weakArea');
-      expect(record(ExamSessionKind.revision, 'x').planTaskTypeName,
-          'review');
+      expect(record(ExamSessionKind.diagnostic, 'x').planTaskTypeName, isNull);
+      expect(
+          record(ExamSessionKind.recovery, 'x').planTaskTypeName, 'weakArea');
+      expect(record(ExamSessionKind.revision, 'x').planTaskTypeName, 'review');
       expect(record(ExamSessionKind.pyq, 'x').planTaskTypeName, 'pyq');
     });
 
@@ -137,7 +135,8 @@ void main() {
         '+12 XP',
       );
       expect(
-        base.copyWith(xpAwarded: 12, streakExtended: true, currentStreak: 3)
+        base
+            .copyWith(xpAwarded: 12, streakExtended: true, currentStreak: 3)
             .headline,
         '+12 XP · 3-day streak',
       );
@@ -179,8 +178,7 @@ void main() {
       await repo.recordCompletion('a', '2026-09-12', 'practice');
       await repo.recordCompletion('b', '2026-09-12', 'mock');
       await repo.recordCompletion('a', '2026-09-13', 'review');
-      expect(await repo.loadDayCompletions('a', '2026-09-12'),
-          {'practice'});
+      expect(await repo.loadDayCompletions('a', '2026-09-12'), {'practice'});
       expect(await repo.loadDayCompletions('b', '2026-09-12'), {'mock'});
       expect(await repo.loadDayCompletions('a', '2026-09-13'), {'review'});
     });
@@ -197,8 +195,8 @@ void main() {
         reason: 'the oldest key must have been dropped',
       );
       expect(
-        await repo.loadDayCompletions(
-            't', 'd${(ExamHubRepository.maxDayKeys + 4).toString().padLeft(3, '0')}'),
+        await repo.loadDayCompletions('t',
+            'd${(ExamHubRepository.maxDayKeys + 4).toString().padLeft(3, '0')}'),
         {'practice'},
       );
     });
@@ -230,8 +228,7 @@ void main() {
       expect(await repo.isAwarded('k0'), isFalse);
       expect(await repo.isAwarded('k1'), isFalse);
       expect(
-        await repo.isAwarded(
-            'k${ExamHubRepository.maxLedgerEntries - 1}'),
+        await repo.isAwarded('k${ExamHubRepository.maxLedgerEntries - 1}'),
         isTrue,
       );
     });

@@ -4,6 +4,7 @@
 /// streak, XP, mastery and exam scores. Tinted with the accent so groups of
 /// tiles read as one family.
 library;
+
 import 'package:flutter/material.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
