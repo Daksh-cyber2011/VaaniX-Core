@@ -12,6 +12,8 @@ import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
 
+export 'package:vaanix_app/shared/widgets/van_widget.dart' show VanState;
+
 enum VanBadgeRole {
   mentor,
   tacticalIntel,

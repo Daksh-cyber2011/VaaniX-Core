@@ -18,7 +18,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
-import 'package:vaanix_app/core/providers/app_mode_provider.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';

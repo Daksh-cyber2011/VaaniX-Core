@@ -29,7 +29,6 @@ import 'package:vaanix_app/features/exam/data/practice/practice_content_bank.dar
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/data/weakarea/exam_attempt_log_repository.dart';
 import 'package:vaanix_app/features/exam/data/weakarea/weak_area_repository.dart';
-import 'package:vaanix_app/features/exam/data/pyq_mock/pyq_performance_repository.dart';
 import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 import 'package:vaanix_app/features/exam/domain/practice/practice_session_engine.dart';
 import 'package:vaanix_app/features/exam/domain/pyq_mock/mock_models.dart'

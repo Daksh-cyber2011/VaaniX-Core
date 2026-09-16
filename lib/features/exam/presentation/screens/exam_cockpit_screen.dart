@@ -21,7 +21,6 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
-import 'package:vaanix_app/features/exam/domain/exam_scope.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';

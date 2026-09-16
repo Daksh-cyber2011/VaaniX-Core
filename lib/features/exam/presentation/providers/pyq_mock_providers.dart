@@ -18,9 +18,6 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:vaanix_app/core/providers/app_providers.dart'
-    show localStorageServiceProvider;
-import 'package:vaanix_app/features/exam/data/pyq_mock/pyq_performance_repository.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus.dart';
 import 'package:vaanix_app/features/exam/domain/practice/practice_models.dart';
 import 'package:vaanix_app/features/exam/domain/practice/practice_session_engine.dart';

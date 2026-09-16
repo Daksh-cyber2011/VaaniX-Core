@@ -22,7 +22,6 @@ import 'package:vaanix_app/features/profile/presentation/providers/profile_provi
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/audio_cadence_waveform.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
-import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/van_companion_bubble.dart';
 
 class InteractiveDrillScreen extends ConsumerStatefulWidget {

@@ -24,6 +24,7 @@ import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
@@ -44,7 +45,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
 
   void _showRenameVanDialog(BuildContext context, String currentName) {
     final controller = TextEditingController(text: currentName);
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: VaaniXRadius.borderLg),
@@ -80,7 +81,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
   }
 
   void _showResetExamDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: VaaniXRadius.borderLg),
@@ -125,6 +126,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileProvider);
+    final xpTotal = ref.watch(xpTotalProvider);
     final activeMode = ref.watch(appModeProvider);
     final companionName = profile.resolvedCompanionName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -147,7 +149,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
           const SizedBox(height: VaaniXSpacing.md),
 
           // 2. Metric Trio (Streak, XP, Accuracy)
-          _buildMetricTrio(profile.currentStreak, profile.xpTotal),
+          _buildMetricTrio(profile.currentStreak, xpTotal),
           const SizedBox(height: VaaniXSpacing.lg),
 
           // 3. Mascot Config Card

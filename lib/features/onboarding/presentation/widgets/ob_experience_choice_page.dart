@@ -18,6 +18,7 @@ import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/onboarding/presentation/providers/onboarding_provider.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/shared/widgets/van_companion_bubble.dart';
+import 'package:vaanix_app/shared/widgets/van_widget.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
 
 class ObExperienceChoicePage extends ConsumerStatefulWidget {
