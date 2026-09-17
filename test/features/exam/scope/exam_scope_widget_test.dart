@@ -13,6 +13,7 @@ import 'dart:io';
 import 'dart:typed_data' show ByteData, Uint8List;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,11 +47,17 @@ void main() {
   void clearAssets() {
     TestWidgetsFlutterBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', null);
+    rootBundle.evict('assets/syllabus/cbse/index.json');
+    rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit.json');
+    rootBundle.evict('assets/syllabus/cbse/cbse_9_sanskrit.json');
+    rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit_communicative.json');
+    rootBundle.evict('assets/van/metadata/van_assets.json');
   }
 
   setUp(() {
     SharedPreferences.resetStatic();
     SharedPreferences.setMockInitialValues(<String, Object>{});
+    clearAssets();
     mockRealAssets();
   });
 

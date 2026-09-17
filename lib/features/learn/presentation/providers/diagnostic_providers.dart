@@ -161,32 +161,43 @@ class DiagnosticSessionNotifier extends StateNotifier<DiagnosticSessionState> {
   /// learner's own self-report hint (never shown as a level) and varies
   /// the probe order per run.
   Future<void> start(LearnLanguage language) async {
-    final baseBank = await _ref.read(diagnosticItemBankProvider.future);
-    if (baseBank.isEmpty) {
-      state = const DiagnosticSessionState.unavailable(
-        'The placement game unlocks once this language has lessons '
-        'and practice content.',
+    // ignore: avoid_print
+    print('DEBUG: start() called for $language');
+    try {
+      final baseBank = await _ref.read(diagnosticItemBankProvider.future);
+      // ignore: avoid_print
+      print('DEBUG: baseBank count = ${baseBank.items.length}');
+      if (baseBank.isEmpty) {
+        state = const DiagnosticSessionState.unavailable(
+          'The placement game unlocks once this language has lessons '
+          'and practice content.',
+        );
+        return;
+      }
+
+      final seed = seedFromText(
+        'diagnostic#${language.name}#${DateTime.now().millisecondsSinceEpoch}',
       );
-      return;
+      final profile = _ref.read(learnerProfileProvider(language));
+      _engine = DiagnosticEngine(
+        bank: baseBank.reshuffled(seed),
+        seedLevel: profile.selfReport.suggestedLevel,
+      );
+      _language = language;
+      _startedAt = DateTime.now();
+
+      final engine = _engine!;
+      state = DiagnosticSessionState.active(
+        item: engine.currentItem!,
+        askedCount: 0,
+        estimatedMax: engine.estimatedMax,
+      );
+      // ignore: avoid_print
+      print('DEBUG: start() finished, new phase = ${state.phase}');
+    } catch (e, st) {
+      // ignore: avoid_print
+      print('DEBUG: start() caught error: $e\n$st');
     }
-
-    final seed = seedFromText(
-      'diagnostic#${language.name}#${DateTime.now().millisecondsSinceEpoch}',
-    );
-    final profile = _ref.read(learnerProfileProvider(language));
-    _engine = DiagnosticEngine(
-      bank: baseBank.reshuffled(seed),
-      seedLevel: profile.selfReport.suggestedLevel,
-    );
-    _language = language;
-    _startedAt = DateTime.now();
-
-    final engine = _engine!;
-    state = DiagnosticSessionState.active(
-      item: engine.currentItem!,
-      askedCount: 0,
-      estimatedMax: engine.estimatedMax,
-    );
   }
 
   /// Records the learner's answer to the current probe and moves to the

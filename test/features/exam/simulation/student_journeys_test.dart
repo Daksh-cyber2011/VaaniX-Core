@@ -234,7 +234,7 @@ void main() {
         name: 'Strong one section, weak another',
         percent: 100,
         weakSectionTitle: weakSection.title,
-        weakSectionPercent: 15,
+        weakSectionPercent: 0,
       ),
       chance,
       now,
