@@ -63,6 +63,7 @@ void main() {
   }
 
   Future<SharedPreferences> seedActiveSelection(String trackId) async {
+    SharedPreferences.resetStatic();
     SharedPreferences.setMockInitialValues(<String, Object>{
       'exam_scope_v1': jsonEncode({
         'version': 1,
@@ -200,10 +201,6 @@ void main() {
     final container = containerFor(prefs);
     await pumpScreen(tester, container, const ExamTrackSelectionScreen());
     await waitForFinder(tester, find.textContaining('Continue:'));
-    for (final element in find.byType(Text).evaluate()) {
-      final widget = element.widget as Text;
-      print('DEBUG TEXT: "${widget.data ?? widget.textSpan?.toPlainText()}"');
-    }
 
     expect(find.textContaining('Continue:'), findsOneWidget);
     expect(find.textContaining('इकाइयाँ चयनित'), findsOneWidget);
