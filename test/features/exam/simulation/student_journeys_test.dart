@@ -234,6 +234,12 @@ void main() {
         name: 'Strong one section, weak another',
         percent: 100,
         weakSectionTitle: weakSection.title,
+        // 0, not a milder value: `chance` is a hash over question
+        // salts, so a mid-range percentage can land above the weak
+        // band in a small section and fail for sampling reasons.
+        // This journey therefore only proves the asymmetry is visible
+        // end to end; the weak-band THRESHOLD is pinned exactly in
+        // test/features/exam/pyq_mock/mock_weak_section_detection_test.dart.
         weakSectionPercent: 0,
       ),
       chance,

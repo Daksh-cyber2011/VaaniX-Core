@@ -22,7 +22,7 @@ class ExamLearnerProfileRepository {
   final ILocalStorageService _storage;
 
   Future<Map<String, ExamLearnerProfile>> loadAll() async {
-    final raw = await _storage.getString(storageKey);
+    final raw = _storage.getString(storageKey);
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
@@ -61,8 +61,30 @@ class ExamLearnerProfileRepository {
         }));
   }
 
-  @visibleForTesting
-  Future<void> reset() async {
+  /// Removes one track's learner profile (course isolation teardown).
+  Future<void> remove(String trackId) async {
+    final all = await loadAll();
+    if (all.remove(trackId) == null) return;
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'profiles': {
+            for (final e in all.entries) e.key: e.value.toJson(),
+          },
+        }));
+  }
+
+  /// Production teardown: drops the stored exam learner profiles for every track.
+  ///
+  /// Settings -> "Reset all progress" promises that exam history is cleared,
+  /// so a production entry point is required; [reset] is `@visibleForTesting`
+  /// and must never be called from production code. [reset] delegates here so
+  /// both paths share one implementation.
+  Future<void> clear() async {
     await _storage.remove(storageKey);
   }
+
+  @visibleForTesting
+  Future<void> reset() => clear();
 }

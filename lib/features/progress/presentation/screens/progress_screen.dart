@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -286,7 +287,7 @@ class ProgressScreen extends ConsumerWidget {
           // ---- 6. Achievements entry ------------------------------------
           const SizedBox(height: 16),
           VaaniXCard(
-            onTap: () => context.push(RouteNames.achievements),
+            onTap: () => context.pushUnique(RouteNames.achievements),
             child: Row(
               children: [
                 Icon(Icons.emoji_events_rounded,

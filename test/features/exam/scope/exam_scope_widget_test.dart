@@ -50,7 +50,8 @@ void main() {
     rootBundle.evict('assets/syllabus/cbse/index.json');
     rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit.json');
     rootBundle.evict('assets/syllabus/cbse/cbse_9_sanskrit.json');
-    rootBundle.evict('assets/syllabus/cbse/cbse_10_sanskrit_communicative.json');
+    rootBundle
+        .evict('assets/syllabus/cbse/cbse_10_sanskrit_communicative.json');
     rootBundle.evict('assets/van/metadata/van_assets.json');
   }
 

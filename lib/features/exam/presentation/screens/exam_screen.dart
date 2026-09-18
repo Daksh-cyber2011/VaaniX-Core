@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 
@@ -81,28 +82,28 @@ class _ExamScreenState extends ConsumerState<ExamScreen> {
     final store = await ref.read(examScopeStoreProvider.future);
     final trackId = store.activeTrackId;
     if (trackId == null) {
-      router.pushNamed(RouteNames.examSetupName);
+      router.pushNamedUnique(RouteNames.examSetupName);
       return;
     }
     final selection = store.scopes[trackId];
     if (selection == null || selection.isEmpty) {
-      router.pushNamed(RouteNames.examSetupName);
+      router.pushNamedUnique(RouteNames.examSetupName);
       return;
     }
     final profileRepo = ref.read(examProfileRepositoryProvider);
     final profile = await profileRepo.load(trackId);
     if (profile == null || !profile.isValid) {
-      router.pushNamed(RouteNames.examProfileName,
+      router.pushNamedUnique(RouteNames.examProfileName,
           pathParameters: {'trackId': trackId});
       return;
     }
     final learner = await ref.read(examLearnerProfileProvider(trackId).future);
     if (!learner.hasDiagnostic) {
-      router.pushNamed(RouteNames.examDiagnosticName,
+      router.pushNamedUnique(RouteNames.examDiagnosticName,
           pathParameters: {'trackId': trackId});
       return;
     }
-    router.pushNamed(RouteNames.examHubName,
+    router.pushNamedUnique(RouteNames.examHubName,
         pathParameters: {'trackId': trackId});
   }
 

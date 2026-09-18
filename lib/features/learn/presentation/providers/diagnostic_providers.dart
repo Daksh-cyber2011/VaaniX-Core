@@ -25,6 +25,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/logging/logger.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
@@ -161,12 +162,8 @@ class DiagnosticSessionNotifier extends StateNotifier<DiagnosticSessionState> {
   /// learner's own self-report hint (never shown as a level) and varies
   /// the probe order per run.
   Future<void> start(LearnLanguage language) async {
-    // ignore: avoid_print
-    print('DEBUG: start() called for $language');
     try {
       final baseBank = await _ref.read(diagnosticItemBankProvider.future);
-      // ignore: avoid_print
-      print('DEBUG: baseBank count = ${baseBank.items.length}');
       if (baseBank.isEmpty) {
         state = const DiagnosticSessionState.unavailable(
           'The placement game unlocks once this language has lessons '
@@ -192,11 +189,20 @@ class DiagnosticSessionNotifier extends StateNotifier<DiagnosticSessionState> {
         askedCount: 0,
         estimatedMax: engine.estimatedMax,
       );
-      // ignore: avoid_print
-      print('DEBUG: start() finished, new phase = ${state.phase}');
-    } catch (e, st) {
-      // ignore: avoid_print
-      print('DEBUG: start() caught error: $e\n$st');
+    } catch (error, stackTrace) {
+      // The probe bank is built from curriculum assets + exercise banks;
+      // a malformed/missing asset must surface honestly instead of
+      // leaving the screen stuck on its pre-start state forever.
+      AppLogger.error(
+        'Diagnostic placement run failed to start',
+        tag: 'DiagnosticSessionNotifier',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      state = const DiagnosticSessionState.unavailable(
+        'The placement game could not be started right now. '
+        'Please try again in a moment.',
+      );
     }
   }
 

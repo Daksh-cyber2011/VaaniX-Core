@@ -74,7 +74,13 @@ void _configureSentryScope() {
   });
 }
 
+/// Guards against a second `Supabase.initialize` call, which throws when the
+/// SDK is already initialized. Reachable now that bootstrap can be retried
+/// after a later step (preferences) failed.
+bool _supabaseInitialized = false;
+
 Future<void> _initializeSupabase() async {
+  if (_supabaseInitialized) return;
   if (!AppEnvironment.isSupabaseConfigured) {
     // Guarded so release builds never emit the message.
     if (kDebugMode) {
@@ -88,16 +94,18 @@ Future<void> _initializeSupabase() async {
       url: AppEnvironment.supabaseUrl,
       publishableKey: AppEnvironment.supabaseAnonKey,
     );
+    _supabaseInitialized = true;
   } catch (e, st) {
     reportError(e, st, context: 'Supabase.initialize');
   }
 }
 
-Future<SharedPreferences> _acquireSharedPreferences() async {
-  try {
-    return await SharedPreferences.getInstance();
-  } catch (e, st) {
-    reportError(e, st, context: 'SharedPreferences.getInstance');
-    rethrow;
-  }
+/// Acquires the [SharedPreferences] singleton.
+///
+/// Intentionally does NOT catch: the app cannot run without preferences, so
+/// the failure must reach the caller, which renders the bootstrap-failure
+/// screen and offers a retry. Reporting is done there (one Sentry event per
+/// failed start-up attempt) rather than here, which would double-report.
+Future<SharedPreferences> _acquireSharedPreferences() {
+  return SharedPreferences.getInstance();
 }

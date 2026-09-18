@@ -16,7 +16,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
@@ -61,9 +61,16 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileProvider);
-    final candidateName = profile.resolvedCompanionName.isNotEmpty
-        ? profile.resolvedCompanionName
-        : 'Daksh Sharma';
+    // Two defects here, both fixed: the header reads "<name> • ACTIVE
+    // CANDIDATE", so it must use the LEARNER's name, not the companion's
+    // (`resolvedCompanionName` is the duck — and it already falls back to
+    // 'Van', so the old `isNotEmpty` branch could never be false and the
+    // 'Daksh Sharma' fallback was unreachable dead code that would have
+    // shown a stranger's name if it ever ran).
+    final learnerName = profile.resolvedDisplayName;
+    final candidateLabel = learnerName.isEmpty
+        ? 'ACTIVE CANDIDATE'
+        : '$learnerName • ACTIVE CANDIDATE';
 
     return Scaffold(
       backgroundColor: VaaniXColors.examCanvasBg,
@@ -71,7 +78,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
         child: Column(
           children: [
             // ── Top Tactical Header ────────────────────────────
-            _buildTacticalHeader(context, candidateName),
+            _buildTacticalHeader(context, candidateLabel),
 
             // ── Scrollable Cockpit Engine ──────────────────────
             Expanded(
@@ -131,13 +138,13 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     final activeTrack = storeAsync.valueOrNull?.activeTrackId ??
         widget.trackId ??
         'cbse_10_hindi_a';
-    context.pushNamed(
+    context.pushNamedUnique(
       RouteNames.examStudyName,
       pathParameters: {'trackId': activeTrack, 'topicId': topicId},
     );
   }
 
-  Widget _buildTacticalHeader(BuildContext context, String candidateName) {
+  Widget _buildTacticalHeader(BuildContext context, String candidateLabel) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: const BoxDecoration(
@@ -175,7 +182,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
               ),
               const SizedBox(width: 8),
               Text(
-                '$candidateName • ACTIVE CANDIDATE',
+                candidateLabel,
                 style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 11,
@@ -507,7 +514,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           subtitle: 'Official CBSE Step-marking scheme (+4 / -1 rules)',
           tag: 'Calibrated',
           onTap: () {
-            context.pushNamed(RouteNames.examMockName,
+            context.pushNamedUnique(RouteNames.examMockName,
                 pathParameters: {'trackId': activeTrack});
           },
         ),
@@ -520,7 +527,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           subtitle: 'Categorized by weightage & frequency trends',
           tag: 'Official PYQs',
           onTap: () {
-            context.pushNamed(RouteNames.examPyqName,
+            context.pushNamedUnique(RouteNames.examPyqName,
                 pathParameters: {'trackId': activeTrack});
           },
         ),
@@ -533,7 +540,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           subtitle: 'Ras, Alankar, and Samas quick diagnostic notes',
           tag: 'High Yield',
           onTap: () {
-            context.pushNamed(RouteNames.examPlanName,
+            context.pushNamedUnique(RouteNames.examPlanName,
                 pathParameters: {'trackId': activeTrack});
           },
         ),

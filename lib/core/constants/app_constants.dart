@@ -136,6 +136,13 @@ abstract final class AppConstants {
   /// `conv_<millis>` id timestamp) are removed first.
   static const int maxStoredAiConversations = 5;
 
+  /// Maximum number of daily entries retained in the AI token-usage
+  /// history (`ai_token_usage`). One entry is written per calendar day
+  /// the app is used; without pruning the map grows forever for the
+  /// life of the install. Oldest days are dropped first — see
+  /// TokenUsageTracker._pruneToRetentionWindow (audit defect #12).
+  static const int maxTokenUsageHistoryDays = 30;
+
   // ============================================================
   // VAN ANIMATION TIMING (milliseconds)
   // From PRD Section 6.4 — Animation System

@@ -22,6 +22,7 @@ import 'package:vaanix_app/features/achievements/presentation/providers/achievem
 import 'package:vaanix_app/core/theme/theme_notifier.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_reset_providers.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
@@ -651,6 +652,15 @@ class SettingsScreen extends ConsumerWidget {
       // them re-earn with their bonus XP.
       await ref.read(milestoneRepositoryProvider).clear();
       await ref.read(dailyActivityRepositoryProvider).clear();
+
+      // The dialog above promises this clears "exam history", but no Exam
+      // Mode store was ever touched: the target date, study plan and its day
+      // overrides, weak areas, attempt log, evaluations, PYQ evidence, mock
+      // history, scope selection and exam XP ledger all survived the wipe.
+      // The XP ledger mattered most — it is a set of once-ever award
+      // fingerprints, so a stale entry means sessions the learner re-did
+      // after resetting would have awarded no XP at all.
+      await ref.read(examDataResetProvider).clearAll();
 
       ref.invalidate(userProfileProvider);
       // Invalidate ALL progress-related providers so the UI updates

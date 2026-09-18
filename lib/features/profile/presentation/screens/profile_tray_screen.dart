@@ -3,27 +3,62 @@
 /// Stitch Design Canvas: Screen 4
 /// Hybrid Neutral (#F8FAFC)
 ///
-/// Features:
-/// - User Identity: Daksh Sharma (ID: VX-9832) with Exam Mode Active badge & switch
-/// - Metric Trio: 18 Day Streak, 4.2k XP, 88% Accuracy
-/// - Mascot Config: VAN (Duck) • MENTOR (Mood: Focused & Ready, Rename action)
-/// - Multi-profile Management: Active Learn languages + Add New Language
-/// - Active Exam Slot: CBSE Class 10 Hindi Course A
-/// - High Visual Gravity Zone: Isolated Exam reset without wiping Learn records
-/// - Preferences: Daily study reminders, board urgency alerts, flash drills
-/// - Offline Content Manager: 552 MB cached with Clear Cache CTA
+/// Data provenance (audited — the Stitch mock values this screen shipped
+/// with were indistinguishable from real data, so each row is now either
+/// live or an explicit unavailable state):
+/// - User identity: `userProfileProvider.resolvedDisplayName`; neutral
+///   label when unset. No user-facing account ID exists in the model.
+/// - Streak / XP: live (`userProfileProvider`, `xpTotalProvider`), zeros
+///   shown as zeros.
+/// - Accuracy: NO source in the architecture — shown as unavailable.
+/// - Mascot: companion name + `personalityMode` (both real); there is no
+///   mood concept, so none is displayed.
+/// - Learn profiles: `kLearnLanguageCatalogue` × `hasProfile`, selected
+///   language marked active. No per-language percentage exists.
+/// - Active exam track: `examActiveTrackIdProvider` + `courseSyllabusProvider`.
+/// - Exam reset: clears the four §21 per-track stores, Learn untouched.
+/// - Preferences toggles: local UI state only — see the note on
+///   [_buildPreferencesSection].
+/// - Offline Content Manager: states that curriculum content ships
+///   bundled with the app (no separate downloadable cache exists yet)
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vaanix_app/core/navigation/push_unique.dart';
+import 'package:vaanix_app/core/logging/logger.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart'
+    show examLearnerProfileProvider, examLearnerProfileRepositoryProvider;
+import 'package:vaanix_app/features/exam/data/syllabus/syllabus_loader.dart'
+    show courseSyllabusProvider;
+import 'package:vaanix_app/features/exam/data/syllabus/syllabus_models.dart'
+    show CourseSyllabus;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_hub_providers.dart'
+    show examActiveTrackIdProvider, examHubSnapshotProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_profile_providers.dart'
+    show
+        examProfileMapProvider,
+        examProfileProvider,
+        examProfileRepositoryProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/exam_repository_providers.dart'
+    show mockResultRepositoryProvider, pyqPerformanceRepositoryProvider;
+import 'package:vaanix_app/features/exam/presentation/providers/pyq_mock_providers.dart'
+    show examMockProvider, examPyqProvider;
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/providers/app_mode_provider.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/features/profile/domain/user_profile.dart'
+    show PersonalityMode;
+import 'package:vaanix_app/features/learn/domain/learn_language.dart'
+    show kLearnLanguageCatalogue;
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart'
+    show selectedLearnLanguageProvider;
+import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart'
+    show learnProfileRepositoryProvider;
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
@@ -41,7 +76,6 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
   bool _dailyReminders = true;
   bool _boardUrgencyAlerts = true;
   bool _flashDrills = true;
-  int _cachedMegabytes = 552;
 
   void _showRenameVanDialog(BuildContext context, String currentName) {
     final controller = TextEditingController(text: currentName);
@@ -93,9 +127,13 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        // Copy describes exactly what the reset deletes — the four §21
+        // per-track stores cleared in [_performExamTrackReset] — and
+        // nothing more.
         content: const Text(
-          'This will reset your CBSE Class 10 syllabus diagnostic and mock records. '
-          'Your Learn Mode languages (Hindi, Tamil), streaks, and total XP remain completely safe.',
+          "This clears the active exam track's study profile, diagnostic "
+          'result, PYQ evidence and mock history. Learn Mode progress, '
+          'streaks and XP are not touched.',
           style: TextStyle(fontFamily: 'Poppins', fontSize: 13),
         ),
         actions: [
@@ -109,18 +147,74 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
             ),
             onPressed: () {
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                      'Exam track reset successfully. Learn progress preserved.'),
-                ),
-              );
+              _performExamTrackReset();
             },
             child: const Text('Confirm Reset'),
           ),
         ],
       ),
     );
+  }
+
+  /// Clears every §21 per-track store for the ACTIVE exam track.
+  ///
+  /// Contract (the original implementation violated all of it: it popped the
+  /// dialog and announced success while touching nothing):
+  ///   * the track id comes from the real scope store, not a constant;
+  ///   * each removal is a production API — no `@visibleForTesting` call;
+  ///   * success is reported only after every write has completed;
+  ///   * a failure is logged and reported to the learner as a failure.
+  ///
+  /// Learn Mode stores are deliberately absent, and each repository's
+  /// `remove` drops a single track from its document, so sibling exam
+  /// tracks survive too.
+  Future<void> _performExamTrackReset() async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final trackId = await ref.read(examActiveTrackIdProvider.future);
+      if (trackId == null || trackId.isEmpty) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('No exam track is active, so there is nothing '
+                'to reset.'),
+          ),
+        );
+        return;
+      }
+
+      await ref.read(examProfileRepositoryProvider).remove(trackId);
+      await ref.read(examLearnerProfileRepositoryProvider).remove(trackId);
+      await ref.read(pyqPerformanceRepositoryProvider).remove(trackId);
+      await ref.read(mockResultRepositoryProvider).remove(trackId);
+
+      // Derived state: the hub/pyq/mock providers read their repositories
+      // with `ref.read`, so they do not rebuild on their own.
+      ref.invalidate(examProfileMapProvider);
+      ref.invalidate(examProfileProvider(trackId));
+      ref.invalidate(examLearnerProfileProvider(trackId));
+      ref.invalidate(examHubSnapshotProvider(trackId));
+      ref.invalidate(examPyqProvider(trackId));
+      ref.invalidate(examMockProvider(trackId));
+
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Exam track reset. Learn Mode progress preserved.'),
+        ),
+      );
+    } catch (e, st) {
+      AppLogger.error(
+        'Exam track reset failed',
+        tag: 'ProfileTrayScreen',
+        error: e,
+        stackTrace: st,
+      );
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Exam track reset failed. Your data has not been '
+              'changed. Please try again.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -145,7 +239,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
         ),
         children: [
           // 1. User Identity Card
-          _buildIdentityCard(context, activeMode),
+          _buildIdentityCard(context, activeMode, profile.resolvedDisplayName),
           const SizedBox(height: VaaniXSpacing.md),
 
           // 2. Metric Trio (Streak, XP, Accuracy)
@@ -153,7 +247,8 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
           const SizedBox(height: VaaniXSpacing.lg),
 
           // 3. Mascot Config Card
-          _buildMascotConfigCard(context, companionName),
+          _buildMascotConfigCard(
+              context, companionName, profile.personalityMode),
           const SizedBox(height: VaaniXSpacing.lg),
 
           // 4. Multi-Profile Management (Learn Languages)
@@ -174,7 +269,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
 
           // 8. Sign Out
           VaaniXButton.outline(
-            label: 'Sign Out (VX-9832)',
+            label: 'Sign Out',
             icon: const Icon(Icons.logout_rounded, size: 18),
             onPressed: () {
               context.go(RouteNames.auth);
@@ -186,7 +281,8 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
     );
   }
 
-  Widget _buildIdentityCard(BuildContext context, AppMode activeMode) {
+  Widget _buildIdentityCard(
+      BuildContext context, AppMode activeMode, String displayName) {
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -206,9 +302,14 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Daksh Sharma',
-                  style: TextStyle(
+                Text(
+                  // Real profile name. `resolvedDisplayName` is empty until
+                  // the learner sets one (the model treats empty as
+                  // anonymous), so the fallback is a neutral label rather
+                  // than an invented person — this card previously
+                  // hardcoded 'Daksh Sharma' for every user.
+                  displayName.isEmpty ? 'Your profile' : displayName,
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -216,7 +317,12 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'ID: VX-9832 · ${activeMode == AppMode.exam ? 'Exam Mode Active' : 'Learn Mode Active'}',
+                  // No user-facing ID concept exists in the data model; the
+                  // former 'ID: VX-9832' was a design-mock string shown to
+                  // every learner as if it were their account id.
+                  activeMode == AppMode.exam
+                      ? 'Exam Mode Active'
+                      : 'Learn Mode Active',
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 12,
@@ -244,27 +350,40 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
     );
   }
 
+  /// Streak and XP are live (`userProfileProvider` / `xpTotalProvider`).
+  ///
+  /// The previous version applied `streak > 0 ? streak : 18` and
+  /// `xp > 0 ? … : '4.2k'`: a new learner with a genuine zero was shown
+  /// fabricated non-zero progress, which is worse than a placeholder
+  /// because it is indistinguishable from real data.
+  ///
+  /// Accuracy has NO source. There is no cross-mode accuracy metric in the
+  /// architecture — Learn keeps per-concept mastery, Exam keeps per-section
+  /// bands, and neither is a single app-wide percentage (§30 also keeps
+  /// percentages out of learner-facing exam copy). It is therefore shown as
+  /// unavailable instead of the hardcoded '88%'. Deriving one is a product
+  /// decision, not something to invent here.
   Widget _buildMetricTrio(int streak, int xp) {
-    final displayStreak = streak > 0 ? streak : 18;
-    final displayXp = xp > 0 ? '${(xp / 1000).toStringAsFixed(1)}k' : '4.2k';
+    final streakValue = streak == 1 ? '1 Day' : '$streak Days';
+    final xpValue = xp >= 1000 ? '${(xp / 1000).toStringAsFixed(1)}k' : '$xp';
 
     return Row(
       children: [
         Expanded(
-            child: _MetricTile(
-                emoji: '🔥', value: '$displayStreak Days', label: 'Streak')),
-        const SizedBox(width: 10),
-        Expanded(
             child:
-                _MetricTile(emoji: '⚡', value: displayXp, label: 'XP Earned')),
+                _MetricTile(emoji: '🔥', value: streakValue, label: 'Streak')),
         const SizedBox(width: 10),
         Expanded(
-            child: _MetricTile(emoji: '🎯', value: '88%', label: 'Accuracy')),
+            child: _MetricTile(emoji: '⚡', value: xpValue, label: 'XP Earned')),
+        const SizedBox(width: 10),
+        Expanded(
+            child: _MetricTile(emoji: '🎯', value: '—', label: 'Accuracy')),
       ],
     );
   }
 
-  Widget _buildMascotConfigCard(BuildContext context, String companionName) {
+  Widget _buildMascotConfigCard(BuildContext context, String companionName,
+      PersonalityMode? personalityMode) {
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -292,7 +411,7 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$companionName (Duck) • MENTOR',
+                  '$companionName (Duck)',
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 13.5,
@@ -300,9 +419,17 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
-                  'Mood: Focused & Ready',
-                  style: TextStyle(
+                // Real personality setting. 'MENTOR' and
+                // 'Mood: Focused & Ready' were both invented: the model has
+                // no mood concept at all, and the only companion trait is
+                // [PersonalityMode] (cheerleader / calm / fun), which is
+                // null until the learner picks one.
+                Text(
+                  personalityMode == null
+                      ? 'Personality not set yet'
+                      : 'Personality: ${personalityMode.emoji} '
+                          '${personalityMode.label}',
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 12,
                     color: VaaniXColors.telemetryEmerald,
@@ -322,7 +449,26 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
     );
   }
 
+  /// Learn Mode languages the learner has actually started.
+  ///
+  /// This section used to render two fixed cards — "Hindi • Level 2 / 65%
+  /// Unit 4 Completed" and "Tamil • Foundation / 30% Unit 1 Completed" —
+  /// for every user, plus an "(8 Available)" count that did not match the
+  /// 10-language catalogue. None of it came from storage.
+  ///
+  /// It is now driven by [kLearnLanguageCatalogue] filtered through
+  /// [LearnProfileRepository.hasProfile], with the selected language marked
+  /// active. Per-language completion percentage is deliberately NOT shown:
+  /// no such figure exists in the Learn state model, and the script name is
+  /// real catalogue metadata rather than an invented progress number.
   Widget _buildLearnProfilesSection(BuildContext context) {
+    final repo = ref.watch(learnProfileRepositoryProvider);
+    final selected = ref.watch(selectedLearnLanguageProvider);
+    final started = kLearnLanguageCatalogue
+        .where((spec) => repo.hasProfile(spec.language))
+        .toList(growable: false);
+    final remaining = kLearnLanguageCatalogue.length - started.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -335,105 +481,82 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
           ),
         ),
         const SizedBox(height: 10),
-
-        // Hindi Profile
-        VaaniXCard(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              const Text('🇮🇳', style: TextStyle(fontSize: 22)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Hindi • Level 2',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      '65% Unit 4 Completed',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: VaaniXColors.textSecondaryLight,
-                      ),
-                    ),
-                  ],
-                ),
+        if (started.isEmpty)
+          VaaniXCard(
+            padding: const EdgeInsets.all(14),
+            child: const Text(
+              'No Learn language started yet.',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 13,
+                color: VaaniXColors.textSecondaryLight,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: VaaniXColors.telemetryEmeraldBg,
-                  borderRadius: VaaniXRadius.borderPill,
-                ),
-                child: const Text(
-                  'Active',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w700,
-                    color: VaaniXColors.telemetryEmerald,
+            ),
+          )
+        else
+          for (final spec in started) ...[
+            VaaniXCard(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  const Icon(Icons.translate_rounded, size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          spec.englishName,
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          spec.scriptName,
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 12,
+                            color: VaaniXColors.textSecondaryLight,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // Tamil Profile
-        VaaniXCard(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              const Text('🔤', style: TextStyle(fontSize: 22)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Tamil • Foundation',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
+                  if (spec.language == selected)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: VaaniXColors.telemetryEmeraldBg,
+                        borderRadius: VaaniXRadius.borderPill,
+                      ),
+                      child: const Text(
+                        'Active',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                          color: VaaniXColors.telemetryEmerald,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      '30% Unit 1 Completed',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                        color: VaaniXColors.textSecondaryLight,
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 14,
-                color: VaaniXColors.textTertiaryLight,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
+            ),
+            const SizedBox(height: 8),
+          ],
 
-        // Add Language
+        // Add Language — the count is the real remainder of the catalogue.
         OutlinedButton.icon(
-          onPressed: () => context.push(RouteNames.learnLanguageSelection),
+          onPressed: () =>
+              context.pushUnique(RouteNames.learnLanguageSelection),
           icon: const Icon(Icons.add, size: 16),
-          label: const Text('+ Add New Language (8 Available)'),
+          label: Text(remaining > 0
+              ? '+ Add New Language ($remaining available)'
+              : '+ Add New Language'),
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(borderRadius: VaaniXRadius.borderMd),
             minimumSize: const Size(double.infinity, 42),
@@ -441,6 +564,30 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
         ),
       ],
     );
+  }
+
+  /// The active syllabus for the active track, or null when there is no
+  /// track, the syllabus is still loading, or it failed to load. Every
+  /// caller renders an honest state for null rather than a placeholder
+  /// course.
+  CourseSyllabus? _activeSyllabus() {
+    final trackId = ref.watch(examActiveTrackIdProvider).valueOrNull;
+    if (trackId == null || trackId.isEmpty) return null;
+    return ref.watch(courseSyllabusProvider(trackId)).valueOrNull;
+  }
+
+  String _activeTrackLabel() {
+    final syllabus = _activeSyllabus();
+    if (syllabus == null) return 'No exam track selected yet';
+    final name = syllabus.courseNameEn.isNotEmpty
+        ? syllabus.courseNameEn
+        : syllabus.courseName;
+    return name.isEmpty ? syllabus.subjectName : name;
+  }
+
+  String? _activeTrackClassLabel() {
+    final syllabus = _activeSyllabus();
+    return syllabus == null ? null : 'Class ${syllabus.klass}';
   }
 
   Widget _buildExamProfileSection(BuildContext context) {
@@ -461,38 +608,44 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Real active track. The label and the pill were hardcoded
+              // ('CBSE Class 10 Hindi Course A', 'Board 2026') and so lied
+              // to every learner whose track differed — or who had none.
+              // Both now come from the scope store plus the official
+              // syllabus, with honest unset/loading states.
               Row(
                 children: [
                   const Icon(Icons.school_rounded,
                       color: VaaniXColors.examIndigoAccent, size: 22),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'CBSE Class 10 Hindi Course A',
-                      style: TextStyle(
+                      _activeTrackLabel(),
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: VaaniXColors.examSurface,
-                      borderRadius: VaaniXRadius.borderPill,
-                    ),
-                    child: const Text(
-                      'Board 2026',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: VaaniXColors.examPrimary,
+                  if (_activeTrackClassLabel() case final klassLabel?)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: VaaniXColors.examSurface,
+                        borderRadius: VaaniXRadius.borderPill,
+                      ),
+                      child: Text(
+                        klassLabel,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                          color: VaaniXColors.examPrimary,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 14),
@@ -552,6 +705,19 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
     );
   }
 
+  /// Preference toggles.
+  ///
+  /// AUDIT NOTE — these three switches are local `setState` fields only.
+  /// Nothing reads them, nothing persists them (they reset on every screen
+  /// entry), and the app has no notification dependency or scheduler at
+  /// all: there is no `flutter_local_notifications`, no notification
+  /// service, nothing that could deliver a 7:30 PM reminder. Flipping them
+  /// therefore has no effect whatsoever.
+  ///
+  /// They are kept visible but honestly captioned rather than silently
+  /// pretending to configure delivery. Making them real needs a
+  /// notification dependency, permission handling and a persisted
+  /// preference store — new product surface, not an audit fix.
   Widget _buildPreferencesSection(BuildContext context) {
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
@@ -564,6 +730,16 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
               fontFamily: 'Poppins',
               fontSize: 14,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Reminders are not being delivered yet — these choices are not '
+            'saved.',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 11.5,
+              color: VaaniXColors.textSecondaryLight,
             ),
           ),
           const SizedBox(height: 12),
@@ -613,9 +789,9 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
                 ),
               ),
               const Spacer(),
-              Text(
-                '$_cachedMegabytes MB cached',
-                style: const TextStyle(
+              const Text(
+                'Bundled offline',
+                style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -633,21 +809,23 @@ class _ProfileTrayScreenState extends ConsumerState<ProfileTrayScreen> {
               color: VaaniXColors.textSecondaryLight,
             ),
           ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: () {
-              setState(() => _cachedMegabytes = 120);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content:
-                        Text('Cache cleaned. 120 MB essential data kept.')),
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              shape:
-                  RoundedRectangleBorder(borderRadius: VaaniXRadius.borderMd),
+          const SizedBox(height: 8),
+          // HONESTY GUARD: there is no audio-waveform cache in this app.
+          // AudioCadenceWaveform is a purely visual (animated bars) widget
+          // and caches nothing. The previous "552 MB cached" readout and
+          // its "Clear Cache" button were fabricated: the button only ran
+          // setState(552 -> 120) and reported success for work never done.
+          // Curriculum content ships as bundled assets, so there is
+          // nothing user-clearable here until a real download cache exists.
+          const Text(
+            'This content ships with the app, so there is no separate '
+            'download cache to clear.',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 11.5,
+              fontStyle: FontStyle.italic,
+              color: VaaniXColors.textSecondaryLight,
             ),
-            child: const Text('Clear Audio Waveform Cache'),
           ),
         ],
       ),

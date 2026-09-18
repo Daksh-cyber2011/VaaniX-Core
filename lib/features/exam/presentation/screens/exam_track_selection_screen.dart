@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -169,7 +170,7 @@ class _ExamTrackSelectionScreenState
   void _openScope(String trackId) {
     final router = GoRouter.maybeOf(context);
     // No router (e.g. widget tests without go_router) — nothing to do.
-    router?.pushNamed(
+    router?.pushNamedUnique(
       RouteNames.examScopeName,
       pathParameters: {'trackId': trackId},
     );

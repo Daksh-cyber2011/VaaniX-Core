@@ -85,7 +85,7 @@ class ExamHubRepository {
   }
 
   Future<Map<String, dynamic>> _loadCompletionsDoc() async {
-    final raw = await _storage.getString(_completionsKey);
+    final raw = _storage.getString(_completionsKey);
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw);
@@ -125,7 +125,7 @@ class ExamHubRepository {
   }
 
   Future<List<String>> _loadLedger() async {
-    final raw = await _storage.getString(_xpLedgerKey);
+    final raw = _storage.getString(_xpLedgerKey);
     if (raw == null || raw.isEmpty) return <String>[];
     try {
       final json = jsonDecode(raw);
@@ -135,5 +135,21 @@ class ExamHubRepository {
       debugPrint('[ExamHubRepository] corrupt ledger: $e');
       return <String>[];
     }
+  }
+
+  // ---- teardown ----------------------------------------------------------
+
+  /// Production teardown: drops the day-completion map and the once-ever XP
+  /// ledger for every track.
+  ///
+  /// This store had no teardown hook at all, so Settings -> "Reset all
+  /// progress" left exam day-completions behind (plan days still showed as
+  /// done) and left the XP ledger behind, which would have suppressed the XP
+  /// award for every session the learner re-did after the reset — the ledger
+  /// is a once-ever fingerprint set, so a stale entry silently means "already
+  /// paid".
+  Future<void> clear() async {
+    await _storage.remove(_completionsKey);
+    await _storage.remove(_xpLedgerKey);
   }
 }

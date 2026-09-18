@@ -15,7 +15,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
@@ -352,7 +352,7 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
           statusText: 'In Progress • 12m drill left',
           actionLabel: 'Continue Drill →',
           onTap: () {
-            context.pushNamed(
+            context.pushNamedUnique(
               RouteNames.examPracticeName,
               pathParameters: {'trackId': widget.trackId},
               queryParameters: {'topic': 'pad_2'},
@@ -391,7 +391,7 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
         VaaniXCard(
           padding: const EdgeInsets.all(14),
           onTap: () {
-            context.pushNamed(
+            context.pushNamedUnique(
               RouteNames.examPracticeName,
               pathParameters: {'trackId': widget.trackId},
             );
@@ -446,7 +446,7 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
         VaaniXCard(
           padding: const EdgeInsets.all(14),
           onTap: () {
-            context.pushNamed(
+            context.pushNamedUnique(
               RouteNames.examPracticeName,
               pathParameters: {'trackId': widget.trackId},
             );
@@ -542,7 +542,7 @@ class _ChapterStudyScreenState extends ConsumerState<ChapterStudyScreen> {
             isFullWidth: false,
             height: 40,
             onPressed: () {
-              context.pushNamed(
+              context.pushNamedUnique(
                 RouteNames.examPracticeName,
                 pathParameters: {'trackId': widget.trackId},
                 queryParameters: {'topic': 'pad_2'},

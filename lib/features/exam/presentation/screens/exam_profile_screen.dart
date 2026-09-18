@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -121,7 +122,7 @@ class _ExamProfileScreenState extends ConsumerState<ExamProfileScreen> {
       return;
     }
     // Next step in the flow (M4): the adaptive diagnostic.
-    GoRouter.of(context).pushNamed(
+    GoRouter.of(context).pushNamedUnique(
       RouteNames.examDiagnosticName,
       pathParameters: {'trackId': widget.trackId},
     );

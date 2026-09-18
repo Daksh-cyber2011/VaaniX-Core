@@ -318,9 +318,11 @@ class AdaptiveSessionEngine {
   /// (Master Brief §18 "do not merely repeat the same question").
   final Set<String> _askedIds = {};
 
-  /// Exercises queued or reserved by pending ladder steps — so the
-  /// ladder's easier/guided rungs can never pick the same exercise
-  /// twice before either is even asked.
+  /// Exercises asked so far, plus ids adopted by a pending ladder - so
+  /// the ladder's easier/guided rungs can never pick the same exercise
+  /// twice before either is even asked. Queued-but-unasked exercises may
+  /// still be ADOPTED by a ladder rung (the rung pulls them forward);
+  /// applying the ladder then removes the now-duplicate queue step.
   final Set<String> _reservedIds = {};
 
   /// Consecutive first-try correct answers per concept.
@@ -483,12 +485,23 @@ class AdaptiveSessionEngine {
       _pendingLadderConcept = null;
       if (conceptId != null) {
         _laddered.add(conceptId);
-        // Trim remaining same-concept NORMAL steps — the ladder replaces
+        // Trim remaining same-concept NORMAL steps - the ladder replaces
         // them (never merely repeats the same question).
         _queue = _queue
             .where((s) =>
                 s.conceptId != conceptId ||
                 s.presentation == StepPresentation.masteryCheck)
+            .toList();
+        // A rung may have ADOPTED a queued-but-unasked exercise (e.g. the
+        // prerequisite concept's only exercise was sitting in the queue).
+        // Drop the now-duplicate queue steps so each id is asked once.
+        final ladderIds = {
+          for (final s in ladder)
+            if (s.exercise != null) s.exercise!.id,
+        };
+        _queue = _queue
+            .where((s) =>
+                s.exercise == null || !ladderIds.contains(s.exercise!.id))
             .toList();
         _queue.insertAll(0, ladder);
       }
@@ -606,10 +619,22 @@ class AdaptiveSessionEngine {
   }
 
   Exercise? _firstUnused(List<Exercise> candidates) {
+    // Queued-but-unasked exercises are adoptable: a ladder rung that
+    // takes one pulls it forward out of the normal flow, and applying
+    // the ladder drops the queue step so the id is still asked exactly
+    // once. Only asked ids and ids reserved by an earlier rung of the
+    // ladder currently being built are genuinely unavailable.
+    final queuedIds = {
+      for (final step in _queue)
+        if (step.exercise != null) step.exercise!.id,
+    };
     for (final exercise in candidates) {
       if (!exercise.isValid) continue;
       if (_askedIds.contains(exercise.id)) continue;
-      if (_reservedIds.contains(exercise.id)) continue;
+      if (_reservedIds.contains(exercise.id) &&
+          !queuedIds.contains(exercise.id)) {
+        continue;
+      }
       return exercise;
     }
     return null;

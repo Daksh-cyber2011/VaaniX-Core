@@ -16,7 +16,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
@@ -81,7 +81,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                         'Ready for Unit 4 conversational nuance? Today we explore respectful address agreements.',
                     onVoiceTap: () {
                       HapticFeedback.lightImpact();
-                      context.push(RouteNames.chat);
+                      context.pushUnique(RouteNames.chat);
                     },
                   ),
                   const SizedBox(height: VaaniXSpacing.lg),
@@ -183,7 +183,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
 
           // Profile Avatar
           GestureDetector(
-            onTap: () => context.push(RouteNames.vanProfile),
+            onTap: () => context.pushUnique(RouteNames.vanProfile),
             child: Container(
               width: 34,
               height: 34,
@@ -209,7 +209,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
 
   Widget _buildLanguageSelector(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push(RouteNames.learnLanguageSelection),
+      onTap: () => context.pushUnique(RouteNames.learnLanguageSelection),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
@@ -346,7 +346,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
             label: 'Continue Lesson →',
             onPressed: () {
               // Launches interactive practice session
-              context.push(RouteNames.learnSession);
+              context.pushUnique(RouteNames.learnSession);
             },
           ),
         ],
@@ -388,7 +388,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
         VaaniXCard(
           padding: const EdgeInsets.all(14),
           onTap: () {
-            context.push(RouteNames.learnSmartPractice);
+            context.pushUnique(RouteNames.learnSmartPractice);
           },
           child: Row(
             children: [

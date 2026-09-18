@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -262,7 +263,7 @@ class _ReportView extends StatelessWidget {
         PrimaryButton(
           label: 'निजी योजना बनाएँ',
           icon: const Icon(Icons.auto_awesome),
-          onPressed: () => GoRouter.of(context).pushNamed(
+          onPressed: () => GoRouter.of(context).pushNamedUnique(
             RouteNames.examPlanName,
             pathParameters: {'trackId': trackId},
           ),

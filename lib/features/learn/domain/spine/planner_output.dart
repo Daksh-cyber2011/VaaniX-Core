@@ -167,8 +167,13 @@ class AiPlanParser {
     final reason = _asString(raw['reason']).trim();
     if (reason.isEmpty) return null;
 
-    final minutes = (raw['estimatedMinutes'] is num)
-        ? (raw['estimatedMinutes'] as num).toInt()
+    // M4 contract (docs/Learn-2.0/M4-AI-Planner.md): AI-supplied minutes
+    // are clamped 1..30. Absent / non-numeric / non-positive values are
+    // "not supplied" and fall back to the 5-minute practice default the
+    // deterministic planner uses - a zero-minute session is never real.
+    final rawMinutes = raw['estimatedMinutes'];
+    final minutes = (rawMinutes is num && rawMinutes.toInt() >= 1)
+        ? rawMinutes.toInt().clamp(1, 30).toInt()
         : 5;
 
     seenSteps.add(stepKey);

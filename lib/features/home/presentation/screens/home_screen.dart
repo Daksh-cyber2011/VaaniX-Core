@@ -12,6 +12,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/analytics/analytics_event.dart';
 import 'package:vaanix_app/core/analytics/analytics_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -324,14 +325,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () => context.push(RouteNames.chat),
+                    onPressed: () => context.pushUnique(RouteNames.chat),
                     icon: const Icon(Icons.chat_bubble_outline_rounded),
                     tooltip: 'Chat with $companionName',
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   IconButton(
-                    onPressed: () => context.push(RouteNames.settings),
+                    onPressed: () => context.pushUnique(RouteNames.settings),
                     icon: const Icon(Icons.person_outline_rounded),
                     tooltip: 'Profile and settings',
                     color: colorScheme.primary,
@@ -472,7 +473,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: _SecondaryCta(
                       icon: Icons.emoji_events_outlined,
                       label: 'Awards',
-                      onTap: () => context.push(RouteNames.achievements),
+                      onTap: () => context.pushUnique(RouteNames.achievements),
                     ),
                   ),
                 ],

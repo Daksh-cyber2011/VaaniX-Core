@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -128,7 +129,7 @@ class _PlanBody extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.play_arrow, color: AppColors.primary),
                 tooltip: 'Weak areas',
-                onPressed: () => GoRouter.of(context).pushNamed(
+                onPressed: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examWeakAreaName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -302,7 +303,7 @@ class _TaskRow extends StatelessWidget {
         // Today's actionable tasks jump straight into their session
         // (practice / weak-area / revision / PYQ / mock).
         onTap: isActionable
-            ? () => GoRouter.of(context).pushNamed(
+            ? () => GoRouter.of(context).pushNamedUnique(
                   routeName,
                   pathParameters: task.type == ExamTaskType.learn
                       ? {'trackId': trackId, 'topicId': task.topicId}

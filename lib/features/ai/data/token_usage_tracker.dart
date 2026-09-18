@@ -14,10 +14,16 @@
 ///
 /// The tracker automatically rolls over at midnight — yesterday's usage
 /// is preserved for history but today starts fresh.
+///
+/// Bounded retention (Phase 4 — audit defect #12): the day-keyed map is
+/// pruned to the newest [AppConstants.maxTokenUsageHistoryDays] entries
+/// on every write, so a long-lived install can no longer accumulate one
+/// JSON entry per calendar day forever.
 library;
 
 import 'dart:convert';
 
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 
 class TokenUsageTracker {
@@ -64,7 +70,10 @@ class TokenUsageTracker {
         (todayEntry['totalTokens'] as int) + promptTokens + completionTokens;
 
     usage[today] = todayEntry;
-    await _storage.setString(_usageKey, jsonEncode(usage));
+    await _storage.setString(
+      _usageKey,
+      jsonEncode(_pruneToRetentionWindow(usage)),
+    );
   }
 
   /// Get today's usage snapshot.
@@ -120,6 +129,21 @@ class TokenUsageTracker {
     } catch (_) {
       return {};
     }
+  }
+
+  /// Keeps only the newest [AppConstants.maxTokenUsageHistoryDays] day
+  /// keys (by YYYY-MM-DD string, which sorts chronologically). Called on
+  /// every write so a map that predates this fix (or one restored from an
+  /// old backup) self-heals down to the retention window instead of
+  /// staying oversized until the next prune point.
+  Map<String, dynamic> _pruneToRetentionWindow(Map<String, dynamic> usage) {
+    if (usage.length <= AppConstants.maxTokenUsageHistoryDays) return usage;
+    final keys = usage.keys.toList()..sort();
+    final doomed = keys.length - AppConstants.maxTokenUsageHistoryDays;
+    for (final key in keys.take(doomed)) {
+      usage.remove(key);
+    }
+    return usage;
   }
 }
 

@@ -28,7 +28,7 @@ class ExamPlanRepository {
   final ILocalStorageService _storage;
 
   Future<Map<String, ExamPlan>> loadAll() async {
-    final raw = await _storage.getString(storageKey);
+    final raw = _storage.getString(storageKey);
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
@@ -57,7 +57,7 @@ class ExamPlanRepository {
   /// bounded preference signal, not a replacement syllabus: callers still
   /// validate every id against the active scope before planning.
   Future<List<String>> loadStudentOverrideTopicIds(String trackId) async {
-    final raw = await _storage.getString(overrideStorageKey);
+    final raw = _storage.getString(overrideStorageKey);
     if (raw == null || raw.isEmpty) return const [];
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
@@ -78,7 +78,7 @@ class ExamPlanRepository {
     required String trackId,
     required String topicId,
   }) async {
-    final raw = await _storage.getString(overrideStorageKey);
+    final raw = _storage.getString(overrideStorageKey);
     final all = <String, List<String>>{};
     try {
       final json = raw == null || raw.isEmpty
@@ -130,9 +130,17 @@ class ExamPlanRepository {
     return plan;
   }
 
-  @visibleForTesting
-  Future<void> reset() async {
+  /// Production teardown: drops the stored study plans and their day overrides for every track.
+  ///
+  /// Settings -> "Reset all progress" promises that exam history is cleared,
+  /// so a production entry point is required; [reset] is `@visibleForTesting`
+  /// and must never be called from production code. [reset] delegates here so
+  /// both paths share one implementation.
+  Future<void> clear() async {
     await _storage.remove(storageKey);
     await _storage.remove(overrideStorageKey);
   }
+
+  @visibleForTesting
+  Future<void> reset() => clear();
 }

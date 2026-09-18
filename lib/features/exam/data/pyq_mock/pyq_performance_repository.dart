@@ -28,7 +28,7 @@ class PyqPerformanceRepository {
   final ILocalStorageService _storage;
 
   Future<Map<String, Map<String, PyqTopicPerformance>>> loadAll() async {
-    final raw = await _storage.getString(storageKey);
+    final raw = _storage.getString(storageKey);
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
@@ -102,8 +102,35 @@ class PyqPerformanceRepository {
         }));
   }
 
+  /// Removes one track's PYQ performance data (course isolation teardown).
+  Future<void> remove(String trackId) async {
+    final all = await loadAll();
+    if (!all.containsKey(trackId)) return;
+    all.remove(trackId);
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'tracks': {
+            for (final e in all.entries)
+              e.key: {for (final t in e.value.entries) t.key: t.value.toJson()},
+          },
+        }));
+  }
+
+  /// Production teardown: drops the stored PYQ topic evidence for every
+  /// track.
+  ///
+  /// Settings -> "Reset all progress" promises that exam history is cleared,
+  /// so a production entry point is required; [reset] is `@visibleForTesting`
+  /// and must never be called from production code. [reset] delegates here so
+  /// both paths share one implementation.
+  Future<void> clear() async {
+    await _storage.remove(storageKey);
+  }
+
   @visibleForTesting
-  Future<void> reset() async => _storage.remove(storageKey);
+  Future<void> reset() => clear();
 }
 
 /// Per-track mock results log (§21 mockPerformance, §41 critical).
@@ -118,7 +145,7 @@ class MockResultRepository {
   final ILocalStorageService _storage;
 
   Future<Map<String, List<MockResult>>> loadAll() async {
-    final raw = await _storage.getString(storageKey);
+    final raw = _storage.getString(storageKey);
     if (raw == null || raw.isEmpty) return {};
     try {
       final json = jsonDecode(raw) as Map<String, dynamic>;
@@ -167,6 +194,32 @@ class MockResultRepository {
         }));
   }
 
+  /// Removes one track's mock result history (course isolation teardown).
+  Future<void> remove(String trackId) async {
+    final all = await loadAll();
+    if (!all.containsKey(trackId)) return;
+    all.remove(trackId);
+    await _storage.setString(
+        storageKey,
+        jsonEncode({
+          'version': 1,
+          'tracks': {
+            for (final e in all.entries)
+              e.key: [for (final r in e.value) r.toJson()],
+          },
+        }));
+  }
+
+  /// Production teardown: drops the stored mock history for every track.
+  ///
+  /// Settings -> "Reset all progress" promises that exam history is cleared,
+  /// so a production entry point is required; [reset] is `@visibleForTesting`
+  /// and must never be called from production code. [reset] delegates here so
+  /// both paths share one implementation.
+  Future<void> clear() async {
+    await _storage.remove(storageKey);
+  }
+
   @visibleForTesting
-  Future<void> reset() async => _storage.remove(storageKey);
+  Future<void> reset() => clear();
 }

@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -129,7 +130,7 @@ class _HubBody extends ConsumerWidget {
         PrimaryButton.secondary(
           label: 'पूरा 7-दिन plan देखें',
           icon: const Icon(Icons.calendar_month),
-          onPressed: () => GoRouter.of(context).pushNamed(
+          onPressed: () => GoRouter.of(context).pushNamedUnique(
             RouteNames.examPlanName,
             pathParameters: {'trackId': trackId},
           ),
@@ -174,7 +175,7 @@ class _ReadinessCard extends StatelessWidget {
                 tooltip: 'Edit profile',
                 icon:
                     const Icon(Icons.tune, size: 18, color: AppColors.primary),
-                onPressed: () => GoRouter.of(context).pushNamed(
+                onPressed: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examProfileName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -228,7 +229,7 @@ class _TodayPlanCard extends StatelessWidget {
               PrimaryButton(
                 label: 'योजना बनाएँ',
                 icon: const Icon(Icons.auto_awesome),
-                onPressed: () => GoRouter.of(context).pushNamed(
+                onPressed: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examPlanName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -300,7 +301,7 @@ class _TodayTaskRow extends StatelessWidget {
       child: InkWell(
         // §20 freedom preserved: every task stays openable, done or
         // not — the plan is a recommendation.
-        onTap: () => GoRouter.of(context).pushNamed(
+        onTap: () => GoRouter.of(context).pushNamedUnique(
           routeName,
           pathParameters: task.type == ExamTaskType.learn
               ? {'trackId': trackId, 'topicId': task.topicId}
@@ -414,7 +415,7 @@ class _ContinueSection extends StatelessWidget {
           IconButton(
             tooltip: 'Continue',
             icon: const Icon(Icons.play_arrow, color: AppColors.primary),
-            onPressed: () => GoRouter.of(context).pushNamed(
+            onPressed: () => GoRouter.of(context).pushNamedUnique(
               routeName,
               pathParameters: task.type == ExamTaskType.learn
                   ? {'trackId': trackId, 'topicId': task.topicId}
@@ -449,7 +450,7 @@ class _QuickGrid extends StatelessWidget {
                 line: snapshot.recoveryToday
                     ? snapshot.weakAreaLine
                     : snapshot.weakAreaLine,
-                onTap: () => GoRouter.of(context).pushNamed(
+                onTap: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examWeakAreaName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -464,7 +465,7 @@ class _QuickGrid extends StatelessWidget {
                     : AppColors.info,
                 title: 'दोहराव',
                 line: snapshot.revisionLine,
-                onTap: () => GoRouter.of(context).pushNamed(
+                onTap: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examWeakAreaName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -481,7 +482,7 @@ class _QuickGrid extends StatelessWidget {
                 color: AppColors.vanOrange,
                 title: 'PYQ',
                 line: snapshot.pyqLine,
-                onTap: () => GoRouter.of(context).pushNamed(
+                onTap: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examPyqName,
                   pathParameters: {'trackId': trackId},
                 ),
@@ -495,7 +496,7 @@ class _QuickGrid extends StatelessWidget {
                     snapshot.mockCount > 0 ? AppColors.streak : AppColors.info,
                 title: 'Mock',
                 line: snapshot.mockLine,
-                onTap: () => GoRouter.of(context).pushNamed(
+                onTap: () => GoRouter.of(context).pushNamedUnique(
                   RouteNames.examMockName,
                   pathParameters: {'trackId': trackId},
                 ),

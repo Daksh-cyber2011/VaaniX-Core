@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
@@ -77,7 +78,7 @@ class _ExamScopeSummaryScreenState
   }
 
   void _onEdit() {
-    GoRouter.of(context).pushNamed(
+    GoRouter.of(context).pushNamedUnique(
       RouteNames.examScopeName,
       pathParameters: {'trackId': widget.trackId},
     );
@@ -425,7 +426,7 @@ class _ConfirmedCard extends StatelessWidget {
           PrimaryButton(
             label: 'Exam Profile सेट करें',
             icon: const Icon(Icons.arrow_forward),
-            onPressed: () => GoRouter.of(context).pushNamed(
+            onPressed: () => GoRouter.of(context).pushNamedUnique(
               RouteNames.examProfileName,
               pathParameters: {'trackId': trackId},
             ),

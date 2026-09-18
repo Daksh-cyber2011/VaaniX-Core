@@ -52,7 +52,7 @@ class ExamScopeRepository {
 
   /// Loads the store; degrades to empty on corrupt/missing JSON.
   Future<ExamScopeStore> load() async {
-    final raw = await _storage.getString(storageKey);
+    final raw = _storage.getString(storageKey);
     if (raw == null || raw.isEmpty) {
       return ExamScopeStore(activeTrackId: null, scopes: {});
     }
@@ -146,8 +146,16 @@ class ExamScopeRepository {
   }
 
   /// Test/teardown hook.
-  @visibleForTesting
-  Future<void> reset() async {
+  /// Production teardown: drops the stored scope selections and the active-track pointer for every track.
+  ///
+  /// Settings -> "Reset all progress" promises that exam history is cleared,
+  /// so a production entry point is required; [reset] is `@visibleForTesting`
+  /// and must never be called from production code. [reset] delegates here so
+  /// both paths share one implementation.
+  Future<void> clear() async {
     await _storage.remove(storageKey);
   }
+
+  @visibleForTesting
+  Future<void> reset() => clear();
 }
