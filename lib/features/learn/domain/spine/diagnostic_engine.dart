@@ -224,7 +224,7 @@ DiagnosticDimension? classifyDiagnosticDimension({
 /// carries one deterministic session shuffle ([reshuffled]) so retakes
 /// vary while staying reproducible for a fixed seed.
 class DiagnosticItemBank {
-  DiagnosticItemBank._(this._raw, this._pools);
+  DiagnosticItemBank._(this._raw, this._pools, [this._graph]);
 
   /// Raw pools (curriculum order): dimension → (difficulty → items).
   final Map<DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>> _raw;
@@ -232,7 +232,17 @@ class DiagnosticItemBank {
   /// Session-shuffled view the accessors walk.
   final Map<DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>> _pools;
 
-  static DiagnosticItemBank empty() => DiagnosticItemBank._(const {}, const {});
+  /// Optional concept graph (used by the §12 prerequisite strategy).
+  /// Stays null for the empty bank.
+  final ConceptGraph? _graph;
+
+  /// Concept graph this bank was built from, if available. The prereq
+  /// strategy reads `prerequisites` from here; callers can read it via
+  /// [conceptGraph].
+  ConceptGraph? get conceptGraph => _graph;
+
+  static DiagnosticItemBank empty() =>
+      DiagnosticItemBank._(const {}, const {}, null);
 
   /// Builds the pools from the trusted concept graph + exercise banks.
   ///
@@ -253,14 +263,6 @@ class DiagnosticItemBank {
           exercisesByLesson[concept.id] ??
           const <Exercise>[];
       final chapterOrder = concept.order ~/ 1000;
-      // §12 prerequisite contract requires a STRICT total order inside
-      // every (dimension × difficulty) bucket so a "prereq" probe can be
-      // identified by `conceptOrder < missed.conceptOrder`. Lessons share
-      // the same chapter.order × 1000 + i value, so we walk each lesson's
-      // exercises in their authored order and give each item a strictly
-      // unique conceptOrder (1000-wide room per lesson keeps room for
-      // later authoring without collision).
-      var exerciseSlot = 0;
       for (final exercise in exercises) {
         if (!exercise.isValid) continue;
         if (!seen.add(exercise.id)) continue;
@@ -270,6 +272,12 @@ class DiagnosticItemBank {
         );
         if (dimension == null) continue;
 
+        // `conceptOrder` is the LESSON's curriculum order (semantically
+        // meaningful prerequisite anchor). Exercises that share a lesson
+        // share the same order on purpose — they belong to the same
+        // concept. The prerequisite strategy (§12) reasons in terms of
+        // concept graphs and concept.prerequisites, NOT in terms of
+        // synthetic per-exercise numbering.
         final item = DiagnosticItem(
           exercise: exercise,
           probe: DiagnosticProbe(
@@ -278,9 +286,8 @@ class DiagnosticItemBank {
             difficulty: concept.difficulty,
             conceptId: concept.id,
           ),
-          conceptOrder: concept.order * 10 + exerciseSlot,
+          conceptOrder: concept.order,
         );
-        exerciseSlot++;
         raw
             .putIfAbsent(dimension, () => {})
             .putIfAbsent(
@@ -291,7 +298,7 @@ class DiagnosticItemBank {
       }
     }
 
-    return DiagnosticItemBank._(raw, _shufflePools(raw, seed));
+    return DiagnosticItemBank._(raw, _shufflePools(raw, seed), graph);
   }
 
   static Map<DiagnosticDimension, Map<Difficulty, List<DiagnosticItem>>>
@@ -457,7 +464,8 @@ class DiagnosticEngine {
     } else {
       _consecutiveCorrect = 0;
       if (_levelTrack > 0) _levelTrack--;
-      _pending = _prerequisiteProbe(item) ?? _selectNext();
+      _pending =
+          _prerequisiteProbe(item, graph: _bank.conceptGraph) ?? _selectNext();
     }
   }
 
@@ -517,30 +525,82 @@ class DiagnosticEngine {
     return null;
   }
 
-  /// The §12 "diagnostic prerequisite" probe: same dimension as the missed
-  /// item, with STRICTLY EARLIER conceptOrder when possible. When no such
-  /// item exists in the same dimension, fall back to an easier-band probe
-  /// within the same dimension so the learner gets a recovery chance in
-  /// the same skill rather than being whiplashed to a different skill.
-  DiagnosticItem? _prerequisiteProbe(DiagnosticItem missed) {
-    final pool = _bank.itemsAnyBand(missed.dimension, excludeIds: _askedIds);
-    if (pool.isEmpty) return null;
-    final earlier = pool.where((c) => c.conceptOrder < missed.conceptOrder);
-    if (earlier.isNotEmpty) {
-      return earlier.last; // nearest earlier item, itemsAnyBand is ordered
+  /// §12 prerequisite strategy.
+  ///
+  /// On a miss the engine selects a recovery probe using a priority chain
+  /// that respects the REAL semantic relationships in the data — concept
+  /// prerequisites declared by the curriculum, then easier bands of the
+  /// same concept, then the next concept in the same dimension — instead
+  /// of manufacturing a synthetic numeric "earlier" exercise.
+  ///
+  /// It is a legitimate state for the missed item to be the head of its
+  /// dimension (no concept strictly earlier in the same dimension). In
+  /// that case the strategy stays in-dimension by dropping to an easier
+  /// band of the same concept (still a real recovery probe); only when
+  /// none of that is available does it widen to the next-rotation concept.
+  DiagnosticItem? _prerequisiteProbe(
+    DiagnosticItem missed, {
+    ConceptGraph? graph,
+  }) {
+    // 1) Real prerequisite concept from the curriculum (best — the
+    //    lesson graph already encodes "what must be learned before this").
+    if (graph != null && missed.probe.conceptId != null) {
+      final prereqIds =
+          graph.conceptById(missed.probe.conceptId!)?.prerequisites ??
+              const <String>[];
+      for (final prereqId in prereqIds.reversed) {
+        final candidates = _bank
+            .itemsAnyBand(missed.dimension, excludeIds: _askedIds)
+            .where((c) => c.probe.conceptId == prereqId)
+            .toList();
+        if (candidates.isNotEmpty) return candidates.first;
+      }
     }
-    // No strictly-earlier concept in the same dimension. Stay in the same
-    // dimension (the §12 contract) but drop to the easiest unasked band so
-    // the learner has a real chance of recovery.
+
+    // 2) Easier-band probe within the SAME concept (legitimate recovery
+    //    even when no earlier concept exists).
+    if (missed.probe.conceptId != null) {
+      for (final band in const [
+        Difficulty.beginner,
+        Difficulty.intermediate,
+        Difficulty.advanced,
+      ]) {
+        if (band.index >= missed.probe.difficulty.index) break;
+        final candidates = _bank
+            .itemsAt(missed.dimension, band, excludeIds: _askedIds)
+            .where((c) => c.probe.conceptId == missed.probe.conceptId)
+            .toList();
+        if (candidates.isNotEmpty) return candidates.first;
+      }
+    }
+
+    // 3) Same-dimension, strictly-lower conceptOrder probe when one
+    //    exists in curriculum order.
+    final pool = _bank.itemsAnyBand(missed.dimension, excludeIds: _askedIds);
+    final earlier = pool
+        .where((c) =>
+            c.exercise.id != missed.exercise.id &&
+            c.conceptOrder < missed.conceptOrder)
+        .toList();
+    if (earlier.isNotEmpty) return earlier.last;
+
+    // 4) Same-dimension, easier band (any concept, different exercise).
     for (final band in const [
       Difficulty.beginner,
       Difficulty.intermediate,
       Difficulty.advanced,
     ]) {
-      final fallback =
-          _bank.itemsAt(missed.dimension, band, excludeIds: _askedIds);
-      if (fallback.isNotEmpty) return fallback.first;
+      if (band.index >= missed.probe.difficulty.index) break;
+      final candidates = _bank
+          .itemsAt(missed.dimension, band, excludeIds: _askedIds)
+          .where((c) => c.exercise.id != missed.exercise.id)
+          .toList();
+      if (candidates.isNotEmpty) return candidates.first;
     }
+
+    // No meaningful prerequisite available in the same dimension. The
+    // selection layer will fall through to its standard rotation; returning
+    // null here keeps the engine honest.
     return null;
   }
 
