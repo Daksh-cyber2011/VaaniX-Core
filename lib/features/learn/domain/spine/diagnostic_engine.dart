@@ -253,6 +253,14 @@ class DiagnosticItemBank {
           exercisesByLesson[concept.id] ??
           const <Exercise>[];
       final chapterOrder = concept.order ~/ 1000;
+      // §12 prerequisite contract requires a STRICT total order inside
+      // every (dimension × difficulty) bucket so a "prereq" probe can be
+      // identified by `conceptOrder < missed.conceptOrder`. Lessons share
+      // the same chapter.order × 1000 + i value, so we walk each lesson's
+      // exercises in their authored order and give each item a strictly
+      // unique conceptOrder (1000-wide room per lesson keeps room for
+      // later authoring without collision).
+      var exerciseSlot = 0;
       for (final exercise in exercises) {
         if (!exercise.isValid) continue;
         if (!seen.add(exercise.id)) continue;
@@ -270,8 +278,9 @@ class DiagnosticItemBank {
             difficulty: concept.difficulty,
             conceptId: concept.id,
           ),
-          conceptOrder: concept.order,
+          conceptOrder: concept.order * 10 + exerciseSlot,
         );
+        exerciseSlot++;
         raw
             .putIfAbsent(dimension, () => {})
             .putIfAbsent(
@@ -509,11 +518,10 @@ class DiagnosticEngine {
   }
 
   /// The §12 "diagnostic prerequisite" probe: same dimension as the missed
-  /// item. Preferred target is the unasked item nearest STRICTLY EARLIER
-  /// in curriculum order; when none exists (the missed item sits at the
-  /// head of the dimension), the contract is to KEEP the probe in the same
-  /// dimension — easier-band any-order — rather than round-robin away
-  /// to a different skill mid-assessment.
+  /// item, with STRICTLY EARLIER conceptOrder when possible. When no such
+  /// item exists in the same dimension, fall back to an easier-band probe
+  /// within the same dimension so the learner gets a recovery chance in
+  /// the same skill rather than being whiplashed to a different skill.
   DiagnosticItem? _prerequisiteProbe(DiagnosticItem missed) {
     final pool = _bank.itemsAnyBand(missed.dimension, excludeIds: _askedIds);
     if (pool.isEmpty) return null;
@@ -521,14 +529,19 @@ class DiagnosticEngine {
     if (earlier.isNotEmpty) {
       return earlier.last; // nearest earlier item, itemsAnyBand is ordered
     }
-    // Nothing strictly earlier — the learner still benefits from another
-    // probe in the same dimension. Prefer the easiest band available so a
-    // shaky learner has a real chance of recovery.
-    for (final band in const [Difficulty.beginner, Difficulty.intermediate, Difficulty.advanced]) {
-      final fallback = _bank.itemsAt(missed.dimension, band, excludeIds: _askedIds);
+    // No strictly-earlier concept in the same dimension. Stay in the same
+    // dimension (the §12 contract) but drop to the easiest unasked band so
+    // the learner has a real chance of recovery.
+    for (final band in const [
+      Difficulty.beginner,
+      Difficulty.intermediate,
+      Difficulty.advanced,
+    ]) {
+      final fallback =
+          _bank.itemsAt(missed.dimension, band, excludeIds: _askedIds);
       if (fallback.isNotEmpty) return fallback.first;
     }
-    return pool.first;
+    return null;
   }
 
   /// Picks an unasked item at the current band, falling back to the

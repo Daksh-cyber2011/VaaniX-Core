@@ -14,10 +14,13 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_content_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/smart_practice_screen.dart';
 
 /// Fake raw-text boundary that switches behaviour by prompt shape:
@@ -96,6 +99,21 @@ Future<ProviderContainer> _container({
   );
 }
 
+/// Pre-warm the spine providers from inside [testWidgets] (must be
+/// driven by the fake clock — calling these from outside would block
+/// the test runner on the real asset bundle).
+Future<void> _preWarmSpine(
+  WidgetTester tester,
+  ProviderContainer container,
+) async {
+  for (var i = 0; i < 120; i++) {
+    final cur = container.read(activeCurriculumProvider);
+    final graph = container.read(activeConceptGraphProvider);
+    if (cur.hasValue && graph.hasValue) return;
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+}
+
 Widget _wrap(ProviderContainer container) {
   final router = GoRouter(
     initialLocation: '/learn/smart',
@@ -147,6 +165,15 @@ Future<void> _waitUntilResolved(
   Duration step = const Duration(milliseconds: 50),
   int maxSteps = 160, // ~8 s — Hindi asset load can be slow
 }) async {
+  // Phase 1: wait for the spine providers to load (curriculum + graph).
+  for (var i = 0; i < 120; i++) {
+    final cur = container.read(activeCurriculumProvider);
+    final graph = container.read(activeConceptGraphProvider);
+    if (cur.hasValue && graph.hasValue) break;
+    await tester.pump(step);
+  }
+  // Phase 2: wait for the smart-practice controller to settle to ready /
+  // unavailable.
   for (var i = 0; i < maxSteps; i++) {
     final phase = container.read(smartPracticeProvider).phase;
     if (phase == SmartPracticePhase.ready ||
@@ -154,6 +181,12 @@ Future<void> _waitUntilResolved(
       // Drain one more frame so the screen's switch completes.
       await tester.pump();
       return;
+    }
+    if (i == 60) {
+      // Mid-flight debug so a hanging test doesn't disappear silently.
+      debugPrint('=== _waitUntilResolved still loading @ step=$i ===');
+      debugPrint('=== selected: '
+          '${container.read(selectedLearnLanguageProvider)} ===');
     }
     await tester.pump(step);
   }
@@ -175,7 +208,7 @@ void main() {
     expect(find.text('Back to Learn'), findsOneWidget);
   });
 
-  testWidgets('a stub language (no trusted material) stays honest',
+  testWidgets('a stub language (sparse trusted material) stays honest',
       (tester) async {
     _useTallSurface(tester);
     final container = await _container(prefs: {'learn_language': 'kannada'});
@@ -185,15 +218,14 @@ void main() {
     await tester.pump();
     await _waitUntilResolved(tester, container);
 
-    // Surface what happened so a regression doesn't disappear silently.
+    // Kannada ships with sparse-but-real lesson content (M9 baseline);
+    // the screen MUST render the trusted-first view honestly — no
+    // fake empty state, no fabricated material.
     final phase = container.read(smartPracticeProvider).phase;
-    debugPrint('=== stub-language phase: $phase ===');
-    debugPrint(
-        '=== selectedLearnLanguage: '
-        '${container.read(selectedLearnLanguageProvider)} ===');
-
-    expect(find.text('Nothing to personalize yet.'), findsOneWidget);
-    expect(find.textContaining('trusted material'), findsOneWidget);
+    expect(phase, SmartPracticePhase.ready,
+        reason: 'sparse curricula must still reach the trusted view');
+    expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
+    expect(find.text('Trusted lesson'), findsOneWidget);
   });
 
   testWidgets('ready view is trusted-first with honest labels', (tester) async {
@@ -208,6 +240,11 @@ void main() {
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
     await _waitUntilResolved(tester, container);
+
+    debugPrint('=== ready-view phase: '
+        '${container.read(smartPracticeProvider).phase} ===');
+    debugPrint('=== ready-view reason: '
+        '${container.read(smartPracticeProvider).unavailableReason} ===');
 
     // Trusted section rendered — and resolving it made NO AI call.
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);

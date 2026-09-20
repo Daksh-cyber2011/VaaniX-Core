@@ -14,9 +14,11 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/session_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/session_screen.dart';
 
 Future<ProviderContainer> _container({
@@ -27,6 +29,21 @@ Future<ProviderContainer> _container({
   return ProviderContainer(
     overrides: [sharedPreferencesProvider.overrideWithValue(instance)],
   );
+}
+
+/// Pre-warm the spine providers from inside [testWidgets] (must be
+/// driven by the fake clock — calling these from outside would block
+/// the test runner on the real asset bundle).
+Future<void> _preWarmSpine(
+  WidgetTester tester,
+  ProviderContainer container,
+) async {
+  for (var i = 0; i < 120; i++) {
+    final cur = container.read(activeCurriculumProvider);
+    final graph = container.read(activeConceptGraphProvider);
+    if (cur.hasValue && graph.hasValue) return;
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
 
 Widget _wrap(ProviderContainer container) {
@@ -106,6 +123,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
+    await _preWarmSpine(tester, container);
     await _waitUntilActive(tester, container);
 
     // Active phase: the first trusted exercise of the bank.
@@ -179,6 +197,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
+    await _preWarmSpine(tester, container);
     await _waitUntilActive(tester, container);
 
     expect(find.text('Nothing to practise yet.'), findsOneWidget);

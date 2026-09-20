@@ -13,10 +13,12 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/screens/diagnostic_screen.dart';
 
 Future<ProviderContainer> _container({
@@ -27,6 +29,23 @@ Future<ProviderContainer> _container({
   return ProviderContainer(
     overrides: [sharedPreferencesProvider.overrideWithValue(instance)],
   );
+}
+
+/// Pre-warm the spine providers from inside [testWidgets] (must be
+/// driven by the fake clock — calling these from outside would block
+/// the test runner on the real asset bundle). Returns once both the
+/// active curriculum and concept graph are resolved so the diagnostic
+/// bank builds deterministically.
+Future<void> _preWarmSpine(
+  WidgetTester tester,
+  ProviderContainer container,
+) async {
+  for (var i = 0; i < 120; i++) {
+    final cur = container.read(activeCurriculumProvider);
+    final graph = container.read(activeConceptGraphProvider);
+    if (cur.hasValue && graph.hasValue) return;
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
 
 Widget _wrap(ProviderContainer container) {
@@ -68,9 +87,11 @@ Future<void> _waitForSessionToStart(
 ) async {
   // The Hindi curriculum load + bank build is heavier than the legacy
   // 2-second window allowed — bump the budget so a real-Hindi run still
-  // reaches the active phase inside this helper.
+  // reaches the active phase inside this helper. (15 s ceiling so a
+  // genuine freeze surfaces as a failing test instead of an indefinite
+  // hang.)
   for (var frame = 0;
-      frame < 60 &&
+      frame < 150 &&
           container.read(diagnosticSessionProvider).phase ==
               DiagnosticPhase.idle;
       frame++) {
@@ -160,6 +181,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
+    await _preWarmSpine(tester, container);
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text("Let's see what you already know!"), findsOneWidget);
@@ -182,7 +204,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _preWarmSpine(tester, container);
 
     await tester.tap(find.text("Let's play"));
     await _waitForSessionToStart(tester, container);
@@ -234,7 +256,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _preWarmSpine(tester, container);
     await tester.tap(find.text("Let's play"));
     await _waitForSessionToStart(tester, container);
 
@@ -257,7 +279,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _preWarmSpine(tester, container);
 
     // Intro renders (a language IS selected)…
     expect(find.text("Let's play"), findsOneWidget);
