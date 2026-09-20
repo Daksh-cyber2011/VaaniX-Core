@@ -66,8 +66,11 @@ Future<void> _waitForSessionToStart(
   WidgetTester tester,
   ProviderContainer container,
 ) async {
+  // The Hindi curriculum load + bank build is heavier than the legacy
+  // 2-second window allowed — bump the budget so a real-Hindi run still
+  // reaches the active phase inside this helper.
   for (var frame = 0;
-      frame < 20 &&
+      frame < 60 &&
           container.read(diagnosticSessionProvider).phase ==
               DiagnosticPhase.idle;
       frame++) {

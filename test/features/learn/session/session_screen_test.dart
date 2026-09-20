@@ -73,6 +73,27 @@ void _useTallSurface(WidgetTester tester) {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
+/// Pumps until the adaptive session leaves its initial idle phase.
+/// The session is async (curriculum asset load + bank build); a single
+/// fixed pump is not reliable enough to assert screen-rendered state.
+Future<void> _waitUntilActive(
+  WidgetTester tester,
+  ProviderContainer container, {
+  Duration step = const Duration(milliseconds: 50),
+  int maxSteps = 80, // ~4 s
+}) async {
+  for (var i = 0; i < maxSteps; i++) {
+    final phase = container.read(adaptiveSessionProvider).phase;
+    if (phase == AdaptiveSessionPhase.active ||
+        phase == AdaptiveSessionPhase.feedback ||
+        phase == AdaptiveSessionPhase.finished) {
+      await tester.pump();
+      return;
+    }
+    await tester.pump(step);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -85,7 +106,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilActive(tester, container);
 
     // Active phase: the first trusted exercise of the bank.
     expect(find.text('Guided session'), findsOneWidget);
@@ -158,7 +179,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilActive(tester, container);
 
     expect(find.text('Nothing to practise yet.'), findsOneWidget);
     expect(find.text('Back to Learn'), findsOneWidget);

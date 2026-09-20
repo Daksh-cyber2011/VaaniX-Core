@@ -133,6 +133,32 @@ void _useTallSurface(WidgetTester tester) {
   addTearDown(tester.view.resetDevicePixelRatio);
 }
 
+/// Pumps the widget tester until the Smart Practice phase reaches a
+/// terminal state — `ready` (trusted view rendered) or `unavailable`
+/// (honest empty state). Used by every test in this file. The
+/// trusted-first pipeline resolves asynchronously (curriculum asset
+/// load + plan provider + registry build), so a single 300 ms pump is
+/// not a reliable signal that the screen has settled. Returns once the
+/// phase is no longer `idle` or `loading`, with a sane upper bound to
+/// surface hangs as test failures.
+Future<void> _waitUntilResolved(
+  WidgetTester tester,
+  ProviderContainer container, {
+  Duration step = const Duration(milliseconds: 50),
+  int maxSteps = 160, // ~8 s — Hindi asset load can be slow
+}) async {
+  for (var i = 0; i < maxSteps; i++) {
+    final phase = container.read(smartPracticeProvider).phase;
+    if (phase == SmartPracticePhase.ready ||
+        phase == SmartPracticePhase.unavailable) {
+      // Drain one more frame so the screen's switch completes.
+      await tester.pump();
+      return;
+    }
+    await tester.pump(step);
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -157,7 +183,14 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilResolved(tester, container);
+
+    // Surface what happened so a regression doesn't disappear silently.
+    final phase = container.read(smartPracticeProvider).phase;
+    debugPrint('=== stub-language phase: $phase ===');
+    debugPrint(
+        '=== selectedLearnLanguage: '
+        '${container.read(selectedLearnLanguageProvider)} ===');
 
     expect(find.text('Nothing to personalize yet.'), findsOneWidget);
     expect(find.textContaining('trusted material'), findsOneWidget);
@@ -174,7 +207,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilResolved(tester, container);
 
     // Trusted section rendered — and resolving it made NO AI call.
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
@@ -206,11 +239,15 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilResolved(tester, container);
 
     await tester.tap(find.text('Quick quiz'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    // The personalize call is async (one client.complete + state write).
+    for (var i = 0; i < 40; i++) {
+      if (container.read(smartPracticeProvider).material != null) break;
+      await tester.pump(const Duration(milliseconds: 50));
+    }
 
     // Exactly one AI call (the material); the trusted view stays.
     expect(client.calls.length, 1);
@@ -243,13 +280,17 @@ void main() {
 
     await tester.pumpWidget(_wrap(container));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await _waitUntilResolved(tester, container);
 
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
 
     await tester.tap(find.text('Explain differently'));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    // The personalization returns immediately (isAvailable == false).
+    for (var i = 0; i < 40; i++) {
+      if (container.read(smartPracticeProvider).materialError != null) break;
+      await tester.pump(const Duration(milliseconds: 50));
+    }
 
     expect(client.calls, isEmpty);
     expect(

@@ -186,10 +186,13 @@ class AiPlanParser {
       conceptId: concept.id,
       lessonId: concept.lessonId,
       difficulty: difficultyFromKnob(knob),
-      // A one-minute activity is not a usable learning session. Keep AI
-      // estimates inside the same student-facing 5–30 minute range used
-      // by the deterministic planner and persisted plans.
-      estimatedMinutes: minutes.clamp(5, 30).toInt(),
+      // [minutes] already honours the M4 contract (1..30 with 5-minute
+      // fallback for missing/invalid input, see the comment on
+      // [rawMinutes] above). Re-clamping here would silently raise the
+      // floor to 5 and reject legitimately-brief AI estimates (e.g. a
+      // single 4-minute warm-up), contradicting the contract pinned by
+      // `planner_output_test.dart`.
+      estimatedMinutes: minutes,
     );
   }
 

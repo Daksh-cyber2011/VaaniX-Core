@@ -509,14 +509,26 @@ class DiagnosticEngine {
   }
 
   /// The §12 "diagnostic prerequisite" probe: same dimension as the missed
-  /// item, nearest unasked item STRICTLY EARLIER in curriculum order.
+  /// item. Preferred target is the unasked item nearest STRICTLY EARLIER
+  /// in curriculum order; when none exists (the missed item sits at the
+  /// head of the dimension), the contract is to KEEP the probe in the same
+  /// dimension — easier-band any-order — rather than round-robin away
+  /// to a different skill mid-assessment.
   DiagnosticItem? _prerequisiteProbe(DiagnosticItem missed) {
-    final candidates = _bank
-        .itemsAnyBand(missed.dimension, excludeIds: _askedIds)
-        .where((c) => c.conceptOrder < missed.conceptOrder)
-        .toList();
-    if (candidates.isEmpty) return null;
-    return candidates.last; // itemsAnyBand is curriculum-ordered
+    final pool = _bank.itemsAnyBand(missed.dimension, excludeIds: _askedIds);
+    if (pool.isEmpty) return null;
+    final earlier = pool.where((c) => c.conceptOrder < missed.conceptOrder);
+    if (earlier.isNotEmpty) {
+      return earlier.last; // nearest earlier item, itemsAnyBand is ordered
+    }
+    // Nothing strictly earlier — the learner still benefits from another
+    // probe in the same dimension. Prefer the easiest band available so a
+    // shaky learner has a real chance of recovery.
+    for (final band in const [Difficulty.beginner, Difficulty.intermediate, Difficulty.advanced]) {
+      final fallback = _bank.itemsAt(missed.dimension, band, excludeIds: _askedIds);
+      if (fallback.isNotEmpty) return fallback.first;
+    }
+    return pool.first;
   }
 
   /// Picks an unasked item at the current band, falling back to the
