@@ -3,14 +3,19 @@
 /// Stitch Design Canvas: Screen 2
 /// Clean Editorial Ivory/Slate (#F8FAFC / #FFFFFF)
 ///
-/// Features:
-/// - Sticky Header with VaaniXModeSwitch (LEARN active), streak badge, and profile
-/// - Active language selector pill: "Learn Hindi • Lv 2 (65%)"
-/// - VAN Personalized greeting card with conversational speech bubble
-/// - Hero Unit: "Unit 4: Formal vs Informal Introductions (आप vs तुम)" with 68% mastery
-/// - Today's Delights: Spaced Repetition (12 due) & Pronunciation Lab with AudioCadenceWaveform
-/// - Curriculum Path with unlocked/locked states
-/// - Daily Commitment Dial (16/20 min completed)
+/// Features (all state TRUTHFUL — every number comes from a real
+/// provider, an honest zero, or an explicit unavailable state):
+/// - Sticky Header with VaaniXModeSwitch (LEARN active), live streak badge
+///   (0 shows 0), and profile
+/// - Active language selector pill from the persisted Learn language
+///   ("Pick a language" when none is selected)
+/// - VAN greeting card with a neutral, non-state message
+/// - Hero card: an honest practice entry (no fabricated unit/mastery)
+/// - Today's Delights: Spaced Repetition & Pronunciation Lab with
+///   AudioCadenceWaveform
+/// - Curriculum Path rendered from the active curriculum + the real
+///   completed-lesson records
+/// - Daily Commitment Dial wired to the real daily-XP goal state
 library;
 
 import 'package:flutter/material.dart';
@@ -21,7 +26,12 @@ import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
+import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/features/progress/domain/progress_models.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/audio_cadence_waveform.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
@@ -38,17 +48,14 @@ class LearnHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
-  String _activeLanguage = 'Hindi';
-  int _activeLevel = 2;
-  double _languageProgress = 0.65;
-
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileProvider);
     final learnerName = profile.resolvedCompanionName.isNotEmpty
         ? profile.resolvedCompanionName
         : 'Learner';
-    final streak = profile.currentStreak > 0 ? profile.currentStreak : 14;
+    // Truthful streak: 0 days shows 0 — no fabricated default.
+    final streak = profile.currentStreak;
 
     return Scaffold(
       backgroundColor: VaaniXColors.learnCanvasBg,
@@ -78,7 +85,9 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                     badgeLabel: 'VAN • MENTOR',
                     title: 'Namaste, $learnerName!',
                     message:
-                        'Ready for Unit 4 conversational nuance? Today we explore respectful address agreements.',
+                        'This screen doesn\u2019t track where you are in the '
+                        'curriculum — start a practice below and it adapts '
+                        'to what you know.',
                     onVoiceTap: () {
                       HapticFeedback.lightImpact();
                       context.pushUnique(RouteNames.chat);
@@ -86,8 +95,8 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                   ),
                   const SizedBox(height: VaaniXSpacing.lg),
 
-                  // 3. Hero Concept Card: Unit 4
-                  _buildHeroUnitCard(context),
+                  // 3. Honest Practice Entry Card
+                  _buildPracticeEntryCard(context),
                   const SizedBox(height: VaaniXSpacing.lg),
 
                   // 4. Today's Delights (Micro-doses)
@@ -153,17 +162,11 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
           ),
           const SizedBox(width: 10),
 
-          // Bell Notifications
+          // Bell Notifications (haptic only — there is no real
+          // notifications source yet, so nothing is announced).
           GestureDetector(
             onTap: () {
               HapticFeedback.selectionClick();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content:
-                      Text('Notifications: 12 cards due for spaced review!'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
             },
             child: Container(
               padding: const EdgeInsets.all(7),
@@ -208,6 +211,14 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
   }
 
   Widget _buildLanguageSelector(BuildContext context) {
+    // Real selection from the persisted Learn-language store; when no
+    // language has been picked yet the pill says so honestly. No level or
+    // progress percentage exists anywhere in the app, so none is shown.
+    final selected = ref.watch(selectedLearnLanguageProvider);
+    final label = selected == null
+        ? 'Pick a language'
+        : 'Learn ${learnLanguageSpec(selected).englishName}';
+
     return GestureDetector(
       onTap: () => context.pushUnique(RouteNames.learnLanguageSelection),
       child: Container(
@@ -229,14 +240,16 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
             Container(
               width: 10,
               height: 10,
-              decoration: const BoxDecoration(
-                color: VaaniXColors.telemetryEmerald,
+              decoration: BoxDecoration(
+                color: selected == null
+                    ? VaaniXColors.textTertiaryLight
+                    : VaaniXColors.telemetryEmerald,
                 shape: BoxShape.circle,
               ),
             ),
             const SizedBox(width: 8),
             Text(
-              'Learn $_activeLanguage • Lv $_activeLevel (${(_languageProgress * 100).toInt()}%)',
+              label,
               style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 12.5,
@@ -269,7 +282,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
     );
   }
 
-  Widget _buildHeroUnitCard(BuildContext context) {
+  Widget _buildPracticeEntryCard(BuildContext context) {
     return VaaniXCard(
       padding: const EdgeInsets.all(18),
       child: Column(
@@ -284,7 +297,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                   borderRadius: VaaniXRadius.borderPill,
                 ),
                 child: const Text(
-                  'ACTIVE UNIT',
+                  'PRACTICE',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 10.5,
@@ -294,21 +307,11 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                   ),
                 ),
               ),
-              const Spacer(),
-              const Text(
-                '68% Mastery',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: VaaniXColors.learnPrimaryViolet,
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 10),
           const Text(
-            'Unit 4: Formal vs Informal Introductions',
+            'Continue learning',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 17,
@@ -318,7 +321,8 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
           ),
           const SizedBox(height: 4),
           const Text(
-            'आप (Aap) vs तुम (Tum) — Master grammatical honorifics and colloquial cadence.',
+            'A short focused session — read a little, drill a little, '
+            'review a little.',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 13,
@@ -326,27 +330,13 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 14),
-
-          // Linear Progress Bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: 0.68,
-              minHeight: 6,
-              backgroundColor: VaaniXColors.learnBorder,
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                VaaniXColors.learnPrimaryViolet,
-              ),
-            ),
-          ),
           const SizedBox(height: 16),
 
           VaaniXButton(
-            label: 'Continue Lesson →',
+            label: 'Start today\u2019s practice',
             onPressed: () {
-              // Launches interactive practice session
-              context.pushUnique(RouteNames.learnSession);
+              // Launches the smart practice session.
+              context.pushUnique(RouteNames.learnSmartPractice);
             },
           ),
         ],
@@ -406,11 +396,11 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Spaced Repetition Cards',
                       style: TextStyle(
                         fontFamily: 'Poppins',
@@ -420,7 +410,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                       ),
                     ),
                     Text(
-                      '12 cards due for optimal retention curve',
+                      'Review what needs practice',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
@@ -451,6 +441,16 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
   }
 
   Widget _buildCommitmentAndCurriculum(BuildContext context) {
+    final goal = ref.watch(dailyGoalStateProvider);
+    final target = goal.xpTarget;
+    final xp = goal.xpEarnedToday;
+    // Divide-by-zero safe: an unset goal shows 0 progress, never a
+    // fabricated percentage.
+    final percent = target > 0 ? ((xp * 100) / target).clamp(0.0, 100.0) : 0.0;
+    final goalSentence = xp == 0
+        ? 'No XP earned yet today — your goal is $target XP.'
+        : 'You have earned $xp of your $target XP goal today.';
+
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -458,14 +458,14 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
         children: [
           Row(
             children: [
-              // Radial Gauge for Daily Commitment
-              const VaaniXRadialGauge(
-                percentage: 80,
+              // Radial Gauge for Daily Commitment — real daily XP state.
+              VaaniXRadialGauge(
+                percentage: percent,
                 size: 72,
                 strokeWidth: 6,
                 primaryColor: VaaniXColors.learnPrimaryViolet,
                 showPercentage: false,
-                subtitle: '16/20m',
+                subtitle: '$xp/$target XP',
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -483,8 +483,8 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '16 of 20 min completed today. 4 minutes left to extend streak!',
-                      style: TextStyle(
+                      goalSentence,
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
                         color: VaaniXColors.textSecondaryLight,
@@ -498,7 +498,7 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
           ),
           const Divider(height: 24, color: VaaniXColors.learnBorder),
 
-          // Curriculum Path Preview
+          // Curriculum Path Preview — real chapters + real completions.
           const Text(
             'Curriculum Path',
             style: TextStyle(
@@ -509,33 +509,72 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          _CurriculumStep(
-            index: 1,
-            title: 'Unit 1: Basic Greetings & Salutations',
-            isDone: true,
-          ),
-          _CurriculumStep(
-            index: 2,
-            title: 'Unit 2: Personal Pronouns & Honorifics',
-            isDone: true,
-          ),
-          _CurriculumStep(
-            index: 3,
-            title: 'Unit 3: Asking Questions with Polite Forms',
-            isDone: true,
-          ),
-          _CurriculumStep(
-            index: 4,
-            title: 'Unit 4: Formal vs Informal Introductions',
-            isCurrent: true,
-          ),
-          _CurriculumStep(
-            index: 5,
-            title: 'Unit 5: Conversational Pacing & Common Idioms',
-            isLocked: true,
-          ),
+          _buildCurriculumSteps(),
         ],
       ),
+    );
+  }
+
+  Widget _buildCurriculumSteps() {
+    final curriculumAsync = ref.watch(activeCurriculumProvider);
+    final completedLessonIds = ref.watch(completedLessonIdsProvider);
+
+    return curriculumAsync.when(
+      loading: () => const Text(
+        'Loading curriculum…',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12.5,
+          color: VaaniXColors.textSecondaryLight,
+        ),
+      ),
+      error: (_, __) => const Text(
+        'Curriculum unavailable',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12.5,
+          color: VaaniXColors.textSecondaryLight,
+        ),
+      ),
+      data: (chapters) {
+        if (chapters.isEmpty) {
+          return const Text(
+            'Curriculum unavailable',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 12.5,
+              color: VaaniXColors.textSecondaryLight,
+            ),
+          );
+        }
+
+        // Real join: a chapter is done when ALL of its lessons are in the
+        // completed set; the first not-done chapter is the current one.
+        final completed = completedLessonIds.toSet();
+        bool isDone(Chapter c) =>
+            c.lessons.isNotEmpty &&
+            c.lessons.every((l) => completed.contains(l.id));
+        final currentIndex =
+            chapters.indexWhere((c) => !isDone(c));
+
+        final steps = <Widget>[];
+        final shown = chapters.take(5).toList();
+        for (var i = 0; i < shown.length; i++) {
+          final chapter = shown[i];
+          final done = isDone(chapter);
+          final isCurrent = !done && i == currentIndex;
+          steps.add(
+            _CurriculumStep(
+              index: i + 1,
+              title: chapter.title,
+              isDone: done,
+              isCurrent: isCurrent,
+              isLocked: !done && !isCurrent,
+            ),
+          );
+        }
+        return Column(children: steps);
+      },
     );
   }
 }
