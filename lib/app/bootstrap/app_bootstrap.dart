@@ -24,19 +24,28 @@ class BootstrapResult {
   final SharedPreferences sharedPreferences;
 }
 
+/// Injectable only so bootstrap failure behavior can be tested without a
+/// networked Supabase project. Production always uses [Supabase.initialize].
+typedef SupabaseInitializer = Future<void> Function({
+  required String url,
+  required String anonKey,
+});
+
 /// Executes the full startup sequence and returns a [BootstrapResult].
 ///
 /// Note: Sentry must be initialized BEFORE runApp via
 /// [SentryFlutter.init] in main.dart so it can wrap the zone guard.
 /// This method only configures Sentry scope post-init.
-Future<BootstrapResult> bootstrap() async {
+Future<BootstrapResult> bootstrap({
+  SupabaseInitializer? supabaseInitializer,
+}) async {
   // main() already loads the environment BEFORE Sentry init (the Sentry DSN
   // itself is environment config); only load it here when it is not done.
   if (!dotenv.isInitialized) {
     await loadEnvironment();
   }
   _configureSentryScope();
-  await _initializeSupabase();
+  await _initializeSupabase(supabaseInitializer);
 
   final prefs = await _acquireSharedPreferences();
   return BootstrapResult(sharedPreferences: prefs);
@@ -79,7 +88,7 @@ void _configureSentryScope() {
 /// after a later step (preferences) failed.
 bool _supabaseInitialized = false;
 
-Future<void> _initializeSupabase() async {
+Future<void> _initializeSupabase(SupabaseInitializer? initializer) async {
   if (_supabaseInitialized) return;
   if (!AppEnvironment.isSupabaseConfigured) {
     // Guarded so release builds never emit the message.
@@ -89,15 +98,22 @@ Future<void> _initializeSupabase() async {
     return;
   }
 
-  try {
+  // A configured backend that cannot initialize is not equivalent to an
+  // intentionally unconfigured offline install. Allow a failure to reach
+  // _startApp's retryable bootstrap failure screen; continuing here selected
+  // SupabaseAuthRepository later, which then accessed an uninitialized client.
+  if (initializer == null) {
     await Supabase.initialize(
       url: AppEnvironment.supabaseUrl,
       publishableKey: AppEnvironment.supabaseAnonKey,
     );
-    _supabaseInitialized = true;
-  } catch (e, st) {
-    reportError(e, st, context: 'Supabase.initialize');
+  } else {
+    await initializer(
+      url: AppEnvironment.supabaseUrl,
+      anonKey: AppEnvironment.supabaseAnonKey,
+    );
   }
+  _supabaseInitialized = true;
 }
 
 /// Acquires the [SharedPreferences] singleton.
