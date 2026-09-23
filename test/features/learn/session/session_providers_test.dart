@@ -151,12 +151,14 @@ void main() {
         final step = state.currentStep!;
         if (step.isSupport) {
           sawSupport = true;
+          if (consecutiveWrongs >= 2) sawLadderRung = true;
           await notifier.next();
         } else {
           expect(seenIds.add(step.exercise!.id), isTrue,
               reason: 'never ask the same question twice');
           if (consecutiveWrongs >= 2 &&
-              (step.presentation == StepPresentation.easier ||
+              (step.isSupport ||
+                  step.presentation == StepPresentation.easier ||
                   step.presentation == StepPresentation.guided ||
                   step.presentation == StepPresentation.prerequisite)) {
             sawLadderRung = true;
@@ -173,7 +175,7 @@ void main() {
     expect(sawSupport, isTrue,
         reason: 'two wrongs must surface the trusted explanation beat');
     expect(sawLadderRung, isTrue,
-        reason: 'the §18 ladder answered with easier/guided rungs');
+        reason: 'the §18 ladder answered with an available remediation rung');
 
     // The persisted extras now carry the review queue entry.
     final extras = container

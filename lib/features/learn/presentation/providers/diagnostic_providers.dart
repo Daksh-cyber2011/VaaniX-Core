@@ -36,6 +36,7 @@ import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/curriculum_compatibility_providers.dart';
 
 // ─── Trusted probe pools ────────────────────────────────────────────────────
 
@@ -359,6 +360,8 @@ extension on List<DiagnosticAnswerRecord> {
 /// guarantees the read sees the fresh result).
 final lastDiagnosticProvider =
     Provider.family<DiagnosticResult?, LearnLanguage>((ref, language) {
+  final compatibility = ref.watch(curriculumCompatibilityProvider(language));
+  if (compatibility.isLoading || compatibility.hasError) return null;
   ref.watch(diagnosticSessionProvider);
   return ref.watch(learnProfileRepositoryProvider).getDiagnostic(language);
 });
@@ -367,6 +370,8 @@ final lastDiagnosticProvider =
 /// them; M6 sessions will keep them fresh). `null` = nothing persisted.
 final learnStateExtrasProvider =
     Provider.family<LearningState?, LearnLanguage>((ref, language) {
+  final compatibility = ref.watch(curriculumCompatibilityProvider(language));
+  if (compatibility.isLoading || compatibility.hasError) return null;
   ref.watch(diagnosticSessionProvider);
   return ref.watch(learnProfileRepositoryProvider).getLearningState(language);
 });

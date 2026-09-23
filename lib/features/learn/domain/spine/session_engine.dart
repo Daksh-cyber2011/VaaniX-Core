@@ -45,6 +45,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/spine/evaluation.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
+import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 
 /// How one exercise step is presented (the §18 ladder, expressed).
 enum StepPresentation {
@@ -56,6 +57,9 @@ enum StepPresentation {
 
   /// A different exercise on the same concept with its hint surfaced.
   guided,
+
+  /// Same concept, different exercise representation/type.
+  reframed,
 
   /// An exercise on the PREREQUISITE concept (§18 ladder step 1).
   prerequisite,
@@ -118,6 +122,7 @@ class SessionStep extends Equatable {
         StepPresentation.normal => 'Warm-up',
         StepPresentation.easier => 'Easier step',
         StepPresentation.guided => 'Guided step',
+        StepPresentation.reframed => 'Different approach',
         StepPresentation.prerequisite => 'Foundations',
         StepPresentation.masteryCheck => 'Mastery check',
         null => 'Refresher',
@@ -139,6 +144,7 @@ class SessionExercisePool extends Equatable {
     required this.conceptId,
     required this.exercises,
     this.generatedVariants = const <Exercise>[],
+    this.generatedDifficultyById = const <String, int>{},
   });
 
   final String conceptId;
@@ -149,14 +155,23 @@ class SessionExercisePool extends Equatable {
   /// material — the engine never lets them replace trusted anchors.
   final List<Exercise> generatedVariants;
 
+  /// Exact cached difficulty knob for generated exercise IDs.
+  final Map<String, int> generatedDifficultyById;
+
   SessionExercisePool copy() => SessionExercisePool(
         conceptId: conceptId,
         exercises: List.of(exercises),
         generatedVariants: List.of(generatedVariants),
+        generatedDifficultyById: Map.of(generatedDifficultyById),
       );
 
   @override
-  List<Object?> get props => [conceptId, exercises, generatedVariants];
+  List<Object?> get props => [
+        conceptId,
+        exercises,
+        generatedVariants,
+        generatedDifficultyById,
+      ];
 }
 
 /// Session shape parameters (per kind — see [AdaptiveSessionEngine]).
@@ -170,6 +185,7 @@ class AdaptiveSessionConfig extends Equatable {
     this.difficultyKnob = 2,
     this.maxSteps = 10,
     this.reviewFirstConceptIds = const <String>[],
+    this.startingStagesByConcept = const <String, MasteryStage>{},
   });
 
   /// Which of the SIX kinds this session runs (the engine understands
@@ -198,6 +214,9 @@ class AdaptiveSessionConfig extends Equatable {
   /// persisted review queue).
   final List<String> reviewFirstConceptIds;
 
+  /// Runtime-only starting mastery evidence. It is never persisted.
+  final Map<String, MasteryStage> startingStagesByConcept;
+
   @override
   List<Object?> get props => [
         kind,
@@ -208,6 +227,7 @@ class AdaptiveSessionConfig extends Equatable {
         difficultyKnob,
         maxSteps,
         reviewFirstConceptIds,
+        startingStagesByConcept,
       ];
 }
 
@@ -469,11 +489,26 @@ class AdaptiveSessionEngine {
       if (wasCorrectFirstTry &&
           (_correctStreak[conceptId] ?? 0) >=
               AdaptiveSessionPolicy.kTrimAfterCorrectStreak) {
+        final pool = _poolFor(conceptId);
+        final currentKnob = _config.difficultyKnob.clamp(1, 5).toInt();
         _queue = _queue
             .where((s) =>
                 s.conceptId != conceptId ||
                 s.presentation == StepPresentation.masteryCheck)
             .toList();
+        final harder = pool == null
+            ? null
+            : _firstUnused(pool.generatedVariants.where((exercise) {
+                final knob = _difficultyFor(pool, exercise);
+                return knob != null && knob > currentKnob;
+              }).toList());
+        if (harder != null) {
+          _reservedIds.add(harder.id);
+          _queue.insert(
+            0,
+            SessionStep.exercise(exercise: harder, conceptId: conceptId),
+          );
+        }
       }
     }
 
@@ -549,6 +584,31 @@ class AdaptiveSessionEngine {
   List<SessionStep> _buildLadder(String conceptId) {
     final steps = <SessionStep>[];
 
+    final startingStage = _config.startingStagesByConcept[conceptId];
+    if (startingStage != null &&
+        startingStage.isAtLeast(MasteryStage.understood)) {
+      final pool = _poolFor(conceptId);
+      final failedType = _lastExerciseType(conceptId);
+      if (pool != null && failedType != null) {
+        final alternate = _firstUnused([
+          ...pool.exercises.where((e) => e.type != failedType),
+          ...pool.generatedVariants.where((e) => e.type != failedType),
+        ]);
+        if (alternate != null) {
+          _reservedIds.add(alternate.id);
+          steps.add(SessionStep.exercise(
+            exercise: alternate,
+            conceptId: conceptId,
+            presentation: StepPresentation.reframed,
+          ));
+        }
+      }
+      _addExplanation(steps, conceptId);
+      _addEasier(steps, conceptId);
+      _addGuided(steps, conceptId);
+      return steps;
+    }
+
     // 1. Prerequisite exercise (when the graph offers one with pool).
     final prereqId = _config.prerequisiteOf[conceptId];
     if (prereqId != null && prereqId != conceptId) {
@@ -584,38 +644,83 @@ class AdaptiveSessionEngine {
     // 3. Easier exercise: a validated generated variant first (M5 cache
     //    is exactly "an easier take on the same concept"), else another
     //    trusted exercise of the same concept.
-    final pool = _pools.firstWhere(
-      (p) => p.conceptId == conceptId,
-      orElse: () => const SessionExercisePool(conceptId: '', exercises: []),
-    );
-    final easier =
-        _firstUnused(pool.generatedVariants) ?? _firstUnused(pool.exercises);
-    if (easier != null) {
-      _reservedIds.add(easier.id);
-      steps.add(SessionStep.exercise(
-        exercise: easier,
-        conceptId: conceptId,
-        presentation: StepPresentation.easier,
-      ));
-    }
+    _addEasier(steps, conceptId);
 
     // 4. Guided exercise: a DIFFERENT trusted exercise with the hint
     //    surfaced by the UI ([Exercise.hint]).
-    final guided = _firstUnused(pool.exercises);
-    if (guided != null) {
-      _reservedIds.add(guided.id);
-      steps.add(SessionStep.exercise(
-        exercise: guided,
-        conceptId: conceptId,
-        presentation: StepPresentation.guided,
-      ));
-    }
+    _addGuided(steps, conceptId);
 
     // 5. Back to normal happens naturally: other concepts' queued steps
     //    (and future sessions) take over — the engine does not loop the
     //    same concept endlessly (the ladder runs once per concept).
 
     return steps;
+  }
+
+  SessionExercisePool? _poolFor(String conceptId) {
+    for (final pool in _pools) {
+      if (pool.conceptId == conceptId) return pool;
+    }
+    return null;
+  }
+
+  int? _difficultyFor(SessionExercisePool pool, Exercise exercise) =>
+      pool.generatedDifficultyById[exercise.id]?.clamp(1, 5).toInt();
+
+  ExerciseType? _lastExerciseType(String conceptId) {
+    for (final record in _records.reversed) {
+      if (record.conceptId != conceptId) continue;
+      final pool = _poolFor(conceptId);
+      if (pool == null) return null;
+      for (final exercise in [...pool.exercises, ...pool.generatedVariants]) {
+        if (exercise.id == record.exerciseId) return exercise.type;
+      }
+    }
+    return null;
+  }
+
+  void _addExplanation(List<SessionStep> steps, String conceptId) {
+    if (_explained.add(conceptId)) {
+      final text = _config.explanations[conceptId];
+      if (text != null && text.trim().isNotEmpty) {
+        steps.add(SessionStep.support(
+          explanation: text.trim(),
+          title: 'A quick refresher',
+        ));
+      }
+    }
+  }
+
+  void _addEasier(List<SessionStep> steps, String conceptId) {
+    final pool = _poolFor(conceptId);
+    if (pool == null) return;
+    final currentKnob = _config.difficultyKnob.clamp(1, 5).toInt();
+    final easier = _firstUnused(pool.generatedVariants.where((exercise) {
+      final knob = _difficultyFor(pool, exercise);
+      return knob != null && knob < currentKnob;
+    }).toList());
+    if (easier == null) return;
+    _reservedIds.add(easier.id);
+    steps.add(SessionStep.exercise(
+      exercise: easier,
+      conceptId: conceptId,
+      presentation: StepPresentation.easier,
+    ));
+  }
+
+  void _addGuided(List<SessionStep> steps, String conceptId) {
+    final pool = _poolFor(conceptId);
+    if (pool == null) return;
+    final guided = _firstUnused(pool.exercises.where((exercise) {
+      return exercise.hint?.trim().isNotEmpty ?? false;
+    }).toList());
+    if (guided == null) return;
+    _reservedIds.add(guided.id);
+    steps.add(SessionStep.exercise(
+      exercise: guided,
+      conceptId: conceptId,
+      presentation: StepPresentation.guided,
+    ));
   }
 
   Exercise? _firstUnused(List<Exercise> candidates) {

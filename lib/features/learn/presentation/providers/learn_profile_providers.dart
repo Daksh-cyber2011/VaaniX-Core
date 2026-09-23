@@ -24,6 +24,7 @@ import 'package:vaanix_app/features/learn/data/learn_profile_repository.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/curriculum_compatibility_providers.dart';
 
 /// The M2 profile persistence accessor.
 final learnProfileRepositoryProvider = Provider<LearnProfileRepository>(
@@ -35,10 +36,13 @@ final learnProfileRepositoryProvider = Provider<LearnProfileRepository>(
 /// which persists before publishing the new state.
 final learnerProfileProvider = StateNotifierProvider.family<
     LearnerProfileNotifier, LearnerProfile, LearnLanguage>(
-  (ref, language) => LearnerProfileNotifier(
-    ref.watch(learnProfileRepositoryProvider),
-    language,
-  ),
+  (ref, language) {
+    ref.watch(curriculumCompatibilityProvider(language));
+    return LearnerProfileNotifier(
+      ref.watch(learnProfileRepositoryProvider),
+      language,
+    );
+  },
 );
 
 class LearnerProfileNotifier extends StateNotifier<LearnerProfile> {

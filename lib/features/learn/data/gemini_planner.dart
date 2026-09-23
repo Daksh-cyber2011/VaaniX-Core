@@ -162,14 +162,23 @@ class GeminiPlanner implements LearningPlanner {
       return result.fold(
         (failure) => Left(failure), // malformed / ungrounded → chain falls back
         (plan) async {
+          final contextualPlan = LearningPlan(
+            id: plan.id,
+            languageCode: plan.languageCode,
+            source: plan.source,
+            activities: plan.activities,
+            focusSummary: plan.focusSummary,
+            createdAt: plan.createdAt,
+            plannerContextKey: context.plannerContextKey,
+          );
           // Write-through cache: the NEXT outage serves this plan. A
           // storage failure must never fail a good plan — swallow it.
           try {
-            await _planCache?.savePlan(plan);
+            await _planCache?.savePlan(contextualPlan);
           } catch (_) {
             // Cache write is best-effort by contract.
           }
-          return Right(plan);
+          return Right(contextualPlan);
         },
       );
     });
@@ -234,6 +243,14 @@ class CachedPlanPlanner implements LearningPlanner {
     if (!LearnPlanRepository.isFresh(cached)) {
       return Left(const AiServiceFailure('Cached plan has expired'));
     }
+    if (cached.plannerContextKey == null) {
+      return Left(
+          const AiServiceFailure('Cached plan has no context identity'));
+    }
+    if (cached.plannerContextKey != context.plannerContextKey) {
+      return Left(
+          const AiServiceFailure('Cached plan is for an older context'));
+    }
 
     // Honest provenance: the learner gets the SAME steps, but the plan
     // is labelled cached, not AI-fresh (Master Brief §63 honesty).
@@ -245,6 +262,7 @@ class CachedPlanPlanner implements LearningPlanner {
         activities: cached.activities,
         focusSummary: cached.focusSummary,
         createdAt: cached.createdAt,
+        plannerContextKey: cached.plannerContextKey,
       ),
     );
   }

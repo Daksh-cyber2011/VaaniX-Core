@@ -7,6 +7,8 @@
 /// planner; the legacy Sanskrit track has no cache by design.
 library;
 
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,10 +16,14 @@ import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/features/learn/data/gemini_planner.dart';
 import 'package:vaanix_app/features/learn/data/learn_plan_repository.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
+import 'package:vaanix_app/features/learn/domain/spine/diagnostic.dart';
 import 'package:vaanix_app/features/learn/domain/spine/deterministic_planner.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
+import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
+import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 
@@ -34,11 +40,19 @@ ConceptGraph _graph(String code) => ConceptGraph.forCurriculum(
       ],
     );
 
-PlannerContext _context(String code) => PlannerContext(
+PlannerContext _context(
+  String code, {
+  LearningState? state,
+  LearnerProfile? profile,
+  DiagnosticResult? diagnostic,
+}) =>
+    PlannerContext(
       languageCode: code,
       languageName: code == 'hi' ? 'Hindi' : 'Bengali',
       graph: _graph(code),
-      state: LearningState(languageCode: code),
+      state: state ?? LearningState(languageCode: code),
+      profile: profile,
+      diagnostic: diagnostic,
       supportedActivityTypes: kDeterministicPlannerActivityKinds,
     );
 
@@ -61,6 +75,7 @@ LearningPlan _aiPlan(String languageCode, {DateTime? createdAt}) =>
         ),
       ],
       createdAt: createdAt ?? DateTime.now(),
+      plannerContextKey: _context(languageCode).plannerContextKey,
     );
 
 Future<CachedPlanPlanner> _planner({
@@ -138,6 +153,81 @@ void main() {
       // Sanity for the guard: 'sa' resolves to no catalogue language.
       expect(learnLanguageForCode('sa'), isNull);
       expect(result.isLeft(), isTrue);
+    });
+
+    test('state change rejects an otherwise fresh cached plan', () async {
+      final planner = await _planner();
+      final contextA = _context('hi');
+      await planner.repository.savePlan(_aiPlan('hi'));
+      final contextB = _context(
+        'hi',
+        state: const LearningState(
+          languageCode: 'hi',
+          conceptMasteries: {
+            'hi_ls_1': ConceptMastery(
+              conceptId: 'hi_ls_1',
+              stage: MasteryStage.understood,
+            ),
+          },
+        ),
+      );
+      expect(contextA.plannerContextKey, isNot(contextB.plannerContextKey));
+      expect((await planner.buildPlan(contextB)).isLeft(), isTrue);
+    });
+
+    test('profile change rejects an otherwise fresh cached plan', () async {
+      final planner = await _planner();
+      await planner.repository.savePlan(_aiPlan('hi'));
+      final changed = _context(
+        'hi',
+        profile: const LearnerProfile(
+          language: LearnLanguage.hindi,
+          dailyGoalMinutes: 20,
+        ),
+      );
+      expect((await planner.buildPlan(changed)).isLeft(), isTrue);
+    });
+
+    test('diagnostic change rejects an otherwise fresh cached plan', () async {
+      final planner = await _planner();
+      await planner.repository.savePlan(_aiPlan('hi'));
+      final changed = _context(
+        'hi',
+        diagnostic: DiagnosticResult(
+          language: LearnLanguage.hindi,
+          overallLevel: 2,
+          confidence: 0.8,
+          completedAt: DateTime(2026),
+          dimensionScores: const {
+            DiagnosticDimension.vocabulary: DimensionScore(
+              dimension: DiagnosticDimension.vocabulary,
+              score: 0.8,
+              confidence: 0.9,
+            ),
+          },
+        ),
+      );
+      expect((await planner.buildPlan(changed)).isLeft(), isTrue);
+    });
+
+    test('equivalent planner contexts have deterministic identical keys', () {
+      expect(
+          _context('hi').plannerContextKey, _context('hi').plannerContextKey);
+      expect(
+        _context('hi').plannerContextKey,
+        isNot(_context('bn').plannerContextKey),
+      );
+    });
+
+    test('legacy cache without a planner context key is rejected safely',
+        () async {
+      final legacy = _aiPlan('hi').toJson()..remove('plannerContextKey');
+      final planner = await _planner(
+        seed: {
+          LearnPlanRepository.planKey(LearnLanguage.hindi): jsonEncode(legacy),
+        },
+      );
+      expect((await planner.buildPlan(_context('hi'))).isLeft(), isTrue);
     });
   });
 

@@ -320,11 +320,14 @@ List<ReviewEntry> mergeReviewQueue(
 LearningState applyMasteryEvidence({
   required LearningState derived,
   required Map<String, ConceptMastery> evidence,
+  Set<String>? validConceptIds,
 }) {
   if (evidence.isEmpty) return derived;
+  final validIds = validConceptIds ?? <String>{};
   final masteries = <String, ConceptMastery>{...derived.conceptMasteries};
 
   evidence.forEach((conceptId, evidenceMastery) {
+    if (validConceptIds != null && !validIds.contains(conceptId)) return;
     final derivedMastery = masteries[conceptId];
     if (derivedMastery == null) {
       // No derived record — the concept's lesson was never completed,
@@ -351,8 +354,18 @@ LearningState applyMasteryEvidence({
   return LearningState(
     languageCode: derived.languageCode,
     conceptMasteries: masteries,
-    reviewQueue: derived.reviewQueue,
-    recentPerformance: derived.recentPerformance,
+    reviewQueue: validConceptIds == null
+        ? derived.reviewQueue
+        : derived.reviewQueue
+            .where((entry) => validIds.contains(entry.conceptId))
+            .toList(growable: false),
+    recentPerformance: validConceptIds == null
+        ? derived.recentPerformance
+        : RecentPerformance(
+            events: derived.recentPerformance.events
+                .where((event) => validIds.contains(event.conceptId))
+                .toList(growable: false),
+          ),
   );
 }
 

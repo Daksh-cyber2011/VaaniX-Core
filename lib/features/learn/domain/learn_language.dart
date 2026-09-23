@@ -64,6 +64,7 @@ class LearnLanguageSpec {
     required this.iso639_1,
     required this.iso639_2,
     required this.curriculumAssetPath,
+    required this.curriculumRevision,
   });
 
   /// Enum value (used as the persistence key + Riverpod family key).
@@ -98,6 +99,14 @@ class LearnLanguageSpec {
   /// rootBundle path to this language's curriculum JSON.
   final String curriculumAssetPath;
 
+  /// Explicit content release revision for this curriculum.
+  ///
+  /// Incrementing this value means curriculum-bound learner state and caches
+  /// may no longer be compatible. If the conceptual identity changes, the
+  /// stable lesson/concept/exercise IDs must change as well. This is separate
+  /// from JSON `schemaVersion`, which describes storage format compatibility.
+  final int curriculumRevision;
+
   /// True when the script reads right-to-left (only Urdu in the catalogue).
   bool get isRTL => scriptDirection == ScriptDirection.rtl;
 }
@@ -117,6 +126,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'hi',
     iso639_2: 'hin',
     curriculumAssetPath: 'assets/curriculum/learn/hi.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.bengali,
@@ -129,6 +139,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'bn',
     iso639_2: 'ben',
     curriculumAssetPath: 'assets/curriculum/learn/bn.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.marathi,
@@ -141,6 +152,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'mr',
     iso639_2: 'mar',
     curriculumAssetPath: 'assets/curriculum/learn/mr.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.telugu,
@@ -153,6 +165,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'te',
     iso639_2: 'tel',
     curriculumAssetPath: 'assets/curriculum/learn/te.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.tamil,
@@ -165,6 +178,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'ta',
     iso639_2: 'tam',
     curriculumAssetPath: 'assets/curriculum/learn/ta.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.gujarati,
@@ -177,6 +191,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'gu',
     iso639_2: 'guj',
     curriculumAssetPath: 'assets/curriculum/learn/gu.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.urdu,
@@ -189,6 +204,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'ur',
     iso639_2: 'urd',
     curriculumAssetPath: 'assets/curriculum/learn/ur.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.kannada,
@@ -201,6 +217,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'kn',
     iso639_2: 'kan',
     curriculumAssetPath: 'assets/curriculum/learn/kn.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.malayalam,
@@ -213,6 +230,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'ml',
     iso639_2: 'mal',
     curriculumAssetPath: 'assets/curriculum/learn/ml.json',
+    curriculumRevision: 1,
   ),
   LearnLanguageSpec(
     language: LearnLanguage.odia,
@@ -225,6 +243,7 @@ const List<LearnLanguageSpec> kLearnLanguageCatalogue = <LearnLanguageSpec>[
     iso639_1: 'or',
     iso639_2: 'ori',
     curriculumAssetPath: 'assets/curriculum/learn/or.json',
+    curriculumRevision: 1,
   ),
 ];
 

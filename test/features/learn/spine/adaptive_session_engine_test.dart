@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vaanix_app/features/learn/domain/exercise_models.dart';
 import 'package:vaanix_app/features/learn/domain/spine/session_engine.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
+import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 
 Exercise _mcq(String id, String lessonId, {String? hint, String? explanation}) {
   return Exercise(
@@ -32,17 +33,27 @@ Exercise _mcq(String id, String lessonId, {String? hint, String? explanation}) {
   );
 }
 
+Exercise _translation(String id, String lessonId) => Exercise(
+      id: id,
+      lessonId: lessonId,
+      type: ExerciseType.translation,
+      prompt: 'Translate $id',
+      acceptedAnswers: const ['answer'],
+    );
+
 Exercise mk(int n) => _mcq('ex-a$n', 'lesson-a');
 
 SessionExercisePool _pool(
   String conceptId,
   List<Exercise> exercises, {
   List<Exercise> generatedVariants = const [],
+  Map<String, int> generatedDifficultyById = const {},
 }) =>
     SessionExercisePool(
       conceptId: conceptId,
       exercises: exercises,
       generatedVariants: generatedVariants,
+      generatedDifficultyById: generatedDifficultyById,
     );
 
 void main() {
@@ -163,6 +174,165 @@ void main() {
     });
   });
 
+  group('Phase 2.3 adaptive quality', () {
+    test('two first-try successes adopt an available harder cached variant',
+        () {
+      final harder = _mcq('gen-a-3', 'lesson-a');
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          difficultyKnob: 2,
+          pools: [
+            _pool('a', [_mcq('a1', 'lesson-a'), _mcq('a2', 'lesson-a')],
+                generatedVariants: [harder],
+                generatedDifficultyById: {harder.id: 3}),
+          ],
+        ),
+      );
+      engine.submitAnswer(correct: true, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: true, firstTry: true);
+      engine.advance();
+      expect(engine.currentStep!.exercise!.id, harder.id);
+      expect(engine.currentStep!.conceptId, 'a');
+      engine.submitAnswer(correct: true, firstTry: true);
+      expect(engine.records.last.isGenerated, isTrue);
+    });
+
+    test('without harder cached material success still trims honestly', () {
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool('a', [_mcq('a1', 'lesson-a'), _mcq('a2', 'lesson-a')])
+          ],
+        ),
+      );
+      engine.submitAnswer(correct: true, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: true, firstTry: true);
+      engine.advance();
+      expect(engine.isFinished, isTrue);
+    });
+
+    test('easier only selects a strictly lower generated knob', () {
+      final easier = _mcq('gen-a-1', 'lesson-a');
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          difficultyKnob: 2,
+          pools: [
+            _pool('a', [_mcq('a1', 'lesson-a'), _mcq('a2', 'lesson-a')],
+                generatedVariants: [easier],
+                generatedDifficultyById: {easier.id: 1})
+          ],
+        ),
+      );
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      expect(engine.currentStep!.presentation, StepPresentation.easier);
+      expect(engine.currentStep!.exercise!.id, easier.id);
+    });
+
+    test('understood concepts switch to a different trusted representation',
+        () {
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool('a', [
+              _mcq('a1', 'lesson-a'),
+              _mcq('a2', 'lesson-a'),
+              _translation('a3', 'lesson-a'),
+            ]),
+          ],
+          startingStagesByConcept: const {'a': MasteryStage.understood},
+        ),
+      );
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      expect(engine.currentStep!.presentation, StepPresentation.reframed);
+      expect(engine.currentStep!.conceptId, 'a');
+      expect(engine.currentStep!.exercise!.type, ExerciseType.translation);
+      expect(engine.currentStep!.exercise!.id, 'a3');
+    });
+
+    test('guided is only used when an authored hint exists', () {
+      final hinted = _mcq('a3', 'lesson-a', hint: 'Use the clue.');
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool('a', [
+              _mcq('a1', 'lesson-a'),
+              _mcq('a2', 'lesson-a'),
+              hinted,
+            ])
+          ],
+        ),
+      );
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      expect(engine.currentStep!.presentation, StepPresentation.guided);
+      expect(engine.currentStep!.exercise!.id, hinted.id);
+    });
+
+    test('same-type understood concepts do not receive a fake reframe', () {
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool('a', [_mcq('a1', 'lesson-a'), _mcq('a2', 'lesson-a')])
+          ],
+          startingStagesByConcept: const {'a': MasteryStage.understood},
+        ),
+      );
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      expect(
+          engine.currentStep == null ||
+              engine.currentStep!.presentation != StepPresentation.reframed,
+          isTrue);
+    });
+
+    test('cached generated alternate representation can reframe honestly', () {
+      final generated = _translation('gen-a-translation', 'lesson-a');
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool('a', [_mcq('a1', 'lesson-a'), _mcq('a2', 'lesson-a')],
+                generatedVariants: [generated],
+                generatedDifficultyById: {generated.id: 2})
+          ],
+          startingStagesByConcept: const {'a': MasteryStage.understood},
+        ),
+      );
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      engine.submitAnswer(correct: false, firstTry: true);
+      engine.advance();
+      expect(engine.currentStep!.presentation, StepPresentation.reframed);
+      expect(engine.currentStep!.exercise!.id, generated.id);
+      expect(engine.currentStep!.exercise!.type, ExerciseType.translation);
+    });
+  });
+
   // ─── §18: reduce repetition ──────────────────────────────────────────────
 
   group('§18 reduce repetition', () {
@@ -218,6 +388,7 @@ void main() {
       required List<Exercise> generatedVariants,
       bool withPrereq = true,
       bool withExplanation = true,
+      bool withHints = true,
     }) {
       return AdaptiveSessionEngine(
         config: AdaptiveSessionConfig(
@@ -229,8 +400,10 @@ void main() {
               [
                 _mcq('ex-a1', 'lesson-a'),
                 _mcq('ex-a2', 'lesson-a'),
-                _mcq('ex-a3', 'lesson-a'),
-                _mcq('ex-a4', 'lesson-a'),
+                _mcq('ex-a3', 'lesson-a',
+                    hint: withHints ? 'Try another angle.' : null),
+                _mcq('ex-a4', 'lesson-a',
+                    hint: withHints ? 'Look for the key clue.' : null),
               ],
               generatedVariants: generatedVariants,
             ),
@@ -269,15 +442,9 @@ void main() {
       expect(engine.currentStep!.explanation, 'Refresher text for concept a.');
       engine.advance();
 
-      expect(engine.currentStep!.presentation, StepPresentation.easier);
-      expect(engine.currentStep!.conceptId, 'a');
-      final easierId = engine.currentStep!.exercise!.id;
-      engine.submitAnswer(correct: false, firstTry: true);
-      engine.advance();
-
       expect(engine.currentStep!.presentation, StepPresentation.guided);
       final guidedId = engine.currentStep!.exercise!.id;
-      expect(guidedId, isNot(easierId));
+      expect(guidedId, 'ex-a3');
 
       // The ladder runs once per concept — no loop.
       engine.submitAnswer(correct: true, firstTry: true);
@@ -300,7 +467,27 @@ void main() {
         correctIndex: 0,
         explanation: 'Because the trusted lesson says so.',
       );
-      final engine = buildEngine(generatedVariants: [generated]);
+      final engine = AdaptiveSessionEngine(
+        config: AdaptiveSessionConfig(
+          kind: ActivityKind.practice,
+          languageCode: 'hi',
+          pools: [
+            _pool(
+              'a',
+              [
+                _mcq('ex-a1', 'lesson-a'),
+                _mcq('ex-a2', 'lesson-a'),
+                _mcq('ex-a3', 'lesson-a', hint: 'Hint.'),
+              ],
+              generatedVariants: [generated],
+              generatedDifficultyById: {generated.id: 1},
+            ),
+            _pool('p', [_mcq('ex-p1', 'lesson-p')]),
+          ],
+          explanations: const {'a': 'Refresher text for concept a.'},
+          prerequisiteOf: const {'a': 'p'},
+        ),
+      );
 
       engine.submitAnswer(correct: false, firstTry: true);
       engine.advance();
@@ -320,16 +507,15 @@ void main() {
         generatedVariants: const [],
         withPrereq: false,
         withExplanation: false,
+        withHints: false,
       );
       // Drain the two queued exercises with wrong answers.
       engine.submitAnswer(correct: false, firstTry: true);
       engine.advance();
       engine.submitAnswer(correct: false, firstTry: true);
       engine.advance();
-      // No prereq, no explanation → the easier rung uses a trusted
-      // exercise directly.
-      expect(engine.currentStep, isNotNull);
-      expect(engine.currentStep!.presentation, StepPresentation.easier);
+      // No prereq, explanation, or genuinely easier material: skip honestly.
+      expect(engine.currentStep, isNull);
     });
   });
 

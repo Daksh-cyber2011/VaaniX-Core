@@ -48,6 +48,11 @@ class LearnProfileRepository {
   static String diagnosticKey(LearnLanguage language) =>
       'learn_profile_${learnLanguageSpec(language).code}_diagnostic';
 
+  /// Applied curriculum content revision for [language]. This is deliberately
+  /// distinct from the curriculum JSON schema version.
+  static String curriculumRevisionKey(LearnLanguage language) =>
+      'learn_profile_${learnLanguageSpec(language).code}_curriculum_revision';
+
   /// Namespace prefix shared by every M2 key (used by [clearAll] and
   /// reset flows).
   static const String kNamespacePrefix = 'learn_profile_';
@@ -160,6 +165,17 @@ class LearnProfileRepository {
   /// Removes the placement result for [language].
   Future<void> clearDiagnostic(LearnLanguage language) =>
       _storage.remove(diagnosticKey(language));
+
+  int? getCurriculumRevision(LearnLanguage language) {
+    final raw = _storage.getString(curriculumRevisionKey(language));
+    return raw == null ? null : int.tryParse(raw);
+  }
+
+  Future<void> saveCurriculumRevision(
+    LearnLanguage language,
+    int revision,
+  ) =>
+      _storage.setString(curriculumRevisionKey(language), revision.toString());
 
   // ── Namespace maintenance ──────────────────────────────────────────────
 

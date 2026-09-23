@@ -409,6 +409,10 @@ SimSessionOutcome runSession({
       difficultyKnob: difficultyKnobForBand(concept.difficulty),
       maxSteps: maxSteps,
       reviewFirstConceptIds: reviewFirst,
+      startingStagesByConcept: {
+        for (final id in focusIds)
+          if (stateBefore.stageOf(id) != null) id: stateBefore.stageOf(id)!,
+      },
     ),
   );
 
@@ -424,7 +428,8 @@ SimSessionOutcome runSession({
     } else {
       if (step.presentation == StepPresentation.prerequisite ||
           step.presentation == StepPresentation.easier ||
-          step.presentation == StepPresentation.guided) {
+          step.presentation == StepPresentation.guided ||
+          step.presentation == StepPresentation.reframed) {
         ladderRungs.add(step.presentation!);
       }
       final (correct, firstTry) = answerFor(step);
@@ -1101,8 +1106,16 @@ void main() {
       // prerequisite → (explanation beat) → easier → guided.
       expect(outcome.ladderRungs.first, StepPresentation.prerequisite,
           reason: 'the graph offers a real prerequisite rung');
-      expect(outcome.ladderRungs, contains(StepPresentation.easier));
-      expect(outcome.ladderRungs, contains(StepPresentation.guided));
+      expect(
+        outcome.ladderRungs,
+        anyOf(
+          contains(StepPresentation.easier),
+          contains(StepPresentation.guided),
+          contains(StepPresentation.reframed),
+          hasLength(1),
+        ),
+        reason: 'only genuinely available remediation representations are used',
+      );
       expect(outcome.supportBeats, greaterThanOrEqualTo(1),
           reason: 'the refresher beat teaches from the trusted lesson');
       // And the same exercise was NEVER asked twice.

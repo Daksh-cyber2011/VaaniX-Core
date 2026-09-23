@@ -271,6 +271,17 @@ class ProgressSnapshot {
   final Map<String, int> exerciseCountByLesson;
 }
 
+/// Keeps only exercise evidence that belongs to the current lesson bank.
+/// Historical IDs remain in raw progress storage, but cannot affect the
+/// current curriculum's mastery threshold.
+List<String> validMasteredExerciseIds(
+  Iterable<String> persistedIds,
+  Iterable<String> currentExerciseIds,
+) {
+  final current = currentExerciseIds.toSet();
+  return persistedIds.where(current.contains).toList(growable: false);
+}
+
 /// Derives the concept-based [LearningState] for one language from the
 /// graph plus the raw progress snapshot (the M1 old→new data mapping
 /// documented in the library docs).

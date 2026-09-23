@@ -22,6 +22,8 @@
 /// Pure Dart; no Flutter imports (dartz matches project conventions).
 library;
 
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
@@ -33,6 +35,7 @@ import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery.dart'
     show MasteryStage;
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 
 /// Structured learner state handed to every planner call
 /// (Master Brief §13 field list).
@@ -108,6 +111,72 @@ class PlannerContext extends Equatable {
               },
         'graphSize': graph.concepts.length,
       };
+
+  /// Stable identity of the planner-visible context. This is deliberately
+  /// canonical JSON rather than an object hash so it survives restarts.
+  String get plannerContextKey => keyFor(this);
+
+  static String keyFor(PlannerContext context) {
+    final mastered = context.state.conceptIdsAtLeast(MasteryStage.understood)
+      ..sort();
+    final weak = [
+      for (final e in context.state.conceptMasteries.entries)
+        if (e.value.stage.index < MasteryStage.understood.index) e.key,
+    ]..sort();
+    final review = [
+      for (final entry in context.state.reviewQueue) entry.conceptId,
+    ]..sort();
+    final dimensions = <String, Object?>{};
+    if (context.diagnostic != null) {
+      final scores = context.diagnostic!.dimensionScores.entries.toList()
+        ..sort((a, b) => a.key.name.compareTo(b.key.name));
+      for (final entry in scores) {
+        dimensions[entry.key.name] = {
+          'score': entry.value.score,
+          'confidence': entry.value.confidence,
+        };
+      }
+    }
+    final profile = context.profile;
+    LearnLanguage? language;
+    for (final candidate in kLearnLanguageCatalogue) {
+      if (candidate.code == context.languageCode) {
+        language = candidate.language;
+        break;
+      }
+    }
+    return jsonEncode({
+      'languageCode': context.languageCode,
+      'profile': profile == null
+          ? null
+          : {
+              'currentLevel': profile.currentLevel,
+              'desiredLevel': profile.desiredLevel.name,
+              'goal': profile.goal.name,
+              'pace': profile.pace.name,
+              'practiceStyle': profile.practiceStyle.name,
+              'selfReport': profile.selfReport.name,
+              'dailyGoalMinutes': profile.dailyGoalMinutes,
+            },
+      'masteredConcepts': mastered,
+      'weakConcepts': weak,
+      'reviewQueue': review,
+      'diagnostic': context.diagnostic == null
+          ? null
+          : {
+              'overallLevel': context.diagnostic!.overallLevel,
+              'dimensions': dimensions,
+            },
+      'minutesAvailable': context.minutesAvailable,
+      'supportedActivityTypes':
+          (context.supportedActivityTypes.map((kind) => kind.name).toList()
+            ..sort()),
+      'curriculumRevision': language == null
+          ? null
+          : learnLanguageSpec(language).curriculumRevision,
+      'recentMistakes': [...context.recentMistakeTitles]..sort(),
+    });
+  }
 
   @override
   List<Object?> get props => [
@@ -212,6 +281,7 @@ class ValidatingPlanner implements LearningPlanner {
             activities: valid,
             focusSummary: plan.focusSummary,
             createdAt: plan.createdAt,
+            plannerContextKey: plan.plannerContextKey,
           ),
         );
       },

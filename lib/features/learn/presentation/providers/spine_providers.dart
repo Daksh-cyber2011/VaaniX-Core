@@ -36,6 +36,7 @@ import 'package:vaanix_app/features/learn/domain/spine/mastery.dart';
 import 'package:vaanix_app/features/learn/domain/spine/mastery_scheduling.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/curriculum_compatibility_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/exercise_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
@@ -79,20 +80,38 @@ final activeConceptGraphProvider = FutureProvider<ConceptGraph>((ref) async {
 /// overlays only what derivation cannot know — and never lowers a
 /// stage.
 final activeLearningStateProvider = FutureProvider<LearningState>((ref) async {
+  final selected = ref.watch(selectedLearnLanguageProvider);
+  if (selected != null) {
+    await ref.watch(curriculumCompatibilityProvider(selected).future);
+  }
   final graph = await ref.watch(activeConceptGraphProvider.future);
   final completed = ref.watch(completedLessonIdsProvider).toSet();
-  final selected = ref.watch(selectedLearnLanguageProvider);
   final extras =
       selected == null ? null : ref.watch(learnStateExtrasProvider(selected));
 
   final masteredByLesson = <String, List<String>>{};
   final exerciseCounts = <String, int>{};
+  final validConceptIds = graph.concepts.map((c) => c.id).toSet();
   for (final concept in graph.concepts) {
+    final currentExercises =
+        ref.watch(exercisesForLessonProvider(concept.lessonId));
+    final currentIds = [for (final exercise in currentExercises) exercise.id];
+    final persisted = ref.watch(masteredExercisesProvider(concept.lessonId));
     masteredByLesson[concept.lessonId] =
-        ref.watch(masteredExercisesProvider(concept.lessonId));
-    exerciseCounts[concept.lessonId] =
-        ref.watch(exercisesForLessonProvider(concept.lessonId)).length;
+        validMasteredExerciseIds(persisted, currentIds);
+    exerciseCounts[concept.lessonId] = currentIds.length;
   }
+
+  final validQueue = extras?.reviewQueue
+      .where((entry) => validConceptIds.contains(entry.conceptId))
+      .toList(growable: false);
+  final validPerformance = extras == null
+      ? const RecentPerformance()
+      : RecentPerformance(
+          events: extras.recentPerformance.events
+              .where((event) => validConceptIds.contains(event.conceptId))
+              .toList(growable: false),
+        );
 
   final derived = deriveLearningState(
     languageCode: graph.languageCode,
@@ -102,14 +121,18 @@ final activeLearningStateProvider = FutureProvider<LearningState>((ref) async {
       masteredExerciseIdsByLesson: masteredByLesson,
       exerciseCountByLesson: exerciseCounts,
     ),
-    reviewQueue: extras?.reviewQueue ?? const <ReviewEntry>[],
-    recentPerformance: extras?.recentPerformance ?? const RecentPerformance(),
+    reviewQueue: validQueue ?? const <ReviewEntry>[],
+    recentPerformance: validPerformance,
   );
 
   // M6 evidence overlay (no-op when the extras carry no evidence).
   final evidence = extras?.conceptMasteries ?? const <String, ConceptMastery>{};
   if (evidence.isEmpty) return derived;
-  return applyMasteryEvidence(derived: derived, evidence: evidence);
+  return applyMasteryEvidence(
+    derived: derived,
+    evidence: evidence,
+    validConceptIds: validConceptIds,
+  );
 });
 
 /// Assembled structured planner context for the ACTIVE language.

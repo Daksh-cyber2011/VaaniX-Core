@@ -160,6 +160,7 @@ class LearningPlan extends Equatable {
     required this.activities,
     required this.createdAt,
     this.focusSummary,
+    this.plannerContextKey,
   });
 
   /// The safe plan a failing chain falls back to (Master Brief §60):
@@ -192,6 +193,10 @@ class LearningPlan extends Equatable {
 
   final DateTime createdAt;
 
+  /// Stable planner-input identity for cache compatibility. Null is retained
+  /// for backwards-compatible decoding of pre-Phase-2.4 plans.
+  final String? plannerContextKey;
+
   bool get isEmpty => activities.isEmpty;
 
   int get totalEstimatedMinutes =>
@@ -204,6 +209,7 @@ class LearningPlan extends Equatable {
         'activities': [for (final a in activities) a.toJson()],
         'focusSummary': focusSummary,
         'createdAt': createdAt.toIso8601String(),
+        'plannerContextKey': plannerContextKey,
       };
 
   factory LearningPlan.fromJson(Map<String, dynamic> json) {
@@ -222,12 +228,20 @@ class LearningPlan extends Equatable {
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
           : DateTime.now(),
+      plannerContextKey: json['plannerContextKey'] as String?,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, languageCode, source, activities, focusSummary, createdAt];
+  List<Object?> get props => [
+        id,
+        languageCode,
+        source,
+        activities,
+        focusSummary,
+        createdAt,
+        plannerContextKey
+      ];
 }
 
 /// Why a planner decision was rejected (Master Brief §14 validation list).

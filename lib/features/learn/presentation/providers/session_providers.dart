@@ -212,6 +212,7 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
     );
 
     final graph = await _ref.read(activeConceptGraphProvider.future);
+    final learningState = await _ref.read(activeLearningStateProvider.future);
     final concept = graph.conceptById(conceptId);
     if (concept == null) {
       state = AdaptiveSessionState.unavailable(
@@ -232,7 +233,6 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
     //    add up to two more due concepts from the persisted queue.
     final focusIds = <String>[concept.id];
     if (kind == ActivityKind.review || kind == ActivityKind.weakRepair) {
-      final learningState = await _ref.read(activeLearningStateProvider.future);
       for (final entry in learningState.reviewQueue) {
         if (focusIds.length >= 3) break;
         if (focusIds.contains(entry.conceptId)) continue;
@@ -260,15 +260,12 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
       _trustedIdsByLesson[c.lessonId] = {
         for (final e in trusted) e.id,
       };
+      final generated = _cachedGeneratedVariants(cache, selected, id, knob);
       pools.add(SessionExercisePool(
         conceptId: id,
         exercises: trusted,
-        generatedVariants: _cachedGeneratedVariants(
-          cache,
-          selected,
-          id,
-          knob,
-        ),
+        generatedVariants: generated.exercises,
+        generatedDifficultyById: generated.difficultyById,
       ));
       final excerpt = registry.excerptFor(id);
       final text = excerpt.referenceText.trim().isEmpty
@@ -314,6 +311,14 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
         difficultyKnob: knob,
         maxSteps: 10,
         reviewFirstConceptIds: reviewFirst,
+        startingStagesByConcept: {
+          for (final id in [
+            ...focusIds,
+            ...prerequisiteOf.values.whereType<String>()
+          ])
+            if (learningState.stageOf(id) != null)
+              id: learningState.stageOf(id)!,
+        },
       ),
     );
 
@@ -519,14 +524,17 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
   /// cache at the requested knob and one knob EASIER (ladder material).
   /// Never generates — reads the cache only; missing entries degrade to
   /// an empty list (trusted rungs cover the ladder).
-  List<Exercise> _cachedGeneratedVariants(
+  ({List<Exercise> exercises, Map<String, int> difficultyById})
+      _cachedGeneratedVariants(
     GeneratedContentRepository cache,
     LearnLanguage language,
     String conceptId,
     int knob,
   ) {
     final variants = <Exercise>[];
-    for (final k in {knob, knob > 1 ? knob - 1 : 1}) {
+    final difficultyById = <String, int>{};
+    for (final k in {knob - 1, knob, knob + 1}) {
+      if (k < 1 || k > 5) continue;
       final key = GeneratedContentRepository.itemKeyFor(
         conceptId,
         GeneratedContentKind.practice,
@@ -534,9 +542,12 @@ class AdaptiveSessionController extends StateNotifier<AdaptiveSessionState> {
       );
       final cached = cache.get(language, key);
       final exercise = cached?.exercise;
-      if (exercise != null && exercise.isValid) variants.add(exercise);
+      if (exercise != null && exercise.isValid) {
+        variants.add(exercise);
+        difficultyById[exercise.id] = k;
+      }
     }
-    return variants;
+    return (exercises: variants, difficultyById: difficultyById);
   }
 
   Future<List<String>> _reviewQueueConceptIds() async {
