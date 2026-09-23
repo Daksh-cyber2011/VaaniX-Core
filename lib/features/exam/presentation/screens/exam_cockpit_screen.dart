@@ -116,7 +116,6 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
               candidateLabel,
               syllabusAsync.valueOrNull,
             ),
-
             Expanded(
               child: ListView(
                 physics: const ClampingScrollPhysics(),
@@ -455,9 +454,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           ),
           const SizedBox(height: 16),
           VaaniXButton.cyan(
-            label: mission == null
-                ? 'Open syllabus'
-                : 'Open ${mission.title}',
+            label: mission == null ? 'Open syllabus' : 'Open ${mission.title}',
             onPressed: () {
               if (mission != null) {
                 _launchTopic(context, mission.chapter.id);

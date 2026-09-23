@@ -21,11 +21,7 @@
 library;
 
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus_models.dart'
-    show
-        AssessmentType,
-        CourseSyllabus,
-        SyllabusChapter,
-        SyllabusSection;
+    show CourseSyllabus, SyllabusChapter, SyllabusSection;
 import 'package:vaanix_app/features/exam/domain/exam_learner_profile.dart'
     show ExamLearnerProfile, TopicMastery, TopicStage;
 import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
@@ -301,18 +297,6 @@ class _BarRow {
   final TopicStage stage;
 }
 
-class _EmptySection extends SyllabusSection {
-  const _EmptySection()
-      : super(
-          id: '',
-          stableKey: '',
-          title: '',
-          titleEn: '',
-          marks: 0,
-          assessmentType: AssessmentType.board,
-        );
-}
-
 String _stageLabel(TopicStage stage) {
   switch (stage) {
     case TopicStage.learning:
@@ -330,8 +314,7 @@ String _stageLabel(TopicStage stage) {
   }
 }
 
-SyllabusSection? _findSectionForBook(
-    CourseSyllabus syllabus, String bookId) {
+SyllabusSection? _findSectionForBook(CourseSyllabus syllabus, String bookId) {
   final id = bookId.toLowerCase();
   for (final s in syllabus.sections) {
     final sid = s.id.toLowerCase();
