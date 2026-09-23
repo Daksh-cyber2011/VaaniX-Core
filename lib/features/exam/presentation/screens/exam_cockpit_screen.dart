@@ -33,7 +33,7 @@ import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus_loader.dart';
 import 'package:vaanix_app/features/exam/data/syllabus/syllabus_models.dart';
 import 'package:vaanix_app/features/exam/domain/exam_learner_profile.dart'
-    show TopicMastery, TopicStage;
+    show ExamLearnerProfile, TopicMastery, TopicStage;
 import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/weak_topic_engine.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart';
@@ -317,7 +317,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             child: Row(
               children: [
                 VaaniXRadialGauge(
-                  percentage: readiness.percent,
+                  percentage: readiness.percent.toDouble(),
                   size: 64,
                   strokeWidth: 6,
                   primaryColor: VaaniXColors.examCyanAccent,
@@ -594,16 +594,16 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
         borderRadius: VaaniXRadius.borderMd,
         border: Border.all(color: VaaniXColors.examBorder),
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.terminal_rounded,
             size: 14,
             color: VaaniXColors.examCyanAccent,
           ),
-          const SizedBox(width: 8),
-          const Text(
+          SizedBox(width: 8),
+          Text(
             'System Status: Cockpit Engine Online',
             style: TextStyle(
               fontFamily: 'Poppins',
@@ -713,7 +713,7 @@ class _ExamCockpitHelpers {
       );
     }
     if (daysLeft < 0) {
-      return ReadinessSummary(
+      return const ReadinessSummary(
         percent: 0,
         headline: 'Anchor has passed',
         subline: 'Re-set your readiness anchor in Profile',
@@ -786,7 +786,7 @@ class _ExamCockpitHelpers {
       if (book.chapters.isEmpty) continue;
       final chapter = book.chapters.first;
       final section = _findSectionForBook(syllabus, book.id);
-      final marks = section == null ? null : section.marks;
+      final marks = section?.marks;
       return PrimaryChapter(
         chapter: chapter,
         bookTitle: book.title,
@@ -1076,7 +1076,7 @@ class _SimulatorTile extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: VaaniXColors.examSurfaceElevated,
                 borderRadius: VaaniXRadius.borderSm,
               ),
