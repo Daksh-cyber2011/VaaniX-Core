@@ -30,6 +30,8 @@ import 'package:vaanix_app/features/exam/domain/exam_learner_profile.dart'
     show ExamLearnerProfile, TopicMastery, TopicStage;
 import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/weak_topic_engine.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_weakarea_providers.dart'
+    show WeakAreaOverview;
 
 // ─── public API ──────────────────────────────────────────────────────────────
 
@@ -142,7 +144,6 @@ PrimaryChapter? primaryChapter(CourseSyllabus? syllabus) {
   if (items.isNotEmpty) {
     final first = items.first;
     final section = _findSectionForItem(syllabus, first.sectionId);
-    final marks = section is _EmptySection ? null : section?.marks;
     return PrimaryChapter(
       chapter: SyllabusChapter(
         id: first.id,
@@ -150,9 +151,9 @@ PrimaryChapter? primaryChapter(CourseSyllabus? syllabus) {
         title: first.title.isNotEmpty ? first.title : first.id,
         type: 'item',
       ),
-      bookTitle: section == null ? '' : (section.title),
-      sectionTitle: section == null ? '' : (section.title),
-      sectionMarks: marks,
+      bookTitle: section?.title ?? '',
+      sectionTitle: section?.title ?? '',
+      sectionMarks: section?.marks,
     );
   }
   return null;
