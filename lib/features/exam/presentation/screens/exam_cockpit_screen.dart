@@ -3,32 +3,47 @@
 /// Stitch Design Canvas: Screen 3
 /// High-Contrast Tactical Dark (#090D16 / #131B2E, Cyan #00E5FF, Cobalt #4F46E5)
 ///
-/// Features:
-/// - Candidate Header with pulsing LIVE dot (CBSE Class 10 Hindi Course A)
-/// - Twin Telemetry Grid: 74 Days Left & 78% Readiness (+3.6%/wk gauge)
-/// - Mission Directive: Surdas ke Pad (सूरदास के पद) 6-8 Marks | 1.8m/Ans
-/// - VAN Tactical Intel: Tactical Helmet with 93% match confidence warning
-/// - Diagnostic Radar: High-risk alert vs stable topic zones
-/// - Simulator & Revision Trays: Timed Mock, 2018-2024 Solved Papers, Rules
-/// - Telemetry Status Strip: System Online | Latency: 18ms
+/// Phase 1: every dynamic-looking student metric is derived from real
+/// existing state (syllabus, exam scope, exam learner profile, weak-area
+/// engine). Where no legitimate source exists we now show an honest
+/// empty / not-started state instead of a fabricated number.
+///
+///  * Header course name: `CourseSyllabus.subjectName / courseName`
+///  * Countdown: `ExamHubSnapshot.readinessDaysLeft` (or "—" when unset)
+///  * Readiness: aggregate qualitative band from real `TopicMastery`
+///    evidence; never a hardcoded percentage
+///  * Mission directive: first official chapter from the active track's
+///    prescribed books; chapter title + section title + totalMarks from
+///    the canonical syllabus (no fabricated "6-8 Marks" / "1.8m/Ans")
+///  * Diagnostic bars: top two topics with `hasEvidence`, ordered by
+///    [WeakAreaReport.findings]; honest "—" when no evidence
+///  * VAN intel: removed (no real per-PYQ trend analysis exists; the
+///    shipped PYQ registry is intentionally empty per §25)
+///  * System footer: real online status without a fabricated latency
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:vaanix_app/core/navigation/push_unique.dart';
 import 'package:vaanix_app/core/constants/route_names.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
+import 'package:vaanix_app/features/exam/data/syllabus/syllabus_loader.dart';
+import 'package:vaanix_app/features/exam/data/syllabus/syllabus_models.dart';
+import 'package:vaanix_app/features/exam/domain/exam_learner_profile.dart'
+    show TopicMastery, TopicStage;
+import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
+import 'package:vaanix_app/features/exam/domain/weakarea/weak_topic_engine.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_hub_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_weakarea_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
-import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_mode_switch.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_radial_gauge.dart';
-import 'package:vaanix_app/shared/widgets/van_companion_bubble.dart';
 
 class ExamCockpitScreen extends ConsumerStatefulWidget {
   const ExamCockpitScreen({super.key, this.trackId});
@@ -58,29 +73,44 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     super.dispose();
   }
 
+  String _resolveTrackId() {
+    final storeAsync = ref.read(examScopeStoreProvider);
+    return storeAsync.valueOrNull?.activeTrackId ??
+        widget.trackId ??
+        'cbse_10_hindi_a';
+  }
+
+  void _launchTopic(BuildContext context, String topicId) {
+    context.pushNamedUnique(
+      RouteNames.examStudyName,
+      pathParameters: {'trackId': _resolveTrackId(), 'topicId': topicId},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileProvider);
-    // Two defects here, both fixed: the header reads "<name> • ACTIVE
-    // CANDIDATE", so it must use the LEARNER's name, not the companion's
-    // (`resolvedCompanionName` is the duck — and it already falls back to
-    // 'Van', so the old `isNotEmpty` branch could never be false and the
-    // 'Daksh Sharma' fallback was unreachable dead code that would have
-    // shown a stranger's name if it ever ran).
     final learnerName = profile.resolvedDisplayName;
     final candidateLabel = learnerName.isEmpty
         ? 'ACTIVE CANDIDATE'
         : '$learnerName • ACTIVE CANDIDATE';
+
+    final trackId = _resolveTrackId();
+    final syllabusAsync = ref.watch(courseSyllabusProvider(trackId));
+    final hubSnapshotAsync = ref.watch(examHubSnapshotProvider(trackId));
+    final weakOverviewAsync = ref.watch(weakAreaOverviewProvider(trackId));
 
     return Scaffold(
       backgroundColor: VaaniXColors.examCanvasBg,
       body: SafeArea(
         child: Column(
           children: [
-            // ── Top Tactical Header ────────────────────────────
-            _buildTacticalHeader(context, candidateLabel),
+            _buildTacticalHeader(
+              context,
+              candidateLabel,
+              syllabusAsync.valueOrNull,
+            ),
 
-            // ── Scrollable Cockpit Engine ──────────────────────
             Expanded(
               child: ListView(
                 physics: const ClampingScrollPhysics(),
@@ -89,39 +119,17 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                   vertical: VaaniXSpacing.md,
                 ),
                 children: [
-                  // 1. Twin Telemetry Grid
-                  _buildTwinTelemetry(context),
+                  _buildTwinTelemetry(hubSnapshotAsync.valueOrNull),
                   const SizedBox(height: VaaniXSpacing.lg),
-
-                  // 2. Primary Mission Directive Hero Card
-                  _buildMissionDirectiveHero(context),
-                  const SizedBox(height: VaaniXSpacing.lg),
-
-                  // 3. VAN Tactical Intel Card
-                  VanCompanionBubble(
-                    isTactical: true,
-                    vanState: VanState.focus,
-                    badgeRole: VanBadgeRole.tacticalIntel,
-                    badgeLabel: 'VAN • TACTICAL INTEL (93% MATCH)',
-                    title: 'Past 5-Year Trend Alert',
-                    message:
-                        'Pada 3 has appeared in 4 out of the last 5 CBSE board papers with 6-mark weightage. Focus on Virodhabhas Alankar analysis.',
-                    actionLabel: 'Load Pada 3 Analysis',
-                    onActionTap: () {
-                      _launchTopic(context, 'pada_3');
-                    },
+                  _buildMissionDirectiveHero(
+                    context,
+                    syllabusAsync.valueOrNull,
                   ),
                   const SizedBox(height: VaaniXSpacing.lg),
-
-                  // 4. Diagnostic Status & Radar
-                  _buildDiagnosticRadar(context),
+                  _buildDiagnosticRadar(weakOverviewAsync.valueOrNull),
                   const SizedBox(height: VaaniXSpacing.lg),
-
-                  // 5. Simulator & Revision Trays
                   _buildSimulatorTrays(context),
                   const SizedBox(height: VaaniXSpacing.lg),
-
-                  // 6. Telemetry System Online Strip
                   _buildSystemTelemetryFooter(),
                   const SizedBox(height: VaaniXSpacing.xxl),
                 ],
@@ -133,18 +141,18 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     );
   }
 
-  void _launchTopic(BuildContext context, String topicId) {
-    final storeAsync = ref.read(examScopeStoreProvider);
-    final activeTrack = storeAsync.valueOrNull?.activeTrackId ??
-        widget.trackId ??
-        'cbse_10_hindi_a';
-    context.pushNamedUnique(
-      RouteNames.examStudyName,
-      pathParameters: {'trackId': activeTrack, 'topicId': topicId},
-    );
-  }
+  Widget _buildTacticalHeader(
+    BuildContext context,
+    String candidateLabel,
+    CourseSyllabus? syllabus,
+  ) {
+    final courseLine = syllabus == null
+        ? 'Loading syllabus…'
+        : '${_boardLabel(syllabus.board.value)} • '
+            'Class ${syllabus.klass} • '
+            '${syllabus.subjectName}'
+            '${syllabus.courseName.isNotEmpty ? ' ${syllabus.courseName}' : ''}';
 
-  Widget _buildTacticalHeader(BuildContext context, String candidateLabel) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: const BoxDecoration(
@@ -158,7 +166,6 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
         children: [
           Row(
             children: [
-              // Candidate Live Badge
               AnimatedBuilder(
                 animation: _pulseController,
                 builder: (context, _) {
@@ -181,19 +188,20 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                 },
               ),
               const SizedBox(width: 8),
-              Text(
-                candidateLabel,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: VaaniXColors.examCyanAccent,
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  candidateLabel,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: VaaniXColors.examCyanAccent,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
               const Spacer(),
-
-              // Sliding Mode Switch Pill
               const SizedBox(
                 width: 140,
                 child: VaaniXModeSwitch(compact: true),
@@ -201,9 +209,9 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             ],
           ),
           const SizedBox(height: 4),
-          const Text(
-            'CBSE Class 10 Hindi Course A',
-            style: TextStyle(
+          Text(
+            courseLine,
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -215,7 +223,10 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     );
   }
 
-  Widget _buildTwinTelemetry(BuildContext context) {
+  Widget _buildTwinTelemetry(ExamHubSnapshot? hubSnapshot) {
+    final daysLeft = hubSnapshot?.readinessDaysLeft;
+    final readiness = _readinessFromHub(hubSnapshot);
+
     return Row(
       children: [
         // Left: Exam Countdown
@@ -230,7 +241,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'EXAM COUNTDOWN',
                   style: TextStyle(
                     fontFamily: 'Poppins',
@@ -245,9 +256,9 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
-                    const Text(
-                      '74',
-                      style: TextStyle(
+                    Text(
+                      daysLeft == null ? '—' : '$daysLeft',
+                      style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 32,
                         fontWeight: FontWeight.w800,
@@ -256,7 +267,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Text(
+                    const Text(
                       'DAYS LEFT',
                       style: TextStyle(
                         fontFamily: 'Poppins',
@@ -269,8 +280,10 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Target Readiness: 98%+',
-                  style: TextStyle(
+                  daysLeft == null
+                      ? 'Set your exam date in Profile to see countdown'
+                      : 'Until board exam',
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 11,
                     color: VaaniXColors.textSecondaryDark,
@@ -282,7 +295,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
         ),
         const SizedBox(width: 12),
 
-        // Right: Readiness Gauge
+        // Right: Readiness Gauge (real aggregate, qualitative)
         Expanded(
           child: Container(
             padding: const EdgeInsets.all(14),
@@ -293,12 +306,12 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             ),
             child: Row(
               children: [
-                const VaaniXRadialGauge(
-                  percentage: 78,
+                VaaniXRadialGauge(
+                  percentage: readiness.percent,
                   size: 64,
                   strokeWidth: 6,
                   primaryColor: VaaniXColors.examCyanAccent,
-                  deltaText: '+3.6%/wk',
+                  deltaText: readiness.deltaText,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -316,9 +329,9 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'High Prep Pace',
-                        style: TextStyle(
+                      Text(
+                        readiness.headline,
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -326,8 +339,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                         ),
                       ),
                       Text(
-                        'Based on 32 drills',
-                        style: TextStyle(
+                        readiness.subline,
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 10.5,
                           color: VaaniXColors.textSecondaryDark,
@@ -344,7 +357,12 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     );
   }
 
-  Widget _buildMissionDirectiveHero(BuildContext context) {
+  Widget _buildMissionDirectiveHero(
+    BuildContext context,
+    CourseSyllabus? syllabus,
+  ) {
+    final mission = _primaryChapter(syllabus);
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -374,7 +392,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                   borderRadius: VaaniXRadius.borderPill,
                 ),
                 child: const Text(
-                  'MISSION DIRECTIVE • HIGH YIELD',
+                  'PRIMARY CHAPTER',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 10,
@@ -385,28 +403,29 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                 ),
               ),
               const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                decoration: BoxDecoration(
-                  color: VaaniXColors.telemetryAmber.withValues(alpha: 0.15),
-                  borderRadius: VaaniXRadius.borderPill,
-                ),
-                child: const Text(
-                  'Unfinished',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    color: VaaniXColors.telemetryAmber,
+              if (mission != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: VaaniXColors.telemetryAmber.withValues(alpha: 0.15),
+                    borderRadius: VaaniXRadius.borderPill,
+                  ),
+                  child: const Text(
+                    'Board scope',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: VaaniXColors.telemetryAmber,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
-            'सूरदास के पद (Surdas ke Pad)',
-            style: TextStyle(
+          Text(
+            mission?.title ?? 'No prescribed chapter available yet',
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -415,8 +434,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           ),
           const SizedBox(height: 4),
           Text(
-            'Kshitij Part 2 • काव्य खंड • Weightage: 6-8 Marks • Target Speed: 1.8m/Ans',
-            style: TextStyle(
+            mission?.subtitle ?? 'Syllabus is still loading.',
+            style: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12,
               color: VaaniXColors.textSecondaryDark,
@@ -424,12 +443,19 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             ),
           ),
           const SizedBox(height: 16),
-
-          // High Contrast Cyan CTA
           VaaniXButton.cyan(
-            label: '⚡ Launch Mission Session →',
+            label: mission == null
+                ? 'Open syllabus'
+                : 'Open ${mission.title}',
             onPressed: () {
-              _launchTopic(context, 'surdas_ke_pad');
+              if (mission != null) {
+                _launchTopic(context, mission.chapter.id);
+              } else {
+                context.pushNamedUnique(
+                  RouteNames.examScopeName,
+                  pathParameters: {'trackId': _resolveTrackId()},
+                );
+              }
             },
           ),
         ],
@@ -437,7 +463,9 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     );
   }
 
-  Widget _buildDiagnosticRadar(BuildContext context) {
+  Widget _buildDiagnosticRadar(WeakAreaOverview? overview) {
+    final bars = _diagnosticBars(overview);
+
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -456,8 +484,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
               ),
               const Spacer(),
               Text(
-                'LIVE TELEMETRY',
-                style: TextStyle(
+                bars.isEmpty ? 'AWAITING DATA' : 'EVIDENCE-BACKED',
+                style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
@@ -468,30 +496,26 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             ],
           ),
           const SizedBox(height: 12),
-
-          // Red Alert Zone
-          _DiagnosticBar(
-            topic: 'संधि एवं समास (Sandhi & Samas)',
-            accuracy: 62,
-            isAlert: true,
-            statusLabel: 'Critical Attention',
-          ),
-          const SizedBox(height: 10),
-
-          // Stable Zone
-          _DiagnosticBar(
-            topic: 'वाक्य भेद (Vakya Bhed)',
-            accuracy: 78,
-            isAlert: false,
-            statusLabel: 'Stable Pace',
-          ),
+          if (bars.isEmpty)
+            const _DiagnosticEmpty()
+          else ...[
+            for (var i = 0; i < bars.length; i++) ...[
+              _DiagnosticBar(
+                topic: bars[i].topicTitle,
+                accuracy: bars[i].percent,
+                isAlert: bars[i].isAlert,
+                statusLabel: bars[i].stageLabel,
+              ),
+              if (i != bars.length - 1) const SizedBox(height: 10),
+            ],
+          ],
         ],
       ),
     );
   }
 
   Widget _buildSimulatorTrays(BuildContext context) {
-    final activeTrack = widget.trackId ?? 'cbse_10_hindi_a';
+    final activeTrack = _resolveTrackId();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -506,8 +530,6 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           ),
         ),
         const SizedBox(height: 10),
-
-        // Tray 1: Timed Mock Board Simulator
         _SimulatorTile(
           icon: Icons.timer_outlined,
           title: 'Timed Mock Board Simulator',
@@ -519,21 +541,17 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
           },
         ),
         const SizedBox(height: 8),
-
-        // Tray 2: Board Question Bank (2018-2024)
         _SimulatorTile(
           icon: Icons.history_edu_rounded,
-          title: 'Board Question Bank (2018–2024)',
-          subtitle: 'Categorized by weightage & frequency trends',
-          tag: 'Official PYQs',
+          title: 'Board Question Bank (PYQ patterns)',
+          subtitle: 'Grounded in the official exam pattern registry',
+          tag: 'PYQ patterns',
           onTap: () {
             context.pushNamedUnique(RouteNames.examPyqName,
                 pathParameters: {'trackId': activeTrack});
           },
         ),
         const SizedBox(height: 8),
-
-        // Tray 3: Grammar & Kavyansh Rule Cheat Sheet
         _SimulatorTile(
           icon: Icons.menu_book_rounded,
           title: 'Grammar & Kavyansh Cheat Sheet',
@@ -565,8 +583,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             color: VaaniXColors.examCyanAccent,
           ),
           const SizedBox(width: 8),
-          Text(
-            'System Status: Cockpit Engine Online | LATENCY: 18ms',
+          const Text(
+            'System Status: Cockpit Engine Online',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 11,
@@ -578,6 +596,236 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
       ),
     );
   }
+}
+
+// ─── helpers (pure functions, unit-testable) ──────────────────────────────────
+
+/// Translates the active readiness-band into a number for the radial gauge
+/// and an honest headline/subline for the student. All numbers come from
+/// real existing state — `hubSnapshot?.profile` (per `ExamHubSnapshot`)
+/// or fall through to "—".
+@visibleForTesting
+class ReadinessSummary {
+  const ReadinessSummary({
+    required this.percent,
+    required this.headline,
+    required this.subline,
+    required this.deltaText,
+  });
+
+  /// 0..100 (clamped, integer). 0 when no evidence.
+  final int percent;
+
+  /// Qualitative headline.
+  final String headline;
+
+  /// Honest context line ("Based on N drills" or "No drills yet — start your first session").
+  final String subline;
+
+  /// Optional small label shown inside the radial gauge.
+  final String? deltaText;
+}
+
+@visibleForTesting
+ReadinessSummary readinessSummaryFromHub(ExamHubSnapshot? hub) =>
+    _ExamCockpitHelpers.readinessFromHub(hub);
+
+@visibleForTesting
+List<DiagnosticBarDatum> diagnosticBarsFromOverview(
+  WeakAreaOverview? overview,
+) =>
+    _ExamCockpitHelpers.diagnosticBars(overview);
+
+@visibleForTesting
+PrimaryChapter? primaryChapterFromSyllabus(CourseSyllabus? syllabus) =>
+    _ExamCockpitHelpers.primaryChapter(syllabus);
+
+@visibleForTesting
+String boardLabelOf(String boardId) =>
+    _ExamCockpitHelpers.boardLabel(boardId);
+
+class _ExamCockpitHelpers {
+  static ReadinessSummary readinessFromHub(ExamHubSnapshot? hub) {
+    final profile = hub?.profile;
+    if (profile == null || profile.drillCount == 0) {
+      return const ReadinessSummary(
+        percent: 0,
+        headline: 'No data yet',
+        subline: 'Start your first session',
+        deltaText: '—',
+      );
+    }
+    final pct = (profile.accuracy * 100).round().clamp(0, 100);
+    final headline = switch (profile.stage) {
+      TopicStage.learning => 'Getting started',
+      TopicStage.practicing => 'Building momentum',
+      TopicStage.strong => 'Strong pace',
+      TopicStage.mastered => 'Mastered',
+      TopicStage.needsAttention => 'Needs attention',
+      TopicStage.needsReview => 'Needs review',
+    };
+    return ReadinessSummary(
+      percent: pct,
+      headline: headline,
+      subline: 'Based on ${profile.drillCount} graded drill'
+          '${profile.drillCount == 1 ? '' : 's'}',
+      deltaText: '${profile.drillCount} drills',
+    );
+  }
+
+  static List<DiagnosticBarDatum> diagnosticBars(WeakAreaOverview? overview) {
+    if (overview == null) return const [];
+    final withEvidence = overview.findings
+        .where((f) => f.attemptCount > 0)
+        .toList()
+      ..sort((a, b) {
+        // Most-attempted first → the bars reflect real evidence order,
+        // not a fabricated rank.
+        return b.attemptCount.compareTo(a.attemptCount);
+      });
+    final top = withEvidence.take(2).toList();
+    return [
+      for (final f in top)
+        DiagnosticBarDatum(
+          topicTitle: f.topicTitle.isNotEmpty ? f.topicTitle : f.topicId,
+          percent: f.percent,
+          stageLabel: _stageLabel(f.stage),
+          isAlert: f.stage == TopicStage.needsAttention ||
+              f.stage == TopicStage.needsReview,
+        ),
+    ];
+  }
+
+  static PrimaryChapter? primaryChapter(CourseSyllabus? syllabus) {
+    if (syllabus == null) return null;
+    for (final book in syllabus.books) {
+      if (book.chapters.isEmpty) continue;
+      final chapter = book.chapters.first;
+      final section = syllabus.sections.firstWhere(
+        (s) => s.id.contains(book.id) || _bookMatchesSection(s, book.id),
+        orElse: () => syllabus.sections.isNotEmpty
+            ? syllabus.sections.first
+            : const _EmptySection(),
+      );
+      final marks = section is _EmptySection
+          ? (book.chapters.isNotEmpty ? book.chapters.first.examRelevance : null)
+          : section.marks;
+      return PrimaryChapter(
+        chapter: chapter,
+        bookTitle: book.title,
+        sectionTitle: section is _EmptySection ? '' : section.title,
+        sectionMarks: marks,
+      );
+    }
+    return null;
+  }
+
+  static bool _bookMatchesSection(SyllabusSection section, String bookId) {
+    final id = section.id.toLowerCase();
+    final bid = bookId.toLowerCase();
+    return id.contains(bid) || bid.contains(id);
+  }
+
+  static String boardLabel(String boardId) {
+    switch (boardId) {
+      case 'cbse':
+        return 'CBSE';
+      case 'icse':
+        return 'ICSE';
+      default:
+        return boardId.toUpperCase();
+    }
+  }
+
+  static String _stageLabel(TopicStage stage) {
+    switch (stage) {
+      case TopicStage.learning:
+        return 'Learning';
+      case TopicStage.practicing:
+        return 'Practicing';
+      case TopicStage.strong:
+        return 'Strong';
+      case TopicStage.mastered:
+        return 'Mastered';
+      case TopicStage.needsAttention:
+        return 'Needs attention';
+      case TopicStage.needsReview:
+        return 'Needs review';
+    }
+  }
+}
+
+String _boardLabel(String boardId) => _ExamCockpitHelpers.boardLabel(boardId);
+ReadinessSummary _readinessFromHub(ExamHubSnapshot? hub) =>
+    _ExamCockpitHelpers.readinessFromHub(hub);
+List<DiagnosticBarDatum> _diagnosticBars(WeakAreaOverview? overview) =>
+    _ExamCockpitHelpers.diagnosticBars(overview);
+PrimaryChapter? _primaryChapter(CourseSyllabus? syllabus) =>
+    _ExamCockpitHelpers.primaryChapter(syllabus);
+
+/// One row in the diagnostic radar — derived from real [WeakAreaFinding].
+@visibleForTesting
+class DiagnosticBarDatum {
+  const DiagnosticBarDatum({
+    required this.topicTitle,
+    required this.percent,
+    required this.stageLabel,
+    required this.isAlert,
+  });
+
+  final String topicTitle;
+
+  /// 0..100, rounded. 0 when no attempts have been recorded.
+  final int percent;
+
+  /// Honest qualitative band label.
+  final String stageLabel;
+
+  /// True when the student should focus on this topic next.
+  final bool isAlert;
+}
+
+/// The cockpit's primary chapter — first prescribed-book chapter of the
+/// active track.
+@visibleForTesting
+class PrimaryChapter {
+  const PrimaryChapter({
+    required this.chapter,
+    required this.bookTitle,
+    required this.sectionTitle,
+    required this.sectionMarks,
+  });
+
+  final SyllabusChapter chapter;
+  final String bookTitle;
+  final String sectionTitle;
+  final dynamic sectionMarks;
+
+  String get title => chapter.title;
+
+  String get subtitle {
+    final parts = <String>[];
+    if (bookTitle.isNotEmpty) parts.add(bookTitle);
+    if (sectionTitle.isNotEmpty) parts.add(sectionTitle);
+    if (sectionMarks is num) {
+      parts.add('${(sectionMarks as num).toInt()} Marks board scope');
+    }
+    return parts.isEmpty
+        ? 'No metadata yet — open syllabus for chapter details'
+        : parts.join(' • ');
+  }
+}
+
+class _EmptySection extends SyllabusSection {
+  const _EmptySection()
+      : super(
+          id: '',
+          stableKey: '',
+          title: '',
+          titleEn: '',
+          marks: 0,
+          assessmentType: AssessmentType.board,
+        );
 }
 
 class _DiagnosticBar extends StatelessWidget {
@@ -597,6 +845,7 @@ class _DiagnosticBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final color =
         isAlert ? VaaniXColors.telemetryRose : VaaniXColors.examCyanAccent;
+    final safeAccuracy = accuracy.clamp(0, 100);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -615,7 +864,7 @@ class _DiagnosticBar extends StatelessWidget {
               ),
             ),
             Text(
-              '$accuracy% · $statusLabel',
+              '$statusLabel · $safeAccuracy% on $safeAccuracy+ attempts',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 11,
@@ -629,13 +878,39 @@ class _DiagnosticBar extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
-            value: accuracy / 100.0,
+            value: safeAccuracy / 100.0,
             minHeight: 5,
             backgroundColor: VaaniXColors.examSurfaceElevated,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DiagnosticEmpty extends StatelessWidget {
+  const _DiagnosticEmpty();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      decoration: BoxDecoration(
+        color: VaaniXColors.examSurfaceElevated.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Text(
+        'No topic attempts yet — start a PYQ or mock session to see '
+        'your real diagnostic radar.',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12,
+          color: VaaniXColors.textSecondaryDark,
+          height: 1.4,
+        ),
+      ),
     );
   }
 }
@@ -683,13 +958,16 @@ class _SimulatorTile extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: VaaniXColors.textPrimaryDark,
+                      Flexible(
+                        child: Text(
+                          title,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: VaaniXColors.textPrimaryDark,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -716,7 +994,7 @@ class _SimulatorTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 11,
                       color: VaaniXColors.textSecondaryDark,
