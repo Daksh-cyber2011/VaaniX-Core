@@ -15,8 +15,8 @@
 ///  * Mission directive: first official chapter from the active track's
 ///    prescribed books; chapter title + section title + totalMarks from
 ///    the canonical syllabus (no fabricated "6-8 Marks" / "1.8m/Ans")
-///  * Diagnostic bars: top two topics with `hasEvidence`, ordered by
-///    [WeakAreaReport.findings]; honest "—" when no evidence
+///  * Diagnostic bars: top two findings by attempt volume, only when
+///    real evidence exists; honest "—" when no evidence
 ///  * VAN intel: removed (no real per-PYQ trend analysis exists; the
 ///    shipped PYQ registry is intentionally empty per §25)
 ///  * System footer: real online status without a fabricated latency
@@ -36,6 +36,7 @@ import 'package:vaanix_app/features/exam/domain/exam_learner_profile.dart'
     show TopicMastery, TopicStage;
 import 'package:vaanix_app/features/exam/domain/hub/exam_hub_models.dart';
 import 'package:vaanix_app/features/exam/domain/weakarea/weak_topic_engine.dart';
+import 'package:vaanix_app/features/exam/presentation/providers/exam_diagnostic_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_hub_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_scope_providers.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_weakarea_providers.dart';
@@ -98,7 +99,12 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     final trackId = _resolveTrackId();
     final syllabusAsync = ref.watch(courseSyllabusProvider(trackId));
     final hubSnapshotAsync = ref.watch(examHubSnapshotProvider(trackId));
+    final learnerAsync = ref.watch(examLearnerProfileProvider(trackId));
     final weakOverviewAsync = ref.watch(weakAreaOverviewProvider(trackId));
+
+    final topicLookup = _TopicLookup.build(
+      syllabus: syllabusAsync.valueOrNull,
+    );
 
     return Scaffold(
       backgroundColor: VaaniXColors.examCanvasBg,
@@ -126,7 +132,11 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
                     syllabusAsync.valueOrNull,
                   ),
                   const SizedBox(height: VaaniXSpacing.lg),
-                  _buildDiagnosticRadar(weakOverviewAsync.valueOrNull),
+                  _buildDiagnosticRadar(
+                    weakOverviewAsync.valueOrNull,
+                    learnerAsync.valueOrNull,
+                    topicLookup,
+                  ),
                   const SizedBox(height: VaaniXSpacing.lg),
                   _buildSimulatorTrays(context),
                   const SizedBox(height: VaaniXSpacing.lg),
@@ -225,7 +235,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
 
   Widget _buildTwinTelemetry(ExamHubSnapshot? hubSnapshot) {
     final daysLeft = hubSnapshot?.readinessDaysLeft;
-    final readiness = _readinessFromHub(hubSnapshot);
+    final readiness = _ExamCockpitHelpers.readinessFromHub(hubSnapshot);
 
     return Row(
       children: [
@@ -361,7 +371,7 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     BuildContext context,
     CourseSyllabus? syllabus,
   ) {
-    final mission = _primaryChapter(syllabus);
+    final mission = _ExamCockpitHelpers.primaryChapter(syllabus);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -405,7 +415,8 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
               const Spacer(),
               if (mission != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
                     color: VaaniXColors.telemetryAmber.withValues(alpha: 0.15),
                     borderRadius: VaaniXRadius.borderPill,
@@ -463,8 +474,16 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
     );
   }
 
-  Widget _buildDiagnosticRadar(WeakAreaOverview? overview) {
-    final bars = _diagnosticBars(overview);
+  Widget _buildDiagnosticRadar(
+    WeakAreaOverview? overview,
+    ExamLearnerProfile? learner,
+    _TopicLookup topicLookup,
+  ) {
+    final bars = _ExamCockpitHelpers.diagnosticBars(
+      overview: overview,
+      learner: learner,
+      topicLookup: topicLookup,
+    );
 
     return VaaniXCard(
       padding: const EdgeInsets.all(16),
@@ -502,9 +521,10 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
             for (var i = 0; i < bars.length; i++) ...[
               _DiagnosticBar(
                 topic: bars[i].topicTitle,
-                accuracy: bars[i].percent,
+                percent: bars[i].percent,
+                stageLabel: bars[i].stageLabel,
+                attempts: bars[i].attempts,
                 isAlert: bars[i].isAlert,
-                statusLabel: bars[i].stageLabel,
               ),
               if (i != bars.length - 1) const SizedBox(height: 10),
             ],
@@ -600,6 +620,25 @@ class _ExamCockpitScreenState extends ConsumerState<ExamCockpitScreen>
 
 // ─── helpers (pure functions, unit-testable) ──────────────────────────────────
 
+class _TopicLookup {
+  const _TopicLookup(this._byId);
+
+  final Map<String, SyllabusItem> _byId;
+
+  static _TopicLookup build({CourseSyllabus? syllabus}) {
+    if (syllabus == null) return const _TopicLookup({});
+    return _TopicLookup({
+      for (final item in syllabus.allItems) item.id: item,
+    });
+  }
+
+  String titleFor(String topicId) {
+    final item = _byId[topicId];
+    if (item == null) return topicId;
+    return item.title.isNotEmpty ? item.title : topicId;
+  }
+}
+
 /// Translates the active readiness-band into a number for the radial gauge
 /// and an honest headline/subline for the student. All numbers come from
 /// real existing state — `hubSnapshot?.profile` (per `ExamHubSnapshot`)
@@ -631,10 +670,16 @@ ReadinessSummary readinessSummaryFromHub(ExamHubSnapshot? hub) =>
     _ExamCockpitHelpers.readinessFromHub(hub);
 
 @visibleForTesting
-List<DiagnosticBarDatum> diagnosticBarsFromOverview(
-  WeakAreaOverview? overview,
-) =>
-    _ExamCockpitHelpers.diagnosticBars(overview);
+List<DiagnosticBarDatum> diagnosticBarsFromOverview({
+  required WeakAreaOverview? overview,
+  required ExamLearnerProfile? learner,
+  CourseSyllabus? syllabus,
+}) =>
+    _ExamCockpitHelpers.diagnosticBars(
+      overview: overview,
+      learner: learner,
+      topicLookup: _TopicLookup.build(syllabus: syllabus),
+    );
 
 @visibleForTesting
 PrimaryChapter? primaryChapterFromSyllabus(CourseSyllabus? syllabus) =>
@@ -646,8 +691,12 @@ String boardLabelOf(String boardId) =>
 
 class _ExamCockpitHelpers {
   static ReadinessSummary readinessFromHub(ExamHubSnapshot? hub) {
-    final profile = hub?.profile;
-    if (profile == null || profile.drillCount == 0) {
+    // The hub has no per-attempt evidence: derive an honest day-aware
+    // summary from the readiness anchor / plan only. Numerical drill
+    // counts live on `ExamLearnerProfile`, exposed through the cockpit
+    // by wiring it explicitly when desired (see [TopicMastery]).
+    final daysLeft = hub?.readinessDaysLeft;
+    if (hub == null || hub.profile == null) {
       return const ReadinessSummary(
         percent: 0,
         headline: 'No data yet',
@@ -655,43 +704,78 @@ class _ExamCockpitHelpers {
         deltaText: '—',
       );
     }
-    final pct = (profile.accuracy * 100).round().clamp(0, 100);
-    final headline = switch (profile.stage) {
-      TopicStage.learning => 'Getting started',
-      TopicStage.practicing => 'Building momentum',
-      TopicStage.strong => 'Strong pace',
-      TopicStage.mastered => 'Mastered',
-      TopicStage.needsAttention => 'Needs attention',
-      TopicStage.needsReview => 'Needs review',
-    };
+    if (daysLeft == null) {
+      return const ReadinessSummary(
+        percent: 0,
+        headline: 'Set a readiness anchor',
+        subline: 'Tell VaaniX when you want to be exam-ready',
+        deltaText: '—',
+      );
+    }
+    if (daysLeft < 0) {
+      return ReadinessSummary(
+        percent: 0,
+        headline: 'Anchor has passed',
+        subline: 'Re-set your readiness anchor in Profile',
+        deltaText: 'overdue',
+      );
+    }
+    // The hub tracks plans and PYQ/mock counts as evidence of activity.
+    final pyq = hub.pyqAttemptedTotal;
+    final mock = hub.mockCount;
+    final activityLines = <String>[];
+    if (pyq > 0) activityLines.add('$pyq PYQ attempt${pyq == 1 ? '' : 's'}');
+    if (mock > 0) activityLines.add('$mock mock${mock == 1 ? '' : 's'}');
+    final evidenceLine = activityLines.isEmpty
+        ? 'No graded attempts yet'
+        : activityLines.join(' · ');
     return ReadinessSummary(
-      percent: pct,
-      headline: headline,
-      subline: 'Based on ${profile.drillCount} graded drill'
-          '${profile.drillCount == 1 ? '' : 's'}',
-      deltaText: '${profile.drillCount} drills',
+      percent: 0, // No qualitative %: readiness is window-derived, not %.
+      headline: daysLeft == 0
+          ? 'Readiness target is today'
+          : '$daysLeft day${daysLeft == 1 ? '' : 's'} to readiness',
+      subline: evidenceLine,
+      deltaText: '${daysLeft}d',
     );
   }
 
-  static List<DiagnosticBarDatum> diagnosticBars(WeakAreaOverview? overview) {
+  static List<DiagnosticBarDatum> diagnosticBars({
+    required WeakAreaOverview? overview,
+    required ExamLearnerProfile? learner,
+    required _TopicLookup topicLookup,
+  }) {
     if (overview == null) return const [];
-    final withEvidence = overview.findings
-        .where((f) => f.attemptCount > 0)
-        .toList()
-      ..sort((a, b) {
-        // Most-attempted first → the bars reflect real evidence order,
-        // not a fabricated rank.
-        return b.attemptCount.compareTo(a.attemptCount);
-      });
-    final top = withEvidence.take(2).toList();
+    // Build evidence rows from the engine's findings + the matching
+    // TopicMastery (real attempt / correct counts). Findings without
+    // learner evidence are intentionally skipped — §21 needs ≥ 2 attempts.
+    final rows = <_BarRow>[];
+    for (final finding in overview.report.findings) {
+      final mastery = learner?.topics[finding.topicId];
+      if (mastery == null || mastery.attemptCount < 2) continue;
+      final pct = mastery.attemptCount == 0
+          ? 0
+          : ((mastery.correctCount / mastery.attemptCount) * 100)
+              .round()
+              .clamp(0, 100);
+      rows.add(_BarRow(
+        topicTitle: topicLookup.titleFor(finding.topicId),
+        percent: pct,
+        attempts: mastery.attemptCount,
+        stage: mastery.stage,
+      ));
+    }
+    // Order by most-attempted first — the bars reflect real evidence
+    // order, not a fabricated rank.
+    rows.sort((a, b) => b.attempts.compareTo(a.attempts));
     return [
-      for (final f in top)
+      for (final r in rows.take(2))
         DiagnosticBarDatum(
-          topicTitle: f.topicTitle.isNotEmpty ? f.topicTitle : f.topicId,
-          percent: f.percent,
-          stageLabel: _stageLabel(f.stage),
-          isAlert: f.stage == TopicStage.needsAttention ||
-              f.stage == TopicStage.needsReview,
+          topicTitle: r.topicTitle,
+          percent: r.percent,
+          stageLabel: _stageLabel(r.stage),
+          attempts: r.attempts,
+          isAlert: r.stage == TopicStage.needsAttention ||
+              r.stage == TopicStage.needsReview,
         ),
     ];
   }
@@ -701,18 +785,36 @@ class _ExamCockpitHelpers {
     for (final book in syllabus.books) {
       if (book.chapters.isEmpty) continue;
       final chapter = book.chapters.first;
+      final section = _findSectionForBook(syllabus, book.id);
+      final marks = section == null ? null : section.marks;
+      return PrimaryChapter(
+        chapter: chapter,
+        bookTitle: book.title,
+        sectionTitle: section?.title ?? '',
+        sectionMarks: marks,
+      );
+    }
+    // Fall back: if no chapters are published yet, surface the first
+    // official syllabus item as the primary scope (Class 9 pending-
+    // official literature path uses this).
+    final items = syllabus.allItems;
+    if (items.isNotEmpty) {
+      final first = items.first;
       final section = syllabus.sections.firstWhere(
-        (s) => s.id.contains(book.id) || _bookMatchesSection(s, book.id),
+        (s) => s.id == first.sectionId,
         orElse: () => syllabus.sections.isNotEmpty
             ? syllabus.sections.first
             : const _EmptySection(),
       );
-      final marks = section is _EmptySection
-          ? (book.chapters.isNotEmpty ? book.chapters.first.examRelevance : null)
-          : section.marks;
+      final marks = section is _EmptySection ? null : section.marks;
       return PrimaryChapter(
-        chapter: chapter,
-        bookTitle: book.title,
+        chapter: SyllabusChapter(
+          id: first.id,
+          number: 0,
+          title: first.title.isNotEmpty ? first.title : first.id,
+          type: 'item',
+        ),
+        bookTitle: section is _EmptySection ? '' : section.title,
         sectionTitle: section is _EmptySection ? '' : section.title,
         sectionMarks: marks,
       );
@@ -720,10 +822,18 @@ class _ExamCockpitHelpers {
     return null;
   }
 
-  static bool _bookMatchesSection(SyllabusSection section, String bookId) {
-    final id = section.id.toLowerCase();
-    final bid = bookId.toLowerCase();
-    return id.contains(bid) || bid.contains(id);
+  static SyllabusSection? _findSectionForBook(
+      CourseSyllabus syllabus, String bookId) {
+    // Books do not have a direct section mapping in the canonical
+    // syllabus JSON; the chapters are inside the book and the marks
+    // are derived from the section that contains the SAME prefix as
+    // the chapter ids (e.g. kshitij_01 → kshitij section).
+    final id = bookId.toLowerCase();
+    for (final s in syllabus.sections) {
+      final sid = s.id.toLowerCase();
+      if (sid.contains(id) || id.contains(sid)) return s;
+    }
+    return syllabus.sections.isNotEmpty ? syllabus.sections.first : null;
   }
 
   static String boardLabel(String boardId) {
@@ -755,21 +865,31 @@ class _ExamCockpitHelpers {
   }
 }
 
-String _boardLabel(String boardId) => _ExamCockpitHelpers.boardLabel(boardId);
-ReadinessSummary _readinessFromHub(ExamHubSnapshot? hub) =>
-    _ExamCockpitHelpers.readinessFromHub(hub);
-List<DiagnosticBarDatum> _diagnosticBars(WeakAreaOverview? overview) =>
-    _ExamCockpitHelpers.diagnosticBars(overview);
-PrimaryChapter? _primaryChapter(CourseSyllabus? syllabus) =>
-    _ExamCockpitHelpers.primaryChapter(syllabus);
+class _BarRow {
+  const _BarRow({
+    required this.topicTitle,
+    required this.percent,
+    required this.attempts,
+    required this.stage,
+  });
 
-/// One row in the diagnostic radar — derived from real [WeakAreaFinding].
+  final String topicTitle;
+  final int percent;
+  final int attempts;
+  final TopicStage stage;
+}
+
+String _boardLabel(String boardId) => _ExamCockpitHelpers.boardLabel(boardId);
+
+/// One row in the diagnostic radar — derived from a real
+/// [WeakTopicFinding] + matching [TopicMastery].
 @visibleForTesting
 class DiagnosticBarDatum {
   const DiagnosticBarDatum({
     required this.topicTitle,
     required this.percent,
     required this.stageLabel,
+    required this.attempts,
     required this.isAlert,
   });
 
@@ -780,6 +900,9 @@ class DiagnosticBarDatum {
 
   /// Honest qualitative band label.
   final String stageLabel;
+
+  /// Real attempt count behind the band.
+  final int attempts;
 
   /// True when the student should focus on this topic next.
   final bool isAlert;
@@ -806,9 +929,12 @@ class PrimaryChapter {
   String get subtitle {
     final parts = <String>[];
     if (bookTitle.isNotEmpty) parts.add(bookTitle);
-    if (sectionTitle.isNotEmpty) parts.add(sectionTitle);
+    if (sectionTitle.isNotEmpty && sectionTitle != bookTitle) {
+      parts.add(sectionTitle);
+    }
     if (sectionMarks is num) {
-      parts.add('${(sectionMarks as num).toInt()} Marks board scope');
+      final m = (sectionMarks as num).toInt();
+      if (m > 0) parts.add('$m marks board scope');
     }
     return parts.isEmpty
         ? 'No metadata yet — open syllabus for chapter details'
@@ -831,21 +957,24 @@ class _EmptySection extends SyllabusSection {
 class _DiagnosticBar extends StatelessWidget {
   const _DiagnosticBar({
     required this.topic,
-    required this.accuracy,
+    required this.percent,
+    required this.stageLabel,
+    required this.attempts,
     required this.isAlert,
-    required this.statusLabel,
   });
 
   final String topic;
-  final int accuracy;
+  final int percent;
+  final String stageLabel;
+  final int attempts;
   final bool isAlert;
-  final String statusLabel;
 
   @override
   Widget build(BuildContext context) {
     final color =
         isAlert ? VaaniXColors.telemetryRose : VaaniXColors.examCyanAccent;
-    final safeAccuracy = accuracy.clamp(0, 100);
+    final safePercent = percent.clamp(0, 100);
+    final safeAttempts = attempts.clamp(0, 1 << 30);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -864,7 +993,9 @@ class _DiagnosticBar extends StatelessWidget {
               ),
             ),
             Text(
-              '$statusLabel · $safeAccuracy% on $safeAccuracy+ attempts',
+              '$stageLabel · $safePercent% on $safeAttempts '
+              'attempt${safeAttempts == 1 ? '' : 's'}',
+              textAlign: TextAlign.right,
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 11,
@@ -878,7 +1009,7 @@ class _DiagnosticBar extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
-            value: safeAccuracy / 100.0,
+            value: safePercent / 100.0,
             minHeight: 5,
             backgroundColor: VaaniXColors.examSurfaceElevated,
             valueColor: AlwaysStoppedAnimation<Color>(color),
