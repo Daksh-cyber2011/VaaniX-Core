@@ -27,6 +27,7 @@ import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
 import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
