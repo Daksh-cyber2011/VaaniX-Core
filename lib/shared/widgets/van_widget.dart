@@ -164,12 +164,18 @@ class VanWidgetState extends State<VanWidget>
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     final defaultTap =
         state.definition.allowsUserInteraction ? onDefaultTap : null;
-    final hasBubble = widget.showSpeechBubble && (dialogue != null || loading);
+    final speechAllowed = state.definition.allowsSpeech;
+    final hasBubble = speechAllowed &&
+        widget.showSpeechBubble &&
+        (dialogue != null || loading);
+    final tap = state.definition.allowsUserInteraction
+        ? (widget.onTap ?? defaultTap)
+        : null;
+    final longPress =
+        state.definition.allowsUserInteraction ? widget.onLongPress : null;
 
     return Semantics(
-      button: widget.onTap != null ||
-          widget.onLongPress != null ||
-          defaultTap != null,
+      button: tap != null || longPress != null,
       // The canonical expression name matches what is actually on screen
       // ("Van — thinking", "Van — excited", …), so expression changes are
       // never communicated by colour alone. No per-frame announcements: this
@@ -177,8 +183,8 @@ class VanWidgetState extends State<VanWidget>
       label: widget.semanticLabel ?? 'Van — ${state.canonicalExpression.name}',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: widget.onTap ?? defaultTap,
-        onLongPress: widget.onLongPress,
+        onTap: tap,
+        onLongPress: longPress,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

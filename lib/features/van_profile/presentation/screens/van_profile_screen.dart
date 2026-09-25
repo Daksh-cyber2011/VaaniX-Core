@@ -17,6 +17,8 @@ import 'package:vaanix_app/core/theme/app_dimens.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
+import 'package:vaanix_app/features/van/domain/van_event.dart';
+import 'package:vaanix_app/features/van/presentation/providers/van_controller.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
 import 'package:vaanix_app/shared/widgets/van_widget.dart';
@@ -29,14 +31,6 @@ class VanProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
-  VanState _tapState = VanState.idle;
-
-  void _onTapVan() {
-    setState(() => _tapState = VanState.happy);
-    Future.delayed(const Duration(milliseconds: 800),
-        () => mounted ? setState(() => _tapState = VanState.idle) : null);
-  }
-
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileProvider);
@@ -52,14 +46,15 @@ class _VanProfileScreenState extends ConsumerState<VanProfileScreen> {
         children: [
           Center(
             child: VanWidget(
-              state:
-                  _tapState == VanState.happy ? VanState.happy : VanState.idle,
               size: 180,
+              useController: true,
               showSpeechBubble: true,
               dialogueText: mode == null
                   ? "Hi, I'm $companionName! Tap me!"
                   : _reaction(mode, companionName),
-              onTap: _onTapVan,
+              onTap: () => ref.read(vanControllerProvider.notifier).dispatch(
+                    const VanEvent(VanEventType.companionTapped),
+                  ),
             ),
           ),
           const SizedBox(height: 24),
