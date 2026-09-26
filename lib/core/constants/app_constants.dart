@@ -33,7 +33,14 @@ abstract final class AppConstants {
   static const String geminiModelKey = 'GEMINI_MODEL';
 
   /// Default Gemini model for V1. Configurable via GEMINI_MODEL env.
-  static const String defaultGeminiModel = 'gemini-2.5-flash';
+  ///
+  /// Picked to match Google's currently-supported GA Flash model for new
+  /// projects (see https://ai.google.dev/gemini-api/docs/deprecations).
+  /// The previous default (`gemini-2.5-flash`) is scheduled for shutdown
+  /// on 2026-10-16 — deployments still on it must override this constant
+  /// via the `GEMINI_MODEL` env var before that date, or be re-pointed
+  /// at a 3.x replacement.
+  static const String defaultGeminiModel = 'gemini-3.8-flash';
 
   // ============================================================
   // STORAGE KEYS (SharedPreferences)

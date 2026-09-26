@@ -56,14 +56,17 @@ void main() {
     });
 
     test('geminiModel defaults to the current stable flash model', () {
-      expect(AppEnvironment.geminiModel, 'gemini-2.5-flash');
+      // Pinned to the actively supported Gemini 3.x Flash default. The
+      // prior default (`gemini-2.5-flash`) was scheduled for shutdown on
+      // 2026-10-16 per https://ai.google.dev/gemini-api/docs/deprecations.
+      expect(AppEnvironment.geminiModel, 'gemini-3.8-flash');
     });
 
     test('geminiModel honors the GEMINI_MODEL env override', () {
       dotenv.testLoad(mergeWith: {
-        AppConstants.geminiModelKey: 'gemini-2.5-flash-lite',
+        AppConstants.geminiModelKey: 'gemini-3.5-flash-lite',
       });
-      expect(AppEnvironment.geminiModel, 'gemini-2.5-flash-lite');
+      expect(AppEnvironment.geminiModel, 'gemini-3.5-flash-lite');
     });
 
     test('isGeminiConfigured is false without a key', () {
