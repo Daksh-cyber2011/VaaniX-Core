@@ -31,6 +31,8 @@ abstract final class AppConstants {
   static const String sentryDsnKey = 'SENTRY_DSN';
   static const String geminiApiKey = 'GEMINI_API_KEY';
   static const String geminiModelKey = 'GEMINI_MODEL';
+  static const String groqApiKey = 'GROQ_API_KEY';
+  static const String groqModelKey = 'GROQ_MODEL';
 
   /// Default Gemini model for V1. Configurable via GEMINI_MODEL env.
   ///
@@ -41,6 +43,22 @@ abstract final class AppConstants {
   /// via the `GEMINI_MODEL` env var before that date, or be re-pointed
   /// at a 3.x replacement.
   static const String defaultGeminiModel = 'gemini-3.8-flash';
+
+  /// Default Groq model for V1. Configurable via GROQ_MODEL env.
+  ///
+  /// Groq's production API exposes an OpenAI-compatible
+  /// `/openai/v1/chat/completions` endpoint — the model name below is the
+  /// currently shipped Groq production model family. Operators must
+  /// override this at deploy time via the `GROQ_MODEL` env var to point
+  /// at a model Groq's catalog confirms at that moment; never pin a
+  /// model id in Learn Mode / VAN / chat code.
+  ///
+  /// Kept centrally so the adapter layer does not hardcode a model id.
+  static const String defaultGroqModel = 'llama-3.3-70b-versatile';
+
+  /// Groq's OpenAI-compatible chat completions endpoint. Public and stable.
+  static const String groqChatCompletionsUrl =
+      'https://api.groq.com/openai/v1/chat/completions';
 
   // ============================================================
   // STORAGE KEYS (SharedPreferences)

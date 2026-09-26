@@ -70,6 +70,27 @@ class AppEnvironment {
   static String get geminiApiKey =>
       dotenv.env[AppConstants.geminiApiKey]?.trim() ?? '';
 
+  /// Groq API key. Empty when not configured — the AI module falls back to
+  /// the next-configured provider in the routing chain in that case.
+  static String get groqApiKey =>
+      dotenv.env[AppConstants.groqApiKey]?.trim() ?? '';
+
+  /// Groq model name. Defaults to [AppConstants.defaultGroqModel] when the
+  /// `GROQ_MODEL` env var is unset. Configurable centrally; never hardcode
+  /// model strings throughout the AI feature tree.
+  static String get groqModel {
+    final configured = dotenv.env[AppConstants.groqModelKey]?.trim() ?? '';
+    return configured.isNotEmpty ? configured : AppConstants.defaultGroqModel;
+  }
+
+  /// True when a real Groq API key is present. Template placeholders are
+  /// rejected (mirror of the Gemini check) so a starter `.env` never
+  /// enables the online path.
+  static bool get isGroqConfigured {
+    final key = groqApiKey;
+    return key.isNotEmpty && !key.toLowerCase().contains('your-groq');
+  }
+
   /// Sentry crash-reporting DSN. Empty when unconfigured — Sentry then runs
   /// in no-op mode and the app is unaffected.
   ///

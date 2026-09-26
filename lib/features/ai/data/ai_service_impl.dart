@@ -51,6 +51,16 @@ class AIServiceImpl implements AIService {
   Map<AiProviderId, ModelAdapter> get adapters => Map.unmodifiable(_adapters);
 
   @override
+  void registerAdapter(ModelAdapter adapter) {
+    final id = adapter.providerId;
+    // Always dispose the previous instance under the same id so we do
+    // not leak file handles / sockets when the providers layer wires up
+    // an additional adapter after construction.
+    _adapters[id]?.dispose();
+    _adapters[id] = adapter;
+  }
+
+  @override
   ModelAdapter adapterFor(AiConfig config) {
     // Try the requested provider first.
     final requested = _adapters[config.provider];

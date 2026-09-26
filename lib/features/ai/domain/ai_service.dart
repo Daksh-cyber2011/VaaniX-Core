@@ -24,6 +24,12 @@ abstract class AIService {
   /// All registered adapters, keyed by their provider id.
   Map<AiProviderId, ModelAdapter> get adapters;
 
+  /// Register [adapter] under its [ModelAdapter.providerId]. Replacing an
+  /// adapter that was previously registered under the same id disposes
+  /// the old instance. The Offline adapter must remain registered for
+  /// the service to remain usable when no online provider is configured.
+  void registerAdapter(ModelAdapter adapter);
+
   /// The adapter selected by [config], or the offline fallback.
   ModelAdapter adapterFor(AiConfig config);
 

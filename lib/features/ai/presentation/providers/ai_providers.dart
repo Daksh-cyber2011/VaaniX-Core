@@ -23,6 +23,8 @@ import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/ai/data/ai_service_impl.dart';
 import 'package:vaanix_app/features/ai/data/conversation_pipeline_impl.dart';
 import 'package:vaanix_app/features/ai/data/default_prompt_pipeline.dart';
+import 'package:vaanix_app/features/ai/data/gemini_model_adapter.dart';
+import 'package:vaanix_app/features/ai/data/groq_model_adapter.dart';
 import 'package:vaanix_app/features/ai/data/local_conversation_memory.dart';
 import 'package:vaanix_app/features/ai/data/response_cache.dart';
 import 'package:vaanix_app/features/ai/data/safety_filter.dart';
@@ -70,10 +72,18 @@ final tokenUsageTrackerProvider = Provider<TokenUsageTracker>((ref) {
 
 /// The top-level [AIService] facade.
 ///
-/// Registers the [OfflineModelAdapter] always, and the [GeminiModelAdapter]
-/// when [AppEnvironment.isGeminiConfigured] is true. The Gemini adapter
-/// is constructed with the rate limiter, response cache, and usage tracker
-/// for quota optimization.
+/// Registers adapters in priority order — the first available one wins:
+///   1. Groq   (when `GROQ_API_KEY` is set and not a placeholder)
+///   2. Gemini (when `GEMINI_API_KEY` is set and not a placeholder)
+///   3. Offline (always registered as the deterministic fallback)
+///
+/// The selected provider for any given request is the FIRST registered
+/// adapter whose [ModelAdapter.isAvailable] is true. The Offline
+/// adapter is always available so the chat pipeline can never refuse a
+/// request — a hard AI outage gracefully degrades to the offline tutor
+/// instead of leaving the screen blank. The Gemini / Groq adapters are
+/// constructed with the shared rate limiter, response cache, and usage
+/// tracker so quota optimization is provider-agnostic.
 final aiServiceProvider = Provider<AIService>((ref) {
   final service = AIServiceImpl(
     safetyFilter: ref.watch(safetyFilterProvider),
@@ -81,6 +91,32 @@ final aiServiceProvider = Provider<AIService>((ref) {
     responseCache: ref.watch(responseCacheProvider),
     usageTracker: ref.watch(tokenUsageTrackerProvider),
   );
+
+  // 1. Groq — preferred when configured. Registered first so it is
+  //    selected over Gemini when both providers are present.
+  if (AppEnvironment.isGroqConfigured) {
+    service.registerAdapter(GroqModelAdapter(
+      safetyFilter: ref.read(safetyFilterProvider),
+      rateLimiter: ref.read(aiRateLimiterProvider),
+      responseCache: ref.read(responseCacheProvider),
+      usageTracker: ref.read(tokenUsageTrackerProvider),
+    ));
+  }
+
+  // 2. Gemini — kept as the secondary online provider. When Groq is
+  //    down, callers fall through to Gemini automatically (the service
+  //    retries the next available adapter on retryable failures).
+  if (AppEnvironment.isGeminiConfigured) {
+    service.registerAdapter(GeminiModelAdapter(
+      safetyFilter: ref.read(safetyFilterProvider),
+      rateLimiter: ref.read(aiRateLimiterProvider),
+      responseCache: ref.read(responseCacheProvider),
+      usageTracker: ref.read(tokenUsageTrackerProvider),
+    ));
+  }
+
+  // Note: the offline adapter is registered unconditionally inside
+  // AIServiceImpl's constructor — never remove that guarantee.
   ref.onDispose(service.dispose);
   return service;
 });
@@ -98,14 +134,31 @@ final conversationPipelineProvider = Provider<ConversationPipeline>((ref) {
   );
 });
 
-/// The default [AiConfig] — picks Gemini when configured, falls back to
-/// offline otherwise. UI can override this per-request if needed.
+/// The default [AiConfig] — picks Groq when configured, then Gemini,
+/// then falls back to offline. UI can override this per-request if
+/// needed.
 final defaultAiConfigProvider = Provider<AiConfig>((ref) {
-  return AiConfig(
-    provider: AppEnvironment.isGeminiConfigured
-        ? AiProviderId.gemini
-        : AiProviderId.offline,
-    model: AppEnvironment.isGeminiConfigured ? AppEnvironment.geminiModel : '',
+  if (AppEnvironment.isGroqConfigured) {
+    return AiConfig(
+      provider: AiProviderId.groq,
+      model: AppEnvironment.groqModel,
+      temperature: 0.7,
+      maxTokens: 1024,
+      enableStreaming: true,
+    );
+  }
+  if (AppEnvironment.isGeminiConfigured) {
+    return AiConfig(
+      provider: AiProviderId.gemini,
+      model: AppEnvironment.geminiModel,
+      temperature: 0.7,
+      maxTokens: 1024,
+      enableStreaming: true,
+    );
+  }
+  return const AiConfig(
+    provider: AiProviderId.offline,
+    model: '',
     temperature: 0.7,
     maxTokens: 1024,
     enableStreaming: true,
