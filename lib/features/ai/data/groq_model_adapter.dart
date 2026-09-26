@@ -41,6 +41,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/errors/exception_mapper.dart';
 import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
@@ -140,7 +141,6 @@ class GroqModelAdapter implements ModelAdapter {
   /// 429, 4xx content / context length) never retry.
   static const int _maxSendRetries = 2;
   static const Duration _retryBaseDelay = Duration(milliseconds: 500);
-  static const Duration _requestTimeout = Duration(seconds: 30);
 
   final SafetyFilter _safetyFilter;
   final AiRateLimiter _rateLimiter;
@@ -456,13 +456,17 @@ class GroqModelAdapter implements ModelAdapter {
   }) async* {
     final lastUser = _lastUserMessage(context);
     if (lastUser == null) {
-      yield err(const ServerException(message: 'No user message in context'));
+      yield err(ExceptionMapper.toFailure(
+        const ServerException(message: 'No user message in context'),
+      ));
       return;
     }
     final sanitizedInput = _safetyFilter.sanitizeInput(lastUser.content);
     final apiKey = AppEnvironment.groqApiKey;
     if (apiKey.isEmpty) {
-      yield const err(AuthException(message: 'Groq API key not configured'));
+      yield err(ExceptionMapper.toFailure(
+        const AuthException(message: 'Groq API key not configured'),
+      ));
       return;
     }
     await _rateLimiter.awaitSlot();
@@ -510,9 +514,11 @@ class GroqModelAdapter implements ModelAdapter {
         } catch (_) {
           // Malformed SSE chunk — surface as a content failure so the
           // chat banner can render the recovery reaction.
-          yield const err(ServerException(
-            message: 'Groq stream contained malformed JSON',
-            statusCode: 200,
+          yield err(ExceptionMapper.toFailure(
+            const ServerException(
+              message: 'Groq stream contained malformed JSON',
+              statusCode: 200,
+            ),
           ));
           return;
         }
