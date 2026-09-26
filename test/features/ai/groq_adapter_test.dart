@@ -30,6 +30,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/errors/exceptions.dart';
+import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/core/utils/result.dart';
@@ -77,12 +78,7 @@ class _FakeTransport implements GroqHttpTransport {
   }
 }
 
-LocalStorageService _memStorage() {
-  // Use SharedPreferences' mock so the ResponseCache + TokenUsageTracker
-  // do not depend on real Flutter binding storage.
-  SharedPreferences.setMockInitialValues({});
-  return LocalStorageService(prefs: null);
-}
+
 
 Future<({GroqModelAdapter adapter, _FakeTransport transport, TokenUsageTracker usage,
     ResponseCache cache, AiRateLimiter limiter, LocalStorageService storage})>
@@ -98,7 +94,7 @@ Future<({GroqModelAdapter adapter, _FakeTransport transport, TokenUsageTracker u
 }) async {
   // Reset dotenv between tests so the configured key is exactly what
   // each test sets — no leakage from other suites.
-  await dotenv.testLoad(mergeWith: {
+  dotenv.testLoad(mergeWith: {
     if (apiKeyOverride != null) AppConstants.groqApiKey: apiKeyOverride,
     if (modelOverride != null) AppConstants.groqModelKey: modelOverride,
   });
@@ -107,7 +103,8 @@ Future<({GroqModelAdapter adapter, _FakeTransport transport, TokenUsageTracker u
     respond: respond,
     requestAssertions: requestAssertions,
   );
-  final storage = _memStorage();
+  final prefs = await SharedPreferences.getInstance();
+  final storage = LocalStorageService(prefs);
   final limiterInstance = limiter ?? AiRateLimiter(
     maxRequestsPerMinute: 1000,
     minDelayBetweenRequests: Duration.zero,
@@ -160,27 +157,38 @@ String _groqOkResponse({
     });
 
 ConversationContext _simpleContext() {
+  // The outgoing message MUST be the SAME instance as the one in the
+  // transcript so [GroqModelAdapter.buildRequestBody] can skip it via
+  // `identical()` (mirrors the Gemini adapter contract — see
+  // gemini_request_shaping_test.dart).
+  final outgoing = AiMessage.user(id: 'u2', content: 'what does it mean?');
   return ConversationContext(
+    conversationId: 'c1',
+    learner: const LearnerContext(),
     messages: [
-      const AiMessage.system(
-        id: 'sys',
-        content: 'You are Van.',
-      ),
-      const AiMessage.user(id: 'u1', content: 'namaste'),
-      const AiMessage.assistant(id: 'a1', content: 'namaste, learner'),
-      AiMessage.user(id: 'u2', content: 'what does it mean?'),
+      AiMessage.system(id: 'sys', content: 'You are Van.'),
+      AiMessage.user(id: 'u1', content: 'namaste'),
+      AiMessage.assistant(id: 'a1', content: 'namaste, learner'),
+      outgoing,
     ],
-    learningContextMessage: '',
   );
 }
+
+/// The outgoing user message used by [_simpleContext] (same instance —
+/// needed by the `identical()` deduplication inside `buildRequestBody`).
+final AiMessage _simpleOutgoing =
+    AiMessage.user(id: 'u2', content: 'what does it mean?');
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
     // Ensure tests start with an empty dotenv so config helpers are
-    // deterministic.
-    await dotenv.testLoad(mergeWith: const {});
+    // deterministic. The shared_preferences plugin must be initialised
+    // BEFORE the first getInstance() call so the ResponseCache and
+    // TokenUsageTracker can resolve storage keys.
+    SharedPreferences.setMockInitialValues({});
+    dotenv.testLoad(mergeWith: const {});
   });
 
   group('GroqModelAdapter.buildRequestBody', () {
@@ -233,7 +241,7 @@ void main() {
     test('omits the learning context block when it is empty', () {
       final outgoing = AiMessage.user(id: 'u2', content: 'hello');
       final body = GroqModelAdapter.buildRequestBody(
-        transcript: const [
+        transcript: [
           AiMessage.user(id: 'u1', content: 'hi'),
           outgoing,
         ],
@@ -281,7 +289,7 @@ void main() {
         apiKeyOverride: _realKey,
       );
       addTearDown(() async {
-        await dotenv.testLoad(mergeWith: const {});
+        dotenv.testLoad(mergeWith: const {});
       });
 
       final result = await harness.adapter.complete(
@@ -733,7 +741,7 @@ void main() {
 
   group('GroqModelAdapter provider identity', () {
     test('reports its providerId and isAvailable matches env', () async {
-      await dotenv.testLoad(mergeWith: const {AppConstants.groqApiKey: _realKey});
+      dotenv.testLoad(mergeWith: const {AppConstants.groqApiKey: _realKey});
       final harness = await _newHarness(
         respond: (_) =>
             GroqHttpResponse(statusCode: 200, body: _groqOkResponse(content: 'x')),
@@ -742,7 +750,7 @@ void main() {
       expect(harness.adapter.providerId, AiProviderId.groq);
       expect(harness.adapter.isAvailable, isTrue);
 
-      await dotenv.testLoad(mergeWith: const {});
+      dotenv.testLoad(mergeWith: const {});
       final offline = await _newHarness(
         respond: (_) =>
             GroqHttpResponse(statusCode: 200, body: _groqOkResponse(content: 'x')),
@@ -752,3 +760,4 @@ void main() {
     });
   });
 }
+

@@ -223,8 +223,8 @@ class _DisposingOfflineFake extends OfflineModelAdapter {
   final void Function() onDispose;
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     onDispose();
-    await super.dispose();
+    super.dispose();
   }
 }
