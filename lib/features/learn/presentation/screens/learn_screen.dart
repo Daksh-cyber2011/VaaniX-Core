@@ -37,9 +37,11 @@ import 'package:vaanix_app/features/learn/data/urdu_exercises.dart';
 import 'package:vaanix_app/features/learn/data/telugu_exercises.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/diagnostic.dart';
+import 'package:vaanix_app/features/learn/domain/spine/personalized_course.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/personalized_course_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
@@ -116,57 +118,132 @@ class LearnScreen extends ConsumerWidget {
               languageName: selectedSpec.englishName,
               onTap: () => context.go(RouteNames.learnSmartPractice),
             ),
+          // PRIMARY LEARN EXPERIENCE: when a personalized course exists,
+          // it drives the lesson tree. The static curriculum becomes a
+          // fallback for when no personalized course is available.
           Expanded(
-            child: curriculumAsync.when(
-              loading: () => _loading(context),
-              error: (error, stack) => _error(context, ref),
-              data: (curriculum) {
-                if (curriculum.isEmpty) return _empty(context);
-                return ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                  itemCount: curriculum.length,
-                  itemBuilder: (context, i) {
-                    final chapter = curriculum[i];
-                    final doneInChapter = chapter.lessons
-                        .where((l) => completed.contains(l.id))
-                        .length;
-                    // Real persisted practice mastery per lesson (empty when no
-                    // exercises are authored for that lesson yet).
-                    final practice = <String, ({int mastered, int total})>{};
-                    for (final lesson in chapter.lessons) {
-                      final mastered = ref
-                          .watch(masteredExercisesProvider(lesson.id))
-                          .length;
-                      // Look up exercises across all shipped language
-                      // banks. Lesson IDs are globally unique
-                      // (Sanskrit: ls_*, Hindi: hi_*, Bengali: bn_*,
-                      // Marathi: mr_*, Telugu: te_*), so only one bank
-                      // matches.
-                      final total = exercisesByLesson[lesson.id]?.length ??
-                          hindiExercisesByLesson[lesson.id]?.length ??
-                          bengaliExercisesByLesson[lesson.id]?.length ??
-                          marathiExercisesByLesson[lesson.id]?.length ??
-                          teluguExercisesByLesson[lesson.id]?.length ??
-                          tamilExercisesByLesson[lesson.id]?.length ??
-                          gujaratiExercisesByLesson[lesson.id]?.length ??
-                          urduExercisesByLesson[lesson.id]?.length ??
-                          0;
-                      practice[lesson.id] = (mastered: mastered, total: total);
-                    }
-                    return _ChapterCard(
-                      chapter: chapter,
-                      completedCount: doneInChapter,
-                      completedIds: completed,
-                      practice: practice,
-                      onTapLesson: (lesson) => _onTapLesson(context, lesson),
-                    );
-                  },
-                );
-              },
+            child: _buildPrimaryLearnContent(
+              context,
+              ref,
+              selectedSpec: selectedSpec,
+              curriculumAsync: curriculumAsync,
+              completed: completed,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// Decides whether to show the personalized course or static curriculum.
+  Widget _buildPrimaryLearnContent(
+    BuildContext context,
+    WidgetRef ref, {
+    required LearnLanguageSpec? selectedSpec,
+    required AsyncValue<List<Chapter>> curriculumAsync,
+    required List<String> completed,
+  }) {
+    if (selectedSpec == null) {
+      // No language selected — show static curriculum (Sanskrit default)
+      return _buildStaticCurriculum(context, ref, curriculumAsync, completed);
+    }
+
+    final courseAsync = ref.watch(personalizedCourseProvider);
+
+    return courseAsync.when(
+      loading: () => _loading(context),
+      error: (_, __) =>
+          _buildStaticCurriculum(context, ref, curriculumAsync, completed),
+      data: (course) {
+        if (course == null || course.isEmpty) {
+          return _buildStaticCurriculum(
+              context, ref, curriculumAsync, completed);
+        }
+
+        // The personalized course IS the primary Learn navigation.
+        return _buildPersonalizedCourseTree(context, ref, course, completed);
+      },
+    );
+  }
+
+  /// Renders the personalized course as the primary navigable lesson tree.
+  Widget _buildPersonalizedCourseTree(
+    BuildContext context,
+    WidgetRef ref,
+    PersonalizedCourse course,
+    List<String> completed,
+  ) {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      itemCount: course.units.length + 1, // +1 for the course header
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _PersonalizedCourseHeader(course: course);
+        }
+
+        final unit = course.units[index - 1];
+        return _PersonalizedUnitCard(
+          unit: unit,
+          completedLessonIds: completed,
+          onTapLesson: (lesson) => _onTapPersonalizedLesson(context, lesson),
+        );
+      },
+    );
+  }
+
+  /// Renders the static curriculum (fallback when no personalized course).
+  Widget _buildStaticCurriculum(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<List<Chapter>> curriculumAsync,
+    List<String> completed,
+  ) {
+    return curriculumAsync.when(
+      loading: () => _loading(context),
+      error: (error, stack) => _error(context, ref),
+      data: (curriculum) {
+        if (curriculum.isEmpty) return _empty(context);
+        return ListView.builder(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          itemCount: curriculum.length,
+          itemBuilder: (context, i) {
+            final chapter = curriculum[i];
+            final doneInChapter = chapter.lessons
+                .where((l) => completed.contains(l.id))
+                .length;
+            // Real persisted practice mastery per lesson (empty when no
+            // exercises are authored for that lesson yet).
+            final practice = <String, ({int mastered, int total})>{};
+            for (final lesson in chapter.lessons) {
+              final mastered = ref
+                  .watch(masteredExercisesProvider(lesson.id))
+                  .length;
+              // Look up exercises across all shipped language
+              // banks. Lesson IDs are globally unique
+              // (Sanskrit: ls_*, Hindi: hi_*, Bengali: bn_*,
+              // Marathi: mr_*, Telugu: te_*), so only one bank
+              // matches.
+              final total = exercisesByLesson[lesson.id]?.length ??
+                  hindiExercisesByLesson[lesson.id]?.length ??
+                  bengaliExercisesByLesson[lesson.id]?.length ??
+                  marathiExercisesByLesson[lesson.id]?.length ??
+                  teluguExercisesByLesson[lesson.id]?.length ??
+                  tamilExercisesByLesson[lesson.id]?.length ??
+                  gujaratiExercisesByLesson[lesson.id]?.length ??
+                  urduExercisesByLesson[lesson.id]?.length ??
+                  0;
+              practice[lesson.id] = (mastered: mastered, total: total);
+            }
+            return _ChapterCard(
+              chapter: chapter,
+              completedCount: doneInChapter,
+              completedIds: completed,
+              practice: practice,
+              onTapLesson: (lesson) => _onTapLesson(context, lesson),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -254,7 +331,223 @@ class LearnScreen extends ConsumerWidget {
   void _onTapLesson(BuildContext context, Lesson lesson) {
     context.go(RouteNames.lessonContent.replaceFirst(':lessonId', lesson.id));
   }
+
+  void _onTapPersonalizedLesson(
+      BuildContext context, PersonalizedLesson lesson) {
+    // Navigate to the lesson content screen using the lesson's anchor
+    // in the trusted curriculum. The lessonId links this personalized
+    // lesson back to a real trusted lesson.
+    final targetId = lesson.lessonId ?? lesson.conceptId;
+    context.go(RouteNames.lessonContent.replaceFirst(':lessonId', targetId));
+  }
 }
+
+/// Course header: honest provenance + offline status. Replaces the old
+/// decorative card with truthful labeling per Master Brief §63.
+class _PersonalizedCourseHeader extends StatelessWidget {
+  const _PersonalizedCourseHeader({required this.course});
+
+  final PersonalizedCourse course;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+
+    final sourceLabel = course.isAiGenerated
+        ? 'Personalized for you'
+        : 'Your learning path';
+    final sourceIcon = course.isAiGenerated
+        ? Icons.auto_awesome_rounded
+        : Icons.route_rounded;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Icon(sourceIcon, color: AppColors.primary, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(sourceLabel, style: AppTextStyles.titleSmall()),
+                const SizedBox(height: 3),
+                Text(
+                  '${course.units.length} units · '
+                  '${course.lessonCount} lessons · '
+                  '${course.offlineStatusDescription}',
+                  style: AppTextStyles.bodySmall(color: subtext),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One unit in the personalized course — an expandable card that shows
+/// its lessons as tappable rows, driving actual lesson navigation.
+class _PersonalizedUnitCard extends StatelessWidget {
+  const _PersonalizedUnitCard({
+    required this.unit,
+    required this.completedLessonIds,
+    required this.onTapLesson,
+  });
+
+  final PersonalizedUnit unit;
+  final List<String> completedLessonIds;
+  final ValueChanged<PersonalizedLesson> onTapLesson;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final subtext = isDark ? AppColors.subtextDark : AppColors.subtextLight;
+
+    // A lesson counts as done when its trusted lessonId is in the
+    // completed set OR its conceptId matches a completed lesson.
+    final doneCount = unit.lessons.where((l) {
+      final lid = l.lessonId ?? l.conceptId;
+      return completedLessonIds.contains(lid) ||
+          completedLessonIds.contains(l.conceptId);
+    }).length;
+    final progress =
+        unit.lessons.isEmpty ? 0.0 : doneCount / unit.lessons.length;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+        border: Border.all(color: borderColor),
+      ),
+      child: ExpansionTile(
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(unit.title, style: AppTextStyles.titleMedium()),
+                  Text(
+                    unit.objective,
+                    style: AppTextStyles.bodySmall(color: subtext),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              '$doneCount/${unit.lessons.length}',
+              style: AppTextStyles.labelMedium(color: AppColors.primary),
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 6,
+                backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                color: AppColors.primary,
+                semanticsLabel:
+                    '$doneCount of ${unit.lessons.length} lessons completed',
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...unit.lessons.map((lesson) {
+            final lid = lesson.lessonId ?? lesson.conceptId;
+            final isDone = completedLessonIds.contains(lid) ||
+                completedLessonIds.contains(lesson.conceptId);
+
+            // Honest activity type label
+            final activityLabel = _activityLabel(lesson.activityType);
+
+            return ListTile(
+              leading: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: (isDone ? AppColors.success : _activityColor(lesson))
+                      .withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isDone
+                      ? Icons.check_rounded
+                      : _activityIcon(lesson.activityType),
+                  color: isDone ? AppColors.success : _activityColor(lesson),
+                  size: 20,
+                  semanticLabel: isDone ? 'Completed' : activityLabel,
+                ),
+              ),
+              title: Text(lesson.title, style: AppTextStyles.titleSmall()),
+              subtitle: Text(
+                '$activityLabel · ~${lesson.estimatedMinutes} min',
+                style: AppTextStyles.labelSmall(color: subtext),
+              ),
+              onTap: () => onTapLesson(lesson),
+            );
+          }),
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  String _activityLabel(String? type) {
+    return switch (type) {
+      'newLearning' => 'New lesson',
+      'review' => 'Review',
+      'practice' => 'Practice',
+      'weakRepair' => 'Strengthen',
+      'masteryCheck' => 'Mastery check',
+      'challenge' => 'Challenge',
+      _ => 'Lesson',
+    };
+  }
+
+  IconData _activityIcon(String? type) {
+    return switch (type) {
+      'newLearning' => Icons.play_arrow_rounded,
+      'review' => Icons.replay_rounded,
+      'practice' => Icons.fitness_center_rounded,
+      'weakRepair' => Icons.build_rounded,
+      'masteryCheck' => Icons.verified_rounded,
+      'challenge' => Icons.emoji_events_rounded,
+      _ => Icons.play_arrow_rounded,
+    };
+  }
+
+  Color _activityColor(PersonalizedLesson lesson) {
+    return switch (lesson.activityType) {
+      'review' => AppColors.info,
+      'weakRepair' => AppColors.warning,
+      'masteryCheck' => AppColors.success,
+      'challenge' => AppColors.warning,
+      _ => AppColors.primary,
+    };
+  }
+}
+
 
 class _ChapterCard extends StatelessWidget {
   const _ChapterCard({

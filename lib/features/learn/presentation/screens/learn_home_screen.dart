@@ -29,6 +29,7 @@ import 'package:vaanix_app/core/theme/vaanix_spacing.dart';
 import 'package:vaanix_app/features/learn/data/curriculum_loader.dart';
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/personalized_course_providers.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/domain/progress_models.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
@@ -517,8 +518,63 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
   }
 
   Widget _buildCurriculumSteps() {
-    final curriculumAsync = ref.watch(activeCurriculumProvider);
+    // When a personalized course exists, show IT as the curriculum path
+    // preview — the personalized course IS the real learning roadmap.
+    final courseAsync = ref.watch(personalizedCourseProvider);
     final completedLessonIds = ref.watch(completedLessonIdsProvider);
+
+    return courseAsync.when(
+      loading: () => const Text(
+        'Building your learning path…',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12.5,
+          color: VaaniXColors.textSecondaryLight,
+        ),
+      ),
+      error: (_, __) => _buildStaticCurriculumSteps(completedLessonIds),
+      data: (course) {
+        if (course == null || course.isEmpty) {
+          return _buildStaticCurriculumSteps(completedLessonIds);
+        }
+
+        // Show the personalized course units as curriculum steps
+        final completed = completedLessonIds.toSet();
+        final shown = course.units.take(5).toList();
+        final steps = <Widget>[];
+        var foundCurrent = false;
+
+        for (var i = 0; i < shown.length; i++) {
+          final unit = shown[i];
+          // A unit is done when ALL its lessons' anchor IDs are completed
+          final done = unit.lessons.isNotEmpty &&
+              unit.lessons.every((l) {
+                final lid = l.lessonId ?? l.conceptId;
+                return completed.contains(lid) ||
+                    completed.contains(l.conceptId);
+              });
+          // The first not-done unit is current
+          final isCurrent = !done && !foundCurrent;
+          if (isCurrent) foundCurrent = true;
+
+          steps.add(
+            _CurriculumStep(
+              index: i + 1,
+              title: unit.title,
+              isDone: done,
+              isCurrent: isCurrent,
+              isLocked: !done && !isCurrent,
+            ),
+          );
+        }
+        return Column(children: steps);
+      },
+    );
+  }
+
+  /// Fallback: static curriculum steps when no personalized course exists.
+  Widget _buildStaticCurriculumSteps(List<String> completedLessonIds) {
+    final curriculumAsync = ref.watch(activeCurriculumProvider);
 
     return curriculumAsync.when(
       loading: () => const Text(
@@ -549,14 +605,11 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
           );
         }
 
-        // Real join: a chapter is done when ALL of its lessons are in the
-        // completed set; the first not-done chapter is the current one.
         final completed = completedLessonIds.toSet();
         bool isDone(Chapter c) =>
             c.lessons.isNotEmpty &&
             c.lessons.every((l) => completed.contains(l.id));
-        final currentIndex =
-            chapters.indexWhere((c) => !isDone(c));
+        final currentIndex = chapters.indexWhere((c) => !isDone(c));
 
         final steps = <Widget>[];
         final shown = chapters.take(5).toList();

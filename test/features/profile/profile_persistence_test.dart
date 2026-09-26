@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 
@@ -70,5 +71,38 @@ void main() {
     expect(afterSignOut.dailyGoalMinutes, 20);
     expect(afterSignOut.currentStreak, 1);
     app.dispose();
+  });
+
+  test('malformed legacy preference types hydrate with safe defaults',
+      () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      AppConstants.keyLearnerName: 42,
+      AppConstants.keyUserCompanionName: false,
+      AppConstants.keyPersonalityMode: 7,
+      AppConstants.keySelectedClass: '7',
+      AppConstants.keyDailyGoalMinutes: '30',
+      AppConstants.keyCurrentStreak: 'stale',
+      AppConstants.keyLastActiveDate: 2026,
+      AppConstants.keyCompletedLessonIds: 'not-a-list',
+      AppConstants.keyCompletedQuizIds: 1,
+    });
+    prefs = await SharedPreferences.getInstance();
+
+    final app = launchApp();
+    addTearDown(app.dispose);
+    final repo = app.read(userProfileRepositoryProvider);
+    final profile = (await repo.getProfile()).getOrElse(() => UserProfile.empty);
+
+    expect(profile.displayName, isEmpty);
+    expect(profile.companionName, 'Van');
+    expect(profile.personalityMode, isNull);
+    expect(profile.cbseClass, isNull);
+    expect(profile.dailyGoalMinutes, 10);
+    expect(profile.currentStreak, 0);
+    expect(profile.lastActiveDate, isNull);
+    expect(
+      app.read(localStorageServiceProvider).completedLessonIds,
+      isEmpty,
+    );
   });
 }

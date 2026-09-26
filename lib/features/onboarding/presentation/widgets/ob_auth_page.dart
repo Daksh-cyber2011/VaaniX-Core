@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/theme/app_colors.dart';
 import 'package:vaanix_app/core/theme/app_text_styles.dart';
 import 'package:vaanix_app/core/utils/result.dart';
@@ -55,7 +56,7 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
       (failure) {
         setState(() {
           _isBusy = false;
-          _errorMessage = failure.message;
+          _errorMessage = _friendlyMessage(failure);
         });
       },
       (_) {
@@ -65,6 +66,22 @@ class _ObAuthPageState extends ConsumerState<ObAuthPage> {
         setState(() => _isBusy = false);
       },
     );
+  }
+
+  String _friendlyMessage(Failure failure) {
+    if (failure is InvalidCredentialsFailure) {
+      return 'Invalid email or password. Please try again.';
+    }
+    if (failure is ConflictFailure) {
+      return 'An account with this email already exists. Try signing in instead.';
+    }
+    if (failure is RateLimitFailure) {
+      return 'Too many attempts. Please wait a moment and try again.';
+    }
+    if (failure is UnauthenticatedFailure) {
+      return 'Please sign in to continue.';
+    }
+    return 'Something went wrong. Please try again.';
   }
 
   @override

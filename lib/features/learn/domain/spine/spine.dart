@@ -17,6 +17,8 @@ export 'learner_profile.dart';
 export 'diagnostic.dart';
 export 'learning_state.dart';
 export 'learning_plan.dart';
+export 'personalized_course.dart';
+export 'course_blueprint.dart';
 export 'evaluation.dart';
 export 'learning_session.dart';
 export 'planner.dart';
@@ -29,3 +31,4 @@ export 'content_prompt.dart';
 export 'generated_content_parser.dart';
 export 'session_engine.dart';
 export 'mastery_scheduling.dart';
+

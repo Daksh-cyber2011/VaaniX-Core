@@ -23,6 +23,7 @@ import 'package:vaanix_app/core/theme/theme_notifier.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/ai/presentation/providers/chat_controller.dart';
 import 'package:vaanix_app/features/exam/presentation/providers/exam_reset_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/personalized_course_providers.dart';
 import 'package:vaanix_app/features/profile/domain/user_profile.dart';
 import 'package:vaanix_app/features/profile/presentation/providers/profile_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/daily_activity_providers.dart';
@@ -685,6 +686,10 @@ class SettingsScreen extends ConsumerWidget {
       // usage chip (fresh zeroed numbers).
       ref.invalidate(chatControllerProvider);
       ref.invalidate(dailyUsageProvider);
+      // Learn Mode: personalized course data lives under the
+      // learn_profile_ prefix which clearAll() already wipes, but the
+      // in-memory Riverpod provider must rebuild too.
+      ref.invalidate(personalizedCourseProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
