@@ -275,14 +275,9 @@ final learnCurriculumProvider = AsyncNotifierProvider.family<
 /// The Learn screen treats an empty list as "no content available" and
 /// shows the appropriate empty state.
 final activeCurriculumProvider = FutureProvider<List<Chapter>>((ref) async {
-  print('DEBUG activeCurriculumProvider: started');
   final selected = ref.watch(selectedLearnLanguageProvider);
   if (selected == null) {
-    print('DEBUG activeCurriculumProvider: no language selected');
     return ref.watch(curriculumProvider.future);
   }
-  print('DEBUG activeCurriculumProvider: language is ${selected}, awaiting learnCurriculumProvider');
-  final result = await ref.watch(learnCurriculumProvider(selected).future);
-  print('DEBUG activeCurriculumProvider: learnCurriculumProvider returned');
-  return result;
+  return ref.watch(learnCurriculumProvider(selected).future);
 });

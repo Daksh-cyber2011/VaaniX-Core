@@ -40,18 +40,15 @@ Future<void> _preWarmSpine(
   WidgetTester tester,
   ProviderContainer container,
 ) async {
-  for (var i = 0; i < 120; i++) {
-    final cur = container.read(activeCurriculumProvider);
-    final graph = container.read(activeConceptGraphProvider);
-    print('DEBUG preWarm: loop $i, cur.hasValue: ${cur.hasValue}, cur.hasError: ${cur.hasError}, graph.hasValue: ${graph.hasValue}');
-    if (cur.hasError) {
-      print('DEBUG preWarm ERROR: ${cur.error}');
-      print('DEBUG preWarm STACK: ${cur.stackTrace}');
+  await tester.runAsync(() async {
+    for (var i = 0; i < 120; i++) {
+      final cur = container.read(activeCurriculumProvider);
+      final graph = container.read(activeConceptGraphProvider);
+      if (cur.hasValue && graph.hasValue) return;
+      await Future<void>.delayed(const Duration(milliseconds: 50));
     }
-    if (cur.hasValue && graph.hasValue) return;
-    await tester.pump(const Duration(milliseconds: 50));
-  }
-  print('DEBUG preWarm: TIMEOUT!');
+  });
+  print('DEBUG preWarm: DONE');
 }
 
 Widget _wrap(ProviderContainer container) {
@@ -101,6 +98,7 @@ Future<void> _waitForSessionToStart(
           container.read(diagnosticSessionProvider).phase ==
               DiagnosticPhase.idle;
       frame++) {
+    await tester.runAsync(() async {}); // Yield to real event loop
     await tester.pump(const Duration(milliseconds: 100));
   }
   expect(
