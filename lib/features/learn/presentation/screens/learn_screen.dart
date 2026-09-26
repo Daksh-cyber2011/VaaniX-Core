@@ -334,11 +334,17 @@ class LearnScreen extends ConsumerWidget {
 
   void _onTapPersonalizedLesson(
       BuildContext context, PersonalizedLesson lesson) {
-    // Navigate to the lesson content screen using the lesson's anchor
-    // in the trusted curriculum. The lessonId links this personalized
-    // lesson back to a real trusted lesson.
-    final targetId = lesson.lessonId ?? lesson.conceptId;
-    context.go(RouteNames.lessonContent.replaceFirst(':lessonId', targetId));
+    // Navigate to the adaptive session engine, driven by this lesson's
+    // activity type and concept. (Master Brief §18)
+    final kind = lesson.activityType ?? 'newLearning';
+    final uri = Uri(
+      path: RouteNames.learnSession,
+      queryParameters: {
+        'kind': kind,
+        'concept': lesson.conceptId,
+      },
+    );
+    context.go(uri.toString());
   }
 }
 

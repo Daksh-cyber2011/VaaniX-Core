@@ -41,9 +41,13 @@ import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 class CourseBlueprintRequest extends Equatable {
   const CourseBlueprintRequest({
     required this.context,
+    required this.courseContextKey,
     this.existingCourseId,
     this.adaptationReason,
   });
+
+  /// The stable context key derived from slow-changing inputs (language, diagnostic, profile, curriculum).
+  final String courseContextKey;
 
   /// The full planner context (language, graph, state, profile, diagnostic).
   final PlannerContext context;
@@ -55,7 +59,7 @@ class CourseBlueprintRequest extends Equatable {
   final String? adaptationReason;
 
   @override
-  List<Object?> get props => [context, existingCourseId, adaptationReason];
+  List<Object?> get props => [context, courseContextKey, existingCourseId, adaptationReason];
 }
 
 // ── Blueprint response parsing ────────────────────────────────────────────
@@ -100,6 +104,7 @@ abstract final class CourseBlueprintParser {
     String rawText, {
     required PlannerContext context,
     required String courseId,
+    required String courseContextKey,
   }) {
     // ── Step 1: Extract JSON from the raw text ──
     final jsonStr = _extractJson(rawText);
@@ -281,7 +286,7 @@ abstract final class CourseBlueprintParser {
       languageCode: context.languageCode,
       source: PlanSource.ai,
       generatedAt: DateTime.now(),
-      contextKey: context.plannerContextKey,
+      contextKey: courseContextKey,
       diagnosticVersion:
           context.diagnostic?.completedAt.toIso8601String(),
       curriculumRevision: _curriculumRevisionFor(context.languageCode),

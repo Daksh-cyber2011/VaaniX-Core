@@ -145,6 +145,7 @@ final personalizedCourseProvider = FutureProvider<PersonalizedCourse?>(
     final deterministicCourse = buildDeterministicCourse(
       context: context,
       courseId: courseId,
+      courseContextKey: contextKey,
     );
 
     // Persist the deterministic course for offline use
@@ -165,7 +166,10 @@ Future<PersonalizedCourse?> _tryAiGeneration(
   String contextKey,
 ) async {
   final generator = ref.read(courseBlueprintGeneratorProvider);
-  final request = CourseBlueprintRequest(context: context);
+  final request = CourseBlueprintRequest(
+    context: context,
+    courseContextKey: contextKey,
+  );
 
   final result = await generator.generateBlueprint(request);
 

@@ -163,6 +163,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         json,
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_1',
       );
 
@@ -207,6 +208,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         badJson,
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_2',
       );
 
@@ -221,6 +223,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         '',
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_3',
       );
       expect(result.isLeft(), isTrue);
@@ -230,6 +233,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         'this is not json {{{',
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_4',
       );
       expect(result.isLeft(), isTrue);
@@ -239,6 +243,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         jsonEncode({'units': []}),
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_5',
       );
       expect(result.isLeft(), isTrue);
@@ -263,6 +268,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         jsonEncode({'units': units}),
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_6',
       );
 
@@ -296,6 +302,7 @@ void main() {
           ],
         }),
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_7',
       );
 
@@ -341,6 +348,7 @@ void main() {
           ],
         }),
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_7b',
       );
 
@@ -372,6 +380,7 @@ void main() {
       final result = CourseBlueprintParser.parse(
         json,
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'test_course_8',
       );
       result.fold((_) => fail('Expected Right'), (course) {
@@ -501,6 +510,7 @@ void main() {
       final context = _contextFor(graph);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_1',
       );
 
@@ -515,6 +525,7 @@ void main() {
       final context = _contextFor(graph);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_2',
       );
 
@@ -540,6 +551,7 @@ void main() {
       final context = _contextFor(graph, state: state);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_3',
       );
 
@@ -564,6 +576,7 @@ void main() {
       final context = _contextFor(graph, state: state);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_4',
       );
 
@@ -578,6 +591,7 @@ void main() {
       final context = _contextFor(graph);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_5',
       );
 
@@ -596,6 +610,7 @@ void main() {
       final context = _contextFor(emptyGraph);
       final course = buildDeterministicCourse(
         context: context,
+        courseContextKey: context.plannerContextKey,
         courseId: 'det_empty',
       );
 
@@ -617,7 +632,10 @@ void main() {
     test('user prompt contains language code and concept list', () {
       final graph = _singleSkillGraph();
       final context = _contextFor(graph);
-      final request = CourseBlueprintRequest(context: context);
+      final request = CourseBlueprintRequest(
+        context: context,
+        courseContextKey: context.plannerContextKey,
+      );
       final prompt = buildCourseBlueprintUserPrompt(request);
 
       expect(prompt, contains('hi'));

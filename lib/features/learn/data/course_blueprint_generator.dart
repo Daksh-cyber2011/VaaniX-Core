@@ -75,6 +75,7 @@ class CourseBlueprintGenerator {
         raw,
         context: request.context,
         courseId: courseId,
+        courseContextKey: request.courseContextKey,
       );
 
       return result.fold(
@@ -119,6 +120,7 @@ class CourseBlueprintGenerator {
 PersonalizedCourse buildDeterministicCourse({
   required PlannerContext context,
   required String courseId,
+  required String courseContextKey,
 }) {
   final graph = context.graph;
   final state = context.state;
@@ -176,7 +178,7 @@ PersonalizedCourse buildDeterministicCourse({
     languageCode: context.languageCode,
     source: PlanSource.deterministic,
     generatedAt: DateTime.now(),
-    contextKey: context.plannerContextKey,
+    contextKey: courseContextKey,
     diagnosticVersion:
         context.diagnostic?.completedAt.toIso8601String(),
     curriculumRevision: _curriculumRevisionFor(context.languageCode),
