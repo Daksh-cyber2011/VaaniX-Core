@@ -50,6 +50,12 @@ class _CapturingService implements AIService {
   Map<AiProviderId, ModelAdapter> get adapters => const {};
 
   @override
+  void registerAdapter(ModelAdapter adapter) {
+    // The learning-context test stubs the AIService so we never need
+    // actual adapter registration. The seam is intentionally a no-op.
+  }
+
+  @override
   ModelAdapter adapterFor(AiConfig config) => throw UnimplementedError();
 
   @override

@@ -20,7 +20,6 @@
 ///     payloads; the adapter never propagates them.
 library;
 
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -31,9 +30,7 @@ import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
-import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
-import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/ai/data/groq_model_adapter.dart';
 import 'package:vaanix_app/features/ai/data/response_cache.dart';
@@ -88,7 +85,6 @@ Future<({GroqModelAdapter adapter, _FakeTransport transport, TokenUsageTracker u
   AiRateLimiter? limiter,
   ResponseCache? cache,
   TokenUsageTracker? usage,
-  bool? apiKeyConfigured,
   String? apiKeyOverride,
   String? modelOverride,
 }) async {
@@ -174,11 +170,6 @@ ConversationContext _simpleContext() {
   );
 }
 
-/// The outgoing user message used by [_simpleContext] (same instance —
-/// needed by the `identical()` deduplication inside `buildRequestBody`).
-final AiMessage _simpleOutgoing =
-    AiMessage.user(id: 'u2', content: 'what does it mean?');
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -193,9 +184,10 @@ void main() {
 
   group('GroqModelAdapter.buildRequestBody', () {
     test('preserves the OpenAI-compatible chat-completions shape', () {
-      final outgoing = AiMessage.user(id: 'u2', content: 'what does it mean?');
+      final transcript = _simpleContext().messages;
+      final outgoing = transcript.last;
       final body = GroqModelAdapter.buildRequestBody(
-        transcript: _simpleContext().messages,
+        transcript: transcript,
         outgoingMessage: outgoing,
         sanitizedOutgoing: outgoing.content,
         learningContextMessage: '',
@@ -219,11 +211,13 @@ void main() {
 
     test('prefixes the outgoing message with the learning context snapshot',
         () {
-      final outgoing = AiMessage.user(id: 'u2', content: 'teach me greetings');
+      final transcript = _simpleContext().messages;
+      final outgoing = transcript.last;
+      final sanitizedOutgoing = 'what does it mean? (sanitized)';
       final body = GroqModelAdapter.buildRequestBody(
-        transcript: _simpleContext().messages,
+        transcript: transcript,
         outgoingMessage: outgoing,
-        sanitizedOutgoing: outgoing.content,
+        sanitizedOutgoing: sanitizedOutgoing,
         learningContextMessage: '[Learner progress context]\nstage 0',
         model: 'llama-3.3-70b-versatile',
         temperature: 0.7,
@@ -234,7 +228,7 @@ void main() {
       final last = messages.last as Map;
       expect(
         last['content'] as String,
-        '[Learner progress context]\nstage 0\n\nteach me greetings',
+        '[Learner progress context]\nstage 0\n\n$sanitizedOutgoing',
       );
     });
 
