@@ -50,7 +50,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    await dotenv.testLoad(mergeWith: const {});
+    dotenv.testLoad(mergeWith: const {});
   });
 
   group('aiServiceProvider routing', () {
@@ -215,23 +215,16 @@ void main() {
 
 /// Tiny offline adapter that counts disposes so the test can verify the
 /// service disposed the previous instance when [registerAdapter]
-/// displaced it.
-class _DisposingOfflineFake implements ModelAdapter {
+/// displaced it. Inherits [OfflineModelAdapter] so we do not have to
+/// reimplement [ModelAdapter.complete] / [ModelAdapter.stream].
+class _DisposingOfflineFake extends OfflineModelAdapter {
   _DisposingOfflineFake({required this.onDispose});
 
   final void Function() onDispose;
 
   @override
-  AiProviderId get providerId => AiProviderId.offline;
-
-  @override
-  String get displayName => 'FakeOffline';
-
-  @override
-  bool get isAvailable => true;
-
-  @override
   Future<void> dispose() async {
     onDispose();
+    await super.dispose();
   }
 }
