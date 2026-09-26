@@ -27,7 +27,6 @@ import 'package:vaanix_app/features/learn/data/personalized_course_repository.da
 import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/course_blueprint.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
-import 'package:vaanix_app/features/learn/domain/spine/learning_state.dart';
 import 'package:vaanix_app/features/learn/domain/spine/personalized_course.dart';
 import 'package:vaanix_app/features/learn/domain/spine/planner.dart';
 

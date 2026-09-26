@@ -189,6 +189,12 @@ abstract final class CourseBlueprintParser {
       final unitPrereqs = <String>{};
 
       for (var lessonIdx = 0; lessonIdx < rawLessons.length; lessonIdx++) {
+        // Enforce per-unit lesson cap — prevents runaway AI output
+        if (lessons.length >= kMaxLessonsPerUnit) {
+          rejections.add(BlueprintRejection.excessiveSize);
+          break;
+        }
+
         final rawLesson = rawLessons[lessonIdx];
         if (rawLesson is! Map<String, dynamic>) continue;
 
