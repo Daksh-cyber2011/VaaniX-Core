@@ -130,14 +130,12 @@ List<T> deterministicShuffle<T>(List<T> input, int seed) {
   }
   if (exercise.type == ExerciseType.matching) {
     final seed = seedFromText('${exercise.id}#$sessionIndex');
-    final rightItems = [for (final p in exercise.pairs) p.right];
-    final display = deterministicShuffle(rightItems, seed);
+    final indices = List.generate(exercise.pairs.length, (i) => i);
+    final shuffledIndices = deterministicShuffle(indices, seed);
     return (
-      options: display,
+      options: [for (final i in shuffledIndices) exercise.pairs[i].right],
       correctIndex: 0,
-      pairIndexByDisplay: [
-        for (final text in display) rightItems.indexOf(text),
-      ],
+      pairIndexByDisplay: shuffledIndices,
     );
   }
   final seed = seedFromText('${exercise.id}#$sessionIndex');

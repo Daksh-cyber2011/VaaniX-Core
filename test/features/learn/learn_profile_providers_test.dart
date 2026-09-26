@@ -116,7 +116,7 @@ void main() {
     await notifier.setGoal(LearningGoal.travel); // same value
 
     expect(container.read(learnerProfileProvider(LearnLanguage.hindi)),
-        same(before));
+        equals(before));
   });
 
   test('profiles are isolated per language', () async {

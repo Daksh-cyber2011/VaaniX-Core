@@ -128,6 +128,9 @@ void main() {
 
     // Active phase: the first trusted exercise of the bank.
     expect(find.text('Guided session'), findsOneWidget);
+    if (find.text('Warm-up').evaluate().isEmpty) {
+      debugDumpApp();
+    }
     expect(find.text('Warm-up'), findsOneWidget);
 
     var guard = 0;

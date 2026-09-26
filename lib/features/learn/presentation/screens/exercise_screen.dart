@@ -403,7 +403,7 @@ class _ExerciseScreenState extends ConsumerState<ExerciseScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const VanWidget(
-            state: VanState.thinking,
+            state: VanState.idle,
             size: 140,
             showSpeechBubble: true,
             dialogueText: 'No practice exercises for this lesson yet.',

@@ -46,6 +46,8 @@ void main() {
     addTearDown(container.dispose);
     await tester.pumpWidget(_app(container, _lesson('ls_none', 'Empty')));
 
+    await tester.pump();
+
     expect(find.text('No practice exercises for this lesson yet.'),
         findsOneWidget);
     expect(find.text('Back to lesson'), findsOneWidget);

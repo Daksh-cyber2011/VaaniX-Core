@@ -55,6 +55,8 @@ void main() {
     );
     await tester.pump();
 
+    await tester.pump();
+
     expect(
       find.text('No practice exercises for this lesson yet.'),
       findsOneWidget,
@@ -62,8 +64,5 @@ void main() {
     expect(find.text('Exercises are being prepared.'), findsOneWidget);
     expect(find.text('Back to lesson'), findsOneWidget);
     expect(tester.takeException(), isNull);
-
-    // Drain the speech-bubble timer from the const VanWidget.
-    await tester.pump(const Duration(seconds: 2));
   });
 }
