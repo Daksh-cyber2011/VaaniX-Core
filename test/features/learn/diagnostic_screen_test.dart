@@ -43,9 +43,15 @@ Future<void> _preWarmSpine(
   for (var i = 0; i < 120; i++) {
     final cur = container.read(activeCurriculumProvider);
     final graph = container.read(activeConceptGraphProvider);
+    print('DEBUG preWarm: loop $i, cur.hasValue: ${cur.hasValue}, cur.hasError: ${cur.hasError}, graph.hasValue: ${graph.hasValue}');
+    if (cur.hasError) {
+      print('DEBUG preWarm ERROR: ${cur.error}');
+      print('DEBUG preWarm STACK: ${cur.stackTrace}');
+    }
     if (cur.hasValue && graph.hasValue) return;
     await tester.pump(const Duration(milliseconds: 50));
   }
+  print('DEBUG preWarm: TIMEOUT!');
 }
 
 Widget _wrap(ProviderContainer container) {

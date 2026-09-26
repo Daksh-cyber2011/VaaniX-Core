@@ -191,4 +191,15 @@ class LearnProfileRepository {
       await _storage.remove(key);
     }
   }
+
+  /// Removes EVERY `learn_profile_<language>_*` key for a specific language,
+  /// effectively resetting all generated state (profile, diagnostic, course, plan).
+  Future<void> clearLanguage(LearnLanguage language) async {
+    final prefix = '${kNamespacePrefix}${learnLanguageSpec(language).code}';
+    final doomed =
+        _storage.keys.where((k) => k.startsWith(prefix)).toList();
+    for (final key in doomed) {
+      await _storage.remove(key);
+    }
+  }
 }

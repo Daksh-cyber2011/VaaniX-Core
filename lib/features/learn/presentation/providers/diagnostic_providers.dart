@@ -50,14 +50,22 @@ import 'package:vaanix_app/features/learn/presentation/providers/curriculum_comp
 /// the spine uses, keeping the import direction one-way.
 final diagnosticItemBankProvider = FutureProvider<DiagnosticItemBank>(
   (ref) async {
+    print('DEBUG bank: started');
     final selected = ref.watch(selectedLearnLanguageProvider);
-    if (selected == null) return DiagnosticItemBank.empty();
+    if (selected == null) {
+      print('DEBUG bank: no language selected');
+      return DiagnosticItemBank.empty();
+    }
 
+    print('DEBUG bank: awaiting activeCurriculumProvider.future');
     final chapters = await ref.watch(activeCurriculumProvider.future);
+    print('DEBUG bank: loaded curriculum chapters: \${chapters.length}');
+    
     final graph = ConceptGraph.forCurriculum(
       languageCode: learnLanguageSpec(selected).code,
       chapters: chapters,
     );
+    print('DEBUG bank: built graph with \${graph.concepts.length} concepts');
     if (graph.isEmpty) return DiagnosticItemBank.empty();
 
     final exercises = <String, List<Exercise>>{};
@@ -65,6 +73,7 @@ final diagnosticItemBankProvider = FutureProvider<DiagnosticItemBank>(
       exercises[concept.lessonId] =
           ref.watch(exercisesForLessonProvider(concept.lessonId));
     }
+    print('DEBUG bank: resolved exercises for all concepts');
     return DiagnosticItemBank.build(graph: graph, exercisesByLesson: exercises);
   },
 );
@@ -163,8 +172,11 @@ class DiagnosticSessionNotifier extends StateNotifier<DiagnosticSessionState> {
   /// learner's own self-report hint (never shown as a level) and varies
   /// the probe order per run.
   Future<void> start(LearnLanguage language) async {
+    print('DEBUG: start() called');
     try {
+      print('DEBUG: reading diagnosticItemBankProvider.future');
       final baseBank = await _ref.read(diagnosticItemBankProvider.future);
+      print('DEBUG: read diagnosticItemBankProvider.future');
       if (baseBank.isEmpty) {
         state = const DiagnosticSessionState.unavailable(
           'The placement game unlocks once this language has lessons '

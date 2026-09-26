@@ -59,6 +59,7 @@ class LearnerProfileNotifier extends StateNotifier<LearnerProfile> {
     final next = transform(state);
     if (next == state) return;
     await _repo.saveProfile(next);
+    if (!mounted) return;
     state = next;
   }
 
@@ -84,7 +85,8 @@ class LearnerProfileNotifier extends StateNotifier<LearnerProfile> {
   /// screen's reset action). No-op when nothing was ever saved.
   Future<void> resetToDefaults() async {
     if (!_repo.hasProfile(_language)) return;
-    await _repo.clearProfile(_language);
+    await _repo.clearLanguage(_language);
+    if (!mounted) return;
     state = LearnerProfile.initial(_language);
   }
 }

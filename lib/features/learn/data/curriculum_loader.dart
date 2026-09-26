@@ -187,9 +187,13 @@ const int kLearnCurriculumSchemaVersion = 1;
 /// Part 0 and the picker must keep working.
 Future<List<Chapter>> loadLearnCurriculum(LearnLanguage language) async {
   final spec = learnLanguageSpec(language);
+  print('DEBUG loadLearnCurriculum: starting for ${spec.code}');
   try {
+    print('DEBUG loadLearnCurriculum: awaiting rootBundle.loadString for ${spec.curriculumAssetPath}');
     final raw = await rootBundle.loadString(spec.curriculumAssetPath);
+    print('DEBUG loadLearnCurriculum: loaded raw string, length: ${raw.length}');
     final json = jsonDecode(raw) as Map<String, dynamic>;
+    print('DEBUG loadLearnCurriculum: decoded json');
 
     // Schema guard: refuse to load a newer schema than we understand.
     final version = (json['schemaVersion'] as num?)?.toInt() ?? 0;
@@ -271,14 +275,14 @@ final learnCurriculumProvider = AsyncNotifierProvider.family<
 /// The Learn screen treats an empty list as "no content available" and
 /// shows the appropriate empty state.
 final activeCurriculumProvider = FutureProvider<List<Chapter>>((ref) async {
+  print('DEBUG activeCurriculumProvider: started');
   final selected = ref.watch(selectedLearnLanguageProvider);
   if (selected == null) {
-    // Legacy path: no Learn language chosen → show the Sanskrit Exam
-    // Mode curriculum (the pre-Part-0 default). This keeps the Learn
-    // screen working for users who haven't picked a language yet.
+    print('DEBUG activeCurriculumProvider: no language selected');
     return ref.watch(curriculumProvider.future);
   }
-  // Learn Mode per-language path. Returns the selected language's
-  // chapters (empty for languages whose curriculum hasn't shipped).
-  return ref.watch(learnCurriculumProvider(selected).future);
+  print('DEBUG activeCurriculumProvider: language is ${selected}, awaiting learnCurriculumProvider');
+  final result = await ref.watch(learnCurriculumProvider(selected).future);
+  print('DEBUG activeCurriculumProvider: learnCurriculumProvider returned');
+  return result;
 });

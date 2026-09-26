@@ -35,6 +35,11 @@ import 'package:vaanix_app/features/learn/domain/spine/learner_profile.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/diagnostic_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_language_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/personalized_course_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
+import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
+import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
+import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/shared/widgets/empty_state_widget.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
@@ -264,7 +269,20 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
   Future<void> _reset(BuildContext context) async {
     final language = ref.read(selectedLearnLanguageProvider);
     if (language == null) return;
+    
+    // 1. Wipe Learn-specific generated state (profile, course, diagnostic, etc)
     await ref.read(learnerProfileProvider(language).notifier).resetToDefaults();
+    
+    // 2. Wipe mastery/progress for this language (wait, it's global)
+    await ref.read(progressRepositoryProvider).reset();
+    
+    // 3. Invalidate providers to force a clean rebuild from the newly emptied state
+    ref.invalidate(personalizedCourseProvider);
+    ref.invalidate(diagnosticSessionProvider);
+    ref.invalidate(learningPlannerProvider);
+    ref.invalidate(activeLearningStateProvider);
+    ref.invalidate(learnStateExtrasProvider);
+
     if (!mounted) return;
     setState(() {
       _selfReport = SelfReport.almostNothing;
