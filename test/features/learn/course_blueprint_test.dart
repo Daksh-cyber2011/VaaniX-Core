@@ -19,7 +19,6 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/features/learn/domain/spine/concept_graph.dart';
 import 'package:vaanix_app/features/learn/domain/spine/course_blueprint.dart';
 import 'package:vaanix_app/features/learn/domain/spine/learning_plan.dart';
@@ -241,7 +240,7 @@ void main() {
 
     test('returns Left on JSON with no units', () {
       final result = CourseBlueprintParser.parse(
-        jsonEncode({'units': []}),
+        jsonEncode({'units': <Map<String, dynamic>>[]}),
         context: context,
         courseContextKey: context.plannerContextKey,
         courseId: 'test_course_5',

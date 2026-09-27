@@ -108,7 +108,7 @@ void main() {
     final outbox = SyncOutbox(prefs);
     var posted = 0;
     final api = _RecorderApiClient(
-      respond: (_, __) async => {'results': []},
+      respond: (_, __) async => {'results': <Map<String, dynamic>>[]},
     );
     // Override postJson to count calls.
     final originalPost = api.postJson;

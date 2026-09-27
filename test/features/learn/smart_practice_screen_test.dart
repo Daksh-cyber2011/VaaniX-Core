@@ -1,10 +1,10 @@
-/// Smart Practice Screen — M5 widget test.
+﻿/// Smart Practice Screen â€” M5 widget test.
 ///
 /// Pins the dynamic-content experience over the REAL Hindi curriculum:
 /// trusted-first resolution (zero AI for the trusted view), the honest
 /// source labels, learner-triggered personalization rendered inline with
 /// the "Made for you" label, the practice-preview honesty note, and the
-/// §46 offline / no-language / stub-language safe states.
+/// Â§46 offline / no-language / stub-language safe states.
 library;
 
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ import 'package:vaanix_app/features/learn/presentation/screens/smart_practice_sc
 /// Fake raw-text boundary that switches behaviour by prompt shape:
 /// planner calls get garbage (forcing the deterministic plan), material
 /// calls get a GROUNDED reply built from the trusted vocabulary the
-/// prompt itself provided — exactly what a §16-obeying model would do.
+/// prompt itself provided â€” exactly what a Â§16-obeying model would do.
 class _ObeyingFakeClient implements PlannerTextClient {
   final List<String> calls = [];
 
@@ -49,7 +49,7 @@ class _ObeyingFakeClient implements PlannerTextClient {
           '"correctIndex":0,'
           '"explanation":"${tokens[0]} is the trusted word."}}';
     }
-    // Planner call: garbage → the chain falls to the deterministic plan.
+    // Planner call: garbage â†’ the chain falls to the deterministic plan.
     return 'definitely not a plan';
   }
 
@@ -99,21 +99,6 @@ Future<ProviderContainer> _container({
   );
 }
 
-/// Pre-warm the spine providers from inside [testWidgets] (must be
-/// driven by the fake clock — calling these from outside would block
-/// the test runner on the real asset bundle).
-Future<void> _preWarmSpine(
-  WidgetTester tester,
-  ProviderContainer container,
-) async {
-  for (var i = 0; i < 120; i++) {
-    final cur = container.read(activeCurriculumProvider);
-    final graph = container.read(activeConceptGraphProvider);
-    if (cur.hasValue && graph.hasValue) return;
-    await tester.pump(const Duration(milliseconds: 50));
-  }
-}
-
 Widget _wrap(ProviderContainer container) {
   final router = GoRouter(
     initialLocation: '/learn/smart',
@@ -152,7 +137,7 @@ void _useTallSurface(WidgetTester tester) {
 }
 
 /// Pumps the widget tester until the Smart Practice phase reaches a
-/// terminal state — `ready` (trusted view rendered) or `unavailable`
+/// terminal state â€” `ready` (trusted view rendered) or `unavailable`
 /// (honest empty state). Used by every test in this file. The
 /// trusted-first pipeline resolves asynchronously (curriculum asset
 /// load + plan provider + registry build), so a single 300 ms pump is
@@ -163,7 +148,7 @@ Future<void> _waitUntilResolved(
   WidgetTester tester,
   ProviderContainer container, {
   Duration step = const Duration(milliseconds: 50),
-  int maxSteps = 160, // ~8 s — Hindi asset load can be slow
+  int maxSteps = 160, // ~8 s
 }) async {
   // Phase 1: wait for the spine providers to load (curriculum + graph).
   for (var i = 0; i < 120; i++) {
@@ -219,7 +204,7 @@ void main() {
     await _waitUntilResolved(tester, container);
 
     // Kannada ships with sparse-but-real lesson content (M9 baseline);
-    // the screen MUST render the trusted-first view honestly — no
+    // the screen MUST render the trusted-first view honestly â€” no
     // fake empty state, no fabricated material.
     final phase = container.read(smartPracticeProvider).phase;
     expect(phase, SmartPracticePhase.ready,
@@ -246,7 +231,7 @@ void main() {
     debugPrint('=== ready-view reason: '
         '${container.read(smartPracticeProvider).unavailableReason} ===');
 
-    // Trusted section rendered — and resolving it made NO AI call.
+    // Trusted section rendered â€” and resolving it made NO AI call.
     expect(find.text('TRUSTED MATERIAL'), findsOneWidget);
     expect(find.text('Trusted lesson'), findsOneWidget);
     expect(find.text('Read lesson'), findsOneWidget);
@@ -288,7 +273,7 @@ void main() {
 
     // Exactly one AI call (the material); the trusted view stays.
     expect(client.calls.length, 1);
-    expect(find.text('Made for you · AI'), findsOneWidget);
+    expect(find.text('Made for you Â· AI'), findsOneWidget);
     expect(find.text('Quick check'), findsOneWidget);
 
     // Answer the generated mcq correctly through the real UI: the
@@ -334,7 +319,7 @@ void main() {
       find.textContaining('AI helper is offline'),
       findsOneWidget,
     );
-    // The trusted material is still there (§46: never a dead end).
+    // The trusted material is still there (Â§46: never a dead end).
     expect(find.text('Trusted lesson'), findsOneWidget);
     expect(find.text('Read lesson'), findsOneWidget);
   });
