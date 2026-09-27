@@ -21,10 +21,13 @@
 /// exercise VaaniX's own state → visual mapping.
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vector_math/vector_math_64.dart' show Matrix4, Vector3;
 
 import 'package:vaanix_app/features/van/domain/van_state.dart';
 import 'package:vaanix_app/features/van/presentation/van_asset_catalog.dart';
@@ -249,6 +252,163 @@ void main() {
       );
       // The fallback is what a caller must be able to rely on.
       expect(find.text('FALLBACK'), findsOneWidget);
+    });
+  });
+
+  group('renderer geometry contract', () {
+    /// Pumps one framed expression into a square stage and returns the
+    /// affine matrix the renderer applied to the source image, read from
+    /// the live widget tree.
+    Future<Matrix4> pumpAndReadMatrix(
+      WidgetTester tester, {
+      required VanExpressionArt art,
+      double stage = 160,
+    }) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox.square(
+              dimension: stage,
+              child: VanVisualRenderer(
+                asset: VanAssetCatalog.v1.assetFor(VanState.idle),
+                expressionArt: art,
+                fallback: const Text('FALLBACK'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      final transform = tester.widget<Transform>(
+        find.ancestor(
+          of: find.byKey(kVanFrameClipKey),
+          matching: find.byType(Transform),
+        ).first,
+      );
+      return transform.transform;
+    }
+
+    /// Projects the measured character frame through the renderer's
+    /// matrix and returns the rect it occupies inside the stage.
+    Rect projectFrame(VanExpressionArt art, Matrix4 m) {
+      final l = art.frame.left.toDouble();
+      final t = art.frame.top.toDouble();
+      final r = l + art.frame.width;
+      final b = t + art.frame.height;
+      Offset map(double x, double y) {
+        final v = m.transform3(Vector3(x, y, 0));
+        return Offset(v.x, v.y);
+      }
+      final tl = map(l, t);
+      final br = map(r, b);
+      return Rect.fromPoints(tl, br);
+    }
+
+    testWidgets('the character frame is centred, not top-left anchored',
+        (tester) async {
+      const art = VanExpressionArt(
+        id: 'van_expression_neutral',
+        expression: VanExpression.neutral,
+        path: 'assets/van/expressions/neutral.png',
+        width: 1024,
+        height: 1536,
+        available: true,
+        frame: VanExpressionFrame(left: 61, top: 74, width: 899, height: 1442),
+      );
+      final m = await pumpAndReadMatrix(tester, art: art);
+      final rect = projectFrame(art, m);
+
+      // The frame is taller than wide, so height binds and width must
+      // be centred: the left and right margins must be equal.
+      expect(rect.height, closeTo(160, 0.01),
+          reason: 'the binding axis must fill the stage');
+      expect(rect.left, closeTo(160 - rect.right, 0.01),
+          reason: 'the character must be horizontally CENTRED in the stage; '
+              'anchoring it to the left or right edge is a defect');
+    });
+
+    testWidgets('the whole character is visible — nothing is cropped',
+        (tester) async {
+      for (final art in kVanCanonicalExpressionArt) {
+        final m = await pumpAndReadMatrix(tester, art: art);
+        final rect = projectFrame(art, m);
+        expect(rect.left, greaterThanOrEqualTo(-0.01),
+            reason: '${art.expression}: character is cropped on the left');
+        expect(rect.top, greaterThanOrEqualTo(-0.01),
+            reason: '${art.expression}: character is cropped on the top');
+        expect(rect.right, lessThanOrEqualTo(160.01),
+            reason: '${art.expression}: character is cropped on the right');
+        expect(rect.bottom, lessThanOrEqualTo(160.01),
+            reason: '${art.expression}: character is cropped at the bottom');
+      }
+    });
+
+    testWidgets('the transform is uniform — aspect ratio is preserved',
+        (tester) async {
+      const art = VanExpressionArt(
+        id: 'van_expression_excited',
+        expression: VanExpression.excited,
+        path: 'assets/van/expressions/excited.png',
+        width: 1024,
+        height: 1536,
+        available: true,
+        frame: VanExpressionFrame(left: 22, top: 78, width: 991, height: 1412),
+      );
+      final m = await pumpAndReadMatrix(tester, art: art);
+
+      // Column vectors of the 3×3 part. A uniform scale has sx == sy
+      // and zero off-diagonal terms, so no axis is stretched.
+      final sx = m.storage[0];
+      final sy = m.storage[5];
+      final xy = m.storage[1];
+      final yx = m.storage[4];
+      expect(sx, closeTo(sy, 1e-9),
+          reason: 'x and y must scale by the SAME factor');
+      expect(xy, closeTo(0, 1e-9), reason: 'no shear on x');
+      expect(yx, closeTo(0, 1e-9), reason: 'no shear on y');
+    });
+
+    testWidgets('character height is consistent across every expression',
+        (tester) async {
+      final heights = <double>[];
+      for (final art in kVanCanonicalExpressionArt) {
+        final m = await pumpAndReadMatrix(tester, art: art);
+        heights.add(projectFrame(art, m).height);
+      }
+      final lo = heights.reduce(math.min);
+      final hi = heights.reduce(math.max);
+      expect(hi - lo, lessThan(3.2),
+          reason: 'apparent character height must not vary by more than 2% of '
+              'the stage; got ${(lo).toStringAsFixed(1)}–${(hi).toStringAsFixed(1)}px');
+    });
+
+    testWidgets('an unframed expression still renders untransformed',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox.square(
+              dimension: 160,
+              child: VanVisualRenderer(
+                asset: VanAssetCatalog.v1.assetFor(VanState.idle),
+                expressionArt: const VanExpressionArt(
+                  id: 'x',
+                  expression: VanExpression.neutral,
+                  path: 'assets/van/expressions/neutral.png',
+                  width: 1024,
+                  height: 1536,
+                  available: true,
+                ),
+                fallback: const Text('FALLBACK'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.byKey(kVanFrameClipKey), findsNothing,
+          reason: 'a whole-image frame must not introduce a crop');
+      expect(find.byKey(kVanCanonicalArtKey), findsOneWidget);
     });
   });
 

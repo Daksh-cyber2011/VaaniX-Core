@@ -84,10 +84,42 @@ class VanVisualRenderer extends StatelessWidget {
 
 /// Renders one canonical expression, cropped to its character frame.
 ///
-/// The crop is a uniform scale plus a translation inside a `ClipRect`
-/// — the standard image-crop idiom. It is uniform, so the artwork's
-/// proportions are never changed; only the transparent margin around
-/// the character is trimmed away.
+/// ## Geometry (verified against the Flutter SDK, not assumed)
+///
+/// Three things make the naive `Transform.scale` + `Transform.translate`
+/// version wrong, so the mapping is computed explicitly instead:
+///
+///  1. **The image must escape the stage constraint.** `RenderImage`
+///     sizes itself with
+///     `constraints.constrainSizeAndAttemptToPreserveAspectRatio`, so
+///     under the VAN stage's tight box it collapses to the stage size.
+///  2. **`BoxFit.none` crops.** In this Flutter version
+///     `applyBoxFit(BoxFit.none, …)` uses
+///     `min(input, output)` per axis and then draws 1:1 — inside a
+///     160 px stage it shows only the top-left 160×160 of a 1024×1536
+///     image, which is transparent margin, not the character.
+///  3. **`Transform.scale` / `Transform.translate` pivot about the
+///     child centre** (their `alignment` defaults to
+///     `Alignment.center`), not the frame origin.
+///
+/// So the child is laid out at its intrinsic pixel size via
+/// [UnconstrainedBox] (giving `BoxFit.none` nothing to crop), and the
+/// whole mapping is applied as ONE explicit affine matrix with
+/// `alignment: null` so the pivot is the frame origin:
+///
+/// ```text
+/// stage = scale * sourcePixels + (tx, ty)
+/// scale = min(stageW / frameW, stageH / frameH)      // uniform = contain
+/// tx    = (stageW - frameW * scale) / 2 - frameLeft * scale
+/// ty    = (stageH - frameH * scale) / 2 - frameTop  * scale
+/// ```
+///
+/// The `(stage - frame*scale) / 2` term is the explicit centring: the
+/// character is presented centred in the stage on the non-binding axis,
+/// never anchored top-left. `scale` is a single scalar applied to both
+/// axes, so the artwork's aspect ratio is preserved exactly, and the
+/// frame is the tight bounding box of non-transparent pixels, so no
+/// character pixel is cropped.
 class _FramedExpressionImage extends StatelessWidget {
   const _FramedExpressionImage({required this.art, required this.fallback});
 
@@ -99,46 +131,64 @@ class _FramedExpressionImage extends StatelessWidget {
     final frame = art.frame;
     if (frame.isWholeImage) {
       // No measurement available — behave exactly as before.
-      return _plainImage();
+      return _image(fit: BoxFit.contain);
     }
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final stageW = constraints.maxWidth;
         final stageH = constraints.maxHeight;
-        if (stageW <= 0 || stageH <= 0) {
-          return _plainImage();
+        if (stageW <= 0 ||
+            stageH <= 0 ||
+            !stageW.isFinite ||
+            !stageH.isFinite) {
+          // Unbounded / zero stage — fall back to the plain contain fit
+          // rather than dividing by zero.
+          return _image(fit: BoxFit.contain);
         }
-        // Uniform scale that makes the CHARACTER box fit the stage
-        // (contain semantics: the whole character is always visible).
-        final scale = math.min(
-          stageW / frame.width,
-          stageH / frame.height,
-        );
+
+        final frameW = frame.width.toDouble();
+        final frameH = frame.height.toDouble();
+        // Uniform scale: the whole character is always visible
+        // (contain semantics applied to the CHARACTER box).
+        final scale = math.min(stageW / frameW, stageH / frameH);
+        // Explicit centring on the non-binding axis, then remove the
+        // frame's own origin. Composed into a single matrix.
+        final tx = (stageW - frameW * scale) / 2 - frame.left * scale;
+        final ty = (stageH - frameH * scale) / 2 - frame.top * scale;
+
         return ClipRect(
           key: kVanFrameClipKey,
-          child: Transform.scale(
-            scale: scale,
-            // Inner: shift so the frame's top-left lands on the origin.
-            child: Transform.translate(
-              offset: Offset(-frame.left.toDouble(), -frame.top.toDouble()),
-              child: _plainImage(),
-            ),
+          child: Transform(
+            // `alignment: null` is required: with a non-null alignment
+            // RenderTransform re-pivots the matrix about the child
+            // centre, which would undo the frame-origin mapping.
+            alignment: null,
+            transform: Matrix4.identity()
+              ..translate(tx, ty)
+              ..scale(scale),
+            child: _naturalSizeImage(),
           ),
         );
       },
     );
   }
 
-  /// The untransformed source image, at natural pixel size.
+  /// The source image at its intrinsic pixel size.
   ///
-  /// [BoxFit.none] is deliberate inside the frame path: the surrounding
-  /// uniform scale already sizes the character to the stage, and `none`
-  /// guarantees no second, independent fit can distort it.
-  Widget _plainImage() => Image.asset(
+  /// [UnconstrainedBox] lets the child exceed the stage so
+  /// `RenderImage` reports its real 1024×1536 (or 1199×1312) size and
+  /// `BoxFit.none` has nothing to crop. `topLeft` keeps the image's
+  /// origin aligned with the transform's origin.
+  Widget _naturalSizeImage() => UnconstrainedBox(
+        alignment: Alignment.topLeft,
+        child: _image(fit: BoxFit.none),
+      );
+
+  Widget _image({required BoxFit fit}) => Image.asset(
         art.path,
         key: kVanCanonicalArtKey,
-        fit: art.frame.isWholeImage ? BoxFit.contain : BoxFit.none,
+        fit: fit,
         filterQuality: FilterQuality.medium,
         // Switching expressions never flashes blank between decodes.
         gaplessPlayback: true,
