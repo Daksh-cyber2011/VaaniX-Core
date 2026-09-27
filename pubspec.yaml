@@ -58,6 +58,14 @@ dependencies:
   # we can pin a major version.
   http: ^1.2.2
 
+  # Audio playback — the single concrete engine behind AudioService.
+  # Chosen because it is actively maintained, supports bundled assets AND
+  # remote HTTPS, exposes real position / duration / seek / state, and
+  # handles Android audio focus plus iOS session interruptions natively.
+  # Playback only: it does NOT request microphone permission.
+  # Rationale and lifecycle notes: docs/BUILD/Audio.md
+  just_audio: ^0.10.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

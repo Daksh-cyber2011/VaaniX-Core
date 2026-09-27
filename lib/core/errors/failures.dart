@@ -181,6 +181,51 @@ class AiServiceFailure extends Failure {
 }
 
 // ============================================================
+// AUDIO FAILURES
+// ============================================================
+
+/// The audio source could not be interpreted at all (empty path, unknown
+/// scheme, malformed URI). Raised before any network or decode work.
+class AudioSourceFailure extends Failure {
+  const AudioSourceFailure([
+    String message = 'The audio source is invalid or unsupported.',
+  ]) : super(message: message, code: 'AUDIO_SOURCE');
+}
+
+/// Remote audio could not be fetched — DNS failure, TLS failure, HTTP
+/// error status, or the connection dropped mid-stream.
+class AudioNetworkFailure extends Failure {
+  const AudioNetworkFailure([
+    String message = 'The audio could not be downloaded.',
+  ]) : super(message: message, code: 'AUDIO_NETWORK');
+}
+
+/// The device is offline and the requested audio was not cached. This is
+/// a distinct code so the UI can say "unavailable offline" rather than
+/// claiming a generic error.
+class AudioOfflineFailure extends Failure {
+  const AudioOfflineFailure([
+    String message = 'This audio is not available offline.',
+  ]) : super(message: message, code: 'AUDIO_OFFLINE');
+}
+
+/// The bytes arrived but the platform decoder could not play them, or
+/// playback failed after starting.
+class AudioPlaybackFailure extends Failure {
+  const AudioPlaybackFailure([
+    String message = 'Audio playback failed.',
+  ]) : super(message: message, code: 'AUDIO_PLAYBACK');
+}
+
+/// The platform has no audio output available (no output route, an
+/// unsupported configuration, or a capability the engine cannot provide).
+class AudioUnavailableFailure extends Failure {
+  const AudioUnavailableFailure([
+    String message = 'Audio is not available on this device right now.',
+  ]) : super(message: message, code: 'AUDIO_UNAVAILABLE');
+}
+
+// ============================================================
 // UNKNOWN
 // ============================================================
 
