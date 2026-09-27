@@ -21,8 +21,8 @@ library;
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:vaanix_app/core/api/vaanix_api_client.dart';
+import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/features/ai/data/groq_model_adapter.dart';
 
 /// Concrete [GroqHttpTransport] that POSTs to the VaaniX backend
@@ -43,36 +43,48 @@ class BackendAiTransport implements GroqHttpTransport {
     required String body,
     required String apiKey,
   }) async {
-    // Decode the OpenAI-compatible body the adapter constructed so we
-    // can extract the provider/model — these decide which backend
-    // route the request lands on. (Adapters call this with `apiKey`
-    // as a placeholder; the backend ignores the header value and
-    // picks credentials itself.)
+    // Decode the OpenAI-compatible body the adapter constructed; the
+    // backend uses the embedded `provider` / `model` fields to
+    // decide which real provider to forward to. We treat the
+    // adapter-supplied `apiKey` as opaque — it is a contract
+    // placeholder; the backend NEVER sees it because the
+    // VaanixApiClient forwards the user's bearer token (NOT this
+    // string) in the Authorization header.
     Map<String, dynamic> payload;
     try {
       final decoded = jsonDecode(body);
-      payload = decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
+      payload = decoded is Map<String, dynamic>
+          ? decoded
+          : <String, dynamic>{};
     } catch (_) {
       payload = const <String, dynamic>{};
     }
-    final result = await _client.postJson(
-      '/ai/chat',
-      body: payload,
-    );
+    final result = await _client.postJson('/ai/chat', body: payload);
 
-    // Map the typed Result back to the GroqHttpResponse shape.
-    return result.fold(
+    return result.fold<GroqHttpResponse>(
       (failure) {
         // Translate our domain failure into the Groq adapter's typed
         // exceptions so the adapter's retry/error classification
-        // works without modification.
-        if (failure.code == 'RATE_LIMIT') {
-          throw const AuthApiException('Provider rate limit reached');
+        // works without modification. The mapping is driven by the
+        // canonical Failure code so the transport never has to know
+        // which specific HTTP status the backend produced.
+        switch (failure.code) {
+          case 'RATE_LIMIT':
+          case 'AI_RATE_LIMIT':
+            throw const AuthApiException('Provider rate limit reached');
+          case 'UNAUTHENTICATED':
+          case 'FORBIDDEN':
+            throw const AuthException(
+              message: 'Backend rejected the AI request credentials',
+            );
+          case 'TIMEOUT':
+            throw const TimeoutException('Backend AI proxy timed out');
+          default:
+            throw ServerException(
+              message: 'Backend AI proxy failed: ${failure.message}',
+              statusCode: null,
+            );
         }
-        throw ServerException(
-          message: 'Backend AI proxy failed: ${failure.message}',
-          statusCode: null,
-        );
       },
       (decodedResponse) {
         // The backend normalises its response to the OpenAI shape.
@@ -82,10 +94,6 @@ class BackendAiTransport implements GroqHttpTransport {
         );
       },
     );
-    // ignore: dead_code  // keeps the analyzer quiet on the unreachable
-    //                       // expression below; preserved for symmetry.
-    // ignore: unused_local_variable
-    // final _ = provider;
   }
 }
 

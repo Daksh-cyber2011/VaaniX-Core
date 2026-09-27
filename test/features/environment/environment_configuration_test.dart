@@ -88,4 +88,57 @@ void main() {
       expect(AppEnvironment.isGeminiConfigured, isTrue);
     });
   });
+
+  group('AppEnvironment production-safety', () {
+    test('useBackendAi defaults to false', () {
+      expect(AppEnvironment.useBackendAi, isFalse,
+          reason: 'a fresh checkout with no .env must not silently enable '
+              'the backend path');
+    });
+
+    test('useBackendAi honours VAANIX_USE_BACKEND_AI=true', () {
+      dotenv.testLoad(mergeWith: const {AppConstants.useBackendAiKey: 'true'});
+      expect(AppEnvironment.useBackendAi, isTrue);
+    });
+
+    test('useBackendAi honours 1 / yes as truthy', () {
+      dotenv.testLoad(mergeWith: const {AppConstants.useBackendAiKey: '1'});
+      expect(AppEnvironment.useBackendAi, isTrue);
+      dotenv.testLoad(mergeWith: const {AppConstants.useBackendAiKey: 'YES'});
+      expect(AppEnvironment.useBackendAi, isTrue);
+    });
+
+    test('hasDirectProviderKeys is false with no keys', () {
+      expect(AppEnvironment.hasDirectProviderKeys, isFalse);
+    });
+
+    test('hasDirectProviderKeys is true if either key is configured', () {
+      dotenv.testLoad(mergeWith: const {
+        AppConstants.groqApiKey: 'gsk_real_value',
+      });
+      expect(AppEnvironment.hasDirectProviderKeys, isTrue);
+      dotenv.testLoad(mergeWith: const {
+        AppConstants.geminiApiKey: 'AIzaSyDummyRealLookingKeyForTests',
+      });
+      expect(AppEnvironment.hasDirectProviderKeys, isTrue);
+    });
+
+    test('productionSafe is true only when backend is on AND no direct keys',
+        () {
+      // Backend on, no direct keys → safe.
+      dotenv.testLoad(mergeWith: const {AppConstants.useBackendAiKey: 'true'});
+      expect(AppEnvironment.productionSafe, isTrue);
+
+      // Backend on, direct key present → not safe (client would carry
+      // a credential it shouldn't).
+      dotenv.testLoad(mergeWith: const {
+        AppConstants.useBackendAiKey: 'true',
+        AppConstants.groqApiKey: 'gsk_real_value',
+      });
+      expect(AppEnvironment.productionSafe, isFalse,
+          reason: 'when both backend AND direct keys are configured, the '
+              'client could still leak the direct key — productionSafe '
+              'must require the absence of direct keys');
+    });
+  });
 }

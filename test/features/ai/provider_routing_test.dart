@@ -211,6 +211,77 @@ void main() {
               'throw, never fabricate an AI response');
     });
   });
+
+  group('production routing', () {
+    /// Helper that turns on the production-mode env flag for a single
+    /// test scenario. `VAANIX_USE_BACKEND_AI=true` is what triggers
+    /// backend-bound routing.
+    Future<void> _setProductionEnv({
+      String? groqKey,
+      String? geminiKey,
+    }) async {
+      dotenv.testLoad(mergeWith: {
+        AppConstants.useBackendAiKey: 'true',
+        if (groqKey != null) AppConstants.groqApiKey: groqKey,
+        if (geminiKey != null) AppConstants.geminiApiKey: geminiKey,
+      });
+    }
+
+    test(
+        'VAANIX_USE_BACKEND_AI=true registers Groq even WITHOUT a '
+        'client-side Groq key (backend owns the credential)', () async {
+      final container = await _newContainer();
+      addTearDown(container.dispose);
+      await _setProductionEnv();
+      // Critically: no client-side Groq or Gemini key is set.
+      final service = container.read(aiServiceProvider);
+      expect(service.adapters.keys, contains(AiProviderId.groq),
+          reason: 'in production mode the backend owns the provider '
+              'credential, so the Groq adapter MUST be registered even '
+              'when the client has no GROQ_API_KEY set');
+      expect(service.adapters.keys, contains(AiProviderId.gemini),
+          reason: 'same reasoning applies to the Gemini adapter');
+    });
+
+    test(
+        'VAANIX_USE_BACKEND_AI=true picks Groq in defaultAiConfigProvider '
+        'even without client-side keys', () async {
+      final container = await _newContainer();
+      addTearDown(container.dispose);
+      await _setProductionEnv();
+      final config = container.read(defaultAiConfigProvider);
+      expect(config.provider, AiProviderId.groq,
+          reason: 'production routing picks Groq (the first registered '
+              'adapter) regardless of whether the client holds a key');
+    });
+
+    test(
+        'production flavor + direct keys → direct adapters are NOT '
+        'registered (safety guard)', () async {
+      // This test runs ONLY in debug mode (where AppEnvironment.isProduction
+      // is true only when VAANIX_ENV=production is explicitly set). The
+      // harness sets VAANIX_ENV via dotenv.testLoad, then asserts the
+      // production guard kicks in.
+      dotenv.testLoad(mergeWith: const {
+        AppConstants.appEnvKey: 'production',
+        AppConstants.groqApiKey: 'gsk_real_production_key_value',
+      });
+      final container = await _newContainer();
+      addTearDown(container.dispose);
+      final service = container.read(aiServiceProvider);
+      // Direct providers must NOT be registered in production flavor
+      // even when keys are present — the client must not be able to
+      // talk to Groq/Gemini directly from a shipped APK.
+      expect(service.adapters.keys, isNot(contains(AiProviderId.groq)),
+          reason: 'production flavor MUST NOT register a Groq adapter that '
+              'would call the provider directly from the client');
+      expect(service.adapters.keys, isNot(contains(AiProviderId.gemini)),
+          reason: 'production flavor MUST NOT register a Gemini adapter '
+              'that would call the provider directly from the client');
+      // Offline is always available so the app still functions.
+      expect(service.adapters.keys, contains(AiProviderId.offline));
+    });
+  });
 }
 
 /// Tiny offline adapter that counts disposes so the test can verify the

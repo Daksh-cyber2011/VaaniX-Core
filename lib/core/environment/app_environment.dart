@@ -67,6 +67,19 @@ class AppEnvironment {
     return raw == 'true' || raw == '1' || raw == 'yes';
   }
 
+  /// True when [useBackendAi] is on AND no direct provider keys are
+  /// configured. This is the safest posture: the client does not
+  /// carry any provider secret.
+  static bool get productionSafe =>
+      useBackendAi && !isGroqConfigured && !isGeminiConfigured;
+
+  /// True when the client is configured to talk to providers directly.
+  /// Carrying real provider keys in production is unsafe (they can be
+  /// extracted from the APK). Callers that surface this in user-facing
+  /// UI should pair it with a warning.
+  static bool get hasDirectProviderKeys =>
+      isGroqConfigured || isGeminiConfigured;
+
   /// Google Gemini API key. Empty when not configured — the AI module
   /// falls back to [OfflineModelAdapter] in that case.
   /// Google Gemini model name, defaulting to [AppConstants.defaultGeminiModel].

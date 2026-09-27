@@ -86,7 +86,7 @@ void main() {
 
   test('backend rate-limit → typed AuthApiException', () async {
     final api = _FakeApiClient(
-      (_, __) async => const AuthApiException('rate_limit'),
+      (_, __) async => const RateLimitFailure(),
     );
     final transport = BackendAiTransport(apiClient: api);
     expect(
@@ -97,9 +97,8 @@ void main() {
 
   test('backend server error → typed ServerException', () async {
     final api = _FakeApiClient(
-      (_, __) async => ServerException(
+      (_, __) async => const ServerFailure(
         message: 'proxy failed',
-        statusCode: 502,
       ),
     );
     final transport = BackendAiTransport(apiClient: api);
