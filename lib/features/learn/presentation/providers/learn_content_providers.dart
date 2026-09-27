@@ -19,6 +19,9 @@
 /// spine may import this file — the graph stays one-way and acyclic.
 library;
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/errors/failures.dart';
@@ -234,10 +237,41 @@ class SmartPracticeController extends StateNotifier<SmartPracticeState> {
 
   final Ref _ref;
 
+  /// Upper bound on how long the trusted-first view may stay in
+  /// [SmartPracticePhase.loading].
+  ///
+  /// Every await inside the trusted path is local and bounded (storage
+  /// plus an in-memory plan), so this is a safety net, not a tuning
+  /// knob. It exists so a stalled provider can never leave a learner
+  /// staring at a spinner forever. On expiry the screen degrades to the
+  /// honest [SmartPracticeState.unavailable] path instead of implying
+  /// content resolved.
+  @visibleForTesting
+  static Duration prepareTimeout = const Duration(seconds: 10);
+
   /// Resolves today's trusted content. Reads the validated plan (no
   /// re-planning — the spine's cached plan is reused) and the registry;
   /// makes NO AI calls by design (§34: trusted content is preferred).
   Future<void> prepare() async {
+    try {
+      await _prepareTrusted().timeout(prepareTimeout);
+    } on TimeoutException {
+      final lang = _ref.read(selectedLearnLanguageProvider);
+      state = lang == null
+          ? const SmartPracticeState.unavailable(
+              'Smart practice could not load in time. Everything else in '
+              'Learn still works.',
+            )
+          : SmartPracticeState.unavailable(
+              'Smart practice could not load in time. Everything else in '
+              'Learn still works.',
+              languageCode: learnLanguageSpec(lang).code,
+              languageName: learnLanguageSpec(lang).englishName,
+            );
+    }
+  }
+
+  Future<void> _prepareTrusted() async {
     final selected = _ref.read(selectedLearnLanguageProvider);
     if (selected == null) {
       state = const SmartPracticeState.unavailable(

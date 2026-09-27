@@ -37,9 +37,7 @@ import 'package:vaanix_app/features/learn/presentation/providers/learn_language_
 import 'package:vaanix_app/features/learn/presentation/providers/learn_profile_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/personalized_course_providers.dart';
 import 'package:vaanix_app/features/learn/presentation/providers/spine_providers.dart';
-import 'package:vaanix_app/features/learn/presentation/providers/learn_plan_providers.dart';
 import 'package:vaanix_app/features/progress/presentation/providers/progress_providers.dart';
-import 'package:vaanix_app/features/learn/domain/learn_language.dart';
 import 'package:vaanix_app/shared/widgets/empty_state_widget.dart';
 import 'package:vaanix_app/shared/widgets/primary_button.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_scaffold.dart';
