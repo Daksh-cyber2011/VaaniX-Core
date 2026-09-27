@@ -248,6 +248,15 @@ class LocalStorageService implements ILocalStorageService {
     };
   }
 
+  /// The un-namespaced key set, i.e. every key physically present in
+  /// SharedPreferences. Used by account-isolation helpers that need to
+  /// address another user's namespace directly.
+  Set<String> get rawKeys => _prefs.getKeys();
+
+  /// Remove a key by its physical (namespaced) name, bypassing the
+  /// active namespace. Pairs with [rawKeys].
+  Future<bool> removeRaw(String rawKey) => _prefs.remove(rawKey);
+
   // SharedPreferences getters cast values and throw when an older build or a
   // damaged preferences file contains the wrong type. Treat such values as
   // absent so provider hydration can use its existing safe defaults.
