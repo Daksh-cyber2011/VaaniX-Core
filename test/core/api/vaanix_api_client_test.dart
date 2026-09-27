@@ -13,15 +13,25 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'package:vaanix_app/core/api/vaanix_api_client.dart';
+import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    // The client reads AppEnvironment.apiBaseUrl, which reads dotenv.
+    // Without this the resolver throws NotInitializedError.
+    dotenv.testLoad(
+      mergeWith: const {AppConstants.apiBaseUrlKey: 'http://localhost:8000/api/v1'},
+    );
+  });
 
   test('GET JSON success returns the decoded map', () async {
     final mock = MockClient((req) async {

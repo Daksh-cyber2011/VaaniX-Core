@@ -216,7 +216,7 @@ void main() {
     /// Helper that turns on the production-mode env flag for a single
     /// test scenario. `VAANIX_USE_BACKEND_AI=true` is what triggers
     /// backend-bound routing.
-    Future<void> _setProductionEnv({
+    Future<void> setProductionEnv({
       String? groqKey,
       String? geminiKey,
     }) async {
@@ -232,7 +232,7 @@ void main() {
         'client-side Groq key (backend owns the credential)', () async {
       final container = await _newContainer();
       addTearDown(container.dispose);
-      await _setProductionEnv();
+      await setProductionEnv();
       // Critically: no client-side Groq or Gemini key is set.
       final service = container.read(aiServiceProvider);
       expect(service.adapters.keys, contains(AiProviderId.groq),
@@ -248,7 +248,7 @@ void main() {
         'even without client-side keys', () async {
       final container = await _newContainer();
       addTearDown(container.dispose);
-      await _setProductionEnv();
+      await setProductionEnv();
       final config = container.read(defaultAiConfigProvider);
       expect(config.provider, AiProviderId.groq,
           reason: 'production routing picks Groq (the first registered '

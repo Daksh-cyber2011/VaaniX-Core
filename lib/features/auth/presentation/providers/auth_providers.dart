@@ -7,9 +7,11 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/providers/sync_providers.dart';
 import 'package:vaanix_app/core/storage/scoped_local_storage.dart';
 import 'package:vaanix_app/core/supabase/supabase_config.dart';
+import 'package:vaanix_app/features/ai/presentation/providers/ai_providers.dart';
 import 'package:vaanix_app/features/auth/data/noop_auth_repository.dart';
 import 'package:vaanix_app/features/auth/data/supabase_auth_repository.dart';
 import 'package:vaanix_app/features/auth/domain/auth_repository.dart';
@@ -44,11 +46,6 @@ final authSessionProvider = Provider<AsyncValue<AuthSession>>((ref) {
 
 /// Synchronous accessor for the latest known session.
 final latestAuthSessionProvider = Provider<AuthSession>((ref) {
-  // Side-effect: spin up the auth transition watcher so per-user
-  // scoping rebinds the moment any caller reads the latest session.
-  // This is intentionally the only place that touches the watcher —
-  // every downstream provider already depends on the session.
-  ref.watch(authTransitionWatcherProvider);
   final async = ref.watch(authSessionStreamProvider);
   return async.maybeWhen(
     data: (session) => session,
@@ -72,24 +69,30 @@ final isAuthenticatedProvider = Provider<bool>(
 /// invalidate. Keeping it here (in features/auth) instead of inside
 /// the SessionManager preserves the layer rule: `core` never imports
 /// features.
+///
+/// It watches [authSessionStreamProvider] rather than
+/// [latestAuthSessionProvider] so there is no circular dependency:
+/// the watcher *feeds* the scoped infrastructure, and
+/// `latestAuthSessionProvider` must not depend on it.
 final authTransitionWatcherProvider = Provider<void>((ref) {
   String? previousUserId;
-  ref.listen<AuthSession>(latestAuthSessionProvider, (previous, next) {
-    final nextUserId = next.user?.id;
+  ref.listen<AsyncValue<AuthSession>>(authSessionStreamProvider,
+      (previous, next) {
+    final session = next.valueOrNull;
+    if (session == null) return;
+    final nextUserId = session.user?.id;
     if (nextUserId == previousUserId) return;
     previousUserId = nextUserId;
 
     // 1. Rebind the scoped storage so reads/writes go to the right
     //    namespace. The previous user's data remains on disk but is
     //    not surfaced to the new user.
-    final storage = ref.read(scopedLocalStorageProvider);
-    storage.rebind(nextUserId);
+    ref.read(scopedLocalStorageProvider).rebind(nextUserId);
 
     // 2. Rebind the sync service. Pending operations belonging to the
     //    previous user are NOT drained — they remain in storage for
     //    that user's next sign-in on this device.
-    final sync = ref.read(syncServiceProvider);
-    sync.rebindUser(nextUserId);
+    ref.read(syncServiceProvider).rebindUser(nextUserId);
 
     // 3. Invalidate every user-owned provider so the UI rebuilds
     //    against the new identity. Without this, in-memory state

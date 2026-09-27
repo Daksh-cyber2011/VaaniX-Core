@@ -19,11 +19,11 @@ library;
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/api/vaanix_api_client.dart';
 import 'package:vaanix_app/core/network/connectivity_service.dart';
 import 'package:vaanix_app/core/sync/sync_outbox.dart';
+import 'package:vaanix_app/core/utils/result.dart';
 
 enum SyncState {
   /// Service is initialising.

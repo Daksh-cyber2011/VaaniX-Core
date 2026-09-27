@@ -1,60 +1,94 @@
-/// Per-user local storage.
+/// Per-user local storage — account isolation seam.
 ///
-/// The Flutter app previously stored every user's state under a flat
-/// SharedPreferences namespace (`learn_profile_*`, `xp_total`, etc.).
-/// When User A signs out and User B signs in on the same device, User
-/// B could see User A's local state.
+/// ## Why this exists
 ///
-/// [ScopedLocalStorage] wraps any [ILocalStorageService] and prefixes
-/// every key with the current user's id (or `guest` when nobody is
-/// signed in). The wrapper re-binds the user id whenever the auth
-/// session changes, so logout cleanly partitions User A's namespace
-/// away from User B's.
+/// SharedPreferences is a single flat namespace. Storing `xp_total`,
+/// `learn_profile_*`, AI conversation history and the like under fixed
+/// keys means that when User A signs out and User B signs in on the same
+/// device, User B sees User A's local progress. That is a data leak
+/// between accounts, not a cosmetic bug.
 ///
-/// The wrapper implements [ILocalStorageService] so feature code does
-/// not need to change — only the provider wiring in
-/// `app_providers.dart` swaps in the scoped implementation.
+/// ## How it works
+///
+/// [ScopedLocalStorage] wraps a [LocalStorageService] and re-binds that
+/// service's **key namespace** whenever the active user changes. Every
+/// key the underlying service reads or writes is routed through its
+/// `_k()` helper, so switching users is a prefix swap rather than a
+/// data migration — nothing is copied, nothing is lost, and the
+/// previous user's rows simply become unreachable.
+///
+/// Keys on disk look like:
+///
+/// ```text
+/// user:<uuidA>:xp_total
+/// user:<uuidA>:learn_profile_hi_course
+/// guest:xp_total
+/// ```
+///
+/// ## Relationship to the plain service
+///
+/// This wrapper deliberately implements [ILocalStorageService] by
+/// delegating every member, so feature repositories need no changes.
+/// With no active user the scope is `guest`, which keeps the signed-out
+/// experience working exactly as before.
 library;
 
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
+import 'package:vaanix_app/core/storage/local_storage_service.dart';
 
-/// Wraps a backing [ILocalStorageService] so every key is prefixed with
-/// the current user's id (`user_<id>_*` for authenticated users,
-/// `guest_*` for signed-out).
+/// Wraps a [LocalStorageService] so every key is prefixed with the
+/// current user's id (`user:<id>:*`), or `guest:*` when nobody is
+/// signed in.
 class ScopedLocalStorage implements ILocalStorageService {
-  ScopedLocalStorage(this._inner, {String? currentUserId})
-      : _userId = currentUserId;
+  ScopedLocalStorage(this._inner, {String? currentUserId}) {
+    rebind(currentUserId);
+  }
 
-  static const String _guestPrefix = 'guest';
-  static const String _userPrefix = 'user';
+  static const String guestScope = 'guest';
+  static const String _userScopePrefix = 'user';
 
-  final ILocalStorageService _inner;
+  final LocalStorageService _inner;
 
-  /// `null` ⇒ guest / signed-out. Otherwise a stable per-user id.
   String? _userId;
 
-  /// Re-bind the scope to a new user. Returns the previous user id
-  /// (so the caller can decide whether to wipe that user's
-  /// namespaced keys).
+  /// The scope prefix currently in effect.
+  String get _scopePrefix {
+    final id = _userId;
+    if (id == null || id.isEmpty) return guestScope;
+    return '$_userScopePrefix:$id';
+  }
+
+  /// The active user id, or `null` for guest.
+  String? get currentUserId => _userId;
+
+  /// Switch the active scope.
+  ///
+  /// Returns the previously-active user id so the caller can decide
+  /// whether to wipe that user's rows (e.g. on an explicit
+  /// "sign out and forget" action). Nothing is deleted here: a user
+  /// who signs back in finds their progress intact.
   String? rebind(String? newUserId) {
     final previous = _userId;
-    _userId = newUserId;
+    _userId = (newUserId != null && newUserId.isEmpty) ? null : newUserId;
+    _inner.rebindNamespace(_scopePrefix);
     return previous;
   }
 
-  String get _scopePrefix {
-    final id = _userId;
-    if (id == null || id.isEmpty) return _guestPrefix;
-    return '$_userPrefix:$id';
+  /// Delete every key owned by [userId], regardless of who is
+  /// currently signed in. Used by an explicit "sign out and erase"
+  /// flow and by tests that verify isolation.
+  Future<void> wipeUser(String userId) async {
+    final prefix = '$_userScopePrefix:$userId:';
+    final raw = _inner.rawKeys;
+    final doomed = raw.where((k) => k.startsWith(prefix)).toList();
+    for (final key in doomed) {
+      await _inner.removeRaw(key);
+    }
   }
 
-  String _scopeKey(String key) => '$_scopePrefix:$key';
-
-  // ---------------------------------------------------------------------
-  // ILocalStorageService surface — every method namespaces its key
-  // (or filters results) so the upper layers never see foreign-user
-  // data.
-  // ---------------------------------------------------------------------
+  // ─── ILocalStorageService — pure delegation ───────────────────────────
+  // The namespacing happens inside [_inner] via its key namespace, so
+  // these members must NOT re-prefix: that would double the prefix.
 
   @override
   bool get isOnboardingComplete => _inner.isOnboardingComplete;
@@ -67,15 +101,13 @@ class ScopedLocalStorage implements ILocalStorageService {
   int? get onboardingPage => _inner.onboardingPage;
 
   @override
-  Future<void> setOnboardingPage(int page) =>
-      _inner.setOnboardingPage(page);
+  Future<void> setOnboardingPage(int page) => _inner.setOnboardingPage(page);
 
   @override
   String get companionName => _inner.companionName;
 
   @override
-  Future<void> setCompanionName(String name) =>
-      _inner.setCompanionName(name);
+  Future<void> setCompanionName(String name) => _inner.setCompanionName(name);
 
   @override
   String? get personalityMode => _inner.personalityMode;
@@ -102,8 +134,7 @@ class ScopedLocalStorage implements ILocalStorageService {
   int get currentStreak => _inner.currentStreak;
 
   @override
-  Future<void> setCurrentStreak(int streak) =>
-      _inner.setCurrentStreak(streak);
+  Future<void> setCurrentStreak(int streak) => _inner.setCurrentStreak(streak);
 
   @override
   String? get lastActiveDate => _inner.lastActiveDate;
@@ -155,8 +186,7 @@ class ScopedLocalStorage implements ILocalStorageService {
   String? get activeAppMode => _inner.activeAppMode;
 
   @override
-  Future<void> setActiveAppMode(String mode) =>
-      _inner.setActiveAppMode(mode);
+  Future<void> setActiveAppMode(String mode) => _inner.setActiveAppMode(mode);
 
   @override
   String get learnerName => _inner.learnerName;
@@ -166,75 +196,34 @@ class ScopedLocalStorage implements ILocalStorageService {
 
   @override
   String? getAiConversation(String conversationId) =>
-      _inner.getAiConversation(_scopeKey(conversationId));
+      _inner.getAiConversation(conversationId);
 
   @override
   Future<void> setAiConversation(
     String conversationId,
     String jsonMessages,
   ) =>
-      _inner.setAiConversation(_scopeKey(conversationId), jsonMessages);
+      _inner.setAiConversation(conversationId, jsonMessages);
 
   @override
-  Future<void> clearAiConversations() async {
-    // Only clear the conversations that belong to the current scope.
-    final prefix = '${_scopePrefix}:';
-    final keep = <String>[];
-    for (final k in _inner.keys) {
-      if (!k.startsWith(prefix)) keep.add(k);
-    }
-    // Replace all keys with the kept set — there is no per-key
-    // delete in [ILocalStorageService], so we clear and rewrite.
-    // (Used only on logout / explicit reset.)
-    await _inner.clear();
-    // The kept set is empty (everything is per-user); we instead
-    // re-stash only the non-scoped (guest / framework) keys.
-    for (final k in keep) {
-      // We do not have access to read+restore values; the safest
-      // action is to clear ALL and let the next auth bind repopulate.
-    }
-    // Note: shared framework state (theme, onboarding flag) is
-    // intentionally cleared on logout — those are not per-user.
-    // The caller (logout flow) re-asserts the desired post-logout
-    // baseline before completing.
-  }
+  Future<void> clearAiConversations() => _inner.clearAiConversations();
 
   @override
-  String? getString(String key) => _inner.getString(_scopeKey(key));
+  String? getString(String key) => _inner.getString(key);
 
   @override
   Future<void> setString(String key, String value) =>
-      _inner.setString(_scopeKey(key), value);
+      _inner.setString(key, value);
 
   @override
-  bool containsKey(String key) => _inner.containsKey(_scopeKey(key));
+  bool containsKey(String key) => _inner.containsKey(key);
 
   @override
-  Future<bool> remove(String key) => _inner.remove(_scopeKey(key));
+  Future<bool> remove(String key) => _inner.remove(key);
 
   @override
-  Future<bool> clear() async {
-    // Per-scope clear — only wipe keys belonging to the current scope.
-    final prefix = '${_scopePrefix}:';
-    final doomed = [for (final k in _inner.keys) if (k.startsWith(prefix)) k];
-    var removedAny = false;
-    for (final k in doomed) {
-      final ok = await _inner.remove(k);
-      removedAny = removedAny || ok;
-    }
-    return removedAny;
-  }
+  Future<bool> clear() => _inner.clear();
 
   @override
-  Set<String> get keys =>
-      {for (final k in _inner.keys) if (k.startsWith('$_scopePrefix:')) k};
-
-  /// Wipe every key for a specific user id — used on logout to make
-  /// sure User A's data cannot leak to User B even via shared device.
-  Future<void> wipeUser(String userId) async {
-    final prefix = '$_userPrefix:$userId:';
-    for (final k in [for (final k in _inner.keys) if (k.startsWith(prefix)) k]) {
-      await _inner.remove(k);
-    }
-  }
+  Set<String> get keys => _inner.keys;
 }

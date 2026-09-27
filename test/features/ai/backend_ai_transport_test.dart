@@ -21,6 +21,13 @@ import 'package:vaanix_app/core/errors/exceptions.dart';
 import 'package:vaanix_app/core/errors/failures.dart';
 import 'package:vaanix_app/core/utils/result.dart';
 import 'package:vaanix_app/features/ai/data/backend_ai_transport.dart';
+import 'package:vaanix_app/features/ai/data/groq_model_adapter.dart';
+
+/// Local mirror of the Groq adapter's transient-error classifier so
+/// the test can assert the transport's error taxonomy lines up with
+/// what the adapter will actually retry.
+bool isTransientGroqError(Object error) =>
+    GroqModelAdapter.isTransientAiError(error);
 
 class _FakeApiClient implements VaanixApiClient {
   _FakeApiClient(this._respond);
@@ -105,6 +112,52 @@ void main() {
     expect(
       () => transport.postChatCompletions(body: '{}', apiKey: 'x'),
       throwsA(isA<ServerException>()),
+    );
+  });
+
+  test('backend 401 → typed AuthException (session must re-auth)', () async {
+    final api = _FakeApiClient(
+      (_, __) async => const UnauthenticatedFailure(),
+    );
+    final transport = BackendAiTransport(apiClient: api);
+    expect(
+      () => transport.postChatCompletions(body: '{}', apiKey: 'x'),
+      throwsA(isA<AuthException>()),
+    );
+  });
+
+  test('backend timeout → typed TimeoutException', () async {
+    final api = _FakeApiClient((_, __) async => const TimeoutFailure());
+    final transport = BackendAiTransport(apiClient: api);
+    expect(
+      () => transport.postChatCompletions(body: '{}', apiKey: 'x'),
+      throwsA(isA<TimeoutException>()),
+    );
+  });
+
+  test(
+      'a Groq 429 arriving as a rate-limit Failure does NOT get treated as '
+      'transient by the Groq adapter (quota is not a transient outage)',
+      () async {
+    // The backend maps a provider 429 to a rate-limit Failure. The
+    // transport must surface it as AuthApiException so the Groq
+    // adapter's `isTransientAiError` returns false — retrying a quota
+    // rejection would hammer the provider.
+    final api = _FakeApiClient(
+      (_, __) async => const RateLimitFailure(),
+    );
+    final transport = BackendAiTransport(apiClient: api);
+    Object? caught;
+    try {
+      await transport.postChatCompletions(body: '{}', apiKey: 'x');
+    } catch (e) {
+      caught = e;
+    }
+    expect(caught, isA<AuthApiException>());
+    expect(
+      isTransientGroqError(caught!),
+      isFalse,
+      reason: 'a rate-limit rejection must never be classified as transient',
     );
   });
 

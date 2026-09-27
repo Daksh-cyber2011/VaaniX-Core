@@ -4,9 +4,9 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/api/vaanix_api_client.dart';
+import 'package:vaanix_app/core/auth/core_auth_session.dart';
 import 'package:vaanix_app/core/network/connectivity_service.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
 import 'package:vaanix_app/core/sync/sync_outbox.dart';
@@ -24,11 +24,9 @@ final syncOutboxProvider = Provider<SyncOutbox>((ref) {
 /// pulls the live token from the auth repository so the backend can
 /// always identify the caller.
 final vaanixApiClientProvider = Provider<VaanixApiClient>((ref) {
-  final tokenProvider = () async {
-    final session = ref.read(latestAuthSessionProvider);
-    return session.accessToken;
-  };
-  final client = VaanixApiClient(tokenProvider: tokenProvider);
+  final client = VaanixApiClient(
+    tokenProvider: () async => ref.read(latestAuthSessionProvider).accessToken,
+  );
   ref.onDispose(client.close);
   return client;
 });
@@ -50,7 +48,7 @@ final syncServiceProvider = Provider<SyncService>((ref) {
   // Rebind whenever the auth user changes. The previous user's
   // pending operations are NOT drained — they remain in storage and
   // will resume when that user signs back in on this device.
-  ref.listen(latestAuthSessionProvider, (_, next) {
+  ref.listen<AuthSession>(latestAuthSessionProvider, (_, next) {
     service.rebindUser(next.user?.id);
   });
   ref.onDispose(service.dispose);

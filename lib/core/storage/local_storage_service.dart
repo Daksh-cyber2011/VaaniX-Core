@@ -1,4 +1,4 @@
-/// VaaniX Local Storage Service Implementation
+﻿/// VaaniX Local Storage Service Implementation
 ///
 /// Typed wrapper around [SharedPreferences] implementing [ILocalStorageService].
 library;
@@ -8,9 +8,35 @@ import 'package:vaanix_app/core/constants/app_constants.dart';
 import 'package:vaanix_app/core/storage/i_local_storage_service.dart';
 
 class LocalStorageService implements ILocalStorageService {
-  LocalStorageService(this._prefs);
+  LocalStorageService(this._prefs, {String? keyNamespace})
+      : _keyNamespace = keyNamespace;
 
   final SharedPreferences _prefs;
+
+  /// Optional key namespace. When set, every key this service reads or
+  /// writes is prefixed with `'$_keyNamespace:'`.
+  ///
+  /// This is the seam used for **per-user account isolation**: the
+  /// `ScopedLocalStorage` wrapper delegates to a namespaced instance of
+  /// this class, so two accounts signing in and out on the same device
+  /// cannot see each other's local state. Every accessor below routes
+  /// its key through [_k] — nothing bypasses the namespace.
+  final String? _keyNamespace;
+
+  String? _keyNamespaceRef;
+
+  /// Rebind the namespace. Keys written under the previous namespace
+  /// remain on disk but are invisible to this instance.
+  void rebindNamespace(String? namespace) {
+    _keyNamespaceRef = namespace;
+  }
+
+  /// Apply the active namespace to [key].
+  String _k(String key) {
+    final ns = _keyNamespaceRef ?? _keyNamespace;
+    if (ns == null || ns.isEmpty) return key;
+    return '$ns:$key';
+  }
 
   // ─── Onboarding ────────────────────────────────────────────────────────────
 
@@ -20,14 +46,14 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setOnboardingComplete(bool value) =>
-      _prefs.setBool(AppConstants.keyOnboardingComplete, value);
+      _prefs.setBool(_k(AppConstants.keyOnboardingComplete), value);
 
   @override
   int? get onboardingPage => _readInt(AppConstants.keyOnboardingPage);
 
   @override
   Future<void> setOnboardingPage(int page) =>
-      _prefs.setInt(AppConstants.keyOnboardingPage, page);
+      _prefs.setInt(_k(AppConstants.keyOnboardingPage), page);
 
   // ─── Companion / Personality ───────────────────────────────────────────────
 
@@ -38,14 +64,14 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setCompanionName(String name) =>
-      _prefs.setString(AppConstants.keyUserCompanionName, name);
+      _prefs.setString(_k(AppConstants.keyUserCompanionName), name);
 
   @override
   String? get personalityMode => _readString(AppConstants.keyPersonalityMode);
 
   @override
   Future<void> setPersonalityMode(String mode) =>
-      _prefs.setString(AppConstants.keyPersonalityMode, mode);
+      _prefs.setString(_k(AppConstants.keyPersonalityMode), mode);
 
   // ─── Learning Profile ──────────────────────────────────────────────────────
 
@@ -54,7 +80,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setSelectedClass(int cbseClass) =>
-      _prefs.setInt(AppConstants.keySelectedClass, cbseClass);
+      _prefs.setInt(_k(AppConstants.keySelectedClass), cbseClass);
 
   @override
   int get dailyGoalMinutes =>
@@ -63,7 +89,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setDailyGoalMinutes(int minutes) =>
-      _prefs.setInt(AppConstants.keyDailyGoalMinutes, minutes);
+      _prefs.setInt(_k(AppConstants.keyDailyGoalMinutes), minutes);
 
   // ─── Streaks / Activity ─────────────────────────────────────────────────────
 
@@ -72,14 +98,14 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setCurrentStreak(int streak) =>
-      _prefs.setInt(AppConstants.keyCurrentStreak, streak);
+      _prefs.setInt(_k(AppConstants.keyCurrentStreak), streak);
 
   @override
   String? get lastActiveDate => _readString(AppConstants.keyLastActiveDate);
 
   @override
   Future<void> setLastActiveDate(String isoDate) =>
-      _prefs.setString(AppConstants.keyLastActiveDate, isoDate);
+      _prefs.setString(_k(AppConstants.keyLastActiveDate), isoDate);
 
   // ─── XP & Progress ────────────────────────────────────────────────────────
 
@@ -87,7 +113,7 @@ class LocalStorageService implements ILocalStorageService {
   int get xpTotal => _readInt(AppConstants.keyXpTotal) ?? 0;
 
   @override
-  Future<void> setXpTotal(int xp) => _prefs.setInt(AppConstants.keyXpTotal, xp);
+  Future<void> setXpTotal(int xp) => _prefs.setInt(_k(AppConstants.keyXpTotal), xp);
 
   @override
   List<String> get completedLessonIds =>
@@ -95,7 +121,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setCompletedLessonIds(List<String> ids) =>
-      _prefs.setStringList(AppConstants.keyCompletedLessonIds, ids);
+      _prefs.setStringList(_k(AppConstants.keyCompletedLessonIds), ids);
 
   @override
   List<String> get completedQuizIds =>
@@ -103,7 +129,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setCompletedQuizIds(List<String> ids) =>
-      _prefs.setStringList(AppConstants.keyCompletedQuizIds, ids);
+      _prefs.setStringList(_k(AppConstants.keyCompletedQuizIds), ids);
 
   /// Quiz attempt history is stored as a JSON-encoded string under
   /// key `quiz_attempts_<quizId>`. This keeps SharedPreferences (which
@@ -124,21 +150,21 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setThemeMode(String mode) =>
-      _prefs.setString(AppConstants.keyThemeMode, mode);
+      _prefs.setString(_k(AppConstants.keyThemeMode), mode);
 
   @override
   String? get language => _readString(AppConstants.keyLanguage);
 
   @override
   Future<void> setLanguage(String language) =>
-      _prefs.setString(AppConstants.keyLanguage, language);
+      _prefs.setString(_k(AppConstants.keyLanguage), language);
 
   @override
   String? get activeAppMode => _readString('vaanix_active_app_mode');
 
   @override
   Future<void> setActiveAppMode(String mode) =>
-      _prefs.setString('vaanix_active_app_mode', mode);
+      _prefs.setString(_k('vaanix_active_app_mode'), mode);
 
   // ─── Learner Identity ──────────────────────────────────────────────────
 
@@ -147,7 +173,7 @@ class LocalStorageService implements ILocalStorageService {
 
   @override
   Future<void> setLearnerName(String name) =>
-      _prefs.setString(AppConstants.keyLearnerName, name);
+      _prefs.setString(_k(AppConstants.keyLearnerName), name);
 
   // ─── AI Conversations ──────────────────────────────────────────────────────
 
@@ -156,19 +182,20 @@ class LocalStorageService implements ILocalStorageService {
   /// conversation-memory retention pruning).
   @override
   String? getAiConversation(String conversationId) =>
-      _readString('${AppConstants.aiConversationKeyPrefix}$conversationId');
+      _readString(_k('${AppConstants.aiConversationKeyPrefix}$conversationId'));
 
   @override
   Future<void> setAiConversation(String conversationId, String jsonMessages) =>
-      _prefs.setString('${AppConstants.aiConversationKeyPrefix}$conversationId',
+      _prefs.setString(
+          _k('${AppConstants.aiConversationKeyPrefix}$conversationId'),
           jsonMessages);
 
   @override
   Future<void> clearAiConversations() async {
-    // Remove all keys starting with the shared AI conversation prefix.
-    final keys = _prefs
-        .getKeys()
-        .where((k) => k.startsWith(AppConstants.aiConversationKeyPrefix));
+    // Remove all keys starting with the shared AI conversation prefix,
+    // scoped to the active namespace.
+    final prefix = _k(AppConstants.aiConversationKeyPrefix);
+    final keys = _prefs.getKeys().where((k) => k.startsWith(prefix));
     for (final key in keys) {
       await _prefs.remove(key);
     }
@@ -177,25 +204,49 @@ class LocalStorageService implements ILocalStorageService {
   // ─── Generic String Storage ────────────────────────────────────────────────
 
   @override
-  String? getString(String key) => _readString(key);
+  String? getString(String key) => _readString(_k(key));
 
   @override
   Future<void> setString(String key, String value) =>
-      _prefs.setString(key, value);
+      _prefs.setString(_k(key), value);
 
   // ─── Utilities ─────────────────────────────────────────────────────────────
 
   @override
-  bool containsKey(String key) => _prefs.containsKey(key);
+  bool containsKey(String key) => _prefs.containsKey(_k(key));
 
   @override
-  Future<bool> remove(String key) => _prefs.remove(key);
+  Future<bool> remove(String key) => _prefs.remove(_k(key));
 
+  /// Clears only the keys inside the active namespace. With no
+  /// namespace set, this falls back to a full `prefs.clear()` so the
+  /// pre-namespacing behavior (a hard reset) is preserved.
   @override
-  Future<bool> clear() => _prefs.clear();
+  Future<bool> clear() async {
+    final ns = _keyNamespaceRef ?? _keyNamespace;
+    if (ns == null || ns.isEmpty) return _prefs.clear();
+    final prefix = '$ns:';
+    final doomed = _prefs.getKeys().where((k) => k.startsWith(prefix));
+    var removedAny = false;
+    for (final key in doomed.toList()) {
+      removedAny = await _prefs.remove(key) || removedAny;
+    }
+    return removedAny;
+  }
 
+  /// All keys inside the active namespace, with the namespace prefix
+  /// stripped. With no namespace set, this is the full key set.
   @override
-  Set<String> get keys => _prefs.getKeys();
+  Set<String> get keys {
+    final ns = _keyNamespaceRef ?? _keyNamespace;
+    final all = _prefs.getKeys();
+    if (ns == null || ns.isEmpty) return all;
+    final prefix = '$ns:';
+    return {
+      for (final k in all)
+        if (k.startsWith(prefix)) k.substring(prefix.length),
+    };
+  }
 
   // SharedPreferences getters cast values and throw when an older build or a
   // damaged preferences file contains the wrong type. Treat such values as

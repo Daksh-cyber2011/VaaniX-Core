@@ -153,9 +153,17 @@ void main() {
       () async {
     final prefs = await SharedPreferences.getInstance();
     final outbox = SyncOutbox(prefs);
+    // Acknowledge every posted op so a successful drain empties the
+    // queue for the active user.
     final api = _RecorderApiClient(
-      respond: (_, __) async => {
-        'results': [],
+      respond: (_, body) async => {
+        'results': [
+          for (final op in (body['operations'] as List? ?? const []))
+            {
+              'operation_id': op['operation_id'],
+              'accepted': true,
+            },
+        ],
       },
     );
     final service = SyncService(
@@ -177,7 +185,9 @@ void main() {
     await service.sync();
     // A's op is still pending (will resume next sign-in), B's was
     // drained in this call.
-    expect(outbox.pendingFor('A').length, 1);
+    expect(outbox.pendingFor('A').length, 1,
+        reason: 'the previous user\'s queue MUST NOT be drained by the '
+            'new user\'s sync pass');
     expect(outbox.pendingFor('B'), isEmpty);
     await service.dispose();
   });
