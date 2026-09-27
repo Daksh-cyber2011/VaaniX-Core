@@ -1,4 +1,4 @@
-﻿/// VaaniX V1 Design System â€” Audio Cadence Waveform Player
+﻿/// VaaniX V1 Design System — Audio Cadence Waveform Player
 ///
 /// Waveform player for:
 /// - Pronunciation Lab micro-doses
@@ -8,7 +8,7 @@
 /// ## Real playback, not decoration
 ///
 /// This widget used to run a `AnimationController` that swung the bars
-/// back and forth with no audio attached â€” the play button toggled a
+/// back and forth with no audio attached — the play button toggled a
 /// boolean and the waveform pretended to play. That is gone.
 ///
 /// Playback now goes through [AudioService], so:
@@ -19,7 +19,7 @@
 ///     reports one, falling back to [durationLabel] only while unknown;
 ///   * dragging the waveform seeks.
 ///
-/// When [source] is null â€” no audio is configured for this item â€” the
+/// When [source] is null — no audio is configured for this item — the
 /// play button does not fake anything. It logs and leaves the player
 /// idle, because a learner must never be shown "playing" for a clip that
 /// does not exist.
@@ -55,7 +55,7 @@ class AudioCadenceWaveform extends ConsumerStatefulWidget {
   final Color? accentColor;
   final ValueChanged<bool>? onPlayStateChanged;
 
-  /// The audio to play. `null` means no audio exists for this item â€” the
+  /// The audio to play. `null` means no audio exists for this item — the
   /// widget will not pretend otherwise.
   final AudioSource? source;
 
@@ -112,7 +112,7 @@ class _AudioCadenceWaveformState extends ConsumerState<AudioCadenceWaveform> {
     final current = _state ?? service.current;
     HapticFeedback.lightImpact();
 
-    // No real source configured â€” do not fake a play. Surface it as a
+    // No real source configured — do not fake a play. Surface it as a
     // genuine unavailable state instead of animating bars for nothing.
     if (source == null) {
       widget.onPlayStateChanged?.call(false);
@@ -123,29 +123,46 @@ class _AudioCadenceWaveformState extends ConsumerState<AudioCadenceWaveform> {
     if (_commandInFlight) return;
     setState(() => _commandInFlight = true);
     try {
-      switch (current.status) {
-        case AudioPlaybackStatus.playing:
-          await service.pause();
-          widget.onPlayStateChanged?.call(false);
-        case AudioPlaybackStatus.paused:
-          await service.resume();
-          widget.onPlayStateChanged?.call(true);
-        case AudioPlaybackStatus.completed:
-          // Replay from the top.
-          await service.play(AudioPlayRequest(
-            source: source,
-            ducking: AudioDuckingPolicy.duckOthers,
-            startAt: Duration.zero,
-          ));
-          widget.onPlayStateChanged?.call(true);
-        case AudioPlaybackStatus.idle:
-        case AudioPlaybackStatus.loading:
-        case AudioPlaybackStatus.error:
-          await service.play(AudioPlayRequest(
-            source: source,
-            ducking: AudioDuckingPolicy.duckOthers,
-          ));
-          widget.onPlayStateChanged?.call(true);
+      // Decide against THIS source, not the global status. The engine is
+      // shared app-wide, so a global status would make a second waveform
+      // interpret "audio is playing" as "pause", even when the clip
+      // playing is someone else's. If the engine is busy with a
+      // DIFFERENT item, this tap means "play mine", which replaces the
+      // current source because there is only ever one engine.
+      final mineIsCurrent =
+          current.source?.deterministicKey == source.deterministicKey;
+
+      if (mineIsCurrent) {
+        switch (current.status) {
+          case AudioPlaybackStatus.playing:
+            await service.pause();
+            widget.onPlayStateChanged?.call(false);
+          case AudioPlaybackStatus.paused:
+            await service.resume();
+            widget.onPlayStateChanged?.call(true);
+          case AudioPlaybackStatus.completed:
+            // Replay from the top.
+            await service.play(AudioPlayRequest(
+              source: source,
+              ducking: AudioDuckingPolicy.duckOthers,
+              startAt: Duration.zero,
+            ));
+            widget.onPlayStateChanged?.call(true);
+          case AudioPlaybackStatus.idle:
+          case AudioPlaybackStatus.loading:
+          case AudioPlaybackStatus.error:
+            await service.play(AudioPlayRequest(
+              source: source,
+              ducking: AudioDuckingPolicy.duckOthers,
+            ));
+            widget.onPlayStateChanged?.call(true);
+        }
+      } else {
+        await service.play(AudioPlayRequest(
+          source: source,
+          ducking: AudioDuckingPolicy.duckOthers,
+        ));
+        widget.onPlayStateChanged?.call(true);
       }
     } finally {
       if (mounted) setState(() => _commandInFlight = false);
@@ -195,11 +212,18 @@ class _AudioCadenceWaveformState extends ConsumerState<AudioCadenceWaveform> {
       initialData: _state ?? ref.read(audioServiceProvider).current,
       builder: (context, snapshot) {
         final state = snapshot.data;
-        final isPlaying = state?.isPlaying ?? false;
-        // Real playback progress. Null while the duration is unknown â€”
-        // in that case the bars render flat rather than pretending to
-        // advance.
-        final progress = state?.progress;
+        // Only reflect state for THIS widget's source. A shared engine
+        // playing someone else's clip must not light up this player.
+        // `mineIsCurrent` implies `state != null`.
+        final mineIsCurrent = widget.source != null &&
+            state != null &&
+            state.source?.deterministicKey == widget.source!.deterministicKey;
+        final isPlaying =
+            mineIsCurrent && (state.status == AudioPlaybackStatus.playing);
+        // Real playback progress. Null while the duration is unknown, or
+        // while a different clip owns the engine.
+        final progress = mineIsCurrent ? state.progress : null;
+        final duration = mineIsCurrent ? state.duration : null;
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -277,12 +301,12 @@ class _AudioCadenceWaveformState extends ConsumerState<AudioCadenceWaveform> {
                   // Bars left of the playhead are fully painted; bars at
                   // or past it stay dim. When the duration is unknown
                   // there is no playhead to draw, so every bar renders
-                  // dim â€” we never synthesise motion.
+                  // dim — we never synthesise motion.
                   Expanded(
                     child: GestureDetector(
                       onHorizontalDragEnd: (details) async {
                         final service = ref.read(audioServiceProvider);
-                        final total = state?.duration;
+                        final total = duration;
                         if (total == null || total.inMilliseconds <= 0) return;
                         final box = context.findRenderObject() as RenderBox?;
                         if (box == null) return;
@@ -325,9 +349,9 @@ class _AudioCadenceWaveformState extends ConsumerState<AudioCadenceWaveform> {
                   ),
                   const SizedBox(width: 12),
 
-                  // Duration label â€” real once known.
+                  // Duration label — real once known.
                   Text(
-                    _durationText(state),
+                    _durationText(mineIsCurrent ? state : null),
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 12,

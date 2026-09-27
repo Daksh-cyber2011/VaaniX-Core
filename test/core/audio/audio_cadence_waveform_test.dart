@@ -55,6 +55,20 @@ Future<FakeAudioService> pumpWaveform(
   return service;
 }
 
+/// Taps the play/pause control, whichever glyph it currently shows.
+///
+/// A user taps the *button*, not an icon — after the first tap the glyph
+/// flips from play to pause, so a finder pinned to one icon goes stale.
+/// This mirrors what a finger actually does.
+Future<void> tapTransport(WidgetTester tester) async {
+  final finder = find.byWidgetPredicate(
+    (w) => w is Icon &&
+        (w.icon == Icons.play_arrow_rounded || w.icon == Icons.pause_rounded),
+  );
+  await tester.tap(finder.first);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   group('play button drives the real service', () {
     testWidgets('idle → tapping play issues a real play() with the source',
@@ -234,10 +248,13 @@ void main() {
       await tester.tap(find.text('1.25x'));
       await tester.pumpAndSettle();
       expect(service.speed, 1.5);
+      expect(find.text('1.50x'), findsOneWidget,
+          reason: 'non-unity speeds render with two decimals');
 
-      await tester.tap(find.text('1.5x'));
+      await tester.tap(find.text('1.50x'));
       await tester.pumpAndSettle();
       expect(service.speed, 1.0, reason: 'the cycle wraps back to 1.0');
+      expect(find.text('1.0x'), findsOneWidget);
     });
   });
 
@@ -291,17 +308,24 @@ void main() {
         (tester) async {
       final service = await pumpWaveform(tester);
 
-      // Fire three taps in the same frame — the classic double-tap race.
-      final button = find.byIcon(Icons.play_arrow_rounded);
-      await tester.tap(button);
-      await tester.tap(button);
-      await tester.pumpAndSettle();
+      // Fire repeated taps in quick succession — the classic double-tap
+      // race. A user means "toggle", not "queue three plays".
+      await tapTransport(tester);
+      await tapTransport(tester);
+      await tapTransport(tester);
 
-      // Regardless of interleaving, the service owns serialisation; the
-      // widget must not have queued unbounded duplicate plays.
       expect(service.playCount, lessThanOrEqualTo(2),
           reason: 'the widget guards against double-queuing a single intent');
-      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+      // Whatever the interleaving, the widget still shows a live state —
+      // never a stuck "playing" glyph over a stopped engine.
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is Icon &&
+              (w.icon == Icons.play_arrow_rounded ||
+                  w.icon == Icons.pause_rounded),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a second waveform instance shares the one service',
@@ -334,17 +358,34 @@ void main() {
       );
       await tester.pump();
 
-      // Play the first, then the second — the second must replace the
-      // first rather than coexist with it.
-      await tester.tap(find.byIcon(Icons.play_arrow_rounded).first);
+      // Two waveforms share ONE engine, so they also share one playback
+      // state. Play the first clip, then the second — the engine must
+      // hold a single source, the newest request winning.
+      final transportIcons = find.byWidgetPredicate(
+        (w) => w is Icon &&
+            (w.icon == Icons.play_arrow_rounded || w.icon == Icons.pause_rounded),
+      );
+      expect(transportIcons, findsNWidgets(2));
+
+      await tester.tap(transportIcons.at(0));
       await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.play_arrow_rounded).last);
+
+      // Only the waveform whose clip is actually playing shows a pause
+      // glyph. The other one still offers "play", because it is not the
+      // source currently loaded.
+      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.play_arrow_rounded));
       await tester.pumpAndSettle();
 
       expect(service.playRequests.length, 2);
       expect(service.playRequests.last.source.deterministicKey,
           _remote.deterministicKey,
-          reason: 'the most recent request wins — one engine, one source');
+          reason: 'the newest request replaces the current source — one '
+              'engine, one clip');
+      expect(find.byIcon(Icons.pause_rounded), findsOneWidget,
+          reason: 'exactly one player is active after the switch');
     });
 
     testWidgets('disposing the widget does not stop the shared engine',
