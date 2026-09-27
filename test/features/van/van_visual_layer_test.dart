@@ -279,11 +279,15 @@ void main() {
         ),
       );
       await tester.pump();
+      // The Transform lives INSIDE the clip: the clip is stage-sized and
+      // trims the transformed full-size source.
       final transform = tester.widget<Transform>(
-        find.ancestor(
-          of: find.byKey(kVanFrameClipKey),
-          matching: find.byType(Transform),
-        ).first,
+        find
+            .descendant(
+              of: find.byKey(kVanFrameClipKey),
+              matching: find.byType(Transform),
+            )
+            .first,
       );
       return transform.transform;
     }

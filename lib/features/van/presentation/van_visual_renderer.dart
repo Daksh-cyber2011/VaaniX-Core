@@ -180,8 +180,16 @@ class _FramedExpressionImage extends StatelessWidget {
   /// `RenderImage` reports its real 1024×1536 (or 1199×1312) size and
   /// `BoxFit.none` has nothing to crop. `topLeft` keeps the image's
   /// origin aligned with the transform's origin.
+  ///
+  /// The child deliberately overflows, and the surrounding [ClipRect] is
+  /// what trims it. `UnconstrainedBox.clipBehavior: Clip.hardEdge` stops
+  /// `RenderConstraintsTransformBox` from raising a debug overflow
+  /// error for a box that is never visible; it clips to this box's own
+  /// (stage-sized) rect, which is the same region the outer [ClipRect]
+  /// trims, so nothing visible changes.
   Widget _naturalSizeImage() => UnconstrainedBox(
         alignment: Alignment.topLeft,
+        clipBehavior: Clip.hardEdge,
         child: _image(fit: BoxFit.none),
       );
 
