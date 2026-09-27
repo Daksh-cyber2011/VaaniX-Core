@@ -51,6 +51,10 @@ VanAssetCatalog parseVanAssetCatalogJson(String raw) {
 /// Parses the canonical expression artwork section (schemaVersion 3+).
 /// Older catalogs without an `expressions` array yield an empty list —
 /// callers then render the Flutter fallback exactly as before.
+///
+/// A `frame` object (schemaVersion 4+) supplies the measured character
+/// rectangle used to normalise VAN's apparent size across expressions.
+/// A catalog without it degrades to the original whole-image contain-fit.
 List<VanExpressionArt> _parseExpressions(Map<String, dynamic> map) {
   final entries = map['expressions'] as List<dynamic>? ?? const [];
   return entries.map((e) {
@@ -62,8 +66,20 @@ List<VanExpressionArt> _parseExpressions(Map<String, dynamic> map) {
       width: (m['width'] as num?)?.toInt() ?? 0,
       height: (m['height'] as num?)?.toInt() ?? 0,
       available: (m['available'] as bool?) ?? false,
+      frame: _parseFrame(m['frame']),
     );
   }).toList(growable: false);
+}
+
+VanExpressionFrame _parseFrame(Object? raw) {
+  if (raw is! Map) return VanExpressionFrame.wholeImage;
+  final m = raw.cast<String, dynamic>();
+  return VanExpressionFrame(
+    left: (m['left'] as num?)?.toInt() ?? 0,
+    top: (m['top'] as num?)?.toInt() ?? 0,
+    width: (m['width'] as num?)?.toInt() ?? 0,
+    height: (m['height'] as num?)?.toInt() ?? 0,
+  );
 }
 
 /// Loads the catalog from the bundled JSON metadata.
@@ -108,5 +124,6 @@ bool vanExpressionArtMatch(VanExpressionArt a, VanExpressionArt b) {
       a.path == b.path &&
       a.width == b.width &&
       a.height == b.height &&
-      a.available == b.available;
+      a.available == b.available &&
+      a.frame == b.frame;
 }

@@ -210,35 +210,59 @@ class VanWidgetState extends State<VanWidget>
                 // Visual selection layers:
                 //   1. injected visualBuilder (custom art host) — existing
                 //      seam, untouched, only while motion is allowed;
-                //   2. canonical static expression artwork — displayed
-                //      EXACTLY as supplied: no breathing/rotation/scale
-                //      transforms may reshape canonical art, and a static
-                //      image is inherently reduced-motion safe;
-                //   3. the Flutter fallback painter with its motion system.
+                //   2. canonical expression artwork — displayed EXACTLY as
+                //      supplied, cropped to its measured character frame,
+                //      with the shape-preserving stage motion below;
+                //   3. the Flutter fallback painter with its full motion
+                //      system (wing flap, blink, beak, pupil, tuft).
+                //
+                // Canonical art gets STAGE motion only — a uniform scale and
+                // a translation of the whole image. Both are
+                // shape-preserving, so the supplied artwork is never
+                // stretched, squashed, or rotated into a different
+                // character, while Van still reads as alive per the
+                // Animation Bible ("Van should never feel static").
+                // Per-part animation (wing/eye/beak) remains exclusive to
+                // the painter, which is the only layer that can draw it.
                 final Widget visual;
-                final bool applyMotion;
+                final bool applyFullMotion;
+                final bool applyStageMotion;
                 if (!reducedMotion && widget.visualBuilder != null) {
                   visual = widget.visualBuilder!(context, asset, fallback);
-                  applyMotion = true;
+                  applyFullMotion = true;
+                  applyStageMotion = true;
                 } else if (canonicalArt != null) {
                   visual = VanVisualRenderer(
                     asset: asset,
                     expressionArt: canonicalArt,
                     fallback: fallback,
                   );
-                  applyMotion = false;
+                  applyFullMotion = false;
+                  applyStageMotion = !reducedMotion;
                 } else {
                   visual = reducedMotion
                       ? fallback
                       : VanVisualRenderer(asset: asset, fallback: fallback);
-                  applyMotion = !reducedMotion;
+                  applyFullMotion = !reducedMotion;
+                  applyStageMotion = false;
                 }
 
                 final Widget stage = SizedBox.square(
                   dimension: widget.size,
                   child: visual,
                 );
-                if (!applyMotion) return stage;
+
+                if (applyStageMotion && !applyFullMotion) {
+                  // Shape-preserving stage motion for canonical art.
+                  return Transform.translate(
+                    offset: Offset(0, motion.verticalOffset * widget.size),
+                    child: Transform.scale(
+                      scale: motion.stageScale,
+                      child: stage,
+                    ),
+                  );
+                }
+                if (!applyFullMotion) return stage;
                 return Transform.translate(
                   offset: Offset(0, motion.verticalOffset * widget.size),
                   child: Transform.rotate(
@@ -261,6 +285,7 @@ class _VanFallbackMotion {
     this.verticalOffset = 0,
     this.rotation = 0,
     this.scale = 1,
+    this.stageScale = 1,
     this.wingAngle = 0,
     this.eyeOpenness = 1,
     this.pupilOffset = Offset.zero,
@@ -272,7 +297,17 @@ class _VanFallbackMotion {
 
   final double verticalOffset;
   final double rotation;
+
+  /// Scale for the painted fallback body (may be anisotropic-free but is
+  /// applied together with rotation).
   final double scale;
+
+  /// Uniform scale for CANONICAL ART stage motion only. Deliberately tiny
+  /// and strictly positive so the supplied artwork is never distorted or
+  /// inverted — this is the "breathing" that keeps Van feeling alive
+  /// without altering a single pixel of the character's proportions.
+  final double stageScale;
+
   final double wingAngle;
   final double eyeOpenness;
   final Offset pupilOffset;
@@ -307,6 +342,19 @@ class _VanFallbackMotion {
         VanState.surprised => 1.025,
         VanState.error => .99,
         _ => 1 + (idle ? slowWave.abs() * .014 : 0),
+      },
+      // Shape-preserving "breathing" applied to canonical artwork. Kept
+      // small and always >= 1 so the character never squashes, flips, or
+      // changes proportion — it only reads as a gentle swell. Amplitude
+      // is highest at rest (where the Animation Bible wants life) and
+      // minimal during active states, so it never competes with meaning.
+      stageScale: switch (state) {
+        VanState.achievement => 1 + math.max(0, slowWave) * .012,
+        VanState.speaking => 1 + quickWave.abs() * .005,
+        VanState.thinking => 1 + slowWave.abs() * .004,
+        VanState.focus => 1 + slowWave.abs() * .004,
+        VanState.error => 1 + quickWave.abs() * .004,
+        _ => 1 + slowWave.abs() * (idle ? .008 : .005),
       },
       rotation: switch (state) {
         VanState.thinking => -.06 + slowWave * .012,
@@ -357,8 +405,14 @@ class _VanFallbackMotion {
     );
   }
 
+  /// Reduced-motion posture. `stageScale` stays exactly 1.0 so canonical
+  /// artwork is presented completely still, and `verticalOffset` stays 0
+  /// so nothing bobs. Per-part values (wing, eye, pupil, beak) remain so
+  /// the painted fallback still reads as the right expression rather than
+  /// a neutral blob.
   static _VanFallbackMotion _staticPoseFor(VanState state) =>
       _VanFallbackMotion(
+        stageScale: 1,
         rotation: switch (state) {
           VanState.thinking => -.06,
           VanState.caring => .045,
