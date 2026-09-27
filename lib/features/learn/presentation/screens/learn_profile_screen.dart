@@ -267,13 +267,13 @@ class _LearnProfileScreenState extends ConsumerState<LearnProfileScreen> {
   Future<void> _reset(BuildContext context) async {
     final language = ref.read(selectedLearnLanguageProvider);
     if (language == null) return;
-    
+
     // 1. Wipe Learn-specific generated state (profile, course, diagnostic, etc)
     await ref.read(learnerProfileProvider(language).notifier).resetToDefaults();
-    
+
     // 2. Wipe mastery/progress for this language (wait, it's global)
     await ref.read(progressRepositoryProvider).reset();
-    
+
     // 3. Invalidate providers to force a clean rebuild from the newly emptied state
     ref.invalidate(personalizedCourseProvider);
     ref.invalidate(diagnosticSessionProvider);

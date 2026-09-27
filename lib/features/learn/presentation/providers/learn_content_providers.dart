@@ -247,7 +247,7 @@ class SmartPracticeController extends StateNotifier<SmartPracticeState> {
   /// honest [SmartPracticeState.unavailable] path instead of implying
   /// content resolved.
   @visibleForTesting
-  static Duration prepareTimeout = const Duration(seconds: 30);
+  static Duration prepareTimeout = const Duration(seconds: 15);
 
   /// Resolves today's trusted content. Reads the validated plan (no
   /// re-planning — the spine's cached plan is reused) and the registry;
