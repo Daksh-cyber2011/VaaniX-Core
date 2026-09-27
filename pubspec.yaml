@@ -115,3 +115,8 @@ flutter:
     - assets/syllabus/cbse/
     - assets/van/metadata/
     - assets/van/expressions/
+    # Pronunciation clips. Currently EMPTY — see
+    # assets/audio/pronunciation/README.md. Declared so dropping real
+    # recordings in needs no manifest change.
+    - assets/audio/
+    - assets/audio/pronunciation/

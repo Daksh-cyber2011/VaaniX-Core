@@ -136,7 +136,11 @@ class _InteractiveDrillScreenState
                   ),
                   const SizedBox(height: VaaniXSpacing.md),
 
-                  // 3. Audio Cadence Waveform Player
+                  // 3. Audio Cadence Waveform Player.
+                  //
+                  // Drives the real AudioService. No `source` is passed
+                  // because VaaniX bundles no recordings yet — the player
+                  // stays idle instead of animating a fake waveform.
                   const AudioCadenceWaveform(
                     phrase: 'नमस्ते, आप कैसे हैं?',
                     transliteration: 'Cadence: Respectful Elder Tone',

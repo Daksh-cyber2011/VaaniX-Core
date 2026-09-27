@@ -431,7 +431,19 @@ class _LearnHomeScreenState extends ConsumerState<LearnHomeScreen> {
         ),
         const SizedBox(height: 10),
 
-        // Pronunciation Lab with Waveform
+        // Pronunciation Lab with Waveform.
+        //
+        // HONESTY GUARD: VaaniX bundles no pronunciation recordings yet
+        // (see assets/audio/pronunciation/README.md), so no `source` is
+        // passed. The waveform therefore drives the real AudioService but
+        // stays idle and does NOT animate bars or report "playing" — the
+        // learner sees a real player with nothing to play yet, which is
+        // accurate.
+        //
+        // When recordings land, this becomes:
+        //   source: AudioSource.asset(
+        //     'assets/audio/pronunciation/hi_hi_greet_namaste.mp3',
+        //   ),
         const AudioCadenceWaveform(
           phrase: 'नमस्ते, आप कैसे हैं?',
           transliteration: 'Namaste, aap kaise hain?',

@@ -45,40 +45,22 @@ enum AudioSourceKind {
 /// Construct with the named constructors rather than the raw constructor
 /// so an [AudioSource] can never be built in an inconsistent state.
 class AudioSource {
-  const AudioSource._({
-    required this.kind,
-    this.assetPath,
-    this.url,
-    this.cacheKey,
-  });
-
   /// A file bundled inside the app. Plays offline.
-  factory AudioSource.asset(String assetPath, {String? cacheKey}) {
-    return AudioSource._(
-      kind: AudioSourceKind.asset,
-      assetPath: assetPath,
-      cacheKey: cacheKey,
-    );
-  }
+  const AudioSource.asset(this.assetPath, {this.cacheKey})
+      : kind = AudioSourceKind.asset,
+        url = null;
 
   /// A remote file. Requires network access and is *not* offline-capable
   /// unless the engine has cached it.
-  factory AudioSource.remote(String url, {String? cacheKey}) {
-    return AudioSource._(
-      kind: AudioSourceKind.remote,
-      url: url,
-      cacheKey: cacheKey,
-    );
-  }
+  const AudioSource.remote(this.url, {this.cacheKey})
+      : kind = AudioSourceKind.remote,
+        assetPath = null;
 
   /// Platform text-to-speech. Not yet backed by an engine in VaaniX.
-  factory AudioSource.tts(String text, {String? cacheKey}) {
-    return AudioSource._(
-      kind: AudioSourceKind.tts,
-      url: text,
-      cacheKey: cacheKey,
-    );
-  }
+  const AudioSource.tts(String text, {this.cacheKey})
+      : kind = AudioSourceKind.tts,
+        url = text,
+        assetPath = null;
 
   final AudioSourceKind kind;
 
