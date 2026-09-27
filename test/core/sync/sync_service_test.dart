@@ -59,13 +59,16 @@ class _RecorderApiClient extends VaanixApiClient {
   }
 }
 
+/// Let any fire-and-forget drain kicked off by `enqueue` complete, so
+/// assertions observe a settled queue rather than a mid-flight one.
+Future<void> _settle() => Future<void>.delayed(const Duration(milliseconds: 50));
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });
-
   test('enqueue persists and sync() drains to the backend', () async {
     final prefs = await SharedPreferences.getInstance();
     final outbox = SyncOutbox(prefs);
@@ -91,8 +94,10 @@ void main() {
       payload: {'id': 'p1'},
       entityId: 'p1',
     );
-    // Force a drain in case the timer hasn't fired.
-    await service.sync();
+    // `enqueue` fires a best-effort drain, so wait for it to settle
+    // rather than issuing a second explicit sync (which would post the
+    // same op twice against a non-idempotent fake).
+    await _settle();
     expect(api.postedPaths, ['/sync/outbox']);
     expect(outbox.pendingFor('A'), isEmpty);
     await service.dispose();
@@ -143,9 +148,13 @@ void main() {
       type: SyncOpType.upsertProgress,
       payload: {'id': 'p1'},
     );
-    await service.sync();
+    // `enqueue` already triggers one drain; that single failed attempt
+    // is the retry we are asserting on. A second explicit sync would
+    // bump the counter twice.
+    await _settle();
     final pending = outbox.pendingFor('A').single;
     expect(pending.retryCount, 1);
+    expect(pending.lastError, contains('boom'));
     await service.dispose();
   });
 
@@ -157,8 +166,8 @@ void main() {
     // queue for the active user.
     final api = _RecorderApiClient(
       respond: (_, body) async => {
-        'results': [
-          for (final op in (body['operations'] as List? ?? const []))
+        'results': <Map<String, dynamic>>[
+          for (final op in (body['operations'] as List<dynamic>? ?? const []))
             {
               'operation_id': op['operation_id'],
               'accepted': true,
@@ -172,17 +181,23 @@ void main() {
       apiClient: api,
     );
     service.rebindUser('A');
-    await service.enqueue(
+    // Seed A's queue directly rather than via `enqueue`, which would
+    // immediately try to drain it while A is still the active user.
+    await outbox.enqueue(SyncOperation(
+      operationId: 'op-a',
+      userId: 'A',
       type: SyncOpType.upsertProgress,
-      payload: {'id': 'a-1'},
-    );
+      entityId: 'a-1',
+      payload: const {'id': 'a-1'},
+      createdAt: DateTime(2026, 9, 27),
+    ));
     // Now switch to B before draining.
     service.rebindUser('B');
     await service.enqueue(
       type: SyncOpType.upsertProgress,
       payload: {'id': 'b-1'},
     );
-    await service.sync();
+    await _settle();
     // A's op is still pending (will resume next sign-in), B's was
     // drained in this call.
     expect(outbox.pendingFor('A').length, 1,

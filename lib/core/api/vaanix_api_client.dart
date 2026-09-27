@@ -17,7 +17,7 @@
 /// call `dart:io` directly.
 library;
 
-import 'dart:async';
+import 'dart:async' as async;
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -49,17 +49,20 @@ class VaanixApiClient {
   final Uri? _baseUrlOverride;
 
   Uri _resolve(String path) {
-    final base = _baseUrlOverride ?? Uri.parse(AppEnvironment.apiBaseUrl);
-    // path may be absolute ("/api/v1/foo") or relative ("foo").
-    if (path.startsWith('/')) {
-      // Treat as relative to the API base's host root.
-      final baseRoot = base.replace(
-        path: '',
-        queryParameters: null,
-      );
-      return baseRoot.resolve(path.substring(1));
+    var base = _baseUrlOverride ?? Uri.parse(AppEnvironment.apiBaseUrl);
+    // The API base already carries its path prefix (e.g.
+    // `http://host:8000/api/v1`).
+    //
+    // `Uri.resolve` treats the final path segment of the base as a
+    // FILE, so `Uri.parse('.../api/v1').resolve('health')` would yield
+    // `.../api/health` and silently drop the version segment. Force a
+    // trailing slash so the base behaves as a DIRECTORY and the
+    // prefix survives.
+    if (base.path.isNotEmpty && !base.path.endsWith('/')) {
+      base = base.replace(path: '${base.path}/');
     }
-    return base.resolve(path);
+    final relative = path.startsWith('/') ? path.substring(1) : path;
+    return base.resolve(relative);
   }
 
   /// GET helper. Returns a typed [Result] — never throws.
@@ -120,7 +123,13 @@ class VaanixApiClient {
               .get(uri, headers: headers)
               .timeout(_timeout);
         }
-      } on TimeoutException {
+      } on async.TimeoutException {
+        // NOTE: VaaniX defines its own `TimeoutException` in
+        // core/errors/exceptions.dart, which shadows dart:async's in
+        // this file's scope. The error that `.timeout()` raises is
+        // dart:async's, so it MUST be matched with an explicit prefix
+        // — a bare `on TimeoutException` would silently never match and
+        // every timeout would fall into the network bucket below.
         throw const TimeoutException('VaaniX API request timed out');
       } catch (e) {
         throw NetworkException('VaaniX API transport failure: $e');

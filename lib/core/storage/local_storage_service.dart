@@ -182,7 +182,7 @@ class LocalStorageService implements ILocalStorageService {
   /// conversation-memory retention pruning).
   @override
   String? getAiConversation(String conversationId) =>
-      _readString(_k('${AppConstants.aiConversationKeyPrefix}$conversationId'));
+      _readString('${AppConstants.aiConversationKeyPrefix}$conversationId');
 
   @override
   Future<void> setAiConversation(String conversationId, String jsonMessages) =>
@@ -204,7 +204,7 @@ class LocalStorageService implements ILocalStorageService {
   // ─── Generic String Storage ────────────────────────────────────────────────
 
   @override
-  String? getString(String key) => _readString(_k(key));
+  String? getString(String key) => _readString(key);
 
   @override
   Future<void> setString(String key, String value) =>
@@ -260,9 +260,13 @@ class LocalStorageService implements ILocalStorageService {
   // SharedPreferences getters cast values and throw when an older build or a
   // damaged preferences file contains the wrong type. Treat such values as
   // absent so provider hydration can use its existing safe defaults.
+  //
+  // Every read routes its key through [_k] so the active namespace applies
+  // uniformly. Callers pass the *logical* key; the physical key on disk is
+  // namespaced.
   bool? _readBool(String key) {
     try {
-      return _prefs.getBool(key);
+      return _prefs.getBool(_k(key));
     } catch (_) {
       return null;
     }
@@ -270,7 +274,7 @@ class LocalStorageService implements ILocalStorageService {
 
   int? _readInt(String key) {
     try {
-      return _prefs.getInt(key);
+      return _prefs.getInt(_k(key));
     } catch (_) {
       return null;
     }
@@ -278,7 +282,7 @@ class LocalStorageService implements ILocalStorageService {
 
   String? _readString(String key) {
     try {
-      return _prefs.getString(key);
+      return _prefs.getString(_k(key));
     } catch (_) {
       return null;
     }
@@ -286,7 +290,7 @@ class LocalStorageService implements ILocalStorageService {
 
   List<String>? _readStringList(String key) {
     try {
-      return _prefs.getStringList(key);
+      return _prefs.getStringList(_k(key));
     } catch (_) {
       return null;
     }

@@ -29,9 +29,10 @@ void main() {
     final scoped = ScopedLocalStorage(backing, currentUserId: 'A');
     await scoped.setXpTotal(42);
     expect(
-      prefs.getKeys().any((k) => k.contains('A') && k.contains('xp')),
+      prefs.getKeys().any((k) => k == 'user:A:xp_total'),
       isTrue,
-      reason: 'a key matching the user namespace MUST be present',
+      reason: 'the key MUST carry the user namespace — a flat key would '
+          'leak across accounts',
     );
   });
 
