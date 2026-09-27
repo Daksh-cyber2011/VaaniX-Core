@@ -7,6 +7,8 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
+import 'package:vaanix_app/core/providers/sync_providers.dart';
+import 'package:vaanix_app/core/storage/scoped_local_storage.dart';
 import 'package:vaanix_app/core/supabase/supabase_config.dart';
 import 'package:vaanix_app/features/auth/data/noop_auth_repository.dart';
 import 'package:vaanix_app/features/auth/data/supabase_auth_repository.dart';
@@ -42,6 +44,11 @@ final authSessionProvider = Provider<AsyncValue<AuthSession>>((ref) {
 
 /// Synchronous accessor for the latest known session.
 final latestAuthSessionProvider = Provider<AuthSession>((ref) {
+  // Side-effect: spin up the auth transition watcher so per-user
+  // scoping rebinds the moment any caller reads the latest session.
+  // This is intentionally the only place that touches the watcher —
+  // every downstream provider already depends on the session.
+  ref.watch(authTransitionWatcherProvider);
   final async = ref.watch(authSessionStreamProvider);
   return async.maybeWhen(
     data: (session) => session,
@@ -53,3 +60,57 @@ final latestAuthSessionProvider = Provider<AuthSession>((ref) {
 final isAuthenticatedProvider = Provider<bool>(
   (ref) => ref.watch(latestAuthSessionProvider).isAuthenticated,
 );
+
+/// Watches the auth session for user-id transitions and rebinds the
+/// per-user infrastructure in one place: the [ScopedLocalStorage]
+/// re-prefixes its keys, the [SyncService] stops draining the
+/// previous user's outbox, and every user-owned Riverpod provider
+/// invalidates its in-memory state.
+///
+/// Why a separate provider: this is the canonical place that knows
+/// about BOTH `core/` and the per-user providers it needs to
+/// invalidate. Keeping it here (in features/auth) instead of inside
+/// the SessionManager preserves the layer rule: `core` never imports
+/// features.
+final authTransitionWatcherProvider = Provider<void>((ref) {
+  String? previousUserId;
+  ref.listen<AuthSession>(latestAuthSessionProvider, (previous, next) {
+    final nextUserId = next.user?.id;
+    if (nextUserId == previousUserId) return;
+    previousUserId = nextUserId;
+
+    // 1. Rebind the scoped storage so reads/writes go to the right
+    //    namespace. The previous user's data remains on disk but is
+    //    not surfaced to the new user.
+    final storage = ref.read(scopedLocalStorageProvider);
+    storage.rebind(nextUserId);
+
+    // 2. Rebind the sync service. Pending operations belonging to the
+    //    previous user are NOT drained — they remain in storage for
+    //    that user's next sign-in on this device.
+    final sync = ref.read(syncServiceProvider);
+    sync.rebindUser(nextUserId);
+
+    // 3. Invalidate every user-owned provider so the UI rebuilds
+    //    against the new identity. Without this, in-memory state
+    //    from User A would still be visible to User B until the
+    //    next manual refresh.
+    _invalidateUserScopedProviders(ref);
+  });
+});
+
+/// The set of providers that hold user-owned in-memory state. Adding
+/// a new provider here is the only action required for cross-user
+/// isolation to take effect — the listener above drives the
+/// invalidation.
+void _invalidateUserScopedProviders(Ref ref) {
+  // The AI conversation memory, response cache, and token usage
+  // tracker are all keyed by user-scoped storage keys, so the
+  // rebind above already routes their reads correctly — but their
+  // in-memory caches (e.g. `ResponseCache._memory`) are NOT scoped.
+  // Invalidate so the next read rebuilds from the new user.
+  ref.invalidate(responseCacheProvider);
+  ref.invalidate(tokenUsageTrackerProvider);
+  ref.invalidate(conversationMemoryProvider);
+}
+

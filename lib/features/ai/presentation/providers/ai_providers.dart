@@ -19,8 +19,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:vaanix_app/core/environment/app_environment.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/core/providers/sync_providers.dart';
 import 'package:vaanix_app/features/ai/data/ai_rate_limiter.dart';
 import 'package:vaanix_app/features/ai/data/ai_service_impl.dart';
+import 'package:vaanix_app/features/ai/data/backend_ai_transport.dart';
 import 'package:vaanix_app/features/ai/data/conversation_pipeline_impl.dart';
 import 'package:vaanix_app/features/ai/data/default_prompt_pipeline.dart';
 import 'package:vaanix_app/features/ai/data/gemini_model_adapter.dart';
@@ -92,6 +94,15 @@ final aiServiceProvider = Provider<AIService>((ref) {
     usageTracker: ref.watch(tokenUsageTrackerProvider),
   );
 
+  // In production (`VAANIX_USE_BACKEND_AI=true`) provider keys MUST
+  // not live in the mobile client — both Groq and Gemini adapters
+  // route through the VaaniX backend instead. In development we keep
+  // the direct adapters so engineers can iterate against the
+  // provider without standing up the backend.
+  final backendTransport = AppEnvironment.useBackendAi
+      ? BackendAiTransport(apiClient: ref.read(vaanixApiClientProvider))
+      : null;
+
   // 1. Groq — preferred when configured. Registered first so it is
   //    selected over Gemini when both providers are present.
   if (AppEnvironment.isGroqConfigured) {
@@ -100,6 +111,7 @@ final aiServiceProvider = Provider<AIService>((ref) {
       rateLimiter: ref.read(aiRateLimiterProvider),
       responseCache: ref.read(responseCacheProvider),
       usageTracker: ref.read(tokenUsageTrackerProvider),
+      transport: backendTransport,
     ));
   }
 

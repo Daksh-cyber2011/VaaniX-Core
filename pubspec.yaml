@@ -53,6 +53,11 @@ dependencies:
   # Image picker — used by exam_practice_screen §26 photo-answer flow
   image_picker: ^1.1.2
 
+  # HTTP — used by the VaaniX API client + sync outbox. Already
+  # present as a transitive dep of Supabase; declared explicitly so
+  # we can pin a major version.
+  http: ^1.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

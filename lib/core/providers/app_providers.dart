@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
+import 'package:vaanix_app/core/storage/scoped_local_storage.dart';
+import 'package:vaanix_app/features/auth/presentation/providers/auth_providers.dart';
 
 /// Provides the initialized [SharedPreferences] instance.
 ///
@@ -22,13 +24,22 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   );
 });
 
-/// Provides the [LocalStorageService] built on top of [SharedPreferences].
-///
-/// Feature repositories should depend on this — not on the raw
-/// [SharedPreferences] instance — so storage mechanics stay isolated in one
-/// place and can evolve (e.g. migrate to a different backend) without
-/// touching feature code.
+/// Raw, un-scoped [LocalStorageService]. Reserved for use by the
+/// scope manager itself and by tests. Feature code should depend on
+/// [scopedLocalStorageProvider] instead so reads/writes are always
+/// namespaced by the current user.
 final localStorageServiceProvider = Provider<LocalStorageService>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return LocalStorageService(prefs);
+});
+
+/// The per-user scoped storage. Every key read or written by feature
+/// code goes through here, so two users signing in and out on the
+/// same device cannot see each other's local data.
+final scopedLocalStorageProvider = Provider<ScopedLocalStorage>((ref) {
+  final inner = ref.watch(localStorageServiceProvider);
+  final session = ref.watch(latestAuthSessionProvider);
+  final scoped = ScopedLocalStorage(inner);
+  scoped.rebind(session.user?.id);
+  return scoped;
 });

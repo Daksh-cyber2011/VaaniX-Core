@@ -57,6 +57,16 @@ class AppEnvironment {
     return 'http://localhost:8000/api/v1';
   }
 
+  /// True when the AI adapters MUST route through the VaaniX backend
+  /// instead of calling provider APIs directly. Defaults to `false`
+  /// so existing dev builds continue to work. Production should set
+  /// `VAANIX_USE_BACKEND_AI=true` so provider keys never reach the
+  /// mobile client.
+  static bool get useBackendAi {
+    final raw = dotenv.env[AppConstants.useBackendAiKey]?.trim().toLowerCase();
+    return raw == 'true' || raw == '1' || raw == 'yes';
+  }
+
   /// Google Gemini API key. Empty when not configured — the AI module
   /// falls back to [OfflineModelAdapter] in that case.
   /// Google Gemini model name, defaulting to [AppConstants.defaultGeminiModel].

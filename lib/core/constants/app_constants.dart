@@ -27,6 +27,7 @@ abstract final class AppConstants {
   static const String supabaseUrlKey = 'SUPABASE_URL';
   static const String supabaseAnonKeyKey = 'SUPABASE_ANON_KEY';
   static const String apiBaseUrlKey = 'API_BASE_URL';
+  static const String useBackendAiKey = 'VAANIX_USE_BACKEND_AI';
   static const String appEnvKey = 'APP_ENV';
   static const String sentryDsnKey = 'SENTRY_DSN';
   static const String geminiApiKey = 'GEMINI_API_KEY';
