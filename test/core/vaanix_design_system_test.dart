@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaanix_app/core/providers/app_mode_provider.dart';
 import 'package:vaanix_app/core/providers/app_providers.dart';
+import 'package:vaanix_app/core/audio/audio_providers.dart';
 import 'package:vaanix_app/core/storage/local_storage_service.dart';
 import 'package:vaanix_app/core/theme/vaanix_colors.dart';
 import 'package:vaanix_app/core/theme/vaanix_radius.dart';
@@ -24,6 +25,8 @@ import 'package:vaanix_app/shared/widgets/vaanix_card.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_mode_switch.dart';
 import 'package:vaanix_app/shared/widgets/vaanix_radial_gauge.dart';
 import 'package:vaanix_app/shared/widgets/van_companion_bubble.dart';
+
+import '../support/fake_audio_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -144,28 +147,57 @@ void main() {
       expect(find.text('+3.6%/wk'), findsOneWidget);
     });
 
-    testWidgets('AudioCadenceWaveform toggles play/pause state on tap',
+    testWidgets('AudioCadenceWaveform renders and does NOT fake playback',
         (tester) async {
-      bool playState = false;
+      // CONTRACT CHANGE (audio infrastructure pass).
+      //
+      // This test previously asserted that tapping play with no audio
+      // reported `playState == true` and swapped the glyph to pause.
+      // That was the fake `AnimationController` engine: it toggled a
+      // boolean with no sound behind it. The engine is now gone and the
+      // widget drives a real `AudioService`.
+      //
+      // With no `AudioSource` there is nothing to play, so the honest
+      // behaviour is to stay idle. Asserting the old behaviour would
+      // re-introduce exactly the fabrication this change removed.
+      final audio = FakeAudioService();
+
       await tester.pumpWidget(
-        wrap(
-          AudioCadenceWaveform(
-            phrase: 'नमस्ते',
-            durationLabel: '0:03',
-            onPlayStateChanged: (val) => playState = val,
+        ProviderScope(
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(prefs),
+            localStorageServiceProvider.overrideWithValue(storage),
+            audioServiceProvider.overrideWithValue(audio),
+          ],
+          child: MaterialApp(
+            home: Scaffold(
+              body: AudioCadenceWaveform(
+                phrase: 'नमस्ते',
+                durationLabel: '0:03',
+                onPlayStateChanged: (_) {},
+              ),
+            ),
           ),
         ),
       );
 
+      // Visual contract is unchanged.
       expect(find.text('नमस्ते'), findsOneWidget);
       expect(find.text('0:03'), findsOneWidget);
       expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
 
+      // Behavioural contract is now honest.
       await tester.tap(find.byIcon(Icons.play_arrow_rounded));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(playState, isTrue);
-      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+      expect(audio.playCount, 0,
+          reason: 'no source was supplied, so the service must not be '
+              'asked to play anything');
+      expect(find.byIcon(Icons.pause_rounded), findsNothing,
+          reason: 'the widget must not display a pause glyph for audio that '
+              'does not exist');
+      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget,
+          reason: 'the player stays honestly idle');
     });
 
     testWidgets('VanCompanionBubble renders speech message and badge role',
